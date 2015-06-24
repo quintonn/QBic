@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title></title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link href="css/siteSpecific.css" rel="stylesheet" />
+    <link href="css/login.css" rel="stylesheet" />
+    <link href="css/menu.css" rel="stylesheet" />
+    <link href="css/inputDialog.css" rel="stylesheet" />
+
+    <script src="Scripts/auth.js"></script>
+    <script src="Scripts/menuBuilder.js"></script>
+    <script src="Scripts/navigation.js"></script>
+    <script src="Scripts/inputDialog.js"></script>
+    <script src="Scripts/siteMenu.js"></script>
+    <script src="Scripts/main.js"></script>
+</head>
+<body onload="main.bodyOnLoad()">
+
+    <div>
+        <div id="menuContainer"></div>
+        <div id="userDetail" style="display:none; float:right;">
+            <a href="#" id="aUserName">xxx</a>
+            <button onclick="auth.logout()">Logout</button>
+        </div>
+    </div>
+
+    <div id="mainContent">
+        <h1 style="margin: 20px">...Loading</h1>
+    </div>
+
+    <div id="loginContainer"></div>
+
+    <div id="inputContent">
+        <div id="dlgInput">
+        </div>
+    </div>
+
+</body>
+</html>
