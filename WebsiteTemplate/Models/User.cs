@@ -33,5 +33,10 @@ namespace WebsiteTemplate.Models
         public virtual UserRole UserRole { get; set;  }
 
         public virtual UserStatus UserStatus { get; set; }
+
+        public User()
+        {
+            UserStatus = Models.UserStatus.Active;
+        }
     }
 }

@@ -7,7 +7,7 @@
     tokenName: "",
     userSettingSuffix: "UserSetting",
     userSettingName: "",
-    version: "0.0.2",
+    version: "0.0.3",
     scriptLoaded: false,
     refreshTimerRunning: false,
 
@@ -31,9 +31,7 @@
 
     processInitResponse: function(data)
     {
-        console.log('processInitResponse: refreshTimerRunning: ');
-        console.log(main.refreshTimerRunning);
-        var userInfo = JSON.parse(data);
+        var userInfo = data;
         document.getElementById('aUserName').innerHTML = userInfo.user;
         navigation.entryPoint(userInfo);
         if (main.refreshTimerRunning == false)
@@ -71,20 +69,8 @@
         url = main.baseURL + url;
         webRequest.open(method, url, true);
         
-        //var tokenData = localStorage.getItem(main.tokenName);
-        //tokenData = tokenData || "";
-        //if (tokenData.length > 0)
-        //{
-        //    tokenData = JSON.parse(tokenData);
-        //}
-        ////var userToken = localStorage.getItem(main.tokenName);
-        //var userToken = "";
-        //if (tokenData != null && tokenData.refresh_token != null)
-        //{
-        //    userToken = tokenData.refresh_token;
-        //}
         var userToken = auth.getAccessToken();
-        //console.log('making web call ' + url + ' with token:\n' + userToken);
+        
         webRequest.setRequestHeader("Authorization", "Bearer " + userToken);
         webRequest.send(params);
     },
@@ -98,13 +84,30 @@
         switch (req.status)
         {
             case 200:
-                callback(req.responseText, args);
+                
+                var contentType = req.getResponseHeader('content-type');
+                contentType = contentType || "";
+
+                var response = req.responseText;
+
+                if (contentType.indexOf("application/json") > -1)
+                {
+                    response = JSON.parse(response);
+                }
+                
+                callback(response, args);
                 break;
             case 400:
-                //console.log(req);
-                var respData = JSON.parse(req.responseText);
-                //console.log(respData.error);
-                //console.log(respData.error_description);
+                
+                var contentType = req.getResponseHeader('content-type');
+                contentType = contentType || "";
+                
+                var respData = req.response;
+                if (contentType.indexOf("application/json") > -1)
+                {
+                    respData = JSON.parse(respData);
+                }
+                
                 if (respData && respData.error && respData.error_description)
                 {
                     switch (respData.error)
@@ -125,8 +128,12 @@
                 }
                 else
                 {
-                    alert("Bad request");
-                    //console.log("Bad request");
+                    alert(respData.message);
+                    
+                    //console.log(req.response.message);
+                    //console.log(req.responseTex.message);
+                    //console.log(respData.message);
+                    //console.log(respData.error_description);
                 }
                 break;
             case 401: //Unauthorized: Need to show login screen
@@ -134,6 +141,9 @@
                 break;
             case 403: //Forbidden
                 alert("You are not authorized to perform the requested action.\n" + req.statusText);
+                break;
+            case 500:
+                alert(JSON.parse(req.response).exceptionMessage);
                 break;
             default:
                 //alert("unknown web response status: " + req.status);

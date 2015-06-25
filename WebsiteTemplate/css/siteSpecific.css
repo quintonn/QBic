@@ -11,3 +11,18 @@ body {
     background-color: #FFF;
     padding:50px;
 }
+
+label {
+    font-family: Trebuchet MS,Tahoma,Verdana,Arial,sans-serif;
+    font-size: 1.1em;
+    display: block;
+    min-width: 100px;
+}
+
+input[type=text] {
+    display: inline-block;
+}
+
+input[type=password] {
+    display: inline-block;
+}

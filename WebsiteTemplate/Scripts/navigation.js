@@ -42,7 +42,7 @@
 
     loadHtmlBody: function (nodeName, pageName, callback)
     {
-        var url = "pages/" + pageName;
+        var url = "pages/" + pageName + '?v=' + main.version;
         var loadCompleted = function (resp, nodeName)
         {
             navigation.loadHtmlBodyResponse(resp, nodeName);

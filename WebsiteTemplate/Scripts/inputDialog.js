@@ -7,11 +7,21 @@
 
         callback = callback || function() { };
 
-        navigation.loadHtmlBody('dlgInput', pageName + "?v="+main.version, callback);
+        navigation.loadHtmlBody('dlgInput', pageName, callback);
     },
 
     cancelInput: function()
     {
         document.getElementById('inputContent').style.display = 'none';
-    }
+    },
+
+    addHiddenField: function (fieldName, fieldValue)
+    {
+        var inputDiv = document.getElementById("dlgInput");
+        var hidden = document.createElement("input");
+        hidden.type = "hidden";
+        hidden.value = fieldValue;
+        hidden.id = fieldName;
+        inputDiv.appendChild(hidden);
+    },
 };

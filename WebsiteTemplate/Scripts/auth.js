@@ -16,21 +16,17 @@
 
     onLoginSuccess: function (data)
     {
+        console.log('login success: ' + data);
         auth.refreshTokenResponse(data);
         main.init();
     },
 
     makeRefreshCall: function()
     {
-        //var tokenData = localStorage.getItem(main.tokenName);
-        //tokenData = JSON.parse(tokenData);
-
-        //var refreshToken = tokenData.refresh_token;
         var refreshToken = auth.getRefreshToken();
 
         var data = "grant_type=refresh_token&client_id=" + main.applicationName + "&refresh_token=" + refreshToken;
 
-        //console.log("making refresh token call: " + new Date());
         main.makeWebCall(main.webApiURL + "token", "POST", auth.refreshTokenResponse, data);
     },
 
@@ -86,16 +82,10 @@
 
     refreshTokenResponse: function(data)
     {
-        var data = JSON.parse(data);
-
-        //console.log(data);
-
         var userToken = data.access_token;
         var userName = data.userName;
 
         localStorage.setItem(main.tokenName, JSON.stringify(data));
-
-        
 
         //console.log(expireTimeout);
         
@@ -105,7 +95,7 @@
     startRefreshTimer: function()
     {
         var data = localStorage.getItem(main.tokenName);
-        //console.log('token data: \n' + data + "\n");
+
         data = JSON.parse(data);
 
         var expireTime = data[".expires"];
@@ -130,6 +120,9 @@
         console.log("start refresh timer from refreshTokenResponse with timeout: " + expireTimeout / 1000 + " seconds / " + expireTimeout / 60000 + " minutes");
         setTimeout(auth.refreshTokenHandler, expireTimeout);
         main.refreshTimerRunning = true;
+
+        console.log("TODO:xxxxxxxxx");
+        ///TODO: Need to save the refreshTimerRunning to localStorage so that if another tab is opened we don't call refresh multiple times.
     },
 
     refreshTokenHandler: function ()
