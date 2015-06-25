@@ -219,6 +219,7 @@ namespace WebsiteTemplate.Security
                     {
                         continue;
                     }
+                    
                     var value = property.GetValue(user);
                     try
                     {
@@ -247,7 +248,7 @@ namespace WebsiteTemplate.Security
                         throw;
                     }
                 }
-                session.Save(dbUser, dbUser.Id);
+                session.Save(dbUser);
                 session.Flush();
             }
             return Task.FromResult(0);

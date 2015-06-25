@@ -11,6 +11,12 @@ using Newtonsoft.Json;
 using System.Transactions;
 using BasicAuthentication.Users;
 using System.Threading.Tasks;
+using System.Configuration;
+using System.Net.Configuration;
+using System.Diagnostics;
+using WebsiteTemplate.SiteSpecific.Utilities;
+using System.Net.Mail;
+using System.Net.Http;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -45,9 +51,6 @@ namespace WebsiteTemplate.Controllers
             }
             return Json(users);
         }
-
-         Next, move site specific code into it's own folder/s.
-         This is the javascript, css, Controller code and all of that.
 
         [HttpDelete]
         [Route("deleteUser/{*id}")]
@@ -131,8 +134,109 @@ namespace WebsiteTemplate.Controllers
                 var message = String.Join("\n", result.Errors);
                 return BadRequest(message);
             }
+            else
+            {
+                var emailSent = await SendConfirmationEmail(user.Id, user.UserName, user.Email);
+                if (emailSent == false)
+                {
+                    return Ok("User created, but was unable to send activation email");
+                }
+            }
 
-            return Ok();
+            return Ok("User created successfully.\nCheck your inbox for confirmation email to activate your account");
+        }
+
+        private async Task<bool> SendConfirmationEmail(string userId, string userName, string emailAddress)
+        {
+            var smtp = ConfigurationManager.GetSection("system.net/mailSettings/smtp") as SmtpSection;
+            if (smtp == null)
+            {
+                Trace.WriteLine("No system.net/mailSettings/smtp section in web.config or app.config");
+                return await Task.FromResult(false);
+            }
+
+            var emailToken = CoreAuthenticationEngine.UserManager.GenerateEmailConfirmationTokenAsync(userId).Result;
+
+            var myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
+
+            var body = "Hi " + userName;
+            body += "\nWelcome to " + WebsiteTemplateConstants.ApplicatoinName;
+
+            body += "\n\nPlease click on the following link to activate and activate your email:\n";
+
+            body += GetCurrentUrl() + "/api/v1/menu/ConfirmEmail?userId=" + userId + "&token=" + HttpUtility.UrlEncode(emailToken);
+
+            var mailMessage = new MailMessage(smtp.From, emailAddress, "Email Confirmation", body);
+            
+            var sendEmailTask = Task.Run(() =>
+                {
+                    try
+                    {
+                        var smtpClient = new SmtpClient(smtp.Network.Host, smtp.Network.Port);
+
+                        smtpClient.Credentials = new System.Net.NetworkCredential(smtp.Network.UserName, smtp.Network.Password);
+                        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                        smtpClient.EnableSsl = smtp.Network.EnableSsl;
+
+                        smtpClient.Send(mailMessage);
+                    }
+                    catch (Exception e)
+                    {
+                        var message = e.Message + "\n" + e.ToString();
+                        Console.WriteLine(message);
+                        Trace.WriteLine(message);
+                        Debug.WriteLine(message);
+                        return false;
+                    }
+                    return true;
+                });
+            return await sendEmailTask;
+        }
+
+        private string GetCurrentUrl()
+        {
+            var request = Request.GetRequestContext();
+            var uri = request.Url.Request.RequestUri;
+            var result = uri.Scheme + "://" + uri.Host + request.VirtualPathRoot;
+            return result;
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("ConfirmEmail")]
+        [RequireHttps]
+        public async Task<IHttpActionResult> ConfirmEmail()
+        {
+            try
+            {
+                var queryString = this.Request.GetQueryNameValuePairs();
+                var userId = queryString.Single(q => q.Key == "userId").Value;
+                var emailToken = queryString.Single(q => q.Key == "token").Value;
+                var verifyToken = await CoreAuthenticationEngine.UserManager.ConfirmEmailAsync(userId, emailToken);
+                
+                if (verifyToken.Succeeded)
+                {
+                    /// Maybe show a confirmation/welcome page
+                    using (var session = Store.OpenSession())
+                    {
+                        var user = session.Load<User>(Convert.ToInt32(userId));
+                        var url = GetCurrentUrl() + "?confirmed=" + HttpUtility.UrlEncode(user.UserName);
+                        return Redirect(url);
+                    }
+                }
+                else
+                {
+                    var message = String.Join("\n", verifyToken.Errors);
+                    //return BadRequest(message);
+                    //This won't work but is just an example of what to do
+                    //return Redirect("https://localhost/CustomIdentity/Pages/Error.html?Errors=" + verifyToken.Result.Errors.First());
+                    return Redirect(GetCurrentUrl() + "?errors="+HttpUtility.UrlEncode(message));
+                }
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
     }
 }

@@ -122,9 +122,9 @@
             userRoleId: userRoleId
         };
 
-        var callback = function ()
+        var callback = function (data)
         {
-            alert('User created successfully');
+            alert(data);
             inputDialog.cancelInput();
             
             siteMenu.viewUsers();
