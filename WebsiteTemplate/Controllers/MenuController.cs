@@ -46,6 +46,9 @@ namespace WebsiteTemplate.Controllers
             return Json(users);
         }
 
+         Next, move site specific code into it's own folder/s.
+         This is the javascript, css, Controller code and all of that.
+
         [HttpDelete]
         [Route("deleteUser/{*id}")]
         [RequireHttps]
