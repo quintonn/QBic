@@ -30,9 +30,30 @@
             settings.push(new views.viewSetting('Email', 'Email'));
             settings.push(new views.viewSetting('Role', 'UserRole/Name'));
             settings.push(new views.viewSetting('Email Confirmed', 'EmailConfirmed', 'bool'));
+            settings.push(new views.viewSetting("", "X", "button", siteMenu.confirmDeleteUser));
 
             views.addDataToTable(settings, data);
         });
+    },
+
+    confirmDeleteUser: function(index, data)
+    {
+        var userToDelete = data[index];
+        var doDelete = confirm("Delete user " + userToDelete.UserName + "?");
+        if (doDelete == true)
+        {
+            siteMenu.deleteUser(userToDelete.Id);
+        }
+    },
+
+    deleteUser: function(userId)
+    {
+        var callback = function ()
+        {
+            alert('User successfully deleted');
+            siteMenu.viewUsers();
+        };
+        main.makeWebCall(main.menuApiUrl + "deleteUser/" + userId, "DELETE", callback, userId);
     },
 
     createAddUserButton: function ()

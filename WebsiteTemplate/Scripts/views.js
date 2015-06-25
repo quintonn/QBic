@@ -36,16 +36,17 @@
             for (var j = 0; j < settings.length; j++)
             {
                 var setting = settings[j];
-                if (setting.ColumnLabel[0] == "#")
+                //if (setting.ColumnLabel[0] == "#")
+                if (setting.Type == "button")
                 {
                     var cell = document.createElement("td");
                     var button = document.createElement("button");
-                    button.innerHTML = setting.ColumnLabel.substring(1, setting.ColumnLabel.length);
+                    button.innerHTML = setting.Name;//.substring(1, setting.ColumnLabel.length);
                     button.onclick = (function (x)
                     {
                         return function ()
                         {
-                            customFunction(x, data);
+                            setting.Callback(x, data);
                         };
                     })(i);
 

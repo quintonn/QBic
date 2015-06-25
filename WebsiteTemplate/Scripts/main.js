@@ -146,9 +146,12 @@
                 alert(JSON.parse(req.response).exceptionMessage);
                 break;
             default:
-                //alert("unknown web response status: " + req.status);
-                //alert(JSON.stringify(req));
-                navigation.loadHtmlBodyResponse(JSON.stringify(req), "mainContent");
+                
+                menuBuilder.clearNode('menuContainer');
+                menuBuilder.clearNode('userDetail');
+                //document.getElementById('menuContainer').style.display = "none";
+                
+                navigation.loadHtmlBodyResponse(req.response, "mainContent");
                 break;
         }
     },

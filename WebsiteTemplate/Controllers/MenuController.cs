@@ -46,6 +46,22 @@ namespace WebsiteTemplate.Controllers
             return Json(users);
         }
 
+        [HttpDelete]
+        [Route("deleteUser/{*id}")]
+        [RequireHttps]
+        [Authorize]
+        [RoleAuthorization("Admin")]
+        public IHttpActionResult DeleteUser(int id)
+        {
+            using (var session = Store.OpenSession())
+            {
+                var user = session.Get<User>(id);
+                session.Delete(user);
+                session.Flush();
+            }
+            return Ok();
+        }
+
         [HttpGet]
         [Route("getUserRoles")]
         [RequireHttps]
