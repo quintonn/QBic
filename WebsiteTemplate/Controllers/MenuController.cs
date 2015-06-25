@@ -240,3 +240,8 @@ namespace WebsiteTemplate.Controllers
         }
     }
 }
+
+
+Next -> Add a re-send confirmation email on view of users
+     -> Also a forgot username/password button  --> Or maybe not.
+     -> Add a way to prevent certain information from being deleted (eg, admin user).
