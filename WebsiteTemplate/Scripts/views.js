@@ -36,6 +36,16 @@
             for (var j = 0; j < settings.length; j++)
             {
                 var setting = settings[j];
+
+                if (setting.ConditionalCheckCallback != null)
+                {
+                    var showInfo = setting.ConditionalCheckCallback(i, data);
+                    if (showInfo == false)
+                    {
+                        views.addCellToRow("", row, setting.Type);
+                        continue;
+                    }
+                }
                 //if (setting.ColumnLabel[0] == "#")
                 if (setting.Type == "button")
                 {
@@ -126,11 +136,12 @@
     },
 };
 
-views.viewSetting = function (label, name, type, callback)
+views.viewSetting = function (label, name, type, callback, conditionalCheckCallback)
 {
     this.ColumnLabel = label;
     this.Name = name;
     this.Type = type || "string";
     this.Callback = callback;
+    this.ConditionalCheckCallback = conditionalCheckCallback;
 };
 

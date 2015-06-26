@@ -23,18 +23,23 @@
         navigation.loadHtmlBody('mainContent', 'Views.html', function ()
         {
             siteMenu.createAddUserButton();
-
             var settings = [];
             settings.push(new views.viewSetting('Id', 'Id'));
             settings.push(new views.viewSetting('Name', 'UserName'));
             settings.push(new views.viewSetting('Email', 'Email'));
             settings.push(new views.viewSetting('Role', 'UserRole/Name'));
             settings.push(new views.viewSetting('Email Confirmed', 'EmailConfirmed', 'bool'));
+            settings.push(new views.viewSetting("", "Resend Confirmation Email", "a", siteMenu.resendConfirmationEmail, siteMenu.showResendConfirmationLink))
             settings.push(new views.viewSetting("", "X", "button", siteMenu.confirmDeleteUser));
-            settings.push(new views.viewSetting("", "Resend Confirmation", "a", siteMenu.resendConfirmationEmail))
 
             views.addDataToTable(settings, data);
         });
+    },
+
+    showResendConfirmationLink: function(index, data)
+    {
+        var user = data[index];
+        return user.EmailConfirmed == false;
     },
 
     resendConfirmationEmail: function(index, data)
