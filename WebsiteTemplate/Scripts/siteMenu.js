@@ -29,10 +29,10 @@
         {
             //siteMenu.createAddUserButton();
             var settings = [];
-            //settings.push(new views.viewSetting('Id', 'Id'));
-            settings.push(new views.viewSetting('Name', 'Name', 'a', siteMenu.editUserRole));
+            settings.push(new views.viewSetting('Id', 'Id'));
+            settings.push(new views.viewSetting('Name', 'Name'));//, 'a', siteMenu.editUserRole));
             settings.push(new views.viewSetting('Description', 'Description'));
-            settings.push(new views.viewSetting("", "X", "button", siteMenu.confirmDeleteUserRole));
+            //settings.push(new views.viewSetting("", "X", "button", siteMenu.confirmDeleteUserRole));
 
             views.addDataToTable(settings, data);
         });
