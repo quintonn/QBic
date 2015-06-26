@@ -67,7 +67,16 @@
                 {
                     var cell = document.createElement("td");
                     var a = document.createElement("a");
-                    a.innerHTML = setting.Name;
+                    var value = setting.Name;
+                    if (value[0] == "#")
+                    {
+                        value = value.substring(1, value.length - 1);
+                    }
+                    else
+                    {
+                        value = views.getPropertyValue(item, setting.Name);
+                    }
+                    a.innerHTML = value;
                     a.href = "#";
                     a.onclick = (function (x, s)
                     {
@@ -82,41 +91,74 @@
                 }
                 else
                 {
-                    var value = null;
-                    var fields = setting.Name.split("/");
+                    //var value = null;
+                    //var fields = setting.Name.split("/");
                     
-                    for (var x = 0; x < fields.length; x++)
-                    {
-                        var f = fields[x];
+                    //for (var x = 0; x < fields.length; x++)
+                    //{
+                    //    var f = fields[x];
                         
-                        if (value == null)
-                        {
-                            if (x == 0)
-                            {
-                                value = item[f];
-                            }
-                            else
-                            {
-                                value = "";
-                            }
-                        }
-                        else
-                        {
-                            value = value[f];
-                        }
-                    }
+                    //    if (value == null)
+                    //    {
+                    //        if (x == 0)
+                    //        {
+                    //            value = item[f];
+                    //        }
+                    //        else
+                    //        {
+                    //            value = "";
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        value = value[f];
+                    //    }
+                    //}
                     
-                    if (setting.Name.toLowerCase() == "dob" || setting.Name.toLowerCase().indexOf('date') > -1)
-                    {
-                        value = value.substring(0, 10);
-                    }
+                    //if (setting.Name.toLowerCase() == "dob" || setting.Name.toLowerCase().indexOf('date') > -1)
+                    //{
+                    //    value = value.substring(0, 10);
+                    //}
+                    var value = views.getPropertyValue(item, setting.Name);
                     views.addCellToRow(value, row, setting.Type);
                 }
-
             }
 
             table.appendChild(row);
         }
+    },
+
+    getPropertyValue: function(item, propertyName)
+    {
+        var value = null;
+        var fields = propertyName.split("/");
+
+        for (var x = 0; x < fields.length; x++)
+        {
+            var f = fields[x];
+
+            if (value == null)
+            {
+                if (x == 0)
+                {
+                    value = item[f];
+                }
+                else
+                {
+                    value = "";
+                }
+            }
+            else
+            {
+                value = value[f];
+            }
+        }
+
+        if (propertyName.toLowerCase() == "dob" || propertyName.toLowerCase().indexOf('date') > -1)
+        {
+            value = value.substring(0, 10);
+        }
+        return value;
     },
 
     addCellToRow: function (cellData, row, dataType)

@@ -133,6 +133,7 @@
     <Content Include="css\normalize.css" />
     <Content Include="css\siteSpecific.css" />
     <Content Include="Index.html" />
+    <Content Include="Pages\EditUser.html" />
     <Content Include="Pages\CreateUser.html" />
     <Content Include="Pages\Home.html" />
     <Content Include="Pages\Login.html" />

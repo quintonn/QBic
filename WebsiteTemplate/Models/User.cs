@@ -24,5 +24,11 @@ namespace WebsiteTemplate.Models
         {
             UserStatus = Models.UserStatus.Active;
         }
+
+        public User(bool canDelete)
+            :base()
+        {
+            CanDelete = canDelete;
+        }
     }
 }

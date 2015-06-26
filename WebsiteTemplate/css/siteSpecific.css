@@ -26,3 +26,7 @@ input[type=text] {
 input[type=password] {
     display: inline-block;
 }
+
+/*.edit .nonEdit {
+    display:none;
+}*/

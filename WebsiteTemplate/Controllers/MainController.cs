@@ -55,13 +55,12 @@ namespace WebsiteTemplate.Controllers
                                                .UniqueResult<User>();
                     if (adminUser == null)
                     {
-                        adminUser = new User()
+                        adminUser = new User(false)
                         {
                             Email = "Admin@gmail.com",
                             EmailConfirmed = true,
                             UserName = "Admin",
                             UserRole = adminRole,
-                            CanDelete = false
                         };
                         var result = CoreAuthenticationEngine.UserManager.CreateAsync(adminUser, "password");
                         result.Wait();

@@ -122,10 +122,9 @@ namespace WebsiteTemplate.Controllers
         {
             var data = await Request.Content.ReadAsStringAsync();
             
-            var temp2 = HttpUtility.UrlDecode(data);
-            //var temp = JsonConvert.DeserializeObject(temp2)
+            var temp = HttpUtility.UrlDecode(data);
 
-            var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(temp2);
+            var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(temp);
 
             //var parameters = this.ParseFormData(temp2);
 
@@ -157,6 +156,7 @@ namespace WebsiteTemplate.Controllers
                 UserName = name,
                 UserRole = userRole
             };
+
             var result = await CoreAuthenticationEngine.UserManager.CreateAsync(user, password);
             if (result.Succeeded == false)
             {
@@ -170,9 +170,9 @@ namespace WebsiteTemplate.Controllers
                 try
                 {
                     emailSent = await SendConfirmationEmail(user.Id, user.UserName, user.Email);
-                    if (emailSent == false)
+                    if (emailSent == true)
                     {
-                        return Ok(message);
+                        return Ok("User created successfully.\nCheck your inbox for activation email.");
                     }
                 }
                 catch (FormatException e)
@@ -187,8 +187,53 @@ namespace WebsiteTemplate.Controllers
                 }
                 return Ok(message);
             }
+        }
 
-            return Ok("User created successfully.\nCheck your inbox for confirmation email to activate your account");
+        [HttpPost]
+        [Route("updateUser/{*userId}")]
+        [RequireHttps]
+        [Authorize]
+        [RoleAuthorization("Admin")]
+        public async Task<IHttpActionResult> UpdateUser(string userId)
+        {
+            var data = await Request.Content.ReadAsStringAsync();
+
+            var temp = HttpUtility.UrlDecode(data);
+
+            var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(temp);
+
+            var name = parameters["name"];
+            var email = parameters["email"];
+            var userRoleId = parameters["userRoleId"];
+            //var userId = parameters["userId"];
+
+            UserRole userRole;
+            using (var session = Store.OpenSession())
+            {
+                userRole = session.Get<UserRole>(userRoleId);
+            }
+
+            if (name.ToLower() == "admin")
+            {
+                return BadRequest("Cannot modify admin user");
+            }
+
+            if (userRole == null)
+            {
+                return BadRequest("No user role found with id: " + userRoleId);
+            }
+
+            using (var session = Store.OpenSession())
+            {
+                var dbUser = session.Get<User>(userId);
+                dbUser.Email = email;
+                dbUser.UserName = name;
+                dbUser.UserRole = userRole;
+
+                Store.Save(dbUser);
+                session.Flush();
+            }
+            return Ok("User updated successfully");
         }
 
         private async Task<bool> SendConfirmationEmail(string userId, string userName, string emailAddress)

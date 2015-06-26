@@ -2,8 +2,8 @@
 
     loadInputPage: function (pageName, callback)
     {
+        menuBuilder.clearNode('dlgInput');
         document.getElementById('inputContent').style.display = 'inline';
-        //$("#inputContent").css("display", "inline");
 
         callback = callback || function() { };
 
@@ -13,6 +13,7 @@
     cancelInput: function()
     {
         document.getElementById('inputContent').style.display = 'none';
+        menuBuilder.clearNode('dlgInput');
     },
 
     addHiddenField: function (fieldName, fieldValue)
@@ -24,4 +25,14 @@
         hidden.id = fieldName;
         inputDiv.appendChild(hidden);
     },
+
+    getHiddenField: function(fieldName)
+    {
+        var input = document.getElementById(fieldName);
+        if (input == null)
+        {
+            return "";
+        }
+        return input.value;
+    }
 };
