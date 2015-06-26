@@ -145,6 +145,7 @@
     <Content Include="Scripts\navigation.js" />
     <Content Include="Scripts\siteMenu.js" />
     <Content Include="Scripts\views.js" />
+    <None Include="Scripts\_references.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
