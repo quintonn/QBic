@@ -18,6 +18,7 @@
     {
         console.log('login success: ' + data);
         auth.refreshTokenResponse(data);
+        menuBuilder.clearNode("loginContainer");
         main.init();
     },
 

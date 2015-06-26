@@ -45,7 +45,8 @@ namespace WebsiteTemplate.Controllers
                             Description = "Administrator",
                             Name = "Admin"
                         };
-                        session.Save(adminRole);
+                        store.Save(adminRole);
+                        //session.Save(adminRole);
                         session.Flush();
                     };
 
@@ -59,7 +60,8 @@ namespace WebsiteTemplate.Controllers
                             Email = "Admin@gmail.com",
                             EmailConfirmed = true,
                             UserName = "Admin",
-                            UserRole = adminRole
+                            UserRole = adminRole,
+                            CanDelete = false
                         };
                         var result = CoreAuthenticationEngine.UserManager.CreateAsync(adminUser, "password");
                         result.Wait();

@@ -7,12 +7,10 @@ using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Mappings
 {
-    public class UserMap : ClassMap<User>
+    public class UserMap : BaseClassMap<User>
     {
         public UserMap()
         {
-            Id(x => x.IntId).Column("Id").GeneratedBy.Increment();
-                
             Map(x => x.UserName)
               .Not.Nullable();
             Map(x => x.Email)

@@ -57,15 +57,24 @@ namespace WebsiteTemplate.Controllers
         [RequireHttps]
         [Authorize]
         [RoleAuthorization("Admin")]
-        public async Task<IHttpActionResult> DeleteUser(int id)
+        public async Task<IHttpActionResult> DeleteUser(string id)
         {
+            var deleted = false;
             using (var session = Store.OpenSession())
             {
                 var user = session.Get<User>(id);
-                session.Delete(user);
+                deleted = Store.TryDelete(user);
+                //session.Delete(user);
                 session.Flush();
             }
-            return Ok();
+            if (deleted == true)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Unable to delete user");
+            }
         }
 
         [HttpGet]
@@ -93,7 +102,7 @@ namespace WebsiteTemplate.Controllers
             var emailSent = false;
             using (var session = Store.OpenSession())
             {
-                var user = session.Get<User>(Convert.ToInt32(id));
+                var user = session.Get<User>(id);
                 emailSent = await SendConfirmationEmail(user.Id, user.UserName, user.Email);
             }
             if (emailSent == true)
@@ -111,10 +120,9 @@ namespace WebsiteTemplate.Controllers
         [RoleAuthorization("Admin")]
         public async Task<IHttpActionResult> CreateUser()
         {
-            var data = Request.Content.ReadAsStringAsync();
-            data.Wait();
+            var data = await Request.Content.ReadAsStringAsync();
             
-            var temp2 = HttpUtility.UrlDecode(data.Result);
+            var temp2 = HttpUtility.UrlDecode(data);
             //var temp = JsonConvert.DeserializeObject(temp2)
 
             var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(temp2);
@@ -125,7 +133,7 @@ namespace WebsiteTemplate.Controllers
             var email = parameters["email"];
             var password = parameters["password"];
             var confirmPassword = parameters["confirmPassword"];
-            var userRoleId = Convert.ToInt32(parameters["userRoleId"]);
+            var userRoleId = parameters["userRoleId"];
 
             if (confirmPassword != password)
             {
@@ -157,11 +165,27 @@ namespace WebsiteTemplate.Controllers
             }
             else
             {
-                var emailSent = await SendConfirmationEmail(user.Id, user.UserName, user.Email);
+                var emailSent = false;
+                var message = "User created, but was unable to send activation email";
+                try
+                {
+                    emailSent = await SendConfirmationEmail(user.Id, user.UserName, user.Email);
+                    if (emailSent == false)
+                    {
+                        return Ok(message);
+                    }
+                }
+                catch (FormatException e)
+                {
+                    message = "Unable to create user.\n" + e.Message;
+                    emailSent = false;
+                }
                 if (emailSent == false)
                 {
-                    return Ok("User created, but was unable to send activation email");
+                    var deleteUser = await CoreAuthenticationEngine.UserManager.DeleteAsync(user);
+                    return BadRequest(message);
                 }
+                return Ok(message);
             }
 
             return Ok("User created successfully.\nCheck your inbox for confirmation email to activate your account");
@@ -240,7 +264,7 @@ namespace WebsiteTemplate.Controllers
                     /// Maybe show a confirmation/welcome page
                     using (var session = Store.OpenSession())
                     {
-                        var user = session.Load<User>(Convert.ToInt32(userId));
+                        var user = session.Load<User>(userId);
                         var url = GetCurrentUrl() + "?confirmed=" + HttpUtility.UrlEncode(user.UserName);
                         return Redirect(url);
                     }

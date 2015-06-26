@@ -46,19 +46,19 @@
                         continue;
                     }
                 }
-                //if (setting.ColumnLabel[0] == "#")
+
                 if (setting.Type == "button")
                 {
                     var cell = document.createElement("td");
                     var button = document.createElement("button");
-                    button.innerHTML = setting.Name;//.substring(1, setting.ColumnLabel.length);
-                    button.onclick = (function (x)
+                    button.innerHTML = setting.Name;
+                    button.onclick = (function (x, s)
                     {
                         return function ()
                         {
-                            setting.Callback(x, data);
+                            s.Callback(x, data);
                         };
-                    })(i);
+                    })(i, setting);
 
                     cell.appendChild(button);
                     row.appendChild(cell);
@@ -67,15 +67,15 @@
                 {
                     var cell = document.createElement("td");
                     var a = document.createElement("a");
-                    a.innerHTML = setting.Name;//.substring(1, setting.ColumnLabel.length);
+                    a.innerHTML = setting.Name;
                     a.href = "#";
-                    a.onclick = (function (x)
+                    a.onclick = (function (x, s)
                     {
                         return function ()
                         {
-                            setting.Callback(x, data);
+                            s.Callback(x, data);
                         };
-                    })(i);
+                    })(i, setting);
 
                     cell.appendChild(a);
                     row.appendChild(cell);

@@ -38,9 +38,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicAuthentication, Version=0.0.5653.43136, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="BasicAuthentication, Version=0.0.5655.30072, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\BasicAuthentication.0.0.5653.43136\lib\net45\BasicAuthentication.dll</HintPath>
+      <HintPath>..\packages\BasicAuthentication.0.0.5655.30072\lib\net45\BasicAuthentication.dll</HintPath>
     </Reference>
     <Reference Include="FluentNHibernate">
       <HintPath>..\packages\FluentNHibernate.2.0.1.0\lib\net40\FluentNHibernate.dll</HintPath>
@@ -153,13 +153,16 @@
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\RoleAuthorization.cs" />
     <Compile Include="Data\DataStore.cs" />
+    <Compile Include="Mappings\BaseClassMap.cs" />
     <Compile Include="Mappings\UserRoleMap.cs" />
     <Compile Include="Mappings\UserMap.cs" />
+    <Compile Include="Models\BaseClass.cs" />
+    <Compile Include="Models\CustomIdentifierGenerator.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserRole.cs" />
     <Compile Include="Models\UserStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Security\UserContext.cs" />
+    <Compile Include="Data\UserContext.cs" />
     <Compile Include="SiteSpecific\Utilities\WebsiteTemplateConstants.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

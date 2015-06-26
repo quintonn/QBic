@@ -88,36 +88,42 @@ namespace WebsiteTemplate.Data
             }
         }
 
-        public void save<T>(T item) where T : class
+        public void Save<T>(T item) where T : BaseClass
         {
             System.Diagnostics.Trace.TraceInformation("saving an object : " + item.GetType().ToString());
             using (var session = Store.OpenSession())
             {
-                var id = item.GetType().GetProperty("Id").GetValue(item);
-                if (id != null && !String.IsNullOrWhiteSpace(id.ToString()))
-                {
-                    //var existingItem = session.Advanced.DocumentQuery<dynamic>().Where("Id:" + id).ToList<dynamic>().FirstOrDefault();
-                    var existingItem = session.CreateCriteria<T>()
-                                              .Add(Restrictions.Eq("Id", id))
-                                              .UniqueResult<T>();
-                    if (existingItem != null && id != null && !String.IsNullOrWhiteSpace(id.ToString()))
-                    {
-                        throw new Exception("Item with id " + id + " already exists.\n" + JsonConvert.SerializeObject(existingItem));
-                    }
-                }
-                session.Save(item);
+                //var id = item.Id;
+                //if (id != null && !String.IsNullOrWhiteSpace(id))
+                //{
+                //    /// I don't know why i'm doing this
+                //    var existingItem = session.CreateCriteria<T>()
+                //                              .Add(Restrictions.Eq("Id", id))
+                //                              .UniqueResult<T>();
+                //    if (existingItem != null && id != null && !String.IsNullOrWhiteSpace(id.ToString()))
+                //    {
+                //        throw new Exception("Item with id " + id + " already exists.\n" + JsonConvert.SerializeObject(existingItem));
+                //    }
+                //}
+                session.SaveOrUpdate(item);
+                //session.Save(item);
                 session.Flush();
             }
             System.Diagnostics.Trace.TraceInformation("object saved: " + item.GetType().ToString());
         }
 
-        public void delete(object item)
+        public bool TryDelete(BaseClass item)
         {
+            if (item.CanDelete == false)
+            {
+                return false;
+            }
             using (var session = Store.OpenSession())
             {
                 session.Delete(item);
                 session.Flush();
             }
+            return true;
         }
     }
 }

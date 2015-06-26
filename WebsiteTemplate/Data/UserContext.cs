@@ -10,7 +10,7 @@ using System.Web;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
 
-namespace WebsiteTemplate.Security
+namespace WebsiteTemplate.Data
 {
     public class UserContext : CoreUserContext<User>
     {
@@ -29,7 +29,7 @@ namespace WebsiteTemplate.Security
         {
             using (var session = Store.OpenSession())
             {
-                var user = session.Get<User>(Convert.ToInt32(userId));
+                var user = session.Get<User>(userId);
                 if (user == null)
                 {
                     return Task.FromResult(false);
@@ -59,13 +59,13 @@ namespace WebsiteTemplate.Security
 
         public override System.Threading.Tasks.Task CreateUserAsync(User user)
         {
-            Store.save<User>(user);
+            Store.Save<User>(user);
             return Task.FromResult(0);
         }
 
         public override System.Threading.Tasks.Task DeleteUserAsync(User user)
         {
-            Store.delete(user);
+            Store.TryDelete(user);
             return Task.FromResult(0);
         }
 
@@ -94,7 +94,7 @@ namespace WebsiteTemplate.Security
             User result;
             using (var session = Store.OpenSession())
             {
-                result = session.Get<User>(Convert.ToInt32(id));
+                result = session.Get<User>(id);
                 session.Flush();
             }
             return Task.FromResult(result);
@@ -211,7 +211,7 @@ namespace WebsiteTemplate.Security
         {
             using (var session = Store.OpenSession())
             {
-                var dbUser = session.Get<User>(Convert.ToInt32(user.Id));
+                var dbUser = session.Get<User>(user.Id);
                 var properties = dbUser.GetType().GetProperties();
                 foreach (var property in properties)
                 {
@@ -248,7 +248,8 @@ namespace WebsiteTemplate.Security
                         throw;
                     }
                 }
-                session.Save(dbUser);
+                //session.Save(dbUser);
+                Store.Save(dbUser);
                 session.Flush();
             }
             return Task.FromResult(0);

@@ -6,22 +6,8 @@ using System.Web;
 
 namespace WebsiteTemplate.Models
 {
-    public class User : ICoreIdentityUser
+    public class User : BaseClass, ICoreIdentityUser
     {
-        public virtual string Id { get; set; }
-
-        public virtual int IntId
-        {
-            get
-            {
-                return Convert.ToInt32(Id);
-            }
-            set
-            {
-                Id = value.ToString();
-            }
-        }
-
         public virtual string UserName { get; set; }
 
         public virtual string Email { get; set; }

@@ -7,12 +7,10 @@ using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Mappings
 {
-    public class UserRoleMap : ClassMap<UserRole>
+    public class UserRoleMap : BaseClassMap<UserRole>
     {
         public UserRoleMap()
         {
-            Id(x => x.Id).GeneratedBy.Increment();
-                
             Map(x => x.Description)
                 .Not.Nullable();
             Map(x => x.Name)

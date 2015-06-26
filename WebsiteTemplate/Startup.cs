@@ -9,7 +9,7 @@ using BasicAuthentication.Authentication;
 using System.Web.Http;
 using System.Net.Http.Formatting;
 using Newtonsoft.Json.Serialization;
-using WebsiteTemplate.Security;
+using WebsiteTemplate.Data;
 
 [assembly: OwinStartup(typeof(WebsiteTemplate.Startup))]
 namespace WebsiteTemplate
