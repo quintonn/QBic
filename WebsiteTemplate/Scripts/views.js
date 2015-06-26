@@ -53,6 +53,23 @@
                     cell.appendChild(button);
                     row.appendChild(cell);
                 }
+                else if (setting.Type == "a")
+                {
+                    var cell = document.createElement("td");
+                    var a = document.createElement("a");
+                    a.innerHTML = setting.Name;//.substring(1, setting.ColumnLabel.length);
+                    a.href = "#";
+                    a.onclick = (function (x)
+                    {
+                        return function ()
+                        {
+                            setting.Callback(x, data);
+                        };
+                    })(i);
+
+                    cell.appendChild(a);
+                    row.appendChild(cell);
+                }
                 else
                 {
                     var value = null;

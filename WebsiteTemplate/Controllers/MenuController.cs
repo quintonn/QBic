@@ -57,7 +57,7 @@ namespace WebsiteTemplate.Controllers
         [RequireHttps]
         [Authorize]
         [RoleAuthorization("Admin")]
-        public IHttpActionResult DeleteUser(int id)
+        public async Task<IHttpActionResult> DeleteUser(int id)
         {
             using (var session = Store.OpenSession())
             {
@@ -73,7 +73,7 @@ namespace WebsiteTemplate.Controllers
         [RequireHttps]
         [Authorize]
         [RoleAuthorization("Admin")]
-        public IHttpActionResult GetUserRoles()
+        public async Task<IHttpActionResult> GetUserRoles()
         {
             using (var session = Store.OpenSession())
             {
@@ -81,6 +81,27 @@ namespace WebsiteTemplate.Controllers
                                .List<UserRole>().ToList();
                 return Json(items);
             }
+        }
+
+        [HttpPost]
+        [Route("resendConfirmationEmail/{*id}")]
+        [RequireHttps]
+        [Authorize]
+        [RoleAuthorization("Admin")]
+        public async Task<IHttpActionResult> resendConfirmationEmail(string id)
+        {
+            var emailSent = false;
+            using (var session = Store.OpenSession())
+            {
+                var user = session.Get<User>(Convert.ToInt32(id));
+                emailSent = await SendConfirmationEmail(user.Id, user.UserName, user.Email);
+            }
+            if (emailSent == true)
+            {
+                return Ok("Email confirmation resent successfully");
+            }
+
+            return BadRequest("Email confirmation could not be sent again. Contact your system administrator.");
         }
 
         [HttpPost]
@@ -230,7 +251,7 @@ namespace WebsiteTemplate.Controllers
                     //return BadRequest(message);
                     //This won't work but is just an example of what to do
                     //return Redirect("https://localhost/CustomIdentity/Pages/Error.html?Errors=" + verifyToken.Result.Errors.First());
-                    return Redirect(GetCurrentUrl() + "?errors="+HttpUtility.UrlEncode(message));
+                    return Redirect(GetCurrentUrl() + "?errors=" + HttpUtility.UrlEncode(message));
                 }
             }
             catch (Exception exception)
@@ -241,7 +262,7 @@ namespace WebsiteTemplate.Controllers
     }
 }
 
-
+/*
 Next -> Add a re-send confirmation email on view of users
      -> Also a forgot username/password button  --> Or maybe not.
-     -> Add a way to prevent certain information from being deleted (eg, admin user).
+     -> Add a way to prevent certain information from being deleted (eg, admin user).*/

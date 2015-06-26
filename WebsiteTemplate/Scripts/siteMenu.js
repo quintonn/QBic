@@ -31,9 +31,22 @@
             settings.push(new views.viewSetting('Role', 'UserRole/Name'));
             settings.push(new views.viewSetting('Email Confirmed', 'EmailConfirmed', 'bool'));
             settings.push(new views.viewSetting("", "X", "button", siteMenu.confirmDeleteUser));
+            settings.push(new views.viewSetting("", "Resend Confirmation", "a", siteMenu.resendConfirmationEmail))
 
             views.addDataToTable(settings, data);
         });
+    },
+
+    resendConfirmationEmail: function(index, data)
+    {
+        var userToDelete = data[index];
+
+        var callback = function (data)
+        {
+            alert(data);
+            siteMenu.viewUsers();
+        };
+        main.makeWebCall(main.menuApiUrl + "resendConfirmationEmail/" + userToDelete.Id, "POST", callback);
     },
 
     confirmDeleteUser: function(index, data)
@@ -53,7 +66,7 @@
             alert('User successfully deleted');
             siteMenu.viewUsers();
         };
-        main.makeWebCall(main.menuApiUrl + "deleteUser/" + userId, "DELETE", callback, userId);
+        main.makeWebCall(main.menuApiUrl + "deleteUser/" + userId, "DELETE", callback);
     },
 
     createAddUserButton: function ()
