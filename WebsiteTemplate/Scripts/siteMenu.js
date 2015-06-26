@@ -9,7 +9,8 @@
                 {
                     navigation.entryPoint(userInfo);
                 });
-                menuBuilder.addMenuButton("Users", siteMenu.viewUsers);
+                menuBuilder.addMenuButton("Users", siteMenu.getUsers);
+                menuBuilder.addMenuButton("User Roles", siteMenu.getUserRolesForView);
 
                 break;
             default:
@@ -17,11 +18,31 @@
         }
     },
 
-    viewUsers: function()
+    getUserRolesForView: function ()
+    {
+        main.makeWebCall(main.menuApiUrl + "getUserRoles", "GET", siteMenu.showUserRoles);
+    },
+
+    showUserRoles: function (data)
+    {
+        navigation.loadHtmlBody('mainContent', 'Views.html', function ()
+        {
+            //siteMenu.createAddUserButton();
+            var settings = [];
+            //settings.push(new views.viewSetting('Id', 'Id'));
+            settings.push(new views.viewSetting('Name', 'Name', 'a', siteMenu.editUserRole));
+            settings.push(new views.viewSetting('Description', 'Description'));
+            settings.push(new views.viewSetting("", "X", "button", siteMenu.confirmDeleteUserRole));
+
+            views.addDataToTable(settings, data);
+        });
+    },
+
+    getUsers: function()
     {
         main.makeWebCall(main.menuApiUrl + "getUsers", "GET", siteMenu.showUsers);
     },
-
+    
     showUsers: function (data)
     {
         navigation.loadHtmlBody('mainContent', 'Views.html', function ()
@@ -59,7 +80,7 @@
         var callback = function (data)
         {
             alert(data);
-            siteMenu.viewUsers();
+            siteMenu.getUsers();
         };
         main.makeWebCall(main.menuApiUrl + "resendConfirmationEmail/" + userToDelete.Id, "POST", callback);
     },
@@ -79,7 +100,7 @@
         var callback = function ()
         {
             alert('User successfully deleted');
-            siteMenu.viewUsers();
+            siteMenu.getUsers();
         };
         main.makeWebCall(main.menuApiUrl + "deleteUser/" + userId, "DELETE", callback);
     },
@@ -201,7 +222,7 @@
             alert(data);
             inputDialog.cancelInput();
             
-            siteMenu.viewUsers();
+            siteMenu.getUsers();
         };
         
         var dataToSend = JSON.stringify(data);
@@ -240,7 +261,7 @@
             alert(data);
             inputDialog.cancelInput();
 
-            siteMenu.viewUsers();
+            siteMenu.getUsers();
         };
 
         var dataToSend = JSON.stringify(data);

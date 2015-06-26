@@ -52,6 +52,23 @@ namespace WebsiteTemplate.Controllers
             return Json(users);
         }
 
+        [HttpGet]
+        [Route("getUserRoles")]
+        [RequireHttps]
+        [Authorize]
+        [RoleAuthorization("Admin")]
+        public IHttpActionResult GetUserRoles()
+        {
+            IList<UserRole> users;
+            using (var session = Store.OpenSession())
+            {
+                users = session.CreateCriteria<UserRole>()
+                               .List<UserRole>().ToList();
+                session.Flush();
+            }
+            return Json(users);
+        }
+
         [HttpDelete]
         [Route("deleteUser/{*id}")]
         [RequireHttps]
@@ -74,21 +91,6 @@ namespace WebsiteTemplate.Controllers
             else
             {
                 return BadRequest("Unable to delete user");
-            }
-        }
-
-        [HttpGet]
-        [Route("getUserRoles")]
-        [RequireHttps]
-        [Authorize]
-        [RoleAuthorization("Admin")]
-        public async Task<IHttpActionResult> GetUserRoles()
-        {
-            using (var session = Store.OpenSession())
-            {
-                var items = session.CreateCriteria<UserRole>()
-                               .List<UserRole>().ToList();
-                return Json(items);
             }
         }
 
