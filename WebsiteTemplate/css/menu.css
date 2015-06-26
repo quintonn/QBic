@@ -9,6 +9,10 @@
     /*padding:5px;*/
 }
 
+#menuDiv button {
+    margin-right:5px;
+}
+
 #menuDiv button:disabled {
     background-color:#BCBCB6;
 }

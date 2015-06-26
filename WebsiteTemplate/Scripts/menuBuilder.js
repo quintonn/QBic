@@ -1,6 +1,6 @@
 ﻿var menuBuilder = {
 
-    buildMenu: function (role)
+    buildMenu: function (userInfo)
     {
         menuBuilder.clearMenu();
 
@@ -9,7 +9,7 @@
         navigation.loadHtmlBody('menuContainer', 'Menu.html', function()
         {
             menuBuilder.clearNode('menuDiv');
-            siteMenu.buildMenu(role);
+            siteMenu.buildMenu(userInfo);
         });
     },
 

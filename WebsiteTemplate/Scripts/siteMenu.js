@@ -1,10 +1,14 @@
 ﻿var siteMenu = {
-    buildMenu: function (role)
+    buildMenu: function (userInfo)
     {
-        switch (role)
+        switch (userInfo.role)
         {
             case "Admin":
 
+                menuBuilder.addMenuButton("Home", function ()
+                {
+                    navigation.entryPoint(userInfo);
+                });
                 menuBuilder.addMenuButton("Users", siteMenu.viewUsers);
 
                 break;

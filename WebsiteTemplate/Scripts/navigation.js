@@ -5,7 +5,7 @@
         navigation.loadHtmlBody("mainContent", "Home.html");
 
         // figure out what page to go to //TODO
-        menuBuilder.buildMenu(userInfo.role);
+        menuBuilder.buildMenu(userInfo);
     },
 
     clearSettings: function ()

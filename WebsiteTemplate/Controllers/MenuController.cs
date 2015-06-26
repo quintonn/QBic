@@ -213,11 +213,6 @@ namespace WebsiteTemplate.Controllers
                 userRole = session.Get<UserRole>(userRoleId);
             }
 
-            if (name.ToLower() == "admin")
-            {
-                return BadRequest("Cannot modify admin user");
-            }
-
             if (userRole == null)
             {
                 return BadRequest("No user role found with id: " + userRoleId);
@@ -226,6 +221,12 @@ namespace WebsiteTemplate.Controllers
             using (var session = Store.OpenSession())
             {
                 var dbUser = session.Get<User>(userId);
+
+                if (dbUser.UserName.ToLower() == "admin")
+                {
+                    return BadRequest("Cannot modify admin user");
+                }
+
                 dbUser.Email = email;
                 dbUser.UserName = name;
                 dbUser.UserRole = userRole;
