@@ -11,17 +11,15 @@ namespace WebsiteTemplate.Mappings
     {
         public UserMap()
         {
+            Table("Users");
+
             Map(x => x.UserName)
               .Not.Nullable();
             Map(x => x.Email)
                 .Not.Nullable(); ;
             Map(x => x.EmailConfirmed);
             Map(x => x.PasswordHash)
-                .Not.Nullable(); ;
-
-            References(x => x.UserRole).Column("IdUserRole")
-                                       .Not.Nullable()
-                                       .LazyLoad(Laziness.False);
+                .Not.Nullable();
         }
     }
 }

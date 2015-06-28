@@ -16,8 +16,6 @@ namespace WebsiteTemplate.Models
 
         public virtual string PasswordHash { get; set; }
 
-        public virtual UserRole UserRole { get; set;  }
-
         public virtual UserStatus UserStatus { get; set; }
 
         public User()

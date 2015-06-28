@@ -104,7 +104,7 @@
         expireTime = new Date(expireTime);
         console.log('expire: ' + expireTime);
 
-        var diff = Math.abs(new Date() - expireTime) - 1000; // refresh 1 second early
+        var diff = Math.abs(new Date() - expireTime) - 5000; // refresh a few seconds before timeout
         var expireTimeout = diff;
 
         var refreshToken = data.refresh_token;

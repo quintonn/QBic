@@ -1,21 +1,133 @@
 ﻿var siteMenu = {
-    buildMenu: function (userInfo)
+
+    buildMenu: function (menuList)
     {
-        switch (userInfo.role)
+        menuBuilder.addMenuButton("Home", function ()
         {
-            case "Admin":
+            //navigation.processUserMenuResponse(menuList);
+            //navigation.entryPoint(menuList);
+            menuBuilder.buildMenu(menuList);
+        });
+        
+        for (var key in menuList)
+        {
+            var id = key;
+            var label = menuList[key];
 
-                menuBuilder.addMenuButton("Home", function ()
-                {
-                    navigation.entryPoint(userInfo);
-                });
-                menuBuilder.addMenuButton("Users", siteMenu.getUsers);
-                menuBuilder.addMenuButton("User Roles", siteMenu.getUserRolesForView);
+            var buttonClickEvent = function()
+            {
+                siteMenu.executeUIAction(id);
+            };
 
+            menuBuilder.addMenuButton(label, buttonClickEvent);
+        }
+    },
+
+    executeUIAction: function(actionId, params)
+    {
+        main.makeWebCall(main.webApiURL + "executeUIAction/" + actionId, "POST", siteMenu.processUIAction, params);
+        alert("TODO: Show busy indicator");
+    },
+
+    processUIAction: function (response)
+    {
+        var settings = response.UIAction;
+
+        var actionType = -1;
+        if (settings != null && settings.ActionType != null)
+        {
+            actionType = settings.ActionType;
+        }
+
+        var data = response.ResultData;
+        
+        switch (actionType)
+        {
+            case -1:
+                document.title = "hello";
+                alert(data);
+                alert("TODO: create a custom non-blocking message box");
+                break;
+            case 0:
+                siteMenu.populateView(data, settings);
                 break;
             default:
-                break;
+                alert('unknown action type: ' + actionType);
         }
+    },
+
+    populateView: function(data, settings)
+    {
+        navigation.loadHtmlBody('mainContent', 'Views.html', function ()
+        {
+            var table = views.getTable();
+            var row = document.createElement("tr");
+
+            for (var j = 0; j < settings.Columns.length; j++)
+            {
+                var headCell = document.createElement("th");
+                headCell.innerHTML = settings.Columns[j].ColumnLabel;
+                row.appendChild(headCell);
+            }
+            table.appendChild(row);
+            
+            for (var i = 0; i < data.length; i++)
+            {
+                var row = document.createElement("tr");
+                
+                for (var j = 0; j < settings.Columns.length; j++)
+                {
+                    var column = settings.Columns[j];
+                    var cell = document.createElement("td");
+
+                    var value = data[i][column.ColumnName];
+
+                    if (column.ColumnType == 1) /// Boolean
+                    {
+                        if (value == true)
+                        {
+                            value = column.TrueValueDisplay;
+                        }
+                        else if (value == false)
+                        {
+                            value = column.FalseValueDisplay;
+                        }
+                        cell.innerHTML = value;
+                    }
+                    else if (column.ColumnType == 3) /// Link
+                    {
+                        var a = document.createElement('a');
+                        a.href = "#";
+                        a.innerHTML = column.LinkLabel;
+                        a.onclick = (function (col, index)
+                        {
+                            return function ()
+                            {
+                                var formData = data[index][col.KeyColumn];
+                                
+                                var id = col.UIActionId;
+
+                                siteMenu.executeUIAction(id, formData);
+                                //alert(JSON.stringify(val) + "\n\n" + id);
+                                //alert("Todo: this needs to call another UIActionItem");
+                            }
+                        })(column, i);
+                        cell.appendChild(a);
+                    }
+                    else
+                    {
+                        console.log("Column type = " + column.ColumnType);
+                        /// Don't do anything to the value
+
+                        cell.innerHTML = value;
+                    }
+
+                    
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+        });
     },
 
     getUserRolesForView: function ()

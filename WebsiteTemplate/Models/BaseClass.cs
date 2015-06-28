@@ -15,5 +15,10 @@ namespace WebsiteTemplate.Models
         {
             CanDelete = true;
         }
+
+        public BaseClass(bool canDelete)
+        {
+            CanDelete = canDelete;
+        }
     }
 }

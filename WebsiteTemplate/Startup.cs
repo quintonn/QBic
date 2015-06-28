@@ -35,7 +35,7 @@ namespace WebsiteTemplate
                     configuration.MapHttpAttributeRoutes();
 
                     var jsonFormatter = configuration.Formatters.OfType<JsonMediaTypeFormatter>().First();
-                    jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    //jsonFormatter.SerializerSettings.ContractResolver =  new CamelCasePropertyNamesContractResolver();
 
                     myApp.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
                     myApp.UseWebApi(configuration);

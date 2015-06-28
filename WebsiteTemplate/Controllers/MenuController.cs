@@ -27,6 +27,7 @@ namespace WebsiteTemplate.Controllers
 
         public MenuController()
         {
+            var request = Request.GetRequestContext();
             Store = new DataStore();
         }
 
@@ -47,23 +48,6 @@ namespace WebsiteTemplate.Controllers
             {
                 users = session.CreateCriteria<User>()
                                .List<User>().ToList();
-                session.Flush();
-            }
-            return Json(users);
-        }
-
-        [HttpGet]
-        [Route("getUserRoles")]
-        [RequireHttps]
-        [Authorize]
-        [RoleAuthorization("Admin")]
-        public IHttpActionResult GetUserRoles()
-        {
-            IList<UserRole> users;
-            using (var session = Store.OpenSession())
-            {
-                users = session.CreateCriteria<UserRole>()
-                               .List<UserRole>().ToList();
                 session.Flush();
             }
             return Json(users);
@@ -122,6 +106,7 @@ namespace WebsiteTemplate.Controllers
         [RoleAuthorization("Admin")]
         public async Task<IHttpActionResult> CreateUser()
         {
+            return BadRequest("TODO: need to add user role associations on user");
             var data = await Request.Content.ReadAsStringAsync();
             
             var temp = HttpUtility.UrlDecode(data);
@@ -141,22 +126,22 @@ namespace WebsiteTemplate.Controllers
                 return BadRequest("Password and password confirmation do not match");
             }
 
-            UserRole userRole;
-            using (var session = Store.OpenSession())
-            {
-                userRole = session.Get<UserRole>(userRoleId);
-            }
+            //UserRole userRole;
+            //using (var session = Store.OpenSession())
+            //{
+            //    userRole = session.Get<UserRole>(userRoleId);
+            //}
 
-            if (userRole == null)
-            {
-                return BadRequest("No user role found with id: " + userRoleId);
-            }
+            //if (userRole == null)
+            //{
+            //    return BadRequest("No user role found with id: " + userRoleId);
+            //}
 
             var user = new User()
             {
                 Email = email,
                 UserName = name,
-                UserRole = userRole
+                //UserRole = userRole
             };
 
             var result = await CoreAuthenticationEngine.UserManager.CreateAsync(user, password);
@@ -198,6 +183,7 @@ namespace WebsiteTemplate.Controllers
         [RoleAuthorization("Admin")]
         public async Task<IHttpActionResult> UpdateUser(string userId)
         {
+            return BadRequest("User roles");
             var data = await Request.Content.ReadAsStringAsync();
 
             var temp = HttpUtility.UrlDecode(data);
@@ -208,17 +194,6 @@ namespace WebsiteTemplate.Controllers
             var email = parameters["email"];
             var userRoleId = parameters["userRoleId"];
             //var userId = parameters["userId"];
-
-            UserRole userRole;
-            using (var session = Store.OpenSession())
-            {
-                userRole = session.Get<UserRole>(userRoleId);
-            }
-
-            if (userRole == null)
-            {
-                return BadRequest("No user role found with id: " + userRoleId);
-            }
 
             using (var session = Store.OpenSession())
             {
@@ -231,7 +206,6 @@ namespace WebsiteTemplate.Controllers
 
                 dbUser.Email = email;
                 dbUser.UserName = name;
-                dbUser.UserRole = userRole;
 
                 Store.Save(dbUser);
                 session.Flush();

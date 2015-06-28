@@ -49,13 +49,13 @@ namespace WebsiteTemplate.Controllers
                 }
             }
 
-            if (!Roles.Contains(user.UserRole.Name))
-            {
-                actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden)
-                {
-                    ReasonPhrase = "Unauthorized to perform this action"
-                };
-            }
+            //if (!Roles.Contains(user.UserRole.Name))
+            //{
+            //    actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden)
+            //    {
+            //        ReasonPhrase = "Unauthorized to perform this action"
+            //    };
+            //}
 
             base.OnAuthorization(actionContext);
         }

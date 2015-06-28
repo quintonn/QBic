@@ -4,8 +4,19 @@
     {
         navigation.loadHtmlBody("mainContent", "Home.html");
 
+        navigation.getUserMenu();
+    },
+
+    getUserMenu: function()
+    {
+        main.makeWebCall(main.webApiURL + "getUserMenu", "GET", navigation.processUserMenuResponse);
+    },
+
+    processUserMenuResponse: function(data)
+    {
+        var menuList = data;
         // figure out what page to go to //TODO
-        menuBuilder.buildMenu(userInfo);
+        menuBuilder.buildMenu(menuList);
     },
 
     clearSettings: function ()

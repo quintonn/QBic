@@ -81,7 +81,7 @@ namespace WebsiteTemplate.Data
                 var result = session.CreateCriteria<User>()
                                         .CreateAlias("UserRole", "role")
                                         .Add(Restrictions.Eq("EmailConfirmed", true))
-                                        .Add(Restrictions.Ge("role.Id", user.UserRole.Id))
+                                        //.Add(Restrictions.Ge("role.Id", user.UserRole.Id))
                                         .List<User>()
                                         .ToList();
                 return result;
