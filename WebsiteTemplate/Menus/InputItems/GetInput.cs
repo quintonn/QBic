@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using WebsiteTemplate.Menus.BaseItems;
 
-namespace WebsiteTemplate.Menus
+namespace WebsiteTemplate.Menus.InputItems
 {
     /// <summary>
     /// The class can be inherited for UI actions that require input from the user.
@@ -18,5 +18,9 @@ namespace WebsiteTemplate.Menus
                 return UIActionType.UserInput;
             }
         }
+
+        public abstract IList<InputField> InputFields { get; }
+
+        public abstract IList<UIAction> InputButtons { get; }
     }
 }

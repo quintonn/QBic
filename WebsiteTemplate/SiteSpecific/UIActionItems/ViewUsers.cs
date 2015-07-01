@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.SiteSpecific.Utilities;
@@ -56,15 +57,21 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             }
         }
 
+        public override IList<Menus.BaseItems.UIAction> ViewMenu
+        {
+            get
+            {
+                var results = new List<UIAction>();
+                results.Add(new AddUser());
+                return results;
+            }
+        }
+
         public override IList<object> RowSettings
         {
             get
             {
                 return new List<object>();
-            }
-            set
-            {
-                ;
             }
         }
 
@@ -73,10 +80,6 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             get
             {
                 return new List<object>();
-            }
-            set
-            {
-                ;
             }
         }
 

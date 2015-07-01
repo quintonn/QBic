@@ -43,16 +43,106 @@
         switch (actionType)
         {
             case -1:
-                document.title = "hello";
-                alert(data);
-                alert("TODO: create a custom non-blocking message box");
+                alert("TODO: create a custom non-blocking message box\n" + data);
+                /// Should not really be here
                 break;
-            case 0:
+            case 0: /// DataView
                 siteMenu.populateView(data, settings);
+                break;
+            case 1: /// User Input
+                siteMenu.buildInput(settings);
+                break;
+            case 4:
+                inputDialog.cancelInput();
                 break;
             default:
                 alert('unknown action type: ' + actionType);
         }
+    },
+
+    buildInput: function(settings)
+    {
+        inputDialog.loadInputPage("InputDialog.html", function ()
+        {
+            var title = document.getElementById('pageTitle');
+            title.innerHTML = settings.Name;
+
+            var inputTable = document.getElementById('inputTable');
+            for (var i = 0; i < settings.InputFields.length; i++)
+            {
+                var row = document.createElement('tr');
+
+                var inputField = settings.InputFields[i];
+                switch (inputField.InputType)
+                {
+                    case 0:
+                    case 1:
+                        //var label = document.createElement('label');
+                        //label.innerHTML = inputField.InputLabel;
+                        var labelCell = document.createElement('td');
+                        labelCell.innerHTML = inputField.InputLabel;
+                        row.appendChild(labelCell);
+
+                        var inp = document.createElement('input');
+                        inp.type = "text";
+                        inp.id = "_" + inputField.InputName;
+                        var inputCell = document.createElement('td');
+                        inputCell.appendChild(inp);
+                        row.appendChild(inputCell);
+
+                        break;
+                    default:
+                        alert('Unknown input type: ' + inputField.InputType);
+                        continue;
+                        break;
+                }
+                inputTable.appendChild(row);
+            }
+
+            var buttonRow = document.createElement('tr');
+            var buttonCell = document.createElement('td');
+            buttonCell.colSpan = 2;
+            for (var i = 0; i < settings.InputButtons.length; i++)
+            {
+                var buttonItem = settings.InputButtons[i];
+                var button = document.createElement('button');
+                button.style.margin = "10px";
+                button.innerHTML = buttonItem.MenuLabel;
+
+                button.onclick = (function (id, actionType, uiAction)
+                {
+                    return function ()
+                    {
+                        if (actionType == 4) /// Cancel Dialog
+                        {
+                            inputDialog.cancelInput();
+                        }
+                        else
+                        {
+                            var data = { };
+
+
+                            for (var j = 0; j < uiAction.InputFields.length; j++)
+                            {
+                                var inputField = uiAction.InputFields[j];
+                                var inputValue = document.getElementById("_" + inputField.InputName).value;
+                                
+                                data[inputField.InputName] = inputValue;
+                            }
+                            
+                            data = JSON.stringify(data);
+                            
+                            siteMenu.executeUIAction(id, data);
+                        }
+                    }
+                })(buttonItem.Id, buttonItem.ActionType, settings);
+
+                buttonCell.appendChild(button);
+            }
+            buttonCell.style.textAlign = "center";
+            buttonCell.style.verticalAlign = "middle";
+            inputTable.appendChild(buttonCell);
+        });
     },
 
     populateView: function(data, settings)
@@ -103,12 +193,11 @@
                             return function ()
                             {
                                 var formData = data[index][col.KeyColumn];
+                                //formData = JSON.stringify(formData);
                                 
                                 var id = col.UIActionId;
 
                                 siteMenu.executeUIAction(id, formData);
-                                //alert(JSON.stringify(val) + "\n\n" + id);
-                                //alert("Todo: this needs to call another UIActionItem");
                             }
                         })(column, i);
                         cell.appendChild(a);
@@ -152,6 +241,28 @@
                 }
                 table.appendChild(row);
             }
+
+            var viewMenu = document.getElementById("viewsMenu");
+            menuBuilder.clearNode('viewsMenu');
+
+            for (var i = 0; i < settings.ViewMenu.length; i++)
+            {
+                var menu = settings.ViewMenu[i];
+                var button = document.createElement('button');
+                button.innerHTML = menu.MenuLabel;
+
+                button.onclick = (function (id)
+                {
+                    return function ()
+                    {
+                        //var id = menu.Id;
+                        siteMenu.executeUIAction(id);
+                    }
+                })(menu.Id);
+
+                viewMenu.appendChild(button);
+            }
+
         });
     },
 

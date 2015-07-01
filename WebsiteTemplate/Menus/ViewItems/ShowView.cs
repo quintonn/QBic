@@ -36,7 +36,7 @@ namespace WebsiteTemplate.Menus.ViewItems
         ///    * Enable or specify entire row on click events
         ///    * etc...
         /// </summary>
-        public abstract IList<object> RowSettings { get; set; }
+        public abstract IList<object> RowSettings { get; }
 
         /// <summary>
         /// What if we need to limit the results in the view based on user name, role, etc, etc.
@@ -44,7 +44,9 @@ namespace WebsiteTemplate.Menus.ViewItems
         ///   * Or, a function to manually filter the results
         ///   * etc...
         /// </summary>
-        public abstract IList<object> OtherSettings { get; set; }
+        public abstract IList<object> OtherSettings { get; }
+
+        public abstract IList<UIAction> ViewMenu { get; }
 
         public override UIActionType ActionType
         {

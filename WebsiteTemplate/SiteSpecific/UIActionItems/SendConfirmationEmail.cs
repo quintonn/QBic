@@ -14,6 +14,7 @@ using WebsiteTemplate.SiteSpecific.Utilities;
 using System.Web.Http;
 using System.Net.Mail;
 using System.Net.Http;
+using Newtonsoft.Json.Linq;
 
 namespace WebsiteTemplate.SiteSpecific.UIActionItems
 {
@@ -63,10 +64,10 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             }
         }
 
-        public override async Task<UIActionResult> ProcessAction(object data)
+        public override async Task<UIActionResult> ProcessAction(string data)
         {
             var emailSent = false;
-            var id = data.ToString();
+            var id = data;
 
             using (var session = Store.OpenSession())
             {

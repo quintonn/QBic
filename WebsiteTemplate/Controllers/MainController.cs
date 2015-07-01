@@ -17,6 +17,10 @@ using WebsiteTemplate.Menus.BaseItems;
 using System.Net.Http;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Menus;
+using WebsiteTemplate.Menus.InputItems;
+using WebsiteTemplate.SiteSpecific.UIActionItems;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -172,6 +176,18 @@ namespace WebsiteTemplate.Controllers
             else if (uiAction is DoSomething)
             {
                 result = await (uiAction as DoSomething).ProcessAction(data);
+            }
+            else if (uiAction is GetInput)
+            {
+                //result = (uiAction as GetInput).ActionData;
+                result = new UIActionResult()
+                {
+                    UIAction = uiAction
+                };
+            }
+            else if (uiAction is CancelInputDialog)
+            {
+                return Ok();
             }
             else
             {

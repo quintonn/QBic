@@ -18,3 +18,17 @@
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
 }
+
+
+
+.inputTable {
+    /*border: solid 1px black;*/
+    margin-top:10px;
+    /*border-radius:5px;*/
+    border-collapse: separate;
+    border-spacing: 2px;
+}
+
+.inputTable td {
+    padding:10px;
+}

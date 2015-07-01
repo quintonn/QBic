@@ -10,6 +10,7 @@ namespace WebsiteTemplate.Menus.BaseItems
         DataView = 0,
         UserInput = 1,
         SubMenu = 2,
-        DoSomething = 3
+        DoSomething = 3,
+        CancelInputDialog = 4
     }
 }

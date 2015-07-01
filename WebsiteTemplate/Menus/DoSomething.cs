@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +8,7 @@ using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Menus
 {
-    public abstract class DoSomething :UIAction
+    public abstract class DoSomething : UIAction
     {
         public override UIActionType ActionType
         {
@@ -17,6 +18,6 @@ namespace WebsiteTemplate.Menus
             }
         }
 
-        public abstract Task<UIActionResult> ProcessAction(object data);
+        public abstract Task<UIActionResult> ProcessAction(string data);
     }
 }
