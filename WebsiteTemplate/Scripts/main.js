@@ -43,6 +43,8 @@
 
     makeWebCall: function (url, method, callback, params, args)
     {
+        main.showBusyIndicator1();
+
         var webRequest;
         
         method = method || "GET";
@@ -79,6 +81,7 @@
         {
             return;
         }
+        main.hideBusyIndicator();
         switch (req.status)
         {
             case 200:
@@ -156,5 +159,17 @@
                 navigation.loadHtmlBodyResponse(req.response, "mainContent");
                 break;
         }
+    },
+
+    showBusyIndicator1: function()
+    {
+        var container = document.getElementById('busyContainer');
+        container.style.visibility = 'visible';
+    },
+
+    hideBusyIndicator: function()
+    {
+        var container = document.getElementById('busyContainer');
+        container.style.visibility = 'hidden';
     },
 };
