@@ -67,7 +67,7 @@ namespace WebsiteTemplate.Controllers
                     {
                         adminUser = new User(false)
                         {
-                            Email = "Admin@gmail.com",
+                            Email = "q10athome@gmail.com",
                             EmailConfirmed = true,
                             UserName = "Admin",
                         };

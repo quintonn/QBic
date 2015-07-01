@@ -26,7 +26,6 @@
     executeUIAction: function(actionId, params)
     {
         main.makeWebCall(main.webApiURL + "executeUIAction/" + actionId, "POST", siteMenu.processUIAction, params);
-        alert("TODO: Show busy indicator");
     },
 
     processUIAction: function (response)
@@ -116,12 +115,38 @@
                     }
                     else
                     {
-                        console.log("Column type = " + column.ColumnType);
+                        //console.log("Column type = " + column.ColumnType);
                         /// Don't do anything to the value
 
                         cell.innerHTML = value;
                     }
 
+                    if (column.ColumnSetting != null)
+                    {
+                        //console.log(column.ColumnSetting);
+                        if (column.ColumnSetting.ColumnSettingType == 0) /// Show/Hide column
+                        {
+                            var show = column.ColumnSetting.Display == 0;
+                            var otherColumnValue = data[i][column.ColumnSetting.OtherColumnToCheck].toString();
+                            var showHideValue = column.ColumnSetting.OtherColumnValue.toString();
+                            //console.log('showHideValue = ' + showHideValue);
+                            //console.log("value = " + otherColumnValue);
+                            //console.log("Show = " + show);
+                            
+                            if ((otherColumnValue == showHideValue && show == true) ||
+                                 (otherColumnValue != showHideValue && show == false))
+                            {
+                                var cellValue = cell.innerHTML;
+                                var div = document.createElement('div');
+                                div.innerHTML = cellValue;
+                                
+                                var newCell = document.createElement('td');
+                                newCell.appendChild(div);
+                                div.style.display = 'none';
+                                cell = newCell;
+                            }
+                        }
+                    }
                     
                     row.appendChild(cell);
                 }

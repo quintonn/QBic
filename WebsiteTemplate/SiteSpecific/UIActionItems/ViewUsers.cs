@@ -43,7 +43,15 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
                 results.Add(new StringColumn("Name", "UserName", "UserName"));
                 results.Add(new StringColumn("Email", "Email", "Email"));
                 results.Add(new BooleanColumn("Email Confirmed", "EmailConfirmed", "EmailConfirmed", "Yes", "No"));
-                results.Add(new LinkColumn("", "", "Confirm Email", "Id", "Send Confirmation Email", UIActionNumbers.SEND_CONFIRMATION_EMAIL));
+                results.Add(new LinkColumn("", "", "Confirm Email", "Id", "Send Confirmation Email", UIActionNumbers.SEND_CONFIRMATION_EMAIL)
+                    {
+                        ColumnSetting = new ShowHideColumnSetting()
+                        {
+                            Display = ColumnDisplayType.Show,
+                            OtherColumnToCheck = "EmailConfirmed",
+                            OtherColumnValue = "true"
+                        }
+                    });
                 return results;
             }
         }

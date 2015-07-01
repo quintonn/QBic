@@ -12,6 +12,7 @@ namespace WebsiteTemplate.Menus.ViewItems
             ColumnLabel = columnLabel;
             DbColumnName = dbColumnName;
             ColumnName = columnName;
+            ColumnSetting = null;
         }
 
         /// <summary>
@@ -35,7 +36,7 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// </summary>
         public abstract ColumnType ColumnType { get; }
 
-        public object HideColumnIfSomething { get; set; }
+        public ColumnSetting ColumnSetting { get; set; }
         // show this column if another column == ???
         // hide this column if another column == ???
         // hide this column if no rows are populated
