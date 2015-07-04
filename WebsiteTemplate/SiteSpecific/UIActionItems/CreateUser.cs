@@ -43,23 +43,48 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
                 };
             }
 
+            var message = "";
+            var success = false;
+
             var result = await CoreAuthenticationEngine.UserManager.CreateAsync(user, "password");
 
             if (!result.Succeeded)
             {
+                message = "Unable to create user:\n" + String.Join("\n", result.Errors);
                 return new UIActionResult()
                 {
-                    //UIAction = 
-                    ResultData = "Unable to create user:\n" + String.Join("\n", result.Errors)
+                    ResultData = message
                 };
-                //throw new Exception("Unable to create user: " + "Admin");
-                //return result.Result.ToString();
             }
 
-            TODO: Also send an email, and if the email sending fails, delete the user
+            try
+            {
+                var sendEmail = new SendConfirmationEmail();
+                sendEmail.Store = Store;
+                sendEmail.Request = Request;
+                await sendEmail.ProcessAction(user.Id);
+                success = true;
+            }
+            catch (FormatException e)
+            {
+                message = e.Message;
+
+                success = false;
+            }
+
+            if (!success)
+            {
+                //await CoreAuthenticationEngine.UserManager.DeleteAsync(user);
+
+                return new UIActionResult()
+                {
+                    ResultData = "User created but there was an error sending activation email:\n" + message
+                };
+            }
+            
             return new UIActionResult()
             {
-                ResultData = "User created successfully"
+                ResultData = "User created successfully.\nCheck your inbox for activation email."
             };
         }
 

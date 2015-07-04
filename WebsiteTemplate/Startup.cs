@@ -24,7 +24,7 @@ namespace WebsiteTemplate
                     var options = new UserAuthenticationOptions()
                     {
                         AccessControlAllowOrigin = "*",
-                        AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30), //Refresh the token every 30 minutes
+                        AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(2), //Refresh the token every 30 minutes
                         AllowInsecureHttp = false,
                         TokenEndpointPath = new PathString("/api/v1/token"), //path is actually now /jbq/web/api/token
                         UserContext = new UserContext()

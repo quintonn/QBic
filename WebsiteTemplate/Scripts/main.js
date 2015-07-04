@@ -9,13 +9,19 @@
     userSettingName: "",
     version: "0.0.3",
     scriptLoaded: false,
-    refreshTimerRunning: false,
+
+    bodyOnLoad: function ()
+    {
+        main.init();
+    },
 
     init: function ()
     {
         menuBuilder.clearMenu();
+
         main.tokenName = main.applicationName + "_" + main.tokenNameSuffix + "_" + main.version;
         main.userSettingName = main.applicationName + "_" + main.userSettingSuffix + "_" + main.version;
+
         main.menuApiUrl = main.webApiURL + "menu/";
         
         main.makeWebCall(main.webApiURL + "initialize", "GET", main.processInitResponse);
@@ -28,17 +34,7 @@
         document.getElementById('aUserName').innerHTML = userInfo.User;
         navigation.entryPoint(userInfo);
 
-        if (main.refreshTimerRunning == false)
-        {
-            //console.log("start refresh timer from init response");
-            //auth.refreshTokenHandler();
-            auth.startRefreshTimer();
-        }
-    },
-
-    bodyOnLoad: function()
-    {
-        main.init();
+        auth.startRefreshTimer();
     },
 
     makeWebCall: function (url, method, callback, params, args)
