@@ -11,6 +11,7 @@ namespace WebsiteTemplate.Menus.BaseItems
         UserInput = 1,
         SubMenu = 2,
         DoSomething = 3,
-        CancelInputDialog = 4
+        CancelInputDialog = 4,
+        ShowMessage = 5,
     }
 }

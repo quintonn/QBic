@@ -1,14 +1,14 @@
-﻿#inputContent {
+﻿#messageContent, #inputContent {
     position:absolute;
     left:0;
     top:0;
     width:100%;
     height:100%;
     display:none;
-    background-color:beige;
+    background: rgba(255,255,255, 0.5);
 }
 
-#dlgInput {
+#dlgMessage, #dlgInput {
     position: fixed;
     top: 40%;
     left: 50%;
@@ -17,9 +17,10 @@
     -o-transform: translate(-50%, -50%);
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
+    border: solid 2px black;
+    border-radius: 5px;
+    background-color:beige;
 }
-
-
 
 .inputTable {
     /*border: solid 1px black;*/
@@ -27,6 +28,7 @@
     /*border-radius:5px;*/
     border-collapse: separate;
     border-spacing: 2px;
+    width:100%;
 }
 
 .inputTable td {

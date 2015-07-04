@@ -113,19 +113,19 @@
                             var loginError = document.getElementById("loginErrorMessage");
                             if (loginError == null)
                             {
-                                alert('Not on login page. But expected to be on login page');
+                                inputDialog.showMessage('Not on login page. But expected to be on login page');
                                 main.init();
                             }
                             loginError.innerHTML = respData.error_description;
                             break;
                         default:
-                            alert("unknown error description: " + respData.error_description);
+                            inputDialog.showMessage("unknown error description: " + respData.error_description);
                             break;
                     }
                 }
                 else
                 {
-                    alert(respData.Message);
+                    inputDialog.showMessage(respData.Message);
                     console.log(req);
                     
                     //console.log(req.response.message);
@@ -138,13 +138,13 @@
                 navigation.showLoginPage();
                 break;
             case 403: //Forbidden
-                alert("You are not authorized to perform the requested action.\n" + req.statusText);
+                inputDialog.showMessage("You are not authorized to perform the requested action.\n" + req.statusText);
                 break;
             case 500:
                 //console.log("500 response:\n" + JSON.stringify(req));
                 var err = JSON.parse(req.response);
                 err = err.ExceptionMessage || err;
-                alert("Internal Server Error:\n" + err);
+                inputDialog.showMessage("Internal Server Error:\n" + err);
                 break;
             default:
                 

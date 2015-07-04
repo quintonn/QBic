@@ -66,41 +66,47 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
 
         public override async Task<UIActionResult> ProcessAction(string data)
         {
-            var emailSent = false;
+            var emailSentResultMessage = String.Empty;
             var id = data;
 
             using (var session = Store.OpenSession())
             {
                 var user = session.Get<User>(id);
-                emailSent = await SendEmail(user.Id, user.UserName, user.Email);
+                try
+                {
+                    emailSentResultMessage = await SendEmail(user.Id, user.UserName, user.Email);
+                }
+                catch (FormatException e)
+                {
+                    emailSentResultMessage = e.Message;
+                }
             }
-            if (emailSent == true)
+            if (String.IsNullOrWhiteSpace(emailSentResultMessage))
             {
-                //return Ok("Email confirmation resent successfully");
                 return new UIActionResult()
                 {
                     ResultData = "Email confirmation sent successfully",
-                    //UIAction = UIActionNumbers.SHOW_MESSAGE
+                    UIAction = new ShowMessage()
                 };
             }
 
             return new UIActionResult()
             {
-                //UIAction = UIActionNumbers.SHOW_MESSAGE,
-                ResultData = "Email confirmation could not be sent again. Contact your system administrator."
+                UIAction = new ShowMessage(),
+                ResultData = "Email confirmation could not be sent\n" + emailSentResultMessage
             };
             //return BadRequest();
 
             //return new UIActionResult();
         }
 
-        private async Task<bool> SendEmail(string userId, string userName, string emailAddress)
+        private async Task<string> SendEmail(string userId, string userName, string emailAddress)
         {
             var smtp = ConfigurationManager.GetSection("system.net/mailSettings/smtp") as SmtpSection;
             if (smtp == null)
             {
                 Trace.WriteLine("No system.net/mailSettings/smtp section in web.config or app.config");
-                return await Task.FromResult(false);
+                return await Task.FromResult(String.Empty);
             }
 
             var emailToken = CoreAuthenticationEngine.UserManager.GenerateEmailConfirmationTokenAsync(userId).Result;
@@ -134,9 +140,9 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
                     Console.WriteLine(message);
                     Trace.WriteLine(message);
                     Debug.WriteLine(message);
-                    return false;
+                    return message;
                 }
-                return true;
+                return String.Empty; ;
             });
             return await sendEmailTask;
         }

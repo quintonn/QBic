@@ -43,7 +43,7 @@
         switch (actionType)
         {
             case -1:
-                alert("TODO: create a custom non-blocking message box\n" + data);
+                inputDialog.showMessage("TODO: create a custom non-blocking message box\n" + data);
                 /// Should not really be here
                 break;
             case 0: /// DataView
@@ -52,11 +52,14 @@
             case 1: /// User Input
                 siteMenu.buildInput(settings);
                 break;
-            case 4:
+            case 4: // Cancel Input Dialog
                 inputDialog.cancelInput();
                 break;
+            case 5: // Show Message
+                inputDialog.showMessage(data);                
+                break;
             default:
-                alert('unknown action type: ' + actionType);
+                inputDialog.showMessage('unknown action type: ' + actionType);
         }
     },
 
@@ -92,7 +95,7 @@
 
                         break;
                     default:
-                        alert('Unknown input type: ' + inputField.InputType);
+                        inputDialog.showMessage('Unknown input type: ' + inputField.InputType);
                         continue;
                         break;
                 }
@@ -327,7 +330,7 @@
 
         var callback = function (data)
         {
-            alert(data);
+            inputDialog.showMessage(data);
             siteMenu.getUsers();
         };
         main.makeWebCall(main.menuApiUrl + "resendConfirmationEmail/" + userToDelete.Id, "POST", callback);
@@ -347,7 +350,7 @@
     {
         var callback = function ()
         {
-            alert('User successfully deleted');
+            inputDialog.showMessage('User successfully deleted');
             siteMenu.getUsers();
         };
         main.makeWebCall(main.menuApiUrl + "deleteUser/" + userId, "DELETE", callback);
@@ -452,7 +455,7 @@
         if (userName.length == 0 || email.length == 0 ||
             pass.length == 0 || userRoleId.length == 0)
         {
-            alert("Not all fields are filled in");
+            inputDialog.showMessage("Not all fields are filled in");
             return;
         }
 
@@ -467,7 +470,7 @@
 
         var callback = function (data)
         {
-            alert(data);
+            inputDialog.showMessage(data);
             inputDialog.cancelInput();
             
             siteMenu.getUsers();
@@ -492,7 +495,7 @@
 
         if (userName.length == 0 || email.length == 0)
         {
-            alert("Not all fields are filled in");
+            inputDialog.showMessage("Not all fields are filled in");
             return;
         }
 
@@ -506,7 +509,7 @@
 
         var callback = function (data)
         {
-            alert(data);
+            inputDialog.showMessage(data);
             inputDialog.cancelInput();
 
             siteMenu.getUsers();

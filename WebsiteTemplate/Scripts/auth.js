@@ -48,7 +48,7 @@
         }
         catch (err)
         {
-            alert(err + "\n" + err.stack);
+            inputDialog.showMessage(err + "\n" + err.stack);
             localStorage.removeItem(main.tokenName);
         }
     },
@@ -73,7 +73,7 @@
         }
         catch (err)
         {
-            alert(err + "\n" + err.stack);
+            inputDialog.showMessage(err + "\n" + err.stack);
             localStorage.removeItem(main.tokenName);
         }
     },

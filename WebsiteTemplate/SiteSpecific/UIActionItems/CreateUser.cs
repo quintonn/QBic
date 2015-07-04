@@ -20,6 +20,7 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             {
                 return new UIActionResult()
                 {
+                    UIAction = new ShowMessage(),
                     ResultData = "There was an error creating a new user. No input was received."
                 };
             }
@@ -38,7 +39,7 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             {
                 return new UIActionResult()
                 {
-                    //UIAction = 
+                    UIAction = new ShowMessage(),
                     ResultData = "Password and password confirmation do not match"
                 };
             }
@@ -53,7 +54,8 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
                 message = "Unable to create user:\n" + String.Join("\n", result.Errors);
                 return new UIActionResult()
                 {
-                    ResultData = message
+                    ResultData = message,
+                    UIAction = new ShowMessage()
                 };
             }
 
@@ -78,12 +80,14 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
 
                 return new UIActionResult()
                 {
-                    ResultData = "User created but there was an error sending activation email:\n" + message
+                    ResultData = "User created but there was an error sending activation email:\n" + message,
+                    UIAction = new ShowMessage()
                 };
             }
             
             return new UIActionResult()
             {
+                UIAction = new ShowMessage(),
                 ResultData = "User created successfully.\nCheck your inbox for activation email."
             };
         }

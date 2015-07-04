@@ -138,6 +138,7 @@
     <Content Include="Pages\EditUser.html" />
     <Content Include="Pages\CreateUser.html" />
     <Content Include="Pages\Home.html" />
+    <Content Include="Pages\MessageDialog.html" />
     <Content Include="Pages\InputDialog.html" />
     <Content Include="Pages\Login.html" />
     <Content Include="Pages\Menu.html" />
@@ -169,6 +170,7 @@
     <Compile Include="Menus\InputItems\InputType.cs" />
     <Compile Include="Menus\InputItems\PasswordInput.cs" />
     <Compile Include="Menus\InputItems\StringInput.cs" />
+    <Compile Include="Menus\ShowMessage.cs" />
     <Compile Include="Menus\ViewItems\BooleanColumn.cs" />
     <Compile Include="Menus\ViewItems\ButtonColumn.cs" />
     <Compile Include="Menus\ViewItems\ButtonTextSource.cs" />
