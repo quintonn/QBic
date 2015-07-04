@@ -51,6 +51,8 @@
         /// TODO: Need to store the current state of the input dialog 
         menuBuilder.clearNode('dlgMessage');
 
+        message = message || "";
+
         var message = message.replace(/\n/g, "<br/>");
 
         document.getElementById('messageContent').style.display = 'inline';

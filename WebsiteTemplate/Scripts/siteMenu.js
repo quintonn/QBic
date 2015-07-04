@@ -28,38 +28,44 @@
         main.makeWebCall(main.webApiURL + "executeUIAction/" + actionId, "POST", siteMenu.processUIAction, params);
     },
 
-    processUIAction: function (response)
+    processUIAction: function (responseItems)
     {
-        var settings = response.UIAction;
-
-        var actionType = -1;
-        if (settings != null && settings.ActionType != null)
+        console.log('process ui action response');
+        for (var i = 0; i < responseItems.length; i++)
         {
-            actionType = settings.ActionType;
-        }
+            var response = responseItems[i];
+            console.log(response);
+            var settings = response.UIAction;
 
-        var data = response.ResultData;
-        
-        switch (actionType)
-        {
-            case -1:
-                inputDialog.showMessage("TODO: create a custom non-blocking message box\n" + data);
-                /// Should not really be here
-                break;
-            case 0: /// DataView
-                siteMenu.populateView(data, settings);
-                break;
-            case 1: /// User Input
-                siteMenu.buildInput(settings);
-                break;
-            case 4: // Cancel Input Dialog
-                inputDialog.cancelInput();
-                break;
-            case 5: // Show Message
-                inputDialog.showMessage(data);                
-                break;
-            default:
-                inputDialog.showMessage('unknown action type: ' + actionType);
+            var actionType = -1;
+            if (settings != null && settings.ActionType != null)
+            {
+                actionType = settings.ActionType;
+            }
+
+            var data = response.ResultData;
+
+            switch (actionType)
+            {
+                case -1:
+                    inputDialog.showMessage("TODO: create a custom non-blocking message box\n" + data);
+                    /// Should not really be here
+                    break;
+                case 0: /// DataView
+                    siteMenu.populateView(data, settings);
+                    break;
+                case 1: /// User Input
+                    siteMenu.buildInput(settings);
+                    break;
+                case 4: // Cancel Input Dialog
+                    inputDialog.cancelInput();
+                    break;
+                case 5: // Show Message
+                    inputDialog.showMessage(data);
+                    break;
+                default:
+                    inputDialog.showMessage('unknown action type: ' + actionType);
+            }
         }
     },
 
@@ -116,6 +122,7 @@
                 {
                     return function ()
                     {
+                        console.log(actionType);
                         if (actionType == 4) /// Cancel Dialog
                         {
                             inputDialog.cancelInput();
@@ -443,6 +450,7 @@
 
     createUser: function()
     {
+        alert('zzzzz');
         var userName = document.getElementById("txtUserName").value;
         var email = document.getElementById("txtEmail").value;
 

@@ -53,6 +53,15 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
                             OtherColumnValue = "true"
                         }
                     });
+                results.Add(new ButtonColumn("X", "", "", UIActionNumbers.DELETE_USER)
+                {
+                    ColumnSetting = new ShowHideColumnSetting()
+                    {
+                        Display = ColumnDisplayType.Show,
+                        OtherColumnToCheck = "CanDelete",
+                        OtherColumnValue = "true"
+                    }
+                });
                 return results;
             }
         }

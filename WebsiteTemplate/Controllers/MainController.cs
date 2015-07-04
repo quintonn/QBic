@@ -147,7 +147,7 @@ namespace WebsiteTemplate.Controllers
                 return BadRequest("No action has been found for UIActionId: " + id);
             }
 
-            UIActionResult result;
+            var result = new List<UIActionResult>();
 
             var uiAction = UIActionList[id];
             uiAction.Store = Store;
@@ -164,26 +164,28 @@ namespace WebsiteTemplate.Controllers
                     var list = myList as System.Collections.IList;
 
                     session.CreateCriteria(action.DataType)
+                           //.Add(Restrictions.Eq("", ""))   //TODO: Can add filter/query items here
                            .List(list);
 
-                    result = new UIActionResult()
+                    result.Add(new UIActionResult()
                     {
                         UIAction = action,
                         ResultData = list
-                    };
+                    });
                 }
             }
             else if (uiAction is DoSomething)
             {
-                result = await (uiAction as DoSomething).ProcessAction(data);
+                var doResult = await (uiAction as DoSomething).ProcessAction(data);
+                result.AddRange(doResult);
             }
             else if (uiAction is GetInput)
             {
-                //result = (uiAction as GetInput).ActionData;
-                result = new UIActionResult()
+                var inputResult = new UIActionResult()
                 {
                     UIAction = uiAction
                 };
+                result.Add(inputResult);
             }
             else if (uiAction is CancelInputDialog)
             {

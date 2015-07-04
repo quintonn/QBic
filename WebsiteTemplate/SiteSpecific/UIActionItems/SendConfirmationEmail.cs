@@ -64,8 +64,10 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             }
         }
 
-        public override async Task<UIActionResult> ProcessAction(string data)
+        public override async Task<IList<UIActionResult>> ProcessAction(string data)
         {
+            var results = new List<UIActionResult>();
+
             var emailSentResultMessage = String.Empty;
             var id = data;
 
@@ -81,23 +83,26 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
                     emailSentResultMessage = e.Message;
                 }
             }
+
             if (String.IsNullOrWhiteSpace(emailSentResultMessage))
             {
-                return new UIActionResult()
+                results.Add(new UIActionResult()
                 {
                     ResultData = "Email confirmation sent successfully",
                     UIAction = new ShowMessage()
-                };
+                });
             }
-
-            return new UIActionResult()
+            else
             {
-                UIAction = new ShowMessage(),
-                ResultData = "Email confirmation could not be sent\n" + emailSentResultMessage
-            };
-            //return BadRequest();
-
-            //return new UIActionResult();
+                var result = new UIActionResult()
+                {
+                    UIAction = new ShowMessage(),
+                    ResultData = "Email confirmation could not be sent\n" + emailSentResultMessage
+                };
+                results.Add(result);
+            }
+            
+            return results;
         }
 
         private async Task<string> SendEmail(string userId, string userName, string emailAddress)

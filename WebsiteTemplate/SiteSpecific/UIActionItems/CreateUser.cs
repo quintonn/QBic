@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
@@ -14,20 +15,23 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
 {
     public class CreateUser : DoSomething
     {
-        public override async System.Threading.Tasks.Task<Menus.BaseItems.UIActionResult> ProcessAction(string data)
+        public override async Task<IList<UIActionResult>> ProcessAction(string data)
         {
             if (String.IsNullOrWhiteSpace(data))
             {
-                return new UIActionResult()
+                return new List<UIActionResult>()
                 {
-                    UIAction = new ShowMessage(),
-                    ResultData = "There was an error creating a new user. No input was received."
-                };
-            }
+                    new UIActionResult()
+                    {
+                        UIAction = new ShowMessage(),
+                        ResultData = "There was an error creating a new user. No input was received."
+                    }
+            };
+        }
 
             var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
 
-            var user = new User(false)
+            var user = new User(true)
             {
                 Email = parameters["Email"],
                 UserName = parameters["UserName"],
@@ -37,10 +41,13 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
 
             if (password != confirmPassword)
             {
-                return new UIActionResult()
+                return new List<UIActionResult>()
                 {
-                    UIAction = new ShowMessage(),
-                    ResultData = "Password and password confirmation do not match"
+                    new UIActionResult()
+                    {
+                        UIAction = new ShowMessage(),
+                        ResultData = "Password and password confirmation do not match"
+                    }
                 };
             }
 
@@ -52,10 +59,13 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             if (!result.Succeeded)
             {
                 message = "Unable to create user:\n" + String.Join("\n", result.Errors);
-                return new UIActionResult()
+                return new List<UIActionResult>()
                 {
-                    ResultData = message,
-                    UIAction = new ShowMessage()
+                     new UIActionResult()
+                    {
+                        ResultData = message,
+                        UIAction = new ShowMessage()
+                    }
                 };
             }
 
@@ -78,17 +88,35 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             {
                 //await CoreAuthenticationEngine.UserManager.DeleteAsync(user);
 
-                return new UIActionResult()
+                return new List<UIActionResult>()
                 {
-                    ResultData = "User created but there was an error sending activation email:\n" + message,
-                    UIAction = new ShowMessage()
+                    new UIActionResult()
+                    {
+                        ResultData = "User created but there was an error sending activation email:\n" + message,
+                        UIAction = new ShowMessage()
+                    },
+                    new UIActionResult()
+                    {
+                         This should rather show the view of users.
+                         Need to either auto - refresh the last view or execute a specific menu item click
+                        UIAction = new CancelInputDialog()
+                    }
                 };
             }
-            
-            return new UIActionResult()
+
+            return new List<UIActionResult>()
             {
-                UIAction = new ShowMessage(),
-                ResultData = "User created successfully.\nCheck your inbox for activation email."
+                new UIActionResult()
+                {
+                    UIAction = new ShowMessage(),
+                    ResultData = "User created successfully.\nCheck your inbox for activation email."
+                },
+                new UIActionResult()
+                {
+                     This should rather show the view of users.
+                         Need to either auto - refresh the last view or execute a specific menu item click
+                    UIAction = new CancelInputDialog()
+                }
             };
         }
 

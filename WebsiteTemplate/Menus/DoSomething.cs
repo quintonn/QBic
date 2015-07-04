@@ -18,6 +18,6 @@ namespace WebsiteTemplate.Menus
             }
         }
 
-        public abstract Task<UIActionResult> ProcessAction(string data);
+        public abstract Task<IList<UIActionResult>> ProcessAction(string data);
     }
 }
