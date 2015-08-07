@@ -64,9 +64,9 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             }
         }
 
-        public override async Task<IList<UIActionResult>> ProcessAction(string data)
+        public override async Task<IList<UIAction>> ProcessAction(string data)
         {
-            var results = new List<UIActionResult>();
+            var results = new List<UIAction>();
 
             var emailSentResultMessage = String.Empty;
             var id = data;
@@ -86,19 +86,11 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
 
             if (String.IsNullOrWhiteSpace(emailSentResultMessage))
             {
-                results.Add(new UIActionResult()
-                {
-                    ResultData = "Email confirmation sent successfully",
-                    UIAction = new ShowMessage()
-                });
+                results.Add(new ShowMessage("Email confirmation sent successfully"));
             }
             else
             {
-                var result = new UIActionResult()
-                {
-                    UIAction = new ShowMessage(),
-                    ResultData = "Email confirmation could not be sent\n" + emailSentResultMessage
-                };
+                var result = new ShowMessage("Email confirmation could not be sent\n" + emailSentResultMessage);
                 results.Add(result);
             }
             

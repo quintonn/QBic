@@ -46,7 +46,7 @@
                         continue;
                     }
                 }
-
+                
                 if (setting.Type == "button")
                 {
                     var cell = document.createElement("td");

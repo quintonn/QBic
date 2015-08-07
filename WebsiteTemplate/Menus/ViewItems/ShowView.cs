@@ -9,6 +9,7 @@ namespace WebsiteTemplate.Menus.ViewItems
 {
     public abstract class ShowView : UIAction
     {
+        public Object ViewData { get; set; }
         /// <summary>
         /// The columns to show in the view.
         /// </summary>

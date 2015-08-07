@@ -18,6 +18,10 @@ namespace WebsiteTemplate.SiteSpecific.Utilities
 
         public static readonly int SHOW_MESSAGE = 9000;
 
+        public static readonly int USER_CONFIRMATION = 9500;
+
+        public static readonly int EXECUTE_ACTION = 10000;
+
         public static readonly int CANCEL_INPUT_DIALOG = 0;
     }
 }

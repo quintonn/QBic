@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
@@ -53,13 +54,17 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
                             OtherColumnValue = "true"
                         }
                     });
-                results.Add(new ButtonColumn("X", "", "", UIActionNumbers.DELETE_USER)
+                results.Add(new ButtonColumn("", "", "", ButtonTextSource.Fixed, "X")
                 {
                     ColumnSetting = new ShowHideColumnSetting()
                     {
-                        Display = ColumnDisplayType.Show,
+                        Display = ColumnDisplayType.Hide,
                         OtherColumnToCheck = "CanDelete",
                         OtherColumnValue = "true"
+                    },
+                    UIAction = new UserConfirmation("Delete User?")
+                    {
+                        OnConfirmationUIAction = UIActionNumbers.DELETE_USER
                     }
                 });
                 return results;

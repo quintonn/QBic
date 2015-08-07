@@ -13,5 +13,6 @@ namespace WebsiteTemplate.Menus.BaseItems
         DoSomething = 3,
         CancelInputDialog = 4,
         ShowMessage = 5,
+        ExecuteAction = 6
     }
 }

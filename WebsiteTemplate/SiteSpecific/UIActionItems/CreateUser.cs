@@ -15,19 +15,15 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
 {
     public class CreateUser : DoSomething
     {
-        public override async Task<IList<UIActionResult>> ProcessAction(string data)
+        public override async Task<IList<UIAction>> ProcessAction(string data)
         {
             if (String.IsNullOrWhiteSpace(data))
             {
-                return new List<UIActionResult>()
+                return new List<UIAction>()
                 {
-                    new UIActionResult()
-                    {
-                        UIAction = new ShowMessage(),
-                        ResultData = "There was an error creating a new user. No input was received."
-                    }
+                    new ShowMessage("There was an error creating a new user. No input was received.")
+                };
             };
-        }
 
             var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
 
@@ -41,13 +37,9 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
 
             if (password != confirmPassword)
             {
-                return new List<UIActionResult>()
+                return new List<UIAction>()
                 {
-                    new UIActionResult()
-                    {
-                        UIAction = new ShowMessage(),
-                        ResultData = "Password and password confirmation do not match"
-                    }
+                    new ShowMessage("Password and password confirmation do not match")
                 };
             }
 
@@ -59,13 +51,9 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             if (!result.Succeeded)
             {
                 message = "Unable to create user:\n" + String.Join("\n", result.Errors);
-                return new List<UIActionResult>()
+                return new List<UIAction>()
                 {
-                     new UIActionResult()
-                    {
-                        ResultData = message,
-                        UIAction = new ShowMessage()
-                    }
+                     new ShowMessage(message)
                 };
             }
 
@@ -88,35 +76,19 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             {
                 //await CoreAuthenticationEngine.UserManager.DeleteAsync(user);
 
-                return new List<UIActionResult>()
+                return new List<UIAction>()
                 {
-                    new UIActionResult()
-                    {
-                        ResultData = "User created but there was an error sending activation email:\n" + message,
-                        UIAction = new ShowMessage()
-                    },
-                    new UIActionResult()
-                    {
-                         This should rather show the view of users.
-                         Need to either auto - refresh the last view or execute a specific menu item click
-                        UIAction = new CancelInputDialog()
-                    }
+                    new ShowMessage("User created but there was an error sending activation email:\n" + message),
+                    new CancelInputDialog(),
+                    new ExecuteAction(UIActionNumbers.VIEW_USERS)
                 };
             }
 
-            return new List<UIActionResult>()
+            return new List<UIAction>()
             {
-                new UIActionResult()
-                {
-                    UIAction = new ShowMessage(),
-                    ResultData = "User created successfully.\nCheck your inbox for activation email."
-                },
-                new UIActionResult()
-                {
-                     This should rather show the view of users.
-                         Need to either auto - refresh the last view or execute a specific menu item click
-                    UIAction = new CancelInputDialog()
-                }
+                new ShowMessage("User created successfully.\nCheck your inbox for activation email."),
+                new CancelInputDialog(),
+                new ExecuteAction(UIActionNumbers.VIEW_USERS)
             };
         }
 

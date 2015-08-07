@@ -95,16 +95,16 @@
         data = JSON.parse(data);
 
         var expireTime = data[".expires"];
-        console.log('expire: ' + expireTime);
+        //console.log('expire: ' + expireTime);
         expireTime = new Date(expireTime);
-        console.log('expire: ' + expireTime);
+        //console.log('expire: ' + expireTime);
 
         var diff = Math.abs(new Date() - expireTime) - 5000; // refresh a few seconds before timeout
         var expireTimeout = diff;
 
         var refreshToken = data.refresh_token;
         
-        console.log("start refresh timer from refreshTokenResponse with timeout: " + expireTimeout / 1000 + " seconds / " + expireTimeout / 60000 + " minutes");
+        //console.log("start refresh timer from refreshTokenResponse with timeout: " + expireTimeout / 1000 + " seconds / " + expireTimeout / 60000 + " minutes");
         setTimeout(auth.refreshTokenHandler, expireTimeout);
     },
 

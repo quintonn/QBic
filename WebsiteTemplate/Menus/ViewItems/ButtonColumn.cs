@@ -2,15 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Menus.ViewItems
 {
     public class ButtonColumn : ViewColumn
     {
-        public ButtonColumn(string columnLabel, string dbColumnName, string columnName, int uiActionId)
+        public ButtonColumn(string columnLabel, string dbColumnName, string columnName)
             : base(columnLabel, dbColumnName, columnName)
         {
-            UIActionId = uiActionId;
+        }
+
+        public ButtonColumn(string columnLabel, string dbColumnName, string columnName, ButtonTextSource buttonTextSource, string buttonText)
+            : base(columnLabel, dbColumnName, columnName)
+        {
+            ButtonTextSource = buttonTextSource;
+            ButtonText = buttonText;
         }
 
         public override ColumnType ColumnType
@@ -25,6 +32,6 @@ namespace WebsiteTemplate.Menus.ViewItems
 
         public ButtonTextSource ButtonTextSource { get; set; }
 
-        public int UIActionId { get; set; }
+        public UIAction UIAction { get; set; }
     }
 }

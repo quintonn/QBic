@@ -27,7 +27,7 @@ namespace WebsiteTemplate.Controllers
 
         public MenuController()
         {
-            var request = Request.GetRequestContext();
+            //var request = Request.GetRequestContext();
             Store = new DataStore();
         }
 
@@ -274,6 +274,7 @@ namespace WebsiteTemplate.Controllers
         [RequireHttps]
         public async Task<IHttpActionResult> ConfirmEmail()
         {
+
             try
             {
                 var queryString = this.Request.GetQueryNameValuePairs();

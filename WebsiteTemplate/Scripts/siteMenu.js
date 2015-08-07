@@ -25,47 +25,74 @@
 
     executeUIAction: function(actionId, params)
     {
-        main.makeWebCall(main.webApiURL + "executeUIAction/" + actionId, "POST", siteMenu.processUIAction, params);
+        main.makeWebCall(main.webApiURL + "executeUIAction/" + actionId, "POST", siteMenu.processUIActionResponse, params);
     },
 
-    processUIAction: function (responseItems)
+    processUIActionResponse: function (responseItems)
     {
-        console.log('process ui action response');
-        for (var i = 0; i < responseItems.length; i++)
+        console.log('response items:');
+        console.log(responseItems);
+        var response = responseItems[0]; // Get the first item
+            
+        responseItems.splice(0, 1); // Remove the first item
+        
+
+        var callback = function () { };
+        if (responseItems.length > 0)
         {
-            var response = responseItems[i];
-            console.log(response);
-            var settings = response.UIAction;
-
-            var actionType = -1;
-            if (settings != null && settings.ActionType != null)
+            callback = (function (items)
             {
-                actionType = settings.ActionType;
-            }
+                return function ()
+                {
+                    console.log('response callback of process ui action');
+                    siteMenu.processUIActionResponse(items);
+                }
+            })(responseItems);
+        }
 
-            var data = response.ResultData;
+        //var x = responseItems
+        //var y = responseItems.splice(0, 1);
+        //console.log(y);
+        //console.log(response);
+        var settings = response;//.UIAction;
 
-            switch (actionType)
-            {
-                case -1:
-                    inputDialog.showMessage("TODO: create a custom non-blocking message box\n" + data);
-                    /// Should not really be here
-                    break;
-                case 0: /// DataView
-                    siteMenu.populateView(data, settings);
-                    break;
-                case 1: /// User Input
-                    siteMenu.buildInput(settings);
-                    break;
-                case 4: // Cancel Input Dialog
-                    inputDialog.cancelInput();
-                    break;
-                case 5: // Show Message
-                    inputDialog.showMessage(data);
-                    break;
-                default:
-                    inputDialog.showMessage('unknown action type: ' + actionType);
-            }
+        var actionType = -1;
+        if (settings != null && settings.ActionType != null)
+        {
+            actionType = settings.ActionType;
+        }
+
+        var data = response;
+
+        switch (actionType)
+        {
+            case -1:
+                inputDialog.showMessage(data, callback);
+                /// Should not really be here
+                break;
+            case 0: /// DataView
+                var viewData = response.ViewData;
+                siteMenu.populateView(viewData, settings);
+                callback();
+                break;
+            case 1: /// User Input
+                siteMenu.buildInput(settings);
+                callback();
+                break;
+            case 4: // Cancel Input Dialog
+                inputDialog.cancelInput();
+                callback();
+                break;
+            case 5: // Show Message
+                inputDialog.showMessage(data, callback);
+                break;
+            case 6: // Execute action
+                //console.log('executing ' + settings.UIActionId);
+                siteMenu.executeUIAction(settings.UIActionId, null);
+                callback();
+                break;
+            default:
+                inputDialog.showMessage('unknown action type: ' + actionType, callback);
         }
     },
 
@@ -122,7 +149,6 @@
                 {
                     return function ()
                     {
-                        console.log(actionType);
                         if (actionType == 4) /// Cancel Dialog
                         {
                             inputDialog.cancelInput();
@@ -144,6 +170,7 @@
                             
                             siteMenu.executeUIAction(id, data);
                         }
+                        inputDialog.cancelInput();
                     }
                 })(buttonItem.Id, buttonItem.ActionType, settings);
 
@@ -155,7 +182,7 @@
         });
     },
 
-    populateView: function(data, settings)
+    populateView: function(data, settings, callback)
     {
         navigation.loadHtmlBody('mainContent', 'Views.html', function ()
         {
@@ -179,7 +206,11 @@
                     var column = settings.Columns[j];
                     var cell = document.createElement("td");
 
-                    var value = data[i][column.ColumnName];
+                    var value = "";
+                    if (column.ColumnName != null && column.ColumnName.length > 0)
+                    {
+                        value = data[i][column.ColumnName];
+                    }
 
                     if (column.ColumnType == 1) /// Boolean
                     {
@@ -192,6 +223,33 @@
                             value = column.FalseValueDisplay;
                         }
                         cell.innerHTML = value;
+                    }
+                    else if (column.ColumnType == 2) // Button
+                    {
+                        var button = document.createElement('button');
+
+                        button.onclick = (function (index)
+                        {
+                            return function ()
+                            {
+                                var id = data[index]["Id"];
+                                
+                                data = JSON.stringify(data[index]);
+                                inputDialog.showMessage(column.UIAction, null, data);
+                            }
+                        })(i);
+
+                        if (column.ButtonTextSource == 0) //Fixed button text
+                        {
+                            button.innerHTML = column.ButtonText;
+                        }
+                        else
+                        {
+                            inputDialog.showMessage("Unhandled ButtonTextSource: " + column.ButtonTextSource);
+                            button.innerHTML = "????";
+                        }
+
+                        cell.appendChild(button);
                     }
                     else if (column.ColumnType == 3) /// Link
                     {
@@ -272,7 +330,10 @@
 
                 viewMenu.appendChild(button);
             }
-
+            if (callback)
+            {
+                callback();
+            }
         });
     },
 

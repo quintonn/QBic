@@ -166,11 +166,13 @@
     <Compile Include="Menus\BaseItems\UIActionResult.cs" />
     <Compile Include="Menus\BaseItems\UIActionType.cs" />
     <Compile Include="Menus\DoSomething.cs" />
+    <Compile Include="Menus\ExecuteAction.cs" />
     <Compile Include="Menus\InputItems\InputField.cs" />
     <Compile Include="Menus\InputItems\InputType.cs" />
     <Compile Include="Menus\InputItems\PasswordInput.cs" />
     <Compile Include="Menus\InputItems\StringInput.cs" />
     <Compile Include="Menus\ShowMessage.cs" />
+    <Compile Include="Menus\UserConfirmation.cs" />
     <Compile Include="Menus\ViewItems\BooleanColumn.cs" />
     <Compile Include="Menus\ViewItems\ButtonColumn.cs" />
     <Compile Include="Menus\ViewItems\ButtonTextSource.cs" />
@@ -194,6 +196,7 @@
     <Compile Include="SiteSpecific\UIActionItems\AddUser.cs" />
     <Compile Include="SiteSpecific\UIActionItems\CancelInputDialog.cs" />
     <Compile Include="SiteSpecific\UIActionItems\CreateUser.cs" />
+    <Compile Include="SiteSpecific\UIActionItems\DeleteUser.cs" />
     <Compile Include="SiteSpecific\UIActionItems\SendConfirmationEmail.cs" />
     <Compile Include="SiteSpecific\UIActionItems\ViewUsers.cs" />
     <Compile Include="SiteSpecific\UserRole.cs" />

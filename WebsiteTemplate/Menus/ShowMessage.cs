@@ -8,31 +8,21 @@ using WebsiteTemplate.SiteSpecific.Utilities;
 
 namespace WebsiteTemplate.Menus
 {
-    public class ShowMessage : UIAction
+    public class ShowMessage : UserConfirmation
     {
-        //public string Message { get; private set; }
-
-        //private IList<UserRole> mAuthorizedUserRoles { get; set; }
-
-        //public ShowMessage(string message, IList<UserRole> authorizedUserRoles)
-        //{
-        //    Message = message;
-        //    mAuthorizedUserRoles = authorizedUserRoles;
-        //}
+        public override string Name
+        {
+            get
+            {
+                return "Show Message";
+            }
+        }
 
         public override int Id
         {
             get
             {
                 return UIActionNumbers.SHOW_MESSAGE;
-            }
-        }
-
-        public override string Name
-        {
-            get
-            {
-                return "Show Message";
             }
         }
 
@@ -44,28 +34,24 @@ namespace WebsiteTemplate.Menus
             }
         }
 
-        public override UIActionType ActionType
-        {
-            get
-            {
-                return UIActionType.ShowMessage;
-            }
-        }
-
-        public override string MenuLabel
-        {
-            get
-            {
-                return "Message";
-            }
-        }
-
         public override IList<SiteSpecific.UserRole> AuthorizedUserRoles
         {
             get
             {
                 return new List<UserRole>();
             }
+        }
+
+        public ShowMessage()
+            : base()
+        {
+
+        }
+
+        public ShowMessage(string message)
+            : base(message, "Ok", "")
+        {
+
         }
     }
 }

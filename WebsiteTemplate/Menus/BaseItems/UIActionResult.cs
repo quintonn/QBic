@@ -5,7 +5,7 @@ using System.Web;
 
 namespace WebsiteTemplate.Menus.BaseItems
 {
-    public class UIActionResult
+    public class UIActionResultx
     {
         public UIAction UIAction { get; set; }
 
