@@ -67,6 +67,7 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
                         OnConfirmationUIAction = UIActionNumbers.DELETE_USER
                     }
                 });
+                results.Add(new LinkColumn("", "", "Edit", "Id", "Edit", UIActionNumbers.EDIT_USER));
                 return results;
             }
         }

@@ -15,8 +15,8 @@ namespace WebsiteTemplate.Menus.InputItems
             }
         }
 
-        public StringInput(string name, string label)
-            : base(name, label)
+        public StringInput(string name, string label, object defaultValue = null)
+            : base(name, label, defaultValue)
         {
         }
     }

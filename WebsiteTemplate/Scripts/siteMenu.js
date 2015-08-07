@@ -111,8 +111,8 @@
                 var inputField = settings.InputFields[i];
                 switch (inputField.InputType)
                 {
-                    case 0:
-                    case 1:
+                    case 0: /// Text
+                    case 1: /// Password
                         //var label = document.createElement('label');
                         //label.innerHTML = inputField.InputLabel;
                         var labelCell = document.createElement('td');
@@ -120,12 +120,28 @@
                         row.appendChild(labelCell);
 
                         var inp = document.createElement('input');
-                        inp.type = "text";
+                        if (inputField.InputType == 1)
+                        {
+                            //inp.setAttribute('type', 'password');
+                            //alert('d');
+                            inp.type = "password";
+                        }
+                        else
+                        {
+                            inp.type = "text";
+                        }
                         inp.id = "_" + inputField.InputName;
+                        if (inputField.DefaultValue != null && inputField.DefaultValue.length > 0)
+                        {
+                            inp.value = inputField.DefaultValue;
+                        }
                         var inputCell = document.createElement('td');
                         inputCell.appendChild(inp);
                         row.appendChild(inputCell);
 
+                        break;
+                    case 2: ///Hidden input
+                        inputDialog.addHiddenField("_" + inputField.InputName, inputField.DefaultValue);
                         break;
                     default:
                         inputDialog.showMessage('Unknown input type: ' + inputField.InputType);
@@ -170,7 +186,7 @@
                             
                             siteMenu.executeUIAction(id, data);
                         }
-                        inputDialog.cancelInput();
+                        //inputDialog.cancelInput();
                     }
                 })(buttonItem.Id, buttonItem.ActionType, settings);
 
@@ -228,16 +244,18 @@
                     {
                         var button = document.createElement('button');
 
-                        button.onclick = (function (index)
+                        button.onclick = (function (index, ind)
                         {
                             return function ()
                             {
                                 var id = data[index]["Id"];
                                 
                                 data = JSON.stringify(data[index]);
-                                inputDialog.showMessage(column.UIAction, null, data);
+                                var theColumn = settings.Columns[ind];
+                                
+                                inputDialog.showMessage(theColumn.UIAction, null, data);
                             }
-                        })(i);
+                        })(i,j);
 
                         if (column.ButtonTextSource == 0) //Fixed button text
                         {
@@ -416,6 +434,7 @@
 
     deleteUser: function(userId)
     {
+        alert('delete user');
         var callback = function ()
         {
             inputDialog.showMessage('User successfully deleted');
@@ -426,6 +445,7 @@
 
     createAddUserButton: function ()
     {
+        alert('create add user button');
         var viewMenu = document.getElementById("viewsMenu");
         var button = document.createElement("button");
         button.innerHTML = "Add";
@@ -435,159 +455,4 @@
         };
         viewMenu.appendChild(button);
     },
-
-    getUserRoles: function (editItem)
-    {
-        var callback = function (data)
-        {
-            if (editItem == null)
-            {
-                siteMenu.showCreateUserScreen(data, editItem);
-            }
-            else
-            {
-                siteMenu.showEditUserScreen(data, editItem);
-            }
-            
-        };
-        main.makeWebCall(main.menuApiUrl + "getUserRoles", "GET", callback);
-    },
-
-    showCreateUserScreen: function(data, editItem)
-    {
-        var userRoles = data;
-        
-        inputDialog.loadInputPage("CreateUser.html", function ()
-        {
-            var roleSelect = document.getElementById('txtUserRole');
-            menuBuilder.clearNode('txtUserRole');
-
-            for (var i = 0; i < userRoles.length; i++)
-            {
-                var userRole = userRoles[i];
-                var option = document.createElement('option');
-                option.innerHTML = userRole.Name;
-                option.value = userRole.Id;
-                roleSelect.appendChild(option);
-            }
-
-            document.getElementById('txtUserName').focus();
-        });
-    },
-
-    showEditUserScreen: function (data, editItem)
-    {
-        var userRoles = data;
-
-        inputDialog.loadInputPage("EditUser.html", function ()
-        {
-            var roleSelect = document.getElementById('txtUserRole');
-            menuBuilder.clearNode('txtUserRole');
-
-            var selectedIndex = 0;
-            for (var i = 0; i < userRoles.length; i++)
-            {
-                var userRole = userRoles[i];
-                var option = document.createElement('option');
-                option.innerHTML = userRole.Name;
-                option.value = userRole.Id;
-                roleSelect.appendChild(option);
-                if (editItem.UserRole == userRole.Name)
-                {
-                    selectedIndex = 0;
-                }
-            }
-
-            roleSelect.selectedIndex = selectedIndex;
-
-            document.getElementById('txtUserName').value = editItem.UserName;
-            document.getElementById('txtEmail').value = editItem.Email;
-
-            inputDialog.addHiddenField("userId", editItem.Id);
-
-            document.getElementById('txtUserName').focus();
-        });
-    },
-
-    createUser: function()
-    {
-        alert('zzzzz');
-        var userName = document.getElementById("txtUserName").value;
-        var email = document.getElementById("txtEmail").value;
-
-        var pass = document.getElementById("txtPassword").value;
-        var confirmPass = document.getElementById("txtConfirmPassword").value;
-        
-        var userRoleSelect = document.getElementById('txtUserRole');
-        var userRoleId = userRoleSelect.options[userRoleSelect.selectedIndex].value;
-
-        if (userName.length == 0 || email.length == 0 ||
-            pass.length == 0 || userRoleId.length == 0)
-        {
-            inputDialog.showMessage("Not all fields are filled in");
-            return;
-        }
-
-        var data =
-        {
-            name: userName,
-            email: email,
-            password: pass,
-            confirmPassword: confirmPass,
-            userRoleId: userRoleId,
-        };
-
-        var callback = function (data)
-        {
-            inputDialog.showMessage(data);
-            inputDialog.cancelInput();
-            
-            siteMenu.getUsers();
-        };
-        
-        var dataToSend = JSON.stringify(data);
-        
-        dataToSend = encodeURIComponent(dataToSend);
-        
-        main.makeWebCall(main.menuApiUrl + "createUser", "POST", callback, dataToSend);
-    },
-
-    updateUser: function ()
-    {
-        var userId = inputDialog.getHiddenField('userId');
-
-        var userName = document.getElementById("txtUserName").value;
-        var email = document.getElementById("txtEmail").value;
-
-        var userRoleSelect = document.getElementById('txtUserRole');
-        var userRoleId = userRoleSelect.options[userRoleSelect.selectedIndex].value;
-
-        if (userName.length == 0 || email.length == 0)
-        {
-            inputDialog.showMessage("Not all fields are filled in");
-            return;
-        }
-
-        var data =
-        {
-            name: userName,
-            email: email,
-            userRoleId: userRoleId,
-            //userId: userId
-        };
-
-        var callback = function (data)
-        {
-            inputDialog.showMessage(data);
-            inputDialog.cancelInput();
-
-            siteMenu.getUsers();
-        };
-
-        var dataToSend = JSON.stringify(data);
-
-        dataToSend = encodeURIComponent(dataToSend);
-        
-        main.makeWebCall(main.menuApiUrl + "updateUser/" + encodeURI(userId), "POST", callback, dataToSend);
-    }
 };

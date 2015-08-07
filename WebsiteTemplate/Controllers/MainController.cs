@@ -38,8 +38,15 @@ namespace WebsiteTemplate.Controllers
 
         static MainController()
         {
-            CheckDefaultValues();
-            PopulateUIActionList();
+            try
+            {
+                CheckDefaultValues();
+                PopulateUIActionList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         private static void PopulateUIActionList()

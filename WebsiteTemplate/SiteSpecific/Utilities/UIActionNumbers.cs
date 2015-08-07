@@ -11,6 +11,9 @@ namespace WebsiteTemplate.SiteSpecific.Utilities
 
         public static readonly int ADD_USER = 1010;
         public static readonly int CREATE_USER = 1011;
+        public static readonly int EDIT_USER = 1012;
+        public static readonly int DO_EDIT_USER = 1013;
+        public static readonly int PROCESS_EDIT_USER = 1014;
 
         public static readonly int DELETE_USER = 1020;
 

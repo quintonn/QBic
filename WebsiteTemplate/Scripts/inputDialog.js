@@ -51,6 +51,7 @@
         /// TODO: Need to store the current state of the input dialog 
         menuBuilder.clearNode('dlgMessage');
 
+        console.log(settings);
         var message = settings.ConfirmationMessage;
 
         if (message == null)

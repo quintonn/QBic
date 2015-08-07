@@ -167,6 +167,7 @@
     <Compile Include="Menus\BaseItems\UIActionType.cs" />
     <Compile Include="Menus\DoSomething.cs" />
     <Compile Include="Menus\ExecuteAction.cs" />
+    <Compile Include="Menus\InputItems\HiddenInput.cs" />
     <Compile Include="Menus\InputItems\InputField.cs" />
     <Compile Include="Menus\InputItems\InputType.cs" />
     <Compile Include="Menus\InputItems\PasswordInput.cs" />
@@ -197,6 +198,9 @@
     <Compile Include="SiteSpecific\UIActionItems\CancelInputDialog.cs" />
     <Compile Include="SiteSpecific\UIActionItems\CreateUser.cs" />
     <Compile Include="SiteSpecific\UIActionItems\DeleteUser.cs" />
+    <Compile Include="SiteSpecific\UIActionItems\DoEditUser.cs" />
+    <Compile Include="SiteSpecific\UIActionItems\EditUser.cs" />
+    <Compile Include="SiteSpecific\UIActionItems\ProcessDoEditUser.cs" />
     <Compile Include="SiteSpecific\UIActionItems\SendConfirmationEmail.cs" />
     <Compile Include="SiteSpecific\UIActionItems\ViewUsers.cs" />
     <Compile Include="SiteSpecific\UserRole.cs" />

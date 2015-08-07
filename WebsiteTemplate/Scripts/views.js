@@ -7,6 +7,7 @@
 
     addDataToTable: function (settings, data, table)
     {
+        alert('x');
         table = table || views.getTable();
         var row = document.createElement("tr");
 

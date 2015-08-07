@@ -5,19 +5,20 @@ using System.Web;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
-    public class PasswordInput : InputField
+    public class HiddenInput : InputField
     {
+        public HiddenInput(string name, object defaultValue = null)
+            : base(name, "", defaultValue)
+        {
+
+        }
+
         public override InputType InputType
         {
             get
             {
-                return InputItems.InputType.Password;
+                return InputItems.InputType.Hidden;
             }
-        }
-
-        public PasswordInput(string name, string label, object defaultValue = null)
-            : base(name, label, defaultValue)
-        {
         }
     }
 }

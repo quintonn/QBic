@@ -13,10 +13,13 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public string InputLabel { get; set; }
 
-        public InputField(string name, string label)
+        public object DefaultValue { get; set; }
+
+        public InputField(string name, string label, object defaultValue)
         {
             InputName = name;
             InputLabel = label;
+            DefaultValue = defaultValue;
         }
     }
 }
