@@ -7,10 +7,9 @@ namespace WebsiteTemplate.Menus.ViewItems
 {
     public abstract class ViewColumn
     {
-        public ViewColumn(string columnLabel, string dbColumnName, string columnName)
+        public ViewColumn(string columnLabel, string columnName)
         {
             ColumnLabel = columnLabel;
-            DbColumnName = dbColumnName;
             ColumnName = columnName;
             ColumnSetting = null;
         }

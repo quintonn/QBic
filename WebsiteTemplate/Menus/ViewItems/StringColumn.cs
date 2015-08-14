@@ -7,8 +7,8 @@ namespace WebsiteTemplate.Menus.ViewItems
 {
     public class StringColumn : ViewColumn
     {
-        public StringColumn(string columnLabel, string dbColumnName, string columnName)
-            : base(columnLabel, dbColumnName, columnName)
+        public StringColumn(string columnLabel, string columnName)
+            : base(columnLabel, columnName)
         {
         }
 

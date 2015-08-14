@@ -19,6 +19,8 @@
     {
         menuBuilder.clearMenu();
 
+        document.title = main.applicationName;
+
         main.tokenName = main.applicationName + "_" + main.tokenNameSuffix + "_" + main.version;
         main.userSettingName = main.applicationName + "_" + main.userSettingSuffix + "_" + main.version;
 

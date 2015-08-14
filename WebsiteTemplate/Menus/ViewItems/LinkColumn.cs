@@ -9,13 +9,13 @@ namespace WebsiteTemplate.Menus.ViewItems
 {
     public class LinkColumn : ViewColumn
     {
-        public LinkColumn(string columnLabel, string dbColumnName, string columnName)
-            : base(columnLabel, dbColumnName, columnName)
+        public LinkColumn(string columnLabel, string columnName)
+            : base(columnLabel, columnName)
         {
         }
 
-        public LinkColumn(string columnLabel, string dbColumnName, string columnName, string keyColumn, string linkLabel, EventNumber eventNumber)
-            : this(columnLabel, dbColumnName, columnName)
+        public LinkColumn(string columnLabel, string columnName, string keyColumn, string linkLabel, EventNumber eventNumber)
+            : this(columnLabel, columnName)
         {
             KeyColumn = keyColumn;
             LinkLabel = linkLabel;

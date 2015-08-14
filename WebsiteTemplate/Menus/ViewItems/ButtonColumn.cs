@@ -9,12 +9,12 @@ namespace WebsiteTemplate.Menus.ViewItems
     public class ButtonColumn : ViewColumn
     {
         public ButtonColumn(string columnLabel, string dbColumnName, string columnName)
-            : base(columnLabel, dbColumnName, columnName)
+            : base(columnLabel, columnName)
         {
         }
 
-        public ButtonColumn(string columnLabel, string dbColumnName, string columnName, ButtonTextSource buttonTextSource, string buttonText)
-            : base(columnLabel, dbColumnName, columnName)
+        public ButtonColumn(string columnLabel, string columnName, ButtonTextSource buttonTextSource, string buttonText)
+            : base(columnLabel, columnName)
         {
             ButtonTextSource = buttonTextSource;
             ButtonText = buttonText;

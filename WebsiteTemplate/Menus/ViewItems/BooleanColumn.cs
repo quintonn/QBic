@@ -7,13 +7,13 @@ namespace WebsiteTemplate.Menus.ViewItems
 {
     public class BooleanColumn : ViewColumn
     {
-        public BooleanColumn(string columnLabel, string dbColumnName, string columnName)
-            : base(columnLabel, dbColumnName, columnName)
+        public BooleanColumn(string columnLabel, string columnName)
+            : base(columnLabel, columnName)
         {
         }
 
-        public BooleanColumn(string columnLabel, string dbColumnName, string columnName, string trueValue, string falseValue)
-            : this(columnLabel, dbColumnName, columnName)
+        public BooleanColumn(string columnLabel, string columnName, string trueValue, string falseValue)
+            : this(columnLabel, columnName)
         {
             TrueValueDisplay = trueValue;
             FalseValueDisplay = falseValue;

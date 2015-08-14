@@ -33,11 +33,11 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             get
             {
                 var results = new List<ViewColumn>();
-                results.Add(new StringColumn("Id", "Id", "Id"));
-                results.Add(new StringColumn("Name", "UserName", "UserName"));
-                results.Add(new StringColumn("Email", "Email", "Email"));
-                results.Add(new BooleanColumn("Email Confirmed", "EmailConfirmed", "EmailConfirmed", "Yes", "No"));
-                results.Add(new LinkColumn("", "", "Confirm Email", "Id", "Send Confirmation Email", EventNumber.SendConfirmationEmail)
+                results.Add(new StringColumn("Id", "Id"));
+                results.Add(new StringColumn("Name", "UserName"));
+                results.Add(new StringColumn("Email", "Email"));
+                results.Add(new BooleanColumn("Email Confirmed", "EmailConfirmed", "Yes", "No"));
+                results.Add(new LinkColumn("", "Confirm Email", "Id", "Send Confirmation Email", EventNumber.SendConfirmationEmail)
                     {
                         ColumnSetting = new ShowHideColumnSetting()
                         {
@@ -46,7 +46,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                             OtherColumnValue = "true"
                         }
                     });
-                results.Add(new ButtonColumn("", "", "", ButtonTextSource.Fixed, "X")
+                results.Add(new ButtonColumn("", "", ButtonTextSource.Fixed, "X")
                 {
                     ColumnSetting = new ShowHideColumnSetting()
                     {
@@ -59,7 +59,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                         OnConfirmationUIAction = EventNumber.DeleteUser
                     }
                 });
-                results.Add(new LinkColumn("", "", "Edit", "Id", "Edit", EventNumber.EditUser));
+                results.Add(new LinkColumn("", "Edit", "Id", "Edit", EventNumber.EditUser));
                 return results;
             }
         }
