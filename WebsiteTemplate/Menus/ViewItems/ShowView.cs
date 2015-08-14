@@ -47,7 +47,7 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// </summary>
         public abstract IList<object> OtherSettings { get; }
 
-        public abstract IList<Event> ViewMenu { get; }
+        public abstract IList<MenuItem> ViewMenu { get; }
 
         public override EventType ActionType
         {

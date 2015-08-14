@@ -64,12 +64,12 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             }
         }
 
-        public override IList<Menus.BaseItems.Event> ViewMenu
+        public override IList<MenuItem> ViewMenu
         {
             get
             {
-                var results = new List<Event>();
-                results.Add(new AddUser());
+                var results = new List<MenuItem>();
+                results.Add(new MenuItem("Add", EventNumber.AddUser));
                 return results;
             }
         }

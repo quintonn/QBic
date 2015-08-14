@@ -319,15 +319,16 @@
             {
                 var menu = settings.ViewMenu[i];
                 var button = document.createElement('button');
-                button.innerHTML = menu.Description;
+                button.innerHTML = menu.Label;
 
                 button.onclick = (function (id)
                 {
                     return function ()
                     {
+                        alert(id);
                         siteMenu.executeUIAction(id);
                     }
-                })(menu.Id);
+                })(menu.EventNumber);
 
                 viewMenu.appendChild(button);
             }
