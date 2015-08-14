@@ -72,6 +72,19 @@ namespace WebsiteTemplate.Menus.ViewItems
             }
         }
 
-        public virtual string ViewMessage { get { return ""; } }
+        public virtual string GetViewMessage()
+        {
+            return "";
+        }
+
+        public string ViewMessage
+        {
+            get
+            {
+                var result =  GetViewMessage();
+                result = result.Replace("\r", "<br/>").Replace("\n", "<br/>");
+                return result;
+            }
+        }
     }
 }

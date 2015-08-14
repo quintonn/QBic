@@ -79,5 +79,11 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 };
             }
         }
+
+        public override string GetViewMessage()
+        {
+            return "TODO: Need to add ability to limit number of results as well as ability to sort items\n" +
+                   "ALSO: Will need to limit display to 100% of height and put table inside a scroller";
+        }
     }
 }

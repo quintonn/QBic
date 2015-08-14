@@ -53,12 +53,9 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             }
         }
 
-        public override string ViewMessage
+        public override string GetViewMessage()
         {
-            get
-            {
-                return "TODO: Create some kind of table for menus and users allowed to see them";
-            }
+            return "TODO: Create some kind of table for menus and users allowed to see them";
         }
     }
 }
