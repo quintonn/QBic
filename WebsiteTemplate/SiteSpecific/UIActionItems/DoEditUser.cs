@@ -7,7 +7,7 @@ using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.SiteSpecific.Utilities;
 
-namespace WebsiteTemplate.SiteSpecific.UIActionItems
+namespace WebsiteTemplate.SiteSpecific.EventItems
 {
     public class DoEditUser : AddUser
     {

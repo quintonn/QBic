@@ -5,7 +5,7 @@ using System.Web;
 
 namespace WebsiteTemplate.Menus.BaseItems
 {
-    public enum UIActionType
+    public enum EventType
     {
         DataView = 0,
         UserInput = 1,

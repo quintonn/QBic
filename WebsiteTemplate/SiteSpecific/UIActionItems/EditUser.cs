@@ -7,7 +7,7 @@ using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.SiteSpecific.Utilities;
 
-namespace WebsiteTemplate.SiteSpecific.UIActionItems
+namespace WebsiteTemplate.SiteSpecific.EventItems
 {
     public class EditUser : DoSomething
     {

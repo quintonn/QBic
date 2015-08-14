@@ -48,11 +48,7 @@
             })(responseItems);
         }
 
-        //var x = responseItems
-        //var y = responseItems.splice(0, 1);
-        //console.log(y);
-        //console.log(response);
-        var settings = response;//.UIAction;
+        var settings = response;
 
         var actionType = -1;
         if (settings != null && settings.ActionType != null)
@@ -85,7 +81,6 @@
                 inputDialog.showMessage(data, callback);
                 break;
             case 6: // Execute action
-                //console.log('executing ' + settings.UIActionId);
                 siteMenu.executeUIAction(settings.EventNumber, null);
                 callback();
                 break;
@@ -251,7 +246,7 @@
                                 data = JSON.stringify(data[index]);
                                 var theColumn = settings.Columns[ind];
                                 
-                                inputDialog.showMessage(theColumn.UIAction, null, data);
+                                inputDialog.showMessage(theColumn.Event, null, data);
                             }
                         })(i,j);
 

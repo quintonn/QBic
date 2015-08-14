@@ -18,16 +18,16 @@ using System.Net.Http;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.InputItems;
-using WebsiteTemplate.SiteSpecific.UIActionItems;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using WebsiteTemplate.SiteSpecific.EventItems;
 
 namespace WebsiteTemplate.Controllers
 {
     [RoutePrefix("api/v1")]
     public class MainController : ApiController
     {
-        public static IDictionary<EventNumber, Event> UIActionList { get; set; }
+        public static IDictionary<EventNumber, Event> EventList { get; set; }
 
         private DataStore Store { get; set; }
 
@@ -41,7 +41,7 @@ namespace WebsiteTemplate.Controllers
             try
             {
                 CheckDefaultValues();
-                PopulateUIActionList();
+                PopulateEventList();
             }
             catch (Exception e)
             {
@@ -49,9 +49,9 @@ namespace WebsiteTemplate.Controllers
             }
         }
 
-        private static void PopulateUIActionList()
+        private static void PopulateEventList()
         {
-            UIActionList = new Dictionary<EventNumber, Event>();
+            EventList = new Dictionary<EventNumber, Event>();
 
             var types = typeof(Event).Assembly.GetTypes();
             foreach (var type in types)
@@ -59,7 +59,7 @@ namespace WebsiteTemplate.Controllers
                 if (type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(Event)))
                 {
                     var instance = (Event)Activator.CreateInstance(type);
-                    UIActionList.Add(instance.Id, instance);
+                    EventList.Add(instance.Id, instance);
                 }
             }
         }
@@ -152,20 +152,20 @@ namespace WebsiteTemplate.Controllers
             //var temp = HttpUtility.UrlDecode(data);
             //var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(temp);
 
-            if (!UIActionList.ContainsKey(id))
+            if (!EventList.ContainsKey(id))
             {
                 return BadRequest("No action has been found for event number: " + id);
             }
 
             var result = new List<Event>();
 
-            var uiAction = UIActionList[id];
-            uiAction.Store = Store;
-            uiAction.Request = Request;
+            var eventItem = EventList[id];
+            eventItem.Store = Store;
+            eventItem.Request = Request;
 
-            if (uiAction is ShowView)
+            if (eventItem is ShowView)
             {
-                var action = uiAction as ShowView;
+                var action = eventItem as ShowView;
                 
                 using (var session = Store.OpenSession())
                 {
@@ -180,23 +180,23 @@ namespace WebsiteTemplate.Controllers
                     result.Add(action);
                 }
             }
-            else if (uiAction is DoSomething)
+            else if (eventItem is DoSomething)
             {
-                var doResult = await (uiAction as DoSomething).ProcessAction(data);
+                var doResult = await (eventItem as DoSomething).ProcessAction(data);
                 result.AddRange(doResult);
             }
-            else if (uiAction is GetInput)
+            else if (eventItem is GetInput)
             {
-                var inputResult = uiAction;
+                var inputResult = eventItem;
                 result.Add(inputResult);
             }
-            else if (uiAction is CancelInputDialog)
+            else if (eventItem is CancelInputDialog)
             {
                 return Ok();
             }
             else
             {
-                return BadRequest("ERROR: Unknown UIActionType: " + uiAction.GetType().ToString().Split(".".ToCharArray()).Last() + " with id " + id);
+                return BadRequest("ERROR: Unknown UIActionType: " + eventItem.GetType().ToString().Split(".".ToCharArray()).Last() + " with id " + id);
             }
             return Ok(result);
         }
@@ -208,7 +208,7 @@ namespace WebsiteTemplate.Controllers
         public async Task<IHttpActionResult> GetUserMenu()
         {
             var user = await this.GetLoggedInUserAsync();
-            //var results = new List<UIAction>();
+            
             var results = new Dictionary<int, string>();
             using (var session = Store.OpenSession())
             {
@@ -224,13 +224,13 @@ namespace WebsiteTemplate.Controllers
 
                         menuIds.ForEach(i =>
                         {
-                            if (!UIActionList.ContainsKey(i))
+                            if (!EventList.ContainsKey(i))
                             {
-                                throw new NotImplementedException("No UIAction exists for id " + i);
+                                throw new NotImplementedException("No event exists for id " + i);
                             }
-                            var uiAction = UIActionList[i];
-                            //results.Add(uiAction);
-                            results.Add((int)uiAction.Id, uiAction.MenuLabel);
+                            var eventItem = EventList[i];
+                            
+                            results.Add((int)eventItem.Id, eventItem.MenuLabel);
                         });
                     });
             }

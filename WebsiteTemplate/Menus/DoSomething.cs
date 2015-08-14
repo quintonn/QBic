@@ -10,11 +10,11 @@ namespace WebsiteTemplate.Menus
 {
     public abstract class DoSomething : Event
     {
-        public override UIActionType ActionType
+        public override EventType ActionType
         {
             get
             {
-                return UIActionType.DoSomething;
+                return EventType.DoSomething;
             }
         }
 

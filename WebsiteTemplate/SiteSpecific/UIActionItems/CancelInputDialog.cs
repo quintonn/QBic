@@ -5,7 +5,7 @@ using System.Web;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.SiteSpecific.Utilities;
 
-namespace WebsiteTemplate.SiteSpecific.UIActionItems
+namespace WebsiteTemplate.SiteSpecific.EventItems
 {
     public class CancelInputDialog : Event
     {
@@ -52,11 +52,11 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             }
         }
 
-        public override UIActionType ActionType
+        public override EventType ActionType
         {
             get
             {
-                return UIActionType.CancelInputDialog;
+                return EventType.CancelInputDialog;
             }
         }
     }

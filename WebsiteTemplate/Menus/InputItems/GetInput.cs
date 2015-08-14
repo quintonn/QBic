@@ -11,11 +11,11 @@ namespace WebsiteTemplate.Menus.InputItems
     /// </summary>
     public abstract class GetInput : Event
     {
-        public override UIActionType ActionType
+        public override EventType ActionType
         {
             get
             {
-                return UIActionType.UserInput;
+                return EventType.UserInput;
             }
         }
 

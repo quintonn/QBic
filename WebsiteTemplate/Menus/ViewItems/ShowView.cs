@@ -49,11 +49,11 @@ namespace WebsiteTemplate.Menus.ViewItems
 
         public abstract IList<Event> ViewMenu { get; }
 
-        public override UIActionType ActionType
+        public override EventType ActionType
         {
             get
             {
-                return UIActionType.DataView;
+                return EventType.DataView;
             }
         }
     }

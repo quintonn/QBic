@@ -27,11 +27,11 @@ namespace WebsiteTemplate.Menus.BaseItems
             }
         }
 
-        public override UIActionType ActionType
+        public override EventType ActionType
         {
             get
             {
-                return UIActionType.SubMenu;
+                return EventType.SubMenu;
             }
         }
     }

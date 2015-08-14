@@ -163,8 +163,7 @@
     <Compile Include="Mappings\UserRoleAssociationMap.cs" />
     <Compile Include="Mappings\UserMap.cs" />
     <Compile Include="Menus\BaseItems\SubMenuAction.cs" />
-    <Compile Include="Menus\BaseItems\UIActionResult.cs" />
-    <Compile Include="Menus\BaseItems\UIActionType.cs" />
+    <Compile Include="Menus\BaseItems\EventType.cs" />
     <Compile Include="Menus\DoSomething.cs" />
     <Compile Include="Menus\ExecuteAction.cs" />
     <Compile Include="Menus\InputItems\HiddenInput.cs" />

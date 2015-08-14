@@ -8,7 +8,7 @@ using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.SiteSpecific.Utilities;
 
-namespace WebsiteTemplate.SiteSpecific.UIActionItems
+namespace WebsiteTemplate.SiteSpecific.EventItems
 {
     public class ViewUsers : ShowView
     {
@@ -62,7 +62,7 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
                         OtherColumnToCheck = "CanDelete",
                         OtherColumnValue = "true"
                     },
-                    UIAction = new UserConfirmation("Delete User?")
+                    Event = new UserConfirmation("Delete User?")
                     {
                         OnConfirmationUIAction = EventNumber.DeleteUser
                     }

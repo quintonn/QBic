@@ -32,7 +32,7 @@ namespace WebsiteTemplate.Menus.BaseItems
         public abstract string Description { get; }
 
         /// <summary>
-        /// This label will be displayed if a shortcut to this UIAction is to a menu item.
+        /// This label will be displayed if a shortcut to this event is to a menu item.
         /// </summary>
         public abstract string MenuLabel { get; }
 
@@ -41,11 +41,11 @@ namespace WebsiteTemplate.Menus.BaseItems
         /// </summary>
         public abstract IList<UserRole> AuthorizedUserRoles { get; }
 
-        public abstract UIActionType ActionType { get; }
+        public abstract EventType ActionType { get; }
 
         /// <summary>
-        /// This is data that is passed between UIAction.
-        /// Foreach UIAction in a series of events, there will be 1 item in this list.
+        /// This is data that is passed between events.
+        /// Foreach event in a series of events, there will be 1 item in this list.
         /// </summary>
         public IList<object> ActionData { get; set; }
 

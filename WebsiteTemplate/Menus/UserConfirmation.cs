@@ -51,11 +51,11 @@ namespace WebsiteTemplate.Menus
             }
         }
 
-        public override UIActionType ActionType
+        public override EventType ActionType
         {
             get
             {
-                return UIActionType.ShowMessage;
+                return EventType.ShowMessage;
             }
         }
 

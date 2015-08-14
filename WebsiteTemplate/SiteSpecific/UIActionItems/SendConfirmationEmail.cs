@@ -16,7 +16,7 @@ using System.Net.Mail;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
 
-namespace WebsiteTemplate.SiteSpecific.UIActionItems
+namespace WebsiteTemplate.SiteSpecific.EventItems
 {
     public class SendConfirmationEmail : DoSomething
     {
