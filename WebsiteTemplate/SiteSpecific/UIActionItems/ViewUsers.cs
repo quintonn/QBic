@@ -28,14 +28,6 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             }
         }
 
-        public override string MenuLabel
-        {
-            get
-            {
-                return "Users";
-            }
-        }
-
         public override IList<ViewColumn> Columns
         {
             get

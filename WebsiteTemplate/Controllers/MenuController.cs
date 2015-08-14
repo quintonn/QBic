@@ -274,7 +274,6 @@ namespace WebsiteTemplate.Controllers
         [RequireHttps]
         public async Task<IHttpActionResult> ConfirmEmail()
         {
-
             try
             {
                 var queryString = this.Request.GetQueryNameValuePairs();

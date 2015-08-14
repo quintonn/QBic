@@ -33,14 +33,6 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             }
         }
 
-        public override string MenuLabel
-        {
-            get
-            {
-                return "Cancel";
-            }
-        }
-
         public override IList<UserRole> AuthorizedUserRoles
         {
             get

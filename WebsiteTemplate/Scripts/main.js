@@ -23,6 +23,17 @@
         main.userSettingName = main.applicationName + "_" + main.userSettingSuffix + "_" + main.version;
 
         main.menuApiUrl = main.webApiURL + "menu/";
+
+        var confirmedUser = navigation.getParameterByName('confirmed');
+        if (confirmedUser != null && confirmedUser.length > 0)
+        {
+            inputDialog.showMessage("Email for " + confirmedUser + " successfully confirmed.\nYou can now log in with the credentials for " + confirmedUser);
+            /// Remove the 'confirm' parameter from the URL
+            var url = window.location.href;
+            var index = url.lastIndexOf('?');
+            url = url.substring(0, index);
+            window.history.pushState(url, main.applicationName, url);
+        }
         
         main.makeWebCall(main.webApiURL + "initialize", "GET", main.processInitResponse);
     },
@@ -95,7 +106,6 @@
                 callback(response, args);
                 break;
             case 400:
-                
                 var contentType = req.getResponseHeader('content-type');
                 contentType = contentType || "";
                 

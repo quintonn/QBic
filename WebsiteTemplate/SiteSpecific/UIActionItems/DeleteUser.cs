@@ -37,14 +37,6 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             }
         }
 
-        public override string MenuLabel
-        {
-            get
-            {
-                return "";
-            }
-        }
-
         public override IList<UserRole> AuthorizedUserRoles
         {
             get

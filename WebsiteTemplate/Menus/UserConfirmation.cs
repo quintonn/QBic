@@ -34,15 +34,6 @@ namespace WebsiteTemplate.Menus
             }
         }
 
-        public override string MenuLabel
-        {
-
-            get
-            {
-                return "";  /// Should not be in a menu
-            }
-        }
-
         public override IList<SiteSpecific.UserRole> AuthorizedUserRoles
         {
             get

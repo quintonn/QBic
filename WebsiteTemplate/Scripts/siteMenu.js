@@ -327,7 +327,7 @@
             {
                 var menu = settings.ViewMenu[i];
                 var button = document.createElement('button');
-                button.innerHTML = menu.MenuLabel;
+                button.innerHTML = menu.Description;
 
                 button.onclick = (function (id)
                 {

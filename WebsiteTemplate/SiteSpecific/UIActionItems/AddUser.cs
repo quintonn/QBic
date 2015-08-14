@@ -9,6 +9,7 @@ using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.SiteSpecific.UIActionItems;
 using WebsiteTemplate.SiteSpecific.Utilities;
 
 namespace WebsiteTemplate.SiteSpecific.EventItems
@@ -36,14 +37,6 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             get
             {
                 return "Add a new user";
-            }
-        }
-
-        public override string MenuLabel
-        {
-            get
-            {
-                return "Add";
             }
         }
 
@@ -151,6 +144,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                     var sendEmail = new SendConfirmationEmail();
                     sendEmail.Store = Store;
                     sendEmail.Request = Request;
+
                     await sendEmail.ProcessAction(user.Id);
                     success = true;
                 }

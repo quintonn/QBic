@@ -7,12 +7,12 @@
         navigation.getUserMenu();
     },
 
-    getUserMenu: function()
+    getUserMenu: function ()
     {
         main.makeWebCall(main.webApiURL + "getUserMenu", "GET", navigation.processUserMenuResponse);
     },
 
-    processUserMenuResponse: function(data)
+    processUserMenuResponse: function (data)
     {
         var menuList = data;
         // figure out what page to go to //TODO
@@ -70,4 +70,11 @@
         var div = document.getElementById(nodeName);
         div.innerHTML = response;
     },
+
+    getParameterByName: function (name)
+    {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"), results = regex.exec(location.search);
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
 };

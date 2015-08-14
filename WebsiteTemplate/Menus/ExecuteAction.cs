@@ -46,14 +46,6 @@ namespace WebsiteTemplate.Menus
             }
         }
 
-        public override string MenuLabel
-        {
-            get
-            {
-                return "Execute Action";
-            }
-        }
-
         public override IList<SiteSpecific.UserRole> AuthorizedUserRoles
         {
             get

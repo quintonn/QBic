@@ -265,7 +265,7 @@ namespace WebsiteTemplate.Controllers
                             }
                             var eventItem = EventList[i];
                             
-                            results.Add((int)eventItem.Id, eventItem.MenuLabel);
+                            results.Add((int)eventItem.Id, eventItem.Description);
                         });
                     });
             }

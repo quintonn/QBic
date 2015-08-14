@@ -34,7 +34,7 @@ namespace WebsiteTemplate.Menus.BaseItems
         /// <summary>
         /// This label will be displayed if a shortcut to this event is to a menu item.
         /// </summary>
-        public abstract string MenuLabel { get; }
+        //public abstract string MenuLabel { get; }
 
         /// <summary>
         /// Authorized user roles that can execute this UI Action

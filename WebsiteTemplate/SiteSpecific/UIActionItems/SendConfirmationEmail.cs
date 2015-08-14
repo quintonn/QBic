@@ -16,7 +16,7 @@ using System.Net.Mail;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
 
-namespace WebsiteTemplate.SiteSpecific.EventItems
+namespace WebsiteTemplate.SiteSpecific.UIActionItems
 {
     public class SendConfirmationEmail : DoSomething
     {
@@ -42,14 +42,6 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             get
             {
                 return "Sends a confirmation email to a new user";
-            }
-        }
-
-        public override string MenuLabel
-        {
-            get
-            {
-                return String.Empty;
             }
         }
 
