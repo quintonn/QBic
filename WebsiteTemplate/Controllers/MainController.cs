@@ -255,7 +255,7 @@ namespace WebsiteTemplate.Controllers
 
                 roles.ForEach(r =>
                     {
-                        var menuIds = GetMenuItemsForAllRoles().Where(i => i.Key == r.UserRole).Select(i => i.Value).ToList();
+                        var menuIds = GetMenuItemsForAllRoles().Where(i => i.Key == r.UserRole || i.Key == UserRole.AnyOne).Select(i => i.Value).ToList();
 
                         menuIds.ForEach(i =>
                         {
@@ -282,6 +282,8 @@ namespace WebsiteTemplate.Controllers
 
             //EG
             results.Add(UserRole.ViewUsers, EventNumber.ViewUsers);
+
+            results.Add(UserRole.AnyOne, EventNumber.ViewUserRoleAssociations);
 
             return results;
         }

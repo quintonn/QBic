@@ -17,10 +17,13 @@
             var id = key;
             var label = menuList[key];
 
-            var buttonClickEvent = function()
+            var buttonClickEvent = (function (actionId)
             {
-                siteMenu.executeUIAction(id);
-            };
+                return function ()
+                {
+                    siteMenu.executeUIAction(actionId);
+                }
+            })(id);
 
             menuBuilder.addMenuButton(label, buttonClickEvent);
         }
@@ -215,11 +218,22 @@
                     var cell = document.createElement("td");
 
                     var value = "";
+                    
                     if (column.ColumnName != null && column.ColumnName.length > 0)
                     {
-                        value = data[i][column.ColumnName];
+                        value = data[i];
+                        var colName = column.ColumnName;
+                        while (colName.indexOf('.') > -1)
+                        {
+                            var index = colName.indexOf('.');
+                            var partName = colName.substring(0, index);
+                            
+                            value = value[partName];
+                            colName = colName.substring(index+1);
+                        }
+                        value = value[colName];
                     }
-
+                    
                     if (column.ColumnType == 1) /// Boolean
                     {
                         if (value == true)
@@ -282,6 +296,7 @@
                     else
                     {
                         /// Don't do anything to the value
+                        
                         cell.innerHTML = value;
                     }
 
