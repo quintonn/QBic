@@ -134,7 +134,7 @@ namespace WebsiteTemplate.Controllers
                 Id = user.Id
             };
             //var json = JsonConvert.SerializeObject(user);
-            return Ok(json);
+            return Json(json);
         }
 
         [HttpPost]
@@ -157,13 +157,13 @@ namespace WebsiteTemplate.Controllers
                 var inputButtons = eventItem.InputButtons;
                 if (inputButtons.Where(i => i.ActionNumber == actionId).Count() == 0)
                 {
-                    return Ok(new List<Event>()
+                    return Json(new List<Event>()
                     {
                         new ShowMessage("No button with action number " + actionId + " exists for " + eventItem.Description),
                     });
                 };
                 var result = await eventItem.ProcessAction(formData, actionId);
-                return Ok(result);
+                return Json(result);
             }
             catch (Exception ex)
             {
@@ -233,7 +233,7 @@ namespace WebsiteTemplate.Controllers
             {
                 return BadRequest("ERROR: Unknown UIActionType: " + eventItem.GetType().ToString().Split(".".ToCharArray()).Last() + " with id " + id);
             }
-            return Ok(result);
+            return Json(result);
         }
 
         [HttpGet]
@@ -269,7 +269,7 @@ namespace WebsiteTemplate.Controllers
                         });
                     });
             }
-            return Ok(results);
+            return Json(results);
         }
 
         private Dictionary<UserRole, EventNumber> GetMenuItemsForAllRoles()

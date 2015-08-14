@@ -52,5 +52,13 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 };
             }
         }
+
+        public override string ViewMessage
+        {
+            get
+            {
+                return "TODO: Create some kind of table for menus and users allowed to see them";
+            }
+        }
     }
 }

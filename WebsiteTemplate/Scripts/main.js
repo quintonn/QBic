@@ -99,7 +99,7 @@
                 contentType = contentType || "";
 
                 var response = req.responseText;
-
+                
                 if (contentType.indexOf("application/json") > -1)
                 {
                     response = JSON.parse(response);

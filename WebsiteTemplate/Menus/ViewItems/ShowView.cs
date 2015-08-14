@@ -71,5 +71,7 @@ namespace WebsiteTemplate.Menus.ViewItems
                 return EventType.DataView;
             }
         }
+
+        public virtual string ViewMessage { get { return ""; } }
     }
 }

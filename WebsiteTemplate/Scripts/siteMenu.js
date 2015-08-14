@@ -200,6 +200,9 @@
             var table = views.getTable();
             var row = document.createElement("tr");
 
+            var viewTitle = document.getElementById('viewsTitle');
+            viewTitle.innerHTML = settings.Description;
+
             for (var j = 0; j < settings.Columns.length; j++)
             {
                 var headCell = document.createElement("th");
@@ -347,6 +350,17 @@
 
                 viewMenu.appendChild(button);
             }
+
+            var viewFooter = document.getElementById('viewsFooter');
+            if (settings.ViewMessage != null && settings.ViewMessage.length > 0)
+            {
+                viewFooter.innerHTML = settings.ViewMessage;
+            }
+            else
+            {
+                viewFooter.innerHTML = "";
+            }
+
             if (callback)
             {
                 callback();
