@@ -7,6 +7,8 @@
             //navigation.processUserMenuResponse(menuList);
             //navigation.entryPoint(menuList);
             menuBuilder.buildMenu(menuList);
+            //clear maincontent
+            menuBuilder.clearNode('mainContent');
         });
         
         for (var key in menuList)
