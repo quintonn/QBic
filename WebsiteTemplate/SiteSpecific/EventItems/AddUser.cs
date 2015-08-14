@@ -55,15 +55,12 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             }
         }
 
-        //public override IList<Menus.BaseItems.Event> InputButtons
         public override IList<InputButton> InputButtons
         {
             get
             {
                 return new List<InputButton>()
                 {
-                    //new CreateUser(),
-                    //new CancelInputDialog()
                     new InputButton("Submit", 0),
                     new InputButton("Cancel", 1)
                 };
@@ -72,7 +69,6 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
 
         public override System.Threading.Tasks.Task Initialize(string data)
         {
-            //throw new NotImplementedException();
             return Task.FromResult(0);
         }
 
@@ -146,8 +142,6 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
 
                 if (!success)
                 {
-                    //await CoreAuthenticationEngine.UserManager.DeleteAsync(user);
-
                     return new List<Event>()
                     {
                         new ShowMessage("User created but there was an error sending activation email:\n" + message),
