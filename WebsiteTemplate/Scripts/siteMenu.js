@@ -4,11 +4,12 @@
     {
         menuBuilder.addMenuButton("Home", function ()
         {
-            //navigation.processUserMenuResponse(menuList);
-            //navigation.entryPoint(menuList);
             menuBuilder.buildMenu(menuList);
+
             //clear maincontent
             menuBuilder.clearNode('mainContent');
+            //TODO: This should change. Maybe have a home page user setting to call
+            console.log("TODO: This should change to call a getHomePage endpoint or something.");
         });
         
         for (var key in menuList)
@@ -55,7 +56,6 @@
             {
                 return function ()
                 {
-                    console.log('response callback of process ui action');
                     siteMenu.processUIActionResponse(items);
                 }
             })(responseItems);
@@ -119,8 +119,6 @@
                 {
                     case 0: /// Text
                     case 1: /// Password
-                        //var label = document.createElement('label');
-                        //label.innerHTML = inputField.InputLabel;
                         var labelCell = document.createElement('td');
                         labelCell.innerHTML = inputField.InputLabel;
                         row.appendChild(labelCell);
@@ -128,8 +126,6 @@
                         var inp = document.createElement('input');
                         if (inputField.InputType == 1)
                         {
-                            //inp.setAttribute('type', 'password');
-                            //alert('d');
                             inp.type = "password";
                         }
                         else
@@ -284,23 +280,17 @@
                     }
                     else
                     {
-                        //console.log("Column type = " + column.ColumnType);
                         /// Don't do anything to the value
-
                         cell.innerHTML = value;
                     }
 
                     if (column.ColumnSetting != null)
                     {
-                        //console.log(column.ColumnSetting);
                         if (column.ColumnSetting.ColumnSettingType == 0) /// Show/Hide column
                         {
                             var show = column.ColumnSetting.Display == 0;
                             var otherColumnValue = data[i][column.ColumnSetting.OtherColumnToCheck].toString();
                             var showHideValue = column.ColumnSetting.OtherColumnValue.toString();
-                            //console.log('showHideValue = ' + showHideValue);
-                            //console.log("value = " + otherColumnValue);
-                            //console.log("Show = " + show);
                             
                             if ((otherColumnValue == showHideValue && show == true) ||
                                  (otherColumnValue != showHideValue && show == false))
@@ -346,106 +336,5 @@
                 callback();
             }
         });
-    },
-
-    getUserRolesForView: function ()
-    {
-        main.makeWebCall(main.menuApiUrl + "getUserRoles", "GET", siteMenu.showUserRoles);
-    },
-
-    showUserRoles: function (data)
-    {
-        navigation.loadHtmlBody('mainContent', 'Views.html', function ()
-        {
-            //siteMenu.createAddUserButton();
-            var settings = [];
-            settings.push(new views.viewSetting('Id', 'Id'));
-            settings.push(new views.viewSetting('Name', 'Name'));//, 'a', siteMenu.editUserRole));
-            settings.push(new views.viewSetting('Description', 'Description'));
-            //settings.push(new views.viewSetting("", "X", "button", siteMenu.confirmDeleteUserRole));
-
-            views.addDataToTable(settings, data);
-        });
-    },
-
-    getUsers: function()
-    {
-        main.makeWebCall(main.menuApiUrl + "getUsers", "GET", siteMenu.showUsers);
-    },
-    
-    showUsers: function (data)
-    {
-        navigation.loadHtmlBody('mainContent', 'Views.html', function ()
-        {
-            siteMenu.createAddUserButton();
-            var settings = [];
-            settings.push(new views.viewSetting('Id', 'Id'));
-            settings.push(new views.viewSetting('Name', 'UserName', 'a', siteMenu.editUser));
-            settings.push(new views.viewSetting('Email', 'Email'));
-            settings.push(new views.viewSetting('Role', 'UserRole/Name'));
-            settings.push(new views.viewSetting('Email Confirmed', 'EmailConfirmed', 'bool'));
-            settings.push(new views.viewSetting("", "#Resend Confirmation Email", "a", siteMenu.resendConfirmationEmail, siteMenu.showResendConfirmationLink))
-            settings.push(new views.viewSetting("", "X", "button", siteMenu.confirmDeleteUser));
-
-            views.addDataToTable(settings, data);
-        });
-    },
-
-    editUser: function(index, data)
-    {
-        var user = data[index];
-        siteMenu.getUserRoles(user);
-    },
-
-    showResendConfirmationLink: function(index, data)
-    {
-        var user = data[index];
-        return user.EmailConfirmed == false;
-    },
-
-    resendConfirmationEmail: function(index, data)
-    {
-        var userToDelete = data[index];
-
-        var callback = function (data)
-        {
-            inputDialog.showMessage(data);
-            siteMenu.getUsers();
-        };
-        main.makeWebCall(main.menuApiUrl + "resendConfirmationEmail/" + userToDelete.Id, "POST", callback);
-    },
-
-    confirmDeleteUser: function(index, data)
-    {
-        var userToDelete = data[index];
-        var doDelete = confirm("Delete user " + userToDelete.UserName + "?");
-        if (doDelete == true)
-        {
-            siteMenu.deleteUser(userToDelete.Id);
-        }
-    },
-
-    deleteUser: function(userId)
-    {
-        alert('delete user');
-        var callback = function ()
-        {
-            inputDialog.showMessage('User successfully deleted');
-            siteMenu.getUsers();
-        };
-        main.makeWebCall(main.menuApiUrl + "deleteUser/" + userId, "DELETE", callback);
-    },
-
-    createAddUserButton: function ()
-    {
-        alert('create add user button');
-        var viewMenu = document.getElementById("viewsMenu");
-        var button = document.createElement("button");
-        button.innerHTML = "Add";
-        button.onclick = function ()
-        {
-            siteMenu.getUserRoles();
-        };
-        viewMenu.appendChild(button);
     },
 };

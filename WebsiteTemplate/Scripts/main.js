@@ -136,12 +136,6 @@
                 else
                 {
                     inputDialog.showMessage(respData.Message);
-                    console.log(req);
-                    
-                    //console.log(req.response.message);
-                    //console.log(req.responseTex.message);
-                    //console.log(respData.message);
-                    //console.log(respData.error_description);
                 }
                 break;
             case 401: //Unauthorized: Need to show login screen
@@ -151,7 +145,6 @@
                 inputDialog.showMessage("You are not authorized to perform the requested action.\n" + req.statusText);
                 break;
             case 500:
-                //console.log("500 response:\n" + JSON.stringify(req));
                 var err = JSON.parse(req.response);
                 err = err.ExceptionMessage || err;
                 inputDialog.showMessage("Internal Server Error:\n" + err);

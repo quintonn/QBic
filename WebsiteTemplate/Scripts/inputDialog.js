@@ -49,9 +49,9 @@
     showMessage: function (settings, callback, args)
     {
         /// TODO: Need to store the current state of the input dialog 
+        //        For eg, what I need to show a message box while on an input page
         menuBuilder.clearNode('dlgMessage');
 
-        console.log(settings);
         var message = settings.ConfirmationMessage;
 
         if (message == null)
