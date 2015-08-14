@@ -59,12 +59,9 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
 
         private User User { get; set; }
 
-        public override EventNumber Id
+        public override EventNumber GetId()
         {
-            get
-            {
-                return EventNumber.EditUser;
-            }
+            return EventNumber.EditUser;
         }
 
         public override string Name

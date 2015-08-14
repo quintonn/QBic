@@ -22,12 +22,9 @@ namespace WebsiteTemplate.Menus
             EventNumber = eventNumber;
         }
 
-        public override EventNumber Id
+        public override EventNumber GetId()
         {
-            get
-            {
-                return EventNumber.ExecuteAction;
-            }
+            return EventNumber.ExecuteAction;
         }
 
         public override string Name

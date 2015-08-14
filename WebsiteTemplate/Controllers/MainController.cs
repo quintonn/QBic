@@ -59,7 +59,7 @@ namespace WebsiteTemplate.Controllers
                 if (type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(Event)))
                 {
                     var instance = (Event)Activator.CreateInstance(type);
-                    EventList.Add(instance.Id, instance);
+                    EventList.Add(instance.GetId(), instance);
                 }
             }
         }
@@ -203,11 +203,11 @@ namespace WebsiteTemplate.Controllers
                 
                 using (var session = Store.OpenSession())
                 {
-                    var listType = typeof(List<>).MakeGenericType(action.DataType);
+                    var listType = typeof(List<>).MakeGenericType(action.GetDataType());
                     var myList = Activator.CreateInstance(listType);
                     var list = myList as System.Collections.IList;
 
-                    session.CreateCriteria(action.DataType)
+                    session.CreateCriteria(action.GetDataType())
                            //.Add(Restrictions.Eq("", ""))   //TODO: Can add filter/query items here
                            .List(list);
                     action.ViewData = list;
@@ -265,7 +265,7 @@ namespace WebsiteTemplate.Controllers
                             }
                             var eventItem = EventList[i];
                             
-                            results.Add((int)eventItem.Id, eventItem.Description);
+                            results.Add((int)eventItem.GetId(), eventItem.Description);
                         });
                     });
             }

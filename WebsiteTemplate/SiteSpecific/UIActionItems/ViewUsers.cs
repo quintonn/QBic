@@ -12,56 +12,43 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
 {
     public class ViewUsers : ShowView
     {
-        public override EventNumber Id
+        public override EventNumber GetId()
         {
-            get
-            {
-                return EventNumber.ViewUsers;
-            }
+            return EventNumber.ViewUsers;
         }
 
-        public override Type DataType
+        public override Type GetDataType()
         {
-            get
-            {
-                return typeof(User);
-            }
+            return typeof(User);
         }
 
-        public override IList<ViewColumn> Columns
+        public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
-            get
-            {
-                var results = new List<ViewColumn>();
-                results.Add(new StringColumn("Id", "Id"));
-                results.Add(new StringColumn("Name", "UserName"));
-                results.Add(new StringColumn("Email", "Email"));
-                results.Add(new BooleanColumn("Email Confirmed", "EmailConfirmed", "Yes", "No"));
-                results.Add(new LinkColumn("", "Confirm Email", "Id", "Send Confirmation Email", EventNumber.SendConfirmationEmail)
-                    {
-                        ColumnSetting = new ShowHideColumnSetting()
-                        {
-                            Display = ColumnDisplayType.Show,
-                            OtherColumnToCheck = "EmailConfirmed",
-                            OtherColumnValue = "true"
-                        }
-                    });
-                results.Add(new ButtonColumn("", "", ButtonTextSource.Fixed, "X")
+            columnConfig.AddStringColumn("Id", "Id");
+            columnConfig.AddStringColumn("Name", "UserName");
+            columnConfig.AddStringColumn("Email", "Email");
+            columnConfig.AddBooleanColumn("Email Confirmed", "EmailConfirmed", "Yes", "No");
+            columnConfig.AddLinkColumn("", "Confirm Email", "Id", "Send Confirmation Email", EventNumber.SendConfirmationEmail,
+                new ShowHideColumnSetting()
                 {
-                    ColumnSetting = new ShowHideColumnSetting()
-                    {
-                        Display = ColumnDisplayType.Hide,
-                        OtherColumnToCheck = "CanDelete",
-                        OtherColumnValue = "true"
-                    },
-                    Event = new UserConfirmation("Delete User?")
-                    {
-                        OnConfirmationUIAction = EventNumber.DeleteUser
-                    }
-                });
-                results.Add(new LinkColumn("", "Edit", "Id", "Edit", EventNumber.EditUser));
-                return results;
-            }
+                    Display = ColumnDisplayType.Show,
+                    OtherColumnToCheck = "EmailConfirmed",
+                    OtherColumnValue = "true"
+                }
+            );
+            columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X",
+                new ShowHideColumnSetting()
+                {
+                    Display = ColumnDisplayType.Hide,
+                    OtherColumnToCheck = "CanDelete",
+                    OtherColumnValue = "true"
+                },
+                new UserConfirmation("Delete User?")
+                {
+                    OnConfirmationUIAction = EventNumber.DeleteUser
+                }
+            );
+            columnConfig.AddLinkColumn("", "Edit", "Id", "Edit", EventNumber.EditUser);
         }
 
         public override IList<MenuItem> ViewMenu
@@ -71,22 +58,6 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 var results = new List<MenuItem>();
                 results.Add(new MenuItem("Add", EventNumber.AddUser));
                 return results;
-            }
-        }
-
-        public override IList<object> RowSettings
-        {
-            get
-            {
-                return new List<object>();
-            }
-        }
-
-        public override IList<object> OtherSettings
-        {
-            get
-            {
-                return new List<object>();
             }
         }
 

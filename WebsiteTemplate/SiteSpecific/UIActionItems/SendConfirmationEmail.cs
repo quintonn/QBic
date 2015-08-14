@@ -20,13 +20,9 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
 {
     public class SendConfirmationEmail : DoSomething
     {
-        public override EventNumber Id
+        public override EventNumber GetId()
         {
-
-            get
-            {
-                return EventNumber.SendConfirmationEmail;
-            }
+            return EventNumber.SendConfirmationEmail;
         }
 
         public override string Name
@@ -66,14 +62,14 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             using (var session = Store.OpenSession())
             {
                 var user = session.Get<User>(id);
-                try
-                {
+                //try
+                //{
                     emailSentResultMessage = await SendEmail(user.Id, user.UserName, user.Email);
-                }
-                catch (FormatException e)
-                {
-                    emailSentResultMessage = e.Message;
-                }
+                //}
+                //catch (FormatException e)
+                //{
+                    //emailSentResultMessage = e.Message;
+                //}
             }
 
             if (String.IsNullOrWhiteSpace(emailSentResultMessage))

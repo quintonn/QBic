@@ -107,7 +107,7 @@
         inputDialog.loadInputPage("InputDialog.html", function ()
         {
             var title = document.getElementById('pageTitle');
-            title.innerHTML = settings.Name;
+            title.innerHTML = settings.Description;
 
             var inputTable = document.getElementById('inputTable');
             for (var i = 0; i < settings.InputFields.length; i++)
@@ -177,7 +177,7 @@
 
                             data[inputField.InputName] = inputValue;
                         }
-
+                        
                         siteMenu.processEvent(settings.Id, data, id);
                     }
                 })(buttonItem.ActionNumber, settings);
@@ -265,6 +265,7 @@
                     {
                         var a = document.createElement('a');
                         a.href = "#";
+                        //alert(column.LinkLabel);
                         a.innerHTML = column.LinkLabel;
                         a.onclick = (function (col, index)
                         {
@@ -325,7 +326,6 @@
                 {
                     return function ()
                     {
-                        alert(id);
                         siteMenu.executeUIAction(id);
                     }
                 })(menu.EventNumber);

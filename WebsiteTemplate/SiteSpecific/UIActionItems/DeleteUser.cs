@@ -13,12 +13,9 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
 {
     public class DeleteUser : DoSomething
     {
-        public override EventNumber Id
+        public override EventNumber GetId()
         {
-            get
-            {
-                return EventNumber.DeleteUser;
-            }
+            return EventNumber.DeleteUser;
         }
 
         public override string Name

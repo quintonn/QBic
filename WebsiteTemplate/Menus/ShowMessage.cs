@@ -18,12 +18,9 @@ namespace WebsiteTemplate.Menus
             }
         }
 
-        public override EventNumber Id
+        public override EventNumber GetId()
         {
-            get
-            {
-                return EventNumber.ShowMessage;
-            }
+            return EventNumber.ShowMessage;
         }
 
         public override string Description

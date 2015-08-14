@@ -13,7 +13,22 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// <summary>
         /// The columns to show in the view.
         /// </summary>
-        public abstract IList<ViewColumn> Columns{ get; }
+        //public abstract IList<ViewColumn> Columns{ get; }
+
+        /// <summary>
+        /// Add columns for the view.
+        /// </summary>
+        /// <param name="columnConfig"></param>
+        public abstract void ConfigureColumns(ColumnConfiguration columnConfig);
+
+        private IList<ViewColumn> DoConfigureColumns()
+        {
+            var config = new ColumnConfiguration();
+            ConfigureColumns(config);
+            return config.GetColumns();
+        }
+
+        public IList<ViewColumn> Columns { get { return DoConfigureColumns(); } }
 
         /// <summary>
         /// Name of database table from which to retrieve the columns.
@@ -29,7 +44,7 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// <summary>
         /// The type/class to retrieve from the DB. (Using NHibernat -> this is what i need at this point).
         /// </summary>
-        public abstract Type DataType { get; }
+        public abstract Type GetDataType();
 
         /// <summary>
         /// This should contain stuff like:
@@ -37,7 +52,7 @@ namespace WebsiteTemplate.Menus.ViewItems
         ///    * Enable or specify entire row on click events
         ///    * etc...
         /// </summary>
-        public abstract IList<object> RowSettings { get; }
+        //public abstract IList<object> RowSettings { get; }
 
         /// <summary>
         /// What if we need to limit the results in the view based on user name, role, etc, etc.
@@ -45,7 +60,7 @@ namespace WebsiteTemplate.Menus.ViewItems
         ///   * Or, a function to manually filter the results
         ///   * etc...
         /// </summary>
-        public abstract IList<object> OtherSettings { get; }
+        //public abstract IList<object> OtherSettings { get; }
 
         public abstract IList<MenuItem> ViewMenu { get; }
 

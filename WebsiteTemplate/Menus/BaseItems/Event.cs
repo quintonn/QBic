@@ -25,7 +25,9 @@ namespace WebsiteTemplate.Menus.BaseItems
         /// <summary>
         /// Hard coded Id.
         /// </summary>
-        public abstract EventNumber Id { get; }
+        public abstract EventNumber GetId();
+
+        public EventNumber Id { get { return GetId(); } }
 
         public abstract string Name { get; }
 

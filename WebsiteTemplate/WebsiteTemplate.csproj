@@ -176,6 +176,7 @@
     <Compile Include="Menus\ViewItems\BooleanColumn.cs" />
     <Compile Include="Menus\ViewItems\ButtonColumn.cs" />
     <Compile Include="Menus\ViewItems\ButtonTextSource.cs" />
+    <Compile Include="Menus\ViewItems\ColumnConfiguration.cs" />
     <Compile Include="Menus\ViewItems\ColumnDisplayType.cs" />
     <Compile Include="Menus\ViewItems\ColumnSetting.cs" />
     <Compile Include="Menus\ViewItems\ColumnType.cs" />

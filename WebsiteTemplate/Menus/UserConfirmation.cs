@@ -10,12 +10,9 @@ namespace WebsiteTemplate.Menus
 {
     public class UserConfirmation : Event
     {
-        public override EventNumber Id
+        public override EventNumber GetId()
         {
-            get
-            {
-                return EventNumber.UserConfirmation;
-            }
+            return EventNumber.UserConfirmation;
         }
 
         public override string Name

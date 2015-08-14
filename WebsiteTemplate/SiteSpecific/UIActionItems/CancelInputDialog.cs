@@ -9,12 +9,9 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
 {
     public class CancelInputDialog : Event
     {
-        public override EventNumber Id
+        public override EventNumber GetId()
         {
-            get
-            {
-                return EventNumber.CancelInputDialog;
-            }
+            return EventNumber.CancelInputDialog;
         }
 
         public override string Name

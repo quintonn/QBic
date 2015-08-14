@@ -16,12 +16,9 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
 {
     public class AddUser : GetInput
     {
-        public override EventNumber Id
+        public override EventNumber GetId()
         {
-            get
-            {
-                return EventNumber.AddUser;
-            }
+            return EventNumber.AddUser;
         }
 
         public override string Name
@@ -145,7 +142,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                     sendEmail.Store = Store;
                     sendEmail.Request = Request;
 
-                    await sendEmail.ProcessAction(user.Id);
+                    var emailResult = await sendEmail.ProcessAction(user.Id);
                     success = true;
                 }
                 catch (FormatException e)
