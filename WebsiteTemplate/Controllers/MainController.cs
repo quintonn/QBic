@@ -159,7 +159,7 @@ namespace WebsiteTemplate.Controllers
                 {
                     return Ok(new List<Event>()
                     {
-                        new ShowMessage("No button with action number " + actionId + " exists for " + eventItem.Name),
+                        new ShowMessage("No button with action number " + actionId + " exists for " + eventItem.Description),
                     });
                 };
                 var result = await eventItem.ProcessAction(formData, actionId);

@@ -27,14 +27,6 @@ namespace WebsiteTemplate.Menus
             return EventNumber.ExecuteAction;
         }
 
-        public override string Name
-        {
-            get
-            {
-                return "Execute Action";
-            }
-        }
-
         public override string Description
         {
             get

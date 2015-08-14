@@ -25,14 +25,6 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             return EventNumber.SendConfirmationEmail;
         }
 
-        public override string Name
-        {
-            get
-            {
-                return "Send Confirmation Email";
-            }
-        }
-
         public override string Description
         {
             get

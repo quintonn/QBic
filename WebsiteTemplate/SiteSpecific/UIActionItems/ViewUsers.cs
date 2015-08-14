@@ -61,14 +61,6 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             }
         }
 
-        public override string Name
-        {
-            get
-            {
-                return "View Users";
-            }
-        }
-
         public override string Description
         {
             get

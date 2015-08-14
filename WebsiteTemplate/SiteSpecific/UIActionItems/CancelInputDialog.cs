@@ -14,14 +14,6 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             return EventNumber.CancelInputDialog;
         }
 
-        public override string Name
-        {
-            get
-            {
-                return "Cancel";
-            }
-        }
-
         public override string Description
         {
             get

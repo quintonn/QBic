@@ -18,14 +18,6 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             return EventNumber.DeleteUser;
         }
 
-        public override string Name
-        {
-            get
-            {
-                return "Delete User";
-            }
-        }
-
         public override string Description
         {
             get

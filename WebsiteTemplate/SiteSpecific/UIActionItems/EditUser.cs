@@ -64,14 +64,6 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             return EventNumber.EditUser;
         }
 
-        public override string Name
-        {
-            get
-            {
-                return "Edit User";
-            }
-        }
-
         public override string Description
         {
             get

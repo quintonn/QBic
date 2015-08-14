@@ -15,14 +15,6 @@ namespace WebsiteTemplate.Menus
             return EventNumber.UserConfirmation;
         }
 
-        public override string Name
-        {
-            get
-            {
-                return "User Confirmation";
-            }
-        }
-
         public override string Description
         {
             get

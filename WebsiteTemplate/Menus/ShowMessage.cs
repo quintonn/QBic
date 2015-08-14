@@ -10,14 +10,6 @@ namespace WebsiteTemplate.Menus
 {
     public class ShowMessage : UserConfirmation
     {
-        public override string Name
-        {
-            get
-            {
-                return "Show Message";
-            }
-        }
-
         public override EventNumber GetId()
         {
             return EventNumber.ShowMessage;

@@ -21,19 +21,11 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             return EventNumber.AddUser;
         }
 
-        public override string Name
-        {
-            get
-            {
-                return "Add User";
-            }
-        }
-
         public override string Description
         {
             get
             {
-                return "Add a new user";
+                return "Add User";
             }
         }
 
