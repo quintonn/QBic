@@ -12,6 +12,14 @@ namespace WebsiteTemplate.Models
 
         public virtual UserRole UserRole { get; set; }
 
+        public virtual string UserRoleString
+        {
+            get
+            {
+                return UserRole.ToString();
+            }
+        }
+
         public UserRoleAssociation()
             : base()
         {

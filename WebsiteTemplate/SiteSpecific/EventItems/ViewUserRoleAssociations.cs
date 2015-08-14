@@ -13,7 +13,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
             columnConfig.AddStringColumn("User", "User.UserName");
-            columnConfig.AddStringColumn("User Role", "UserRole");
+            columnConfig.AddStringColumn("User Role", "UserRoleString");
         }
 
         public override Type GetDataType()
