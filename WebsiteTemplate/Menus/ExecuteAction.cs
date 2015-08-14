@@ -8,25 +8,25 @@ using WebsiteTemplate.SiteSpecific.Utilities;
 
 namespace WebsiteTemplate.Menus
 {
-    public class ExecuteAction : UIAction
+    public class ExecuteAction : Event
     {
-        public int UIActionId { get; private set; }
+        public EventNumber EventNumber { get; private set; }
 
         public ExecuteAction()
         {
 
         }
 
-        public ExecuteAction(int uiActionId)
+        public ExecuteAction(EventNumber eventNumber)
         {
-            UIActionId = uiActionId;
+            EventNumber = eventNumber;
         }
 
-        public override int Id
+        public override EventNumber Id
         {
             get
             {
-                return UIActionNumbers.EXECUTE_ACTION;
+                return EventNumber.ExecuteAction;
             }
         }
 

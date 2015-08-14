@@ -15,11 +15,11 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
 {
     public class CreateUser : DoSomething
     {
-        public override async Task<IList<UIAction>> ProcessAction(string data)
+        public override async Task<IList<Event>> ProcessAction(string data)
         {
             if (String.IsNullOrWhiteSpace(data))
             {
-                return new List<UIAction>()
+                return new List<Event>()
                 {
                     new ShowMessage("There was an error creating a new user. No input was received.")
                 };
@@ -37,7 +37,7 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
 
             if (password != confirmPassword)
             {
-                return new List<UIAction>()
+                return new List<Event>()
                 {
                     new ShowMessage("Password and password confirmation do not match")
                 };
@@ -51,7 +51,7 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             if (!result.Succeeded)
             {
                 message = "Unable to create user:\n" + String.Join("\n", result.Errors);
-                return new List<UIAction>()
+                return new List<Event>()
                 {
                      new ShowMessage(message)
                 };
@@ -76,27 +76,27 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             {
                 //await CoreAuthenticationEngine.UserManager.DeleteAsync(user);
 
-                return new List<UIAction>()
+                return new List<Event>()
                 {
                     new ShowMessage("User created but there was an error sending activation email:\n" + message),
                     new CancelInputDialog(),
-                    new ExecuteAction(UIActionNumbers.VIEW_USERS)
+                    new ExecuteAction(EventNumber.ViewUsers)
                 };
             }
 
-            return new List<UIAction>()
+            return new List<Event>()
             {
                 new ShowMessage("User created successfully.\nCheck your inbox for activation email."),
                 new CancelInputDialog(),
-                new ExecuteAction(UIActionNumbers.VIEW_USERS)
+                new ExecuteAction(EventNumber.ViewUsers)
             };
         }
 
-        public override int Id
+        public override EventNumber Id
         {
             get
             {
-                return UIActionNumbers.CREATE_USER;
+                return EventNumber.CreateUser;
             }
         }
 

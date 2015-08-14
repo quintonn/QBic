@@ -9,7 +9,7 @@ namespace WebsiteTemplate.Menus.InputItems
     /// <summary>
     /// The class can be inherited for UI actions that require input from the user.
     /// </summary>
-    public abstract class GetInput : UIAction
+    public abstract class GetInput : Event
     {
         public override UIActionType ActionType
         {
@@ -21,6 +21,6 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public abstract IList<InputField> InputFields { get; }
 
-        public abstract IList<UIAction> InputButtons { get; }
+        public abstract IList<Event> InputButtons { get; }
     }
 }

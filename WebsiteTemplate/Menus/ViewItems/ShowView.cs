@@ -7,7 +7,7 @@ using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Menus.ViewItems
 {
-    public abstract class ShowView : UIAction
+    public abstract class ShowView : Event
     {
         public Object ViewData { get; set; }
         /// <summary>
@@ -47,7 +47,7 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// </summary>
         public abstract IList<object> OtherSettings { get; }
 
-        public abstract IList<UIAction> ViewMenu { get; }
+        public abstract IList<Event> ViewMenu { get; }
 
         public override UIActionType ActionType
         {

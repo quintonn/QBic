@@ -12,11 +12,11 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
 {
     public class ViewUsers : ShowView
     {
-        public override int Id
+        public override EventNumber Id
         {
             get
             {
-                return UIActionNumbers.VIEW_USERS;
+                return EventNumber.ViewUsers;
             }
         }
 
@@ -45,7 +45,7 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
                 results.Add(new StringColumn("Name", "UserName", "UserName"));
                 results.Add(new StringColumn("Email", "Email", "Email"));
                 results.Add(new BooleanColumn("Email Confirmed", "EmailConfirmed", "EmailConfirmed", "Yes", "No"));
-                results.Add(new LinkColumn("", "", "Confirm Email", "Id", "Send Confirmation Email", UIActionNumbers.SEND_CONFIRMATION_EMAIL)
+                results.Add(new LinkColumn("", "", "Confirm Email", "Id", "Send Confirmation Email", EventNumber.SendConfirmationEmail)
                     {
                         ColumnSetting = new ShowHideColumnSetting()
                         {
@@ -64,19 +64,19 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
                     },
                     UIAction = new UserConfirmation("Delete User?")
                     {
-                        OnConfirmationUIAction = UIActionNumbers.DELETE_USER
+                        OnConfirmationUIAction = EventNumber.DeleteUser
                     }
                 });
-                results.Add(new LinkColumn("", "", "Edit", "Id", "Edit", UIActionNumbers.EDIT_USER));
+                results.Add(new LinkColumn("", "", "Edit", "Id", "Edit", EventNumber.EditUser));
                 return results;
             }
         }
 
-        public override IList<Menus.BaseItems.UIAction> ViewMenu
+        public override IList<Menus.BaseItems.Event> ViewMenu
         {
             get
             {
-                var results = new List<UIAction>();
+                var results = new List<Event>();
                 results.Add(new AddUser());
                 return results;
             }

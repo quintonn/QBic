@@ -6,10 +6,11 @@ using System.Web;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.SiteSpecific;
 using System.Web.Http;
+using WebsiteTemplate.SiteSpecific.Utilities;
 
 namespace WebsiteTemplate.Menus.BaseItems
 {
-    public abstract class UIAction
+    public abstract class Event
     {
         internal DataStore Store { get; set; }
 
@@ -24,7 +25,7 @@ namespace WebsiteTemplate.Menus.BaseItems
         /// <summary>
         /// Hard coded Id.
         /// </summary>
-        public abstract int Id { get; }
+        public abstract EventNumber Id { get; }
 
         public abstract string Name { get; }
 
@@ -48,7 +49,7 @@ namespace WebsiteTemplate.Menus.BaseItems
         /// </summary>
         public IList<object> ActionData { get; set; }
 
-        public UIAction()
+        public Event()
         {
             ActionData = new List<object>();
         }

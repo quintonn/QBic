@@ -31,19 +31,19 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             }
         }
 
-        public override int Id
+        public override EventNumber Id
         {
             get
             {
-                return UIActionNumbers.DO_EDIT_USER;
+                return EventNumber.DoEditUser;
             }
         }
 
-        public override IList<Menus.BaseItems.UIAction> InputButtons
+        public override IList<Menus.BaseItems.Event> InputButtons
         {
             get
             {
-                return new List<UIAction>()
+                return new List<Event>()
                 {
                     new ProcessDoEditUser(),
                     new CancelInputDialog()

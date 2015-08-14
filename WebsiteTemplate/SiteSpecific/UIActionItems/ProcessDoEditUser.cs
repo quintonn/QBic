@@ -17,7 +17,7 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
 
         }
 
-        public override async System.Threading.Tasks.Task<IList<Menus.BaseItems.UIAction>> ProcessAction(string data)
+        public override async System.Threading.Tasks.Task<IList<Menus.BaseItems.Event>> ProcessAction(string data)
         {
             var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
 
@@ -31,19 +31,19 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
                 session.Flush();
             }
 
-            return new List<UIAction>()
+            return new List<Event>()
             {
                 new ShowMessage("User modified successfully."),
                 new CancelInputDialog(),
-                new ExecuteAction(UIActionNumbers.VIEW_USERS)
+                new ExecuteAction(EventNumber.ViewUsers)
             };
         }
 
-        public override int Id
+        public override EventNumber Id
         {
             get
             {
-                return UIActionNumbers.PROCESS_EDIT_USER;
+                return EventNumber.ProcessEditUser;
             }
         }
 

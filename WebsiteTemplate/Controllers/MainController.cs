@@ -27,7 +27,7 @@ namespace WebsiteTemplate.Controllers
     [RoutePrefix("api/v1")]
     public class MainController : ApiController
     {
-        public static IDictionary<int, UIAction> UIActionList { get; set; }
+        public static IDictionary<EventNumber, Event> UIActionList { get; set; }
 
         private DataStore Store { get; set; }
 
@@ -51,14 +51,14 @@ namespace WebsiteTemplate.Controllers
 
         private static void PopulateUIActionList()
         {
-            UIActionList = new Dictionary<int, UIAction>();
+            UIActionList = new Dictionary<EventNumber, Event>();
 
-            var types = typeof(UIAction).Assembly.GetTypes();
+            var types = typeof(Event).Assembly.GetTypes();
             foreach (var type in types)
             {
-                if (type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(UIAction)))
+                if (type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(Event)))
                 {
-                    var instance = (UIAction)Activator.CreateInstance(type);
+                    var instance = (Event)Activator.CreateInstance(type);
                     UIActionList.Add(instance.Id, instance);
                 }
             }
@@ -138,23 +138,26 @@ namespace WebsiteTemplate.Controllers
         }
 
         [HttpPost]
-        [Route("executeUIAction/{*id}")]
+        [Route("executeUIAction/{*eventId}")]
         [RequireHttps]
         [Authorize]
-        public async Task<IHttpActionResult> ExecuteUIAction(int id)
+        public async Task<IHttpActionResult> ExecuteUIAction(int eventId)
         {
             var user = await this.GetLoggedInUserAsync();
             var data = await Request.Content.ReadAsStringAsync();
+
+            //var id = (EventNumber)Enum.Parse(typeof(EventNumber), eventId);
+            var id = (EventNumber)eventId;
 
             //var temp = HttpUtility.UrlDecode(data);
             //var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(temp);
 
             if (!UIActionList.ContainsKey(id))
             {
-                return BadRequest("No action has been found for UIActionId: " + id);
+                return BadRequest("No action has been found for event number: " + id);
             }
 
-            var result = new List<UIAction>();
+            var result = new List<Event>();
 
             var uiAction = UIActionList[id];
             uiAction.Store = Store;
@@ -227,23 +230,23 @@ namespace WebsiteTemplate.Controllers
                             }
                             var uiAction = UIActionList[i];
                             //results.Add(uiAction);
-                            results.Add(uiAction.Id, uiAction.MenuLabel);
+                            results.Add((int)uiAction.Id, uiAction.MenuLabel);
                         });
                     });
             }
             return Ok(results);
         }
 
-        private Dictionary<UserRole, int> GetMenuItemsForAllRoles()
+        private Dictionary<UserRole, EventNumber> GetMenuItemsForAllRoles()
         {
-            var results = new Dictionary<UserRole, int>();
+            var results = new Dictionary<UserRole, EventNumber>();
 
             // So here i can create menus for users based on their roles.
             // So if a user is in 2 roles, he will get all of those menu items.
             //results.Add("User Role", UIActionId);
 
             //EG
-            results.Add(UserRole.ViewUsers, UIActionNumbers.VIEW_USERS);
+            results.Add(UserRole.ViewUsers, EventNumber.ViewUsers);
 
             return results;
         }

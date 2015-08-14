@@ -9,7 +9,7 @@ namespace WebsiteTemplate.Menus.BaseItems
     /// This class is for sub menus. 
     /// This allows creating a sub menu
     /// </summary>
-    public abstract class SubMenuAction : UIAction
+    public abstract class SubMenuAction : Event
     {
         /// <summary>
         /// This contains the id's of the UIActions that should appear in this SubMenu.
@@ -17,13 +17,13 @@ namespace WebsiteTemplate.Menus.BaseItems
         /// </summary>
         public abstract IList<int> ChildActionIds { get; }
 
-        public IList<UIAction> ChilUIActions
+        public IList<Event> ChilUIActions
         {
             get
             {
                 /// Use reflection here to get the list of all the UIAction items based on their ids from ChildActionIds
                 /// This is so that we can get the Name, Label, Etc, Etc
-                return new List<UIAction>();
+                return new List<Event>();
             }
         }
 

@@ -11,12 +11,12 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
 {
     public class EditUser : DoSomething
     {
-        public override async System.Threading.Tasks.Task<IList<Menus.BaseItems.UIAction>> ProcessAction(string data)
+        public override async System.Threading.Tasks.Task<IList<Menus.BaseItems.Event>> ProcessAction(string data)
         {
             //var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
             //var id = parameters["Id"];
             var id = data;
-            var results = new List<UIAction>();
+            var results = new List<Event>();
             using (var session = Store.OpenSession())
             {
                 var user = session.Get<User>(id);
@@ -29,11 +29,11 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             return results;
         }
 
-        public override int Id
+        public override EventNumber Id
         {
             get
             {
-                return UIActionNumbers.EDIT_USER;
+                return EventNumber.EditUser;
             }
         }
 

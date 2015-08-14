@@ -20,12 +20,12 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
 {
     public class SendConfirmationEmail : DoSomething
     {
-        public override int Id
+        public override EventNumber Id
         {
 
             get
             {
-                return UIActionNumbers.SEND_CONFIRMATION_EMAIL;
+                return EventNumber.SendConfirmationEmail;
             }
         }
 
@@ -64,9 +64,9 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             }
         }
 
-        public override async Task<IList<UIAction>> ProcessAction(string data)
+        public override async Task<IList<Event>> ProcessAction(string data)
         {
-            var results = new List<UIAction>();
+            var results = new List<Event>();
 
             var emailSentResultMessage = String.Empty;
             var id = data;

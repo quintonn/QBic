@@ -111,6 +111,7 @@
                 {
                     if (settings.OnCancelUIAction > -1)
                     {
+                        alert('2=' + settings.OnCancelUIAction);
                         siteMenu.executeUIAction(settings.OnCancelUIAction, args);
                     }
                     if (callback != null && buttonAdded == false)

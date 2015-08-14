@@ -32,6 +32,6 @@ namespace WebsiteTemplate.Menus.ViewItems
 
         public ButtonTextSource ButtonTextSource { get; set; }
 
-        public UIAction UIAction { get; set; }
+        public Event UIAction { get; set; }
     }
 }

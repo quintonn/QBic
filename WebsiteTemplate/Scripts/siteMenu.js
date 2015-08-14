@@ -30,8 +30,6 @@
 
     processUIActionResponse: function (responseItems)
     {
-        console.log('response items:');
-        console.log(responseItems);
         var response = responseItems[0]; // Get the first item
             
         responseItems.splice(0, 1); // Remove the first item
@@ -88,7 +86,7 @@
                 break;
             case 6: // Execute action
                 //console.log('executing ' + settings.UIActionId);
-                siteMenu.executeUIAction(settings.UIActionId, null);
+                siteMenu.executeUIAction(settings.EventNumber, null);
                 callback();
                 break;
             default:
@@ -279,10 +277,8 @@
                             return function ()
                             {
                                 var formData = data[index][col.KeyColumn];
-                                //formData = JSON.stringify(formData);
                                 
-                                var id = col.UIActionId;
-
+                                var id = col.EventNumber;
                                 siteMenu.executeUIAction(id, formData);
                             }
                         })(column, i);
@@ -341,7 +337,6 @@
                 {
                     return function ()
                     {
-                        //var id = menu.Id;
                         siteMenu.executeUIAction(id);
                     }
                 })(menu.Id);

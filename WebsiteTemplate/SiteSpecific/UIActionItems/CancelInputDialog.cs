@@ -7,13 +7,13 @@ using WebsiteTemplate.SiteSpecific.Utilities;
 
 namespace WebsiteTemplate.SiteSpecific.UIActionItems
 {
-    public class CancelInputDialog : UIAction
+    public class CancelInputDialog : Event
     {
-        public override int Id
+        public override EventNumber Id
         {
             get
             {
-                return UIActionNumbers.CANCEL_INPUT_DIALOG;
+                return EventNumber.CancelInputDialog;
             }
         }
 

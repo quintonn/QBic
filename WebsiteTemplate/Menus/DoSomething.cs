@@ -8,7 +8,7 @@ using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Menus
 {
-    public abstract class DoSomething : UIAction
+    public abstract class DoSomething : Event
     {
         public override UIActionType ActionType
         {
@@ -18,6 +18,6 @@ namespace WebsiteTemplate.Menus
             }
         }
 
-        public abstract Task<IList<UIAction>> ProcessAction(string data);
+        public abstract Task<IList<Event>> ProcessAction(string data);
     }
 }

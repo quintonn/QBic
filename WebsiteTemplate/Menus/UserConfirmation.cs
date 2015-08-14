@@ -8,13 +8,13 @@ using WebsiteTemplate.SiteSpecific.Utilities;
 
 namespace WebsiteTemplate.Menus
 {
-    public class UserConfirmation : UIAction
+    public class UserConfirmation : Event
     {
-        public override int Id
+        public override EventNumber Id
         {
             get
             {
-                return UIActionNumbers.USER_CONFIRMATION;
+                return EventNumber.UserConfirmation;
             }
         }
 
@@ -65,9 +65,9 @@ namespace WebsiteTemplate.Menus
 
         public string ConfirmationButtonText { get; set; }
 
-        public int OnConfirmationUIAction { get; set; }
+        public EventNumber OnConfirmationUIAction { get; set; }
 
-        public int OnCancelUIAction { get; set; }
+        public EventNumber OnCancelUIAction { get; set; }
 
         public UserConfirmation()
         {
@@ -92,8 +92,8 @@ namespace WebsiteTemplate.Menus
             ConfirmationButtonText = confirmationButtonText;
             CancelButtonText = cancelButtonText;
 
-            OnConfirmationUIAction = -1;
-            OnCancelUIAction = -1;
+            OnConfirmationUIAction = EventNumber.Nothing;
+            OnCancelUIAction = EventNumber.Nothing;
         }
     }
 }

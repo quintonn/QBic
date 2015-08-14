@@ -7,7 +7,7 @@ namespace WebsiteTemplate.Menus.BaseItems
 {
     public class UIActionResultx
     {
-        public UIAction UIAction { get; set; }
+        public Event UIAction { get; set; }
 
         public object ResultData { get; set; }
     }

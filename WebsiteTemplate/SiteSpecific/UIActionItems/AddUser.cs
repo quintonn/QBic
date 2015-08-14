@@ -11,11 +11,11 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
 {
     public class AddUser : GetInput
     {
-        public override int Id
+        public override EventNumber Id
         {
             get
             {
-                return UIActionNumbers.ADD_USER;
+                return EventNumber.AddUser;
             }
         }
 
@@ -69,11 +69,11 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             }
         }
 
-        public override IList<Menus.BaseItems.UIAction> InputButtons
+        public override IList<Menus.BaseItems.Event> InputButtons
         {
             get
             {
-                return new List<UIAction>()
+                return new List<Event>()
                 {
                     new CreateUser(),
                     new CancelInputDialog()

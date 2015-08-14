@@ -13,11 +13,11 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
 {
     public class DeleteUser : DoSomething
     {
-        public override int Id
+        public override EventNumber Id
         {
             get
             {
-                return UIActionNumbers.DELETE_USER;
+                return EventNumber.DeleteUser;
             }
         }
 
@@ -53,7 +53,7 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             }
         }
 
-        public override async Task<IList<UIAction>> ProcessAction(string data)
+        public override async Task<IList<Event>> ProcessAction(string data)
         {
             var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
             var id = parameters["Id"];
@@ -69,17 +69,17 @@ namespace WebsiteTemplate.SiteSpecific.UIActionItems
             }
             catch (Exception eee)
             {
-                return new List<UIAction>()
+                return new List<Event>()
                 {
                     new ShowMessage(eee.Message)
                 };
             }
 
-            return new List<UIAction>()
+            return new List<Event>()
             {
                 new ShowMessage("User deleted successfully"),
                 new CancelInputDialog(),
-                new ExecuteAction(UIActionNumbers.VIEW_USERS)
+                new ExecuteAction(EventNumber.ViewUsers)
             };
         }
     }

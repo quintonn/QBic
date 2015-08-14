@@ -18,11 +18,11 @@ namespace WebsiteTemplate.Menus
             }
         }
 
-        public override int Id
+        public override EventNumber Id
         {
             get
             {
-                return UIActionNumbers.SHOW_MESSAGE;
+                return EventNumber.ShowMessage;
             }
         }
 

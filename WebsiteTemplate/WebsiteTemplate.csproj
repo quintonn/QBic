@@ -181,7 +181,7 @@
     <Compile Include="Menus\ViewItems\ColumnSetting.cs" />
     <Compile Include="Menus\ViewItems\ColumnType.cs" />
     <Compile Include="Menus\InputItems\GetInput.cs" />
-    <Compile Include="Menus\BaseItems\UIAction.cs" />
+    <Compile Include="Menus\BaseItems\Event.cs" />
     <Compile Include="Menus\ViewItems\LinkColumn.cs" />
     <Compile Include="Menus\ViewItems\ShowHideColumnSetting.cs" />
     <Compile Include="Menus\ViewItems\ShowView.cs" />
@@ -204,7 +204,7 @@
     <Compile Include="SiteSpecific\UIActionItems\SendConfirmationEmail.cs" />
     <Compile Include="SiteSpecific\UIActionItems\ViewUsers.cs" />
     <Compile Include="SiteSpecific\UserRole.cs" />
-    <Compile Include="SiteSpecific\Utilities\UIActionNumbers.cs" />
+    <Compile Include="Menus\BaseItems\EventNumber.cs" />
     <Compile Include="SiteSpecific\Utilities\WebsiteTemplateConstants.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

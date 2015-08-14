@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using WebsiteTemplate.Menus.BaseItems;
+using WebsiteTemplate.SiteSpecific.Utilities;
 
 namespace WebsiteTemplate.Menus.ViewItems
 {
@@ -12,12 +14,12 @@ namespace WebsiteTemplate.Menus.ViewItems
         {
         }
 
-        public LinkColumn(string columnLabel, string dbColumnName, string columnName, string keyColumn, string linkLabel, int uiActionId)
+        public LinkColumn(string columnLabel, string dbColumnName, string columnName, string keyColumn, string linkLabel, EventNumber eventNumber)
             : this(columnLabel, dbColumnName, columnName)
         {
             KeyColumn = keyColumn;
             LinkLabel = linkLabel;
-            UIActionId = uiActionId;
+            EventNumber = eventNumber;
         }
 
         /// <summary>
@@ -39,8 +41,8 @@ namespace WebsiteTemplate.Menus.ViewItems
         }
 
         /// <summary>
-        /// The UIAction Id to execute when the link is clicked.
+        /// The Event Number to execute when the link is clicked.
         /// </summary>
-        public int UIActionId { get; set; }
+        public EventNumber EventNumber { get; set; }
     }
 }
