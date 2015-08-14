@@ -25,12 +25,24 @@
 </head>
 <body onload="main.bodyOnLoad()">
 
-    <div>
-        <div id="menuContainer"></div>
-        <div id="userDetail" style="display:none; float:right;">
-            <a href="#" id="aUserName">xxx</a>
-            <button onclick="auth.logout()">Logout</button>
-        </div>
+    <div style="width:100%">
+        <table style="width:100%">
+            <tr>
+                <td style="width:100%">
+                    <div id="menuContainer"></div>
+                </td>
+
+                <td>
+                    <a href="#" id="aUserName" style="margin-right:10px">xxx</a>
+                    </td>
+                <td>
+                    <button onclick="auth.logout()">Logout</button>
+                    <div id="userDetail" style="display:none;">
+                    </div>
+                </td>
+                    
+            </tr>
+        </table>
     </div>
 
     <div id="mainContent">

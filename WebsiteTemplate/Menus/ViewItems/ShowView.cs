@@ -81,6 +81,11 @@ namespace WebsiteTemplate.Menus.ViewItems
         {
             get
             {
+                //TODO: This might need a more complex parser to handle other special characters.
+                //   OR
+                // I just allow css/html and display that as is.
+                //   OR
+                // If this all becomes editable in the browser, have a proper editor
                 var result =  GetViewMessage();
                 result = result.Replace("\r", "<br/>").Replace("\n", "<br/>");
                 return result;
