@@ -23,6 +23,17 @@
         }
     },
 
+    processEvent: function (eventId, params, actionId)
+    {
+        var data =
+            {
+                Data: params,
+                ActionId: actionId
+            };
+        data = JSON.stringify(data);
+        main.makeWebCall(main.webApiURL + "processEvent/" + eventId, "POST", siteMenu.processUIActionResponse, data);
+    },
+
     executeUIAction: function(actionId, params)
     {
         main.makeWebCall(main.webApiURL + "executeUIAction/" + actionId, "POST", siteMenu.processUIActionResponse, params);
@@ -152,36 +163,26 @@
                 var buttonItem = settings.InputButtons[i];
                 var button = document.createElement('button');
                 button.style.margin = "10px";
-                button.innerHTML = buttonItem.MenuLabel;
+                button.innerHTML = buttonItem.Label;
 
-                button.onclick = (function (id, actionType, uiAction)
+                button.onclick = (function (id, uiAction)
                 {
                     return function ()
                     {
-                        if (actionType == 4) /// Cancel Dialog
-                        {
-                            inputDialog.cancelInput();
-                        }
-                        else
-                        {
-                            var data = { };
+                        var data = {};
 
 
-                            for (var j = 0; j < uiAction.InputFields.length; j++)
-                            {
-                                var inputField = uiAction.InputFields[j];
-                                var inputValue = document.getElementById("_" + inputField.InputName).value;
-                                
-                                data[inputField.InputName] = inputValue;
-                            }
-                            
-                            data = JSON.stringify(data);
-                            
-                            siteMenu.executeUIAction(id, data);
+                        for (var j = 0; j < uiAction.InputFields.length; j++)
+                        {
+                            var inputField = uiAction.InputFields[j];
+                            var inputValue = document.getElementById("_" + inputField.InputName).value;
+
+                            data[inputField.InputName] = inputValue;
                         }
-                        //inputDialog.cancelInput();
+
+                        siteMenu.processEvent(settings.Id, data, id);
                     }
-                })(buttonItem.Id, buttonItem.ActionType, settings);
+                })(buttonItem.ActionNumber, settings);
 
                 buttonCell.appendChild(button);
             }

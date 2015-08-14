@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using WebsiteTemplate.Menus.BaseItems;
 
@@ -21,6 +22,21 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public abstract IList<InputField> InputFields { get; }
 
-        public abstract IList<Event> InputButtons { get; }
+        //public abstract IList<Event> InputButtons { get; } //TODO: This should be something else, not event.
+        public abstract IList<InputButton> InputButtons { get; }
+
+        /// <summary>
+        /// This is called right before obtaining InputFields and InputButtons.
+        /// </summary>
+        /// <param name="data"></param>
+        public abstract Task Initialize(string data);
+
+        /// <summary>
+        /// This is called once the input is obtained and a button is clicked.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="actionNumber">This is the even number of the button pressed</param>
+        /// <returns></returns>
+        public abstract Task<IList<Event>> ProcessAction(string data, int actionNumber);
     }
 }

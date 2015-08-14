@@ -138,6 +138,40 @@ namespace WebsiteTemplate.Controllers
         }
 
         [HttpPost]
+        [Route("processEvent/{*eventId}")]
+        [RequireHttps]
+        [Authorize]
+        public async Task<IHttpActionResult> ProcessEvent(int eventId)
+        {
+            try
+            {
+                var data = await Request.Content.ReadAsStringAsync();
+                var json = JsonConvert.DeserializeObject<JObject>(data);
+                
+                var parameters = json.ToObject<Dictionary<string, object>>();
+                var formData = parameters["Data"].ToString();
+                var actionId = Convert.ToInt32(parameters["ActionId"]);
+                
+                var id = (EventNumber)eventId;
+                var eventItem = EventList[id] as GetInput;
+                var inputButtons = eventItem.InputButtons;
+                if (inputButtons.Where(i => i.ActionNumber == actionId).Count() == 0)
+                {
+                    return Ok(new List<Event>()
+                    {
+                        new ShowMessage("No button with action number " + actionId + " exists for " + eventItem.Name),
+                    });
+                };
+                var result = await eventItem.ProcessAction(formData, actionId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
         [Route("executeUIAction/{*eventId}")]
         [RequireHttps]
         [Authorize]
@@ -187,7 +221,8 @@ namespace WebsiteTemplate.Controllers
             }
             else if (eventItem is GetInput)
             {
-                var inputResult = eventItem;
+                var inputResult = eventItem as GetInput;
+                await inputResult.Initialize(data);
                 result.Add(inputResult);
             }
             else if (eventItem is CancelInputDialog)
