@@ -21,6 +21,7 @@ using WebsiteTemplate.Menus.InputItems;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using WebsiteTemplate.SiteSpecific.EventItems;
+using WebsiteTemplate.Mappings;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -104,6 +105,14 @@ namespace WebsiteTemplate.Controllers
                             UserRole = UserRole.ViewUsers,
                         };
                         session.Save(viewUsersRoleAssociation);
+                    }
+
+                    var test = session.CreateCriteria<TestClass>().List<TestClass>();
+                    if (test.Count == 0)
+                    {
+                        var testClass = new TestClass();
+                        testClass.Items["testColumn"] = "Hello";
+                        session.Save(testClass);
                     }
 
                     session.Flush();

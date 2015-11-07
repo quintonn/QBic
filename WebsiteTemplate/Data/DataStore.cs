@@ -6,12 +6,23 @@ using NHibernate.Criterion;
 using NHibernate.Tool.hbm2ddl;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Data
 {
+    public class SqlStatementInterceptor : EmptyInterceptor
+    {
+        public override NHibernate.SqlCommand.SqlString OnPrepareStatement(NHibernate.SqlCommand.SqlString sql)
+        {
+            Trace.WriteLine(sql.ToString());
+            Console.WriteLine(sql.ToString());
+            return sql;
+        }
+    }
+
     public class DataStore
     {
         private static object xlock = new object();
@@ -26,7 +37,7 @@ namespace WebsiteTemplate.Data
             //Configuration.AddAssembly(typeof(User).Assembly);
             //Store = Configuration.BuildSessionFactory();
             Store = CreateSessionFactory();
-            
+
             new SchemaUpdate(Configuration).Execute(true, true);
             
             //new SchemaExport(Configuration).Execute(false, true, false);//, false);
@@ -34,14 +45,20 @@ namespace WebsiteTemplate.Data
 
         private static ISessionFactory CreateSessionFactory()
         {
-            Configuration = Fluently.Configure()
+            var config = Fluently.Configure()
               .Database(
 
                 FluentNHibernate.Cfg.Db.MsSqlConfiguration.MsSql2012.ConnectionString("Integrated Security=SSPI;Persist Security Info=False;Data Source=localhost;Initial Catalog=websiteTemplate")
-                  //.UsingFile("firstProject.db")
+                //.UsingFile("firstProject.db")
               )
               .Mappings(m =>
-                m.FluentMappings.AddFromAssemblyOf<User>()).BuildConfiguration();
+                m.FluentMappings.AddFromAssemblyOf<User>());
+            config.ExposeConfiguration(x =>
+            {
+                x.SetInterceptor(new SqlStatementInterceptor());
+            });
+                Configuration = config.BuildConfiguration();
+            
             return Configuration.BuildSessionFactory();
         }
 

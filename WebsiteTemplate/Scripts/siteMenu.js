@@ -4,13 +4,10 @@
     {
         menuBuilder.addMenuButton("Home", function ()
         {
-            menuBuilder.buildMenu(menuList);
-
-            //clear maincontent
-            menuBuilder.clearNode('mainContent');
-            //TODO: This should change. Maybe have a home page user setting to call
-            console.log("TODO: This should change to call a getHomePage endpoint or something.");
+            navigation.entryPoint();
         });
+
+        console.log(menuList);
         
         for (var key in menuList)
         {

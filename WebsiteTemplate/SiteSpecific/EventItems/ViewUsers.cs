@@ -37,13 +37,13 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 }
             );
             columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X",
-                new ShowHideColumnSetting()
+                columnSetting: new ShowHideColumnSetting()
                 {
                     Display = ColumnDisplayType.Hide,
                     OtherColumnToCheck = "CanDelete",
                     OtherColumnValue = "true"
                 },
-                new UserConfirmation("Delete User?")
+                eventItem: new UserConfirmation("Delete User?")
                 {
                     OnConfirmationUIAction = EventNumber.DeleteUser
                 }
