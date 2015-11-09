@@ -160,7 +160,7 @@
     <Compile Include="Controllers\RoleBlockedAttribute.cs" />
     <Compile Include="Data\DataStore.cs" />
     <Compile Include="Mappings\BaseClassMap.cs" />
-    <Compile Include="Mappings\TestDynamicMap.cs" />
+    <Compile Include="Mappings\DynamicMap.cs" />
     <Compile Include="Mappings\UserRoleAssociationMap.cs" />
     <Compile Include="Mappings\UserMap.cs" />
     <Compile Include="Menus\BaseItems\SubMenuAction.cs" />

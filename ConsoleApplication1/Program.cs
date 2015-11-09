@@ -29,22 +29,7 @@ namespace ConsoleApplication1
             {
                 using (var session = store.OpenSession())
                 {
-                    var tt = typeof(TestChildClass);
-                    var properties = typeof(TestChildClass).GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                                                    .Where(zz => zz.GetMethod.IsVirtual)
-                                                    .Select(p => p.Name).ToList();
-
-                    var test = session.CreateCriteria<TestChildClass>().List<TestChildClass>();
-
-                    if (test.Count == 0)
-                    {
-                        var testClass = new TestChildClass();
-                        testClass.testColumn = "hello2";
-                        testClass.Namex = "nameX";
-                        session.Save(testClass);
-                    }
-
-                    session.Flush();
+                   
                 }
             }
             catch (Exception e)

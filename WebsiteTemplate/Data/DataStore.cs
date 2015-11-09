@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using WebsiteTemplate.Mappings;
 using WebsiteTemplate.Models;
@@ -29,12 +30,19 @@ namespace WebsiteTemplate.Data
     {
         public static FluentMappingsContainer AddFromAssemblyOf2<T>(this FluentMappingsContainer mappings)
         {
-            var container = new FluentMappingsContainer();
+            var tempQ = new DynamicMap<DynamicClass>();
             
-            container.Add(typeof(TestDynamicMap));
+            var container = mappings.AddFromAssemblyOf<User>();
 
-            var temp = mappings.AddFromAssemblyOf<User>();
-            
+            foreach (var type in
+                Assembly.GetAssembly(typeof(T)).GetTypes()
+                .Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(DynamicClass))))
+            {
+                var d1 = typeof(DynamicMap<>);
+                Type[] typeArgs = { type };
+                var makeme = d1.MakeGenericType(typeArgs);
+                container.Add(makeme);
+            }
 
             return container;
         }
