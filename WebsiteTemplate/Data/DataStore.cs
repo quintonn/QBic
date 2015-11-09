@@ -36,6 +36,8 @@ namespace WebsiteTemplate.Data
             ////Configuration.Configure(typeof(DataStore).Assembly, "JBQ.Data.Mappings.hibernate.cfg.xml");
             //Configuration.AddAssembly(typeof(User).Assembly);
             //Store = Configuration.BuildSessionFactory();
+            Debug.Assert(false);
+
             Store = CreateSessionFactory();
 
             new SchemaUpdate(Configuration).Execute(true, true);
@@ -57,8 +59,8 @@ namespace WebsiteTemplate.Data
             {
                 x.SetInterceptor(new SqlStatementInterceptor());
             });
-                Configuration = config.BuildConfiguration();
-            
+            Configuration = config.BuildConfiguration();
+
             return Configuration.BuildSessionFactory();
         }
 
