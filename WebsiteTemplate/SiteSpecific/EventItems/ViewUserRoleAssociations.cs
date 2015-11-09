@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using WebsiteTemplate.Menus;
+using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
 
@@ -12,21 +13,13 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
     {
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
-            columnConfig.AddStringColumn("User", "User.UserName");
+            columnConfig.AddStringColumn("User", "User.UserName");    /// User.UserName will be processed at runtime in javascript.
             columnConfig.AddStringColumn("User Role", "UserRoleString");
         }
 
         public override Type GetDataType()
         {
             return typeof(UserRoleAssociation);
-        }
-
-        public override IList<Menus.MenuItem> ViewMenu
-        {
-            get
-            {
-                return new List<MenuItem>();
-            }
         }
 
         public override Menus.BaseItems.EventNumber GetId()
@@ -52,6 +45,17 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 };
             }
         }
+
+        public override IList<MenuItem> ViewMenu
+        {
+            get
+            {
+                var results = new List<MenuItem>();
+                results.Add(new MenuItem("Add", EventNumber.AddUserRoleAssociation));
+                return results;
+            }
+        }
+
 
         public override string GetViewMessage()
         {

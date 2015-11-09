@@ -17,8 +17,8 @@ namespace WebsiteTemplate.Data
     {
         public override NHibernate.SqlCommand.SqlString OnPrepareStatement(NHibernate.SqlCommand.SqlString sql)
         {
-            Trace.WriteLine(sql.ToString());
-            Console.WriteLine(sql.ToString());
+            Trace.WriteLine("??" + sql.ToString() + "??");
+            //Console.WriteLine(sql.ToString());
             return sql;
         }
     }
@@ -36,7 +36,6 @@ namespace WebsiteTemplate.Data
             ////Configuration.Configure(typeof(DataStore).Assembly, "JBQ.Data.Mappings.hibernate.cfg.xml");
             //Configuration.AddAssembly(typeof(User).Assembly);
             //Store = Configuration.BuildSessionFactory();
-            Debug.Assert(false);
 
             Store = CreateSessionFactory();
 
@@ -55,6 +54,7 @@ namespace WebsiteTemplate.Data
               )
               .Mappings(m =>
                 m.FluentMappings.AddFromAssemblyOf<User>());
+            
             config.ExposeConfiguration(x =>
             {
                 x.SetInterceptor(new SqlStatementInterceptor());

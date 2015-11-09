@@ -15,6 +15,7 @@ namespace WebsiteTemplate.Menus.BaseItems
         DeleteUser = 1020,
         
         ViewUserRoleAssociations = 1100,
+        AddUserRoleAssociation = 1110,
 
         ShowMessage = 9000,
         UserConfirmation = 9500,

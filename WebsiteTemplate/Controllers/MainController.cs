@@ -22,6 +22,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using WebsiteTemplate.SiteSpecific.EventItems;
 using WebsiteTemplate.Mappings;
+using System.Reflection;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -30,17 +31,22 @@ namespace WebsiteTemplate.Controllers
     {
         public static IDictionary<EventNumber, Event> EventList { get; set; }
 
+        public static List<string> Log { get; set; }
+
         private DataStore Store { get; set; }
 
         public MainController()
         {
             Store = new DataStore();
+
+            //CheckDefaultValues();
         }
 
         static MainController()
         {
             try
             {
+                Log = new List<string>();
                 CheckDefaultValues();
                 PopulateEventList();
             }
@@ -68,6 +74,7 @@ namespace WebsiteTemplate.Controllers
         private static void CheckDefaultValues()
         {
             var store = new DataStore();
+
             try
             {
                 using (var session = store.OpenSession())
@@ -85,6 +92,7 @@ namespace WebsiteTemplate.Controllers
                         };
                         var result = CoreAuthenticationEngine.UserManager.CreateAsync(adminUser, "password");
                         result.Wait();
+
                         if (!result.Result.Succeeded)
                         {
                             throw new Exception("Unable to create user: " + "Admin");
@@ -97,6 +105,7 @@ namespace WebsiteTemplate.Controllers
                                                       .Add(Restrictions.Eq("user.Id", adminUser.Id))
                                                       .Add(Restrictions.Eq("UserRole", UserRole.ViewUsers))
                                                       .UniqueResult<UserRoleAssociation>();
+
                     if (viewUsersRoleAssociation == null)
                     {
                         viewUsersRoleAssociation = new UserRoleAssociation(false)
@@ -107,11 +116,19 @@ namespace WebsiteTemplate.Controllers
                         session.Save(viewUsersRoleAssociation);
                     }
 
-                    var test = session.CreateCriteria<TestClass>().List<TestClass>();
+                    var tt = typeof(TestChildClass);
+                    var properties = typeof(TestChildClass).GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                                                    .Where(zz => zz.GetMethod.IsVirtual)
+                                                    .Select(p => p.Name).ToList();
+
+                    var test = session.CreateCriteria<TestChildClass>().List<TestChildClass>();
+
                     if (test.Count == 0)
-                    {
-                        var testClass = new TestClass();
-                        testClass.Items["testColumn"] = "Hello";
+                    { 
+                        var testClass = new TestChildClass();
+                        //testClass.Items["testColumn"] = "Hello 2";
+                        testClass.testColumn = "hello2";
+                        testClass.Namex = "nameX";
                         session.Save(testClass);
                     }
 
@@ -120,6 +137,7 @@ namespace WebsiteTemplate.Controllers
             }
             catch (Exception e)
             {
+
                 Console.WriteLine(e);
                 Trace.WriteLine(e);
                 Debug.WriteLine(e);
