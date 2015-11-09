@@ -1,4 +1,5 @@
-﻿using FluentNHibernate.Cfg;
+﻿using FluentNHibernate;
+using FluentNHibernate.Cfg;
 using Newtonsoft.Json;
 using NHibernate;
 using NHibernate.Cfg;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
+using WebsiteTemplate.Mappings;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Data
@@ -20,6 +22,21 @@ namespace WebsiteTemplate.Data
             Trace.WriteLine("??" + sql.ToString() + "??");
             //Console.WriteLine(sql.ToString());
             return sql;
+        }
+    }
+
+    public static class NothingJere
+    {
+        public static FluentMappingsContainer AddFromAssemblyOf2<T>(this FluentMappingsContainer mappings)
+        {
+            var container = new FluentMappingsContainer();
+            
+            container.Add(typeof(TestDynamicMap));
+
+            var temp = mappings.AddFromAssemblyOf<User>();
+            
+
+            return container;
         }
     }
 
@@ -46,14 +63,16 @@ namespace WebsiteTemplate.Data
 
         private static ISessionFactory CreateSessionFactory()
         {
+            FluentMappingsContainer container = new FluentMappingsContainer();
+
             var config = Fluently.Configure()
               .Database(
 
                 FluentNHibernate.Cfg.Db.MsSqlConfiguration.MsSql2012.ConnectionString("Integrated Security=SSPI;Persist Security Info=False;Data Source=localhost;Initial Catalog=websiteTemplate")
                 //.UsingFile("firstProject.db")
               )
-              .Mappings(m =>
-                m.FluentMappings.AddFromAssemblyOf<User>());
+              
+              .Mappings(m =>m.FluentMappings.AddFromAssemblyOf2<User>());
             
             config.ExposeConfiguration(x =>
             {

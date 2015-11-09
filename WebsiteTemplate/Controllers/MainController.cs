@@ -126,7 +126,6 @@ namespace WebsiteTemplate.Controllers
                     if (test.Count == 0)
                     { 
                         var testClass = new TestChildClass();
-                        //testClass.Items["testColumn"] = "Hello 2";
                         testClass.testColumn = "hello2";
                         testClass.Namex = "nameX";
                         session.Save(testClass);
