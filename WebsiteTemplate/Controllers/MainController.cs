@@ -23,6 +23,7 @@ using Newtonsoft.Json;
 using WebsiteTemplate.SiteSpecific.EventItems;
 using WebsiteTemplate.Mappings;
 using System.Reflection;
+using NHibernate;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -114,6 +115,55 @@ namespace WebsiteTemplate.Controllers
                             UserRole = UserRole.ViewUsers,
                         };
                         session.Save(viewUsersRoleAssociation);
+                    }
+
+                    var role2 = session.CreateCriteria<UserRoleAssociation>()
+                                                      .CreateAlias("User", "user")
+                                                      .Add(Restrictions.Eq("user.Id", adminUser.Id))
+                                                      .Add(Restrictions.Eq("UserRole", UserRole.ViewUserRoleAssociations))
+                                                      .UniqueResult<UserRoleAssociation>();
+                    if (role2 == null)
+                    {
+                        role2 = new UserRoleAssociation(false)
+                        {
+                            User = adminUser,
+                            UserRole = UserRole.ViewUserRoleAssociations
+                        };
+                        session.Save(role2);
+                    }
+
+                    //var menuList1 = session.QueryOver<Menu>()
+                    //                   .WhereRestrictionOn(x => x.UserRoleString).IsLike("")
+                    //                   .List<Menu>();
+                    var menuList1 = session.CreateCriteria<Menu>()
+                                           .Add(Restrictions.Eq("Event", EventNumber.ViewUsers))
+                                           .List<Menu>();
+                    if (menuList1.Count == 0)
+                    {
+                        var menu1 = new Menu()
+                        {
+                            Event = EventNumber.ViewUsers,
+                            Name = "View Users",
+                            AllowedUserRoles = new List<UserRole>() { UserRole.ViewUsers }
+                        };
+
+                        session.Save(menu1);
+                    }
+
+                    var menuList2 = session.CreateCriteria<Menu>()
+                                           .Add(Restrictions.Eq("Event", EventNumber.ViewUserRoleAssociations))
+                                           .List<Menu>();
+
+                    if (menuList2.Count == 0)
+                    {
+                        var menu2 = new Menu()
+                        {
+                            Event = EventNumber.ViewUserRoleAssociations,
+                            Name = "View User Role Associations",
+                            AllowedUserRoles = new List<UserRole>() { UserRole.ViewUserRoleAssociations }
+                        };
+
+                        session.Save(menu2);
                     }
 
                     session.Flush();
@@ -264,40 +314,23 @@ namespace WebsiteTemplate.Controllers
                                    .List<UserRoleAssociation>()
                                    .ToList();
 
-                roles.ForEach(r =>
-                    {
-                        var menuIds = GetMenuItemsForAllRoles().Where(i => i.Key == r.UserRole || i.Key == UserRole.AnyOne).Select(i => i.Value).ToList();
+                var list = new List<Menu>();
+                foreach (var role in roles)
+                {
+                    var tempQuery = session.QueryOver<Menu>().WhereRestrictionOn(x => x.UserRoleString).IsLike(role.UserRoleString);
+                    list.AddRange(tempQuery.List<Menu>());
+                }
 
-                        menuIds.ForEach(i =>
-                        {
-                            if (!EventList.ContainsKey(i))
-                            {
-                                throw new NotImplementedException("No event exists for id " + i);
-                            }
-                            var eventItem = EventList[i];
-                            
-                            results.Add((int)eventItem.GetId(), eventItem.Description);
-                        });
-                    });
+                foreach (var menu in list)
+                {
+                    if (menu.Event != null && EventList.ContainsKey(menu.Event))
+                    {
+                        var eventItem = EventList[menu.Event];
+                        results.Add((int)eventItem.GetId(), eventItem.Description);
+                    }
+                }
             }
             return Json(results);
         }
-
-        private Dictionary<UserRole, EventNumber> GetMenuItemsForAllRoles()
-        {
-            var results = new Dictionary<UserRole, EventNumber>();
-
-            // So here i can create menus for users based on their roles.
-            // So if a user is in 2 roles, he will get all of those menu items.
-            //results.Add("User Role", UIActionId);
-
-            //EG
-            results.Add(UserRole.ViewUsers, EventNumber.ViewUsers);
-
-            results.Add(UserRole.AnyOne, EventNumber.ViewUserRoleAssociations);
-
-            return results;
-        }
-
     }
 }

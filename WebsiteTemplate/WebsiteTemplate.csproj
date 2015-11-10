@@ -161,6 +161,7 @@
     <Compile Include="Data\DataStore.cs" />
     <Compile Include="Mappings\BaseClassMap.cs" />
     <Compile Include="Mappings\DynamicMap.cs" />
+    <Compile Include="Mappings\MenuMap.cs" />
     <Compile Include="Mappings\UserRoleAssociationMap.cs" />
     <Compile Include="Mappings\UserMap.cs" />
     <Compile Include="Menus\BaseItems\SubMenuAction.cs" />
@@ -192,6 +193,7 @@
     <Compile Include="Menus\ViewItems\ViewColumn.cs" />
     <Compile Include="Models\BaseClass.cs" />
     <Compile Include="Models\CustomIdentifierGenerator.cs" />
+    <Compile Include="Models\Menu.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserRoleAssociation.cs" />
     <Compile Include="Models\UserStatus.cs" />

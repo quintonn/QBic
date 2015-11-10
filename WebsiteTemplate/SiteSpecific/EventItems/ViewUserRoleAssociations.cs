@@ -59,7 +59,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
 
         public override string GetViewMessage()
         {
-            return "TODO: Create some kind of table for menus and users allowed to see them";
+            return "TODO: Make this be not a menu item as such but a link from users screen";
         }
     }
 }

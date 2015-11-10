@@ -11,6 +11,7 @@ namespace WebsiteTemplate.SiteSpecific
         ViewUsers = 0,
         SendConfirmationEmail = 1,
         AddUser = 2,
+        ViewUserRoleAssociations = 3,
 
         AnyOne = 999, /// Any user can do this...
     }

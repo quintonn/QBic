@@ -80,11 +80,12 @@ namespace WebsiteTemplate.Data
                 //.UsingFile("firstProject.db")
               )
               
-              .Mappings(m =>m.FluentMappings.AddFromAssemblyOf2<User>());
+              .Mappings(m => m.FluentMappings.AddFromAssemblyOf2<User>());
             
             config.ExposeConfiguration(x =>
             {
                 x.SetInterceptor(new SqlStatementInterceptor());
+                x.Properties.Add("use_proxy_validator", "false");
             });
             Configuration = config.BuildConfiguration();
 
