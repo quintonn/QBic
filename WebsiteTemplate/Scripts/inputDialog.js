@@ -46,7 +46,7 @@
         menuBuilder.clearNode('dlgMessage');
     },
 
-    showMessage: function (settings, callback, args)
+    showMessage: function (settings, callback, args, actionData)
     {
         /// TODO: Need to store the current state of the input dialog 
         //        For eg, what I need to show a message box while on an input page
@@ -60,7 +60,6 @@
         }
 
         message = message || "";
-        //console.log("Message = " + JSON.stringify(message));
         message = message.toString().replace(/\n/g, "<br/>");
 
         document.getElementById('messageContent').style.display = 'inline';
@@ -90,7 +89,7 @@
                 {
                     if (settings.OnConfirmationUIAction > -1)
                     {
-                        siteMenu.executeUIAction(settings.OnConfirmationUIAction, args);
+                        siteMenu.executeUIAction(settings.OnConfirmationUIAction, args, actionData);
                     }
                     if (callback != null)
                     {
@@ -111,8 +110,7 @@
                 {
                     if (settings.OnCancelUIAction > -1)
                     {
-                        alert('2=' + settings.OnCancelUIAction);
-                        siteMenu.executeUIAction(settings.OnCancelUIAction, args);
+                        siteMenu.executeUIAction(settings.OnCancelUIAction, args, actionData);
                     }
                     if (callback != null && buttonAdded == false)
                     {

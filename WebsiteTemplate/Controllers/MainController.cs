@@ -208,14 +208,19 @@ namespace WebsiteTemplate.Controllers
             try
             {
                 var data = await Request.Content.ReadAsStringAsync();
-                var json = JsonConvert.DeserializeObject<JObject>(data);
+                //var json = JsonConvert.DeserializeObject<JObject>(data);
+                var json = JObject.Parse(data);
                 
                 var parameters = json.ToObject<Dictionary<string, object>>();
                 var formData = parameters["Data"].ToString();
                 var actionId = Convert.ToInt32(parameters["ActionId"]);
+
+                var actionData = json.GetValue("ActionData").ToString();
                 
                 var id = (EventNumber)eventId;
                 var eventItem = EventList[id] as GetInput;
+                eventItem.ActionData.Clear();
+
                 var inputButtons = eventItem.InputButtons;
                 if (inputButtons.Where(i => i.ActionNumber == actionId).Count() == 0)
                 {
@@ -225,6 +230,22 @@ namespace WebsiteTemplate.Controllers
                     });
                 };
                 var result = await eventItem.ProcessAction(formData, actionId);
+
+                var actionDataList = new List<object>();
+                if (!String.IsNullOrWhiteSpace(actionData))
+                {
+                    actionDataList = JsonConvert.DeserializeObject<List<object>>(actionData);
+                }
+
+                foreach (var item in result)
+                {
+                    actionDataList.ForEach(a => item.ActionData.Add(a));
+                    if (!String.IsNullOrWhiteSpace(data))
+                    {
+                        item.ActionData.Add(data);
+                    }
+                }
+
                 return Json(result);
             }
             catch (Exception ex)
@@ -241,6 +262,16 @@ namespace WebsiteTemplate.Controllers
         {
             var user = await this.GetLoggedInUserAsync();
             var data = await Request.Content.ReadAsStringAsync();
+            var json = JObject.Parse(data);
+            data = json.GetValue("Data").ToString();
+            var actionData = json.GetValue("ActionData").ToString();
+
+            var actionDataList = new List<object>();
+            if (!String.IsNullOrWhiteSpace(actionData))
+            {
+                actionDataList = JsonConvert.DeserializeObject<List<object>>(actionData);
+
+            }
 
             //var id = (EventNumber)Enum.Parse(typeof(EventNumber), eventId);
             var id = (EventNumber)eventId;
@@ -256,23 +287,23 @@ namespace WebsiteTemplate.Controllers
             var result = new List<Event>();
 
             var eventItem = EventList[id];
+            eventItem.ActionData.Clear();
+
             eventItem.Store = Store;
             eventItem.Request = Request;
 
             if (eventItem is ShowView)
             {
                 var action = eventItem as ShowView;
-                
+
                 using (var session = Store.OpenSession())
                 {
-                    //var listType = typeof(List<>).MakeGenericType(action.GetDataType());
-                    //var myList = Activator.CreateInstance(listType);
-                    //var list = myList as System.Collections.IList;
-
-                    //session.CreateCriteria(action.GetDataType())
-                           //.Add(Restrictions.Eq("", ""))   //TODO: Can add filter/query items here
-                           //.List(list);
-                    var list = action.GetData(data);
+                    var parentData = data;
+                    if (actionDataList.Count > 0)
+                    {
+                        parentData = actionDataList.First().ToString();
+                    };
+                    var list = action.GetData(parentData);
                     action.ViewData = list;
                     result.Add(action);
                 }
@@ -304,6 +335,15 @@ namespace WebsiteTemplate.Controllers
             else
             {
                 return BadRequest("ERROR: Unknown UIActionType: " + eventItem.GetType().ToString().Split(".".ToCharArray()).Last() + " with id " + id);
+            }
+
+            foreach (var item in result)
+            {
+                actionDataList.ForEach(a => item.ActionData.Add(a));
+                if (!String.IsNullOrWhiteSpace(data))
+                {
+                    item.ActionData.Add(data);
+                }
             }
             return Json(result);
         }
