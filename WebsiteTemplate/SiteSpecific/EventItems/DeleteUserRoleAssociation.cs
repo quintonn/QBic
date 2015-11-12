@@ -46,8 +46,8 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             {
                 using (var session = Store.OpenSession())
                 {
-                    var user = session.Get<UserRoleAssociation>(id);
-                    session.Delete(user);
+                    var userRole = session.Get<UserRoleAssociation>(id);
+                    session.Delete(userRole);
                     session.Flush();
                 }
             }
