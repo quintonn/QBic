@@ -60,8 +60,8 @@
         }
 
         message = message || "";
-
-        var message = message.replace(/\n/g, "<br/>");
+        //console.log("Message = " + JSON.stringify(message));
+        message = message.toString().replace(/\n/g, "<br/>");
 
         document.getElementById('messageContent').style.display = 'inline';
         

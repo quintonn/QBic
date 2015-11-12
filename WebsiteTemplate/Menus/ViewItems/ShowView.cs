@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -45,6 +46,13 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// The type/class to retrieve from the DB. (Using NHibernat -> this is what i need at this point).
         /// </summary>
         public abstract Type GetDataType();
+
+        /// <summary>
+        /// This method is called to obtain all the information
+        /// </summary>
+        /// <param name="data">This is data passed from the web request.</param>
+        /// <returns></returns>
+        public abstract IEnumerable GetData(string data);
 
         /// <summary>
         /// This should contain stuff like:

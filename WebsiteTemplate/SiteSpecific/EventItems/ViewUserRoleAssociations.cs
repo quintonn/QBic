@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NHibernate.Criterion;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -60,6 +61,23 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
         public override string GetViewMessage()
         {
             return "TODO: Make this be not a menu item as such but a link from users screen";
+        }
+
+        public override System.Collections.IEnumerable GetData(string data)
+        {
+            if (String.IsNullOrWhiteSpace(data))
+            {
+                throw new ArgumentNullException(data, "Cannot show view of user role associations without data");
+            }
+            using (var session = Store.OpenSession())
+            {
+                var results = session.CreateCriteria<UserRoleAssociation>()
+                       .CreateAlias("User", "user")
+                       .Add(Restrictions.Eq("user.Id", data))
+                       .List<UserRoleAssociation>()
+                       .ToList();
+                return results;
+            }
         }
     }
 }

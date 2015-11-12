@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -49,6 +50,12 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 }
             );
             columnConfig.AddLinkColumn("", "Edit", "Id", "Edit", EventNumber.EditUser);
+
+            //columnConfig.AddLinkColumn("Associated Roles", "Roles", "Id", "...", EventNumber.EditUser);
+            columnConfig.AddButtonColumn("Roles", "", ButtonTextSource.Fixed, "...",
+                columnSetting: null,
+                eventItem: new ExecuteAction(EventNumber.ViewUserRoleAssociations)
+            );
         }
 
         public override IList<MenuItem> ViewMenu
@@ -84,6 +91,18 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
         {
             return "TODO: Need to add ability to limit number of results as well as ability to sort items\n" +
                    "ALSO: Will need to limit display to 100% of height and put table inside a scroller";
+        }
+
+        public override IEnumerable GetData(string data)
+        {
+            using (var session = Store.OpenSession())
+            {
+                var results = session.CreateCriteria<User>()
+                    //.Add(Restrictions.Eq("", ""))   //TODO: Can add filter/query items here
+                       .List<User>()
+                       .ToList();
+                return results;
+            }
         }
     }
 }

@@ -150,21 +150,22 @@ namespace WebsiteTemplate.Controllers
                         session.Save(menu1);
                     }
 
-                    var menuList2 = session.CreateCriteria<Menu>()
-                                           .Add(Restrictions.Eq("Event", EventNumber.ViewUserRoleAssociations))
-                                           .List<Menu>();
+                    //var menuList2 = session.CreateCriteria<Menu>()
+                    //                       .Add(Restrictions.Eq("Event", EventNumber.ViewUserRoleAssociations))
+                    //                       .List<Menu>();
+                    
+                    
+                    //if (menuList2.Count == 0)
+                    //{
+                    //    var menu2 = new Menu()
+                    //    {
+                    //        Event = EventNumber.ViewUserRoleAssociations,
+                    //        Name = "View User Role Associations",
+                    //        AllowedUserRoles = new List<UserRole>() { UserRole.ViewUserRoleAssociations }
+                    //    };
 
-                    if (menuList2.Count == 0)
-                    {
-                        var menu2 = new Menu()
-                        {
-                            Event = EventNumber.ViewUserRoleAssociations,
-                            Name = "View User Role Associations",
-                            AllowedUserRoles = new List<UserRole>() { UserRole.ViewUserRoleAssociations }
-                        };
-
-                        session.Save(menu2);
-                    }
+                    //    session.Save(menu2);
+                    //}
 
                     session.Flush();
                 }
@@ -264,13 +265,14 @@ namespace WebsiteTemplate.Controllers
                 
                 using (var session = Store.OpenSession())
                 {
-                    var listType = typeof(List<>).MakeGenericType(action.GetDataType());
-                    var myList = Activator.CreateInstance(listType);
-                    var list = myList as System.Collections.IList;
+                    //var listType = typeof(List<>).MakeGenericType(action.GetDataType());
+                    //var myList = Activator.CreateInstance(listType);
+                    //var list = myList as System.Collections.IList;
 
-                    session.CreateCriteria(action.GetDataType())
+                    //session.CreateCriteria(action.GetDataType())
                            //.Add(Restrictions.Eq("", ""))   //TODO: Can add filter/query items here
-                           .List(list);
+                           //.List(list);
+                    var list = action.GetData(data);
                     action.ViewData = list;
                     result.Add(action);
                 }

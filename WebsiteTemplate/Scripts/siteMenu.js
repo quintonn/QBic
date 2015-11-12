@@ -7,7 +7,7 @@
             navigation.entryPoint();
         });
 
-        console.log(menuList);
+        //console.log(menuList);
         
         for (var key in menuList)
         {
@@ -256,10 +256,23 @@
                             {
                                 var id = data[index]["Id"];
                                 
-                                data = JSON.stringify(data[index]);
+                                var formData = JSON.stringify(data[index]);
                                 var theColumn = settings.Columns[ind];
                                 
-                                inputDialog.showMessage(theColumn.Event, null, data);
+                                if (theColumn.Event.ActionType == 5)
+                                {
+                                    inputDialog.showMessage(theColumn.Event, null, formData);
+                                }
+                                else if (theColumn.Event.ActionType == 6)
+                                {
+                                    var eventId = theColumn.Event.EventNumber;
+                                    var formData = data[index]["Id"];
+                                    siteMenu.executeUIAction(eventId, formData);
+                                }
+                                else
+                                {
+                                    inputDialog.showMessage("Unknown action type " + theColumn.Event.ActionType);
+                                }
                             }
                         })(i,j);
 
