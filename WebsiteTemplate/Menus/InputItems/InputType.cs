@@ -9,6 +9,7 @@ namespace WebsiteTemplate.Menus.InputItems
     {
         Text = 0,
         Password = 1,
-        Hidden = 2
+        Hidden = 2,
+        ComboBox = 3
     }
 }

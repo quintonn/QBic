@@ -14,7 +14,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
 {
     public class EditUser : GetInput
     {
-        public override System.Threading.Tasks.Task Initialize(string data)
+        public override System.Threading.Tasks.Task<InitializeResult> Initialize(string data)
         {
             var id = data;
             var results = new List<Event>();
@@ -24,7 +24,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
 
                 session.Flush();
             }
-            return Task.FromResult(0);
+            return Task.FromResult<InitializeResult>(new InitializeResult(true));
         }
 
         public override async System.Threading.Tasks.Task<IList<Event>> ProcessAction(string data, int actionNumber)

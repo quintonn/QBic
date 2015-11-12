@@ -29,7 +29,8 @@ namespace WebsiteTemplate.Menus.InputItems
         /// This is called right before obtaining InputFields and InputButtons.
         /// </summary>
         /// <param name="data"></param>
-        public abstract Task Initialize(string data);
+        /// <returns>Returns an object containing success status as well as an error message if not successful.</returns>
+        public abstract Task<InitializeResult> Initialize(string data);
 
         /// <summary>
         /// This is called once the input is obtained and a button is clicked.

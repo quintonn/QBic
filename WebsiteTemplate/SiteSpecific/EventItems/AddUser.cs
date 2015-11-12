@@ -67,9 +67,9 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             }
         }
 
-        public override System.Threading.Tasks.Task Initialize(string data)
+        public override System.Threading.Tasks.Task<InitializeResult> Initialize(string data)
         {
-            return Task.FromResult(0);
+            return Task.FromResult<InitializeResult>(new InitializeResult(true));
         }
 
         public override async System.Threading.Tasks.Task<IList<Event>> ProcessAction(string data, int actionNumber)

@@ -26,7 +26,7 @@
         }
     },
 
-    processEvent: function (eventId, params, actionId)
+    processEvent: function (eventId, params, actionId, args)
     {
         var data =
             {
@@ -34,15 +34,15 @@
                 ActionId: actionId
             };
         data = JSON.stringify(data);
-        main.makeWebCall(main.webApiURL + "processEvent/" + eventId, "POST", siteMenu.processUIActionResponse, data);
+        main.makeWebCall(main.webApiURL + "processEvent/" + eventId, "POST", siteMenu.processUIActionResponse, data, args);
     },
 
     executeUIAction: function(actionId, params)
     {
-        main.makeWebCall(main.webApiURL + "executeUIAction/" + actionId, "POST", siteMenu.processUIActionResponse, params);
+        main.makeWebCall(main.webApiURL + "executeUIAction/" + actionId, "POST", siteMenu.processUIActionResponse, params, params);
     },
 
-    processUIActionResponse: function (responseItems)
+    processUIActionResponse: function (responseItems, args) /// args is for data passed between calls
     {
         var response = responseItems[0]; // Get the first item
             
@@ -56,7 +56,7 @@
             {
                 return function ()
                 {
-                    siteMenu.processUIActionResponse(items);
+                    siteMenu.processUIActionResponse(items, args);
                 }
             })(responseItems);
         }
@@ -70,7 +70,7 @@
         }
 
         var data = response;
-
+        
         switch (actionType)
         {
             case -1:
@@ -79,11 +79,11 @@
                 break;
             case 0: /// DataView
                 var viewData = response.ViewData;
-                siteMenu.populateView(viewData, settings);
+                siteMenu.populateView(viewData, settings, null, args);
                 callback();
                 break;
             case 1: /// User Input
-                siteMenu.buildInput(settings);
+                siteMenu.buildInput(settings, args);
                 callback();
                 break;
             case 4: // Cancel Input Dialog
@@ -94,7 +94,7 @@
                 inputDialog.showMessage(data, callback);
                 break;
             case 6: // Execute action
-                siteMenu.executeUIAction(settings.EventNumber, null);
+                siteMenu.executeUIAction(settings.EventNumber, args);
                 callback();
                 break;
             default:
@@ -102,7 +102,7 @@
         }
     },
 
-    buildInput: function(settings)
+    buildInput: function(settings, args)
     {
         inputDialog.loadInputPage("InputDialog.html", function ()
         {
@@ -142,8 +142,28 @@
                         row.appendChild(inputCell);
 
                         break;
-                    case 2: ///Hidden input
+                    case 2: /// Hidden input
                         inputDialog.addHiddenField("_" + inputField.InputName, inputField.DefaultValue);
+                        break;
+                    case 3: /// Combo Box
+                        var labelCell = document.createElement('td');
+                        labelCell.innerHTML = inputField.InputLabel;
+                        row.appendChild(labelCell);
+
+                        var combo = document.createElement('select');
+                        combo.id = "_" + inputField.InputName;
+                        var array = inputField.ListItems;
+                        for (var i = 0; i < array.length; i++) {
+                            var option = document.createElement("option");
+                            option.value = array[i];
+                            option.text = array[i];
+                            combo.appendChild(option);
+                        }
+
+                        var inputCell = document.createElement('td');
+                        inputCell.appendChild(combo);
+                        row.appendChild(inputCell);
+
                         break;
                     default:
                         inputDialog.showMessage('Unknown input type: ' + inputField.InputType);
@@ -173,12 +193,19 @@
                         for (var j = 0; j < uiAction.InputFields.length; j++)
                         {
                             var inputField = uiAction.InputFields[j];
+                            console.log('_' + inputField.InputName);
                             var inputValue = document.getElementById("_" + inputField.InputName).value;
 
                             data[inputField.InputName] = inputValue;
                         }
+
+                        if (args != null && args.length > 0)
+                        {
+                            data["parentId"] = args;
+                        }
                         
-                        siteMenu.processEvent(settings.Id, data, id);
+                        
+                        siteMenu.processEvent(settings.Id, data, id, args);
                     }
                 })(buttonItem.ActionNumber, settings);
 
@@ -190,7 +217,7 @@
         });
     },
 
-    populateView: function(data, settings, callback)
+    populateView: function(data, settings, callback, args)
     {
         navigation.loadHtmlBody('mainContent', 'Views.html', function ()
         {
@@ -267,6 +294,7 @@
                                 {
                                     var eventId = theColumn.Event.EventNumber;
                                     var formData = data[index]["Id"];
+                                    
                                     siteMenu.executeUIAction(eventId, formData);
                                 }
                                 else
@@ -354,7 +382,7 @@
                 {
                     return function ()
                     {
-                        siteMenu.executeUIAction(id);
+                        siteMenu.executeUIAction(id, args);
                     }
                 })(menu.EventNumber);
 

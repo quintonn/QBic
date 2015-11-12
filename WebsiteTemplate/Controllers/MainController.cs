@@ -285,7 +285,16 @@ namespace WebsiteTemplate.Controllers
             else if (eventItem is GetInput)
             {
                 var inputResult = eventItem as GetInput;
-                await inputResult.Initialize(data);
+                var initializeResult = await inputResult.Initialize(data);
+                if (!initializeResult.Success)
+                {
+                    if (String.IsNullOrWhiteSpace(initializeResult.Error))
+                    {
+                        return BadRequest("There was an initialization error for GetInput " + eventItem.GetId() + " but there are not error details.");
+                    }
+                    return BadRequest(initializeResult.Error);
+                }
+
                 result.Add(inputResult);
             }
             else if (eventItem is CancelInputDialog)

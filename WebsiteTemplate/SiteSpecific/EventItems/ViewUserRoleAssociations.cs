@@ -16,6 +16,19 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
         {
             columnConfig.AddStringColumn("User", "User.UserName");    /// User.UserName will be processed at runtime in javascript.
             columnConfig.AddStringColumn("User Role", "UserRoleString");
+
+            columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X",
+               columnSetting: new ShowHideColumnSetting()
+               {
+                   Display = ColumnDisplayType.Hide,
+                   OtherColumnToCheck = "CanDelete",
+                   OtherColumnValue = "true"
+               },
+               eventItem: new UserConfirmation("Delete User Role?")
+               {
+                   OnConfirmationUIAction = EventNumber.DeleteUserRoleAssociation
+               }
+           );
         }
 
         public override Type GetDataType()
