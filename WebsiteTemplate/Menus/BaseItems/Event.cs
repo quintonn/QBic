@@ -27,6 +27,11 @@ namespace WebsiteTemplate.Menus.BaseItems
         /// </summary>
         public abstract EventNumber GetId();
 
+        public string GetEventId()
+        {
+            return ((int)GetId()).ToString();
+        }
+
         public EventNumber Id { get { return GetId(); } }
 
         public abstract string Description { get; }
@@ -47,11 +52,11 @@ namespace WebsiteTemplate.Menus.BaseItems
         /// This is data that is passed between events.
         /// Foreach event in a series of events, there will be 1 item in this list.
         /// </summary>
-        public IList<object> ActionData { get; set; }
+        public Dictionary<int, object> ActionData { get; set; }
 
         public Event()
         {
-            ActionData = new List<object>();
+            ActionData = new Dictionary<int, object>();
         }
     }
 }

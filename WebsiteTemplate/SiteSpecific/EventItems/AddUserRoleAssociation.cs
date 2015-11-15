@@ -70,6 +70,8 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
         {
             ListItems = new List<string>();
 
+            var userId = ActionData[(int)EventNumber.ViewUserRoleAssociations];
+
             using (var session = Store.OpenSession())
             {
                 var existingUserRoles = session.CreateCriteria<UserRoleAssociation>()
@@ -105,7 +107,8 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             else if (actionNumber == 0)
             {
                 var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
-                var userId = parameters["parentId"];
+
+                var userId = ActionData[(int)EventNumber.ViewUserRoleAssociations];
 
                 var role = parameters["UserRole"];
 

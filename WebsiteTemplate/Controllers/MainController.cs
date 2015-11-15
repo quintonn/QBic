@@ -229,20 +229,32 @@ namespace WebsiteTemplate.Controllers
                         new ShowMessage("No button with action number " + actionId + " exists for " + eventItem.Description),
                     });
                 };
-                var result = await eventItem.ProcessAction(formData, actionId);
 
-                var actionDataList = new List<object>();
+                var actionDataList = new Dictionary<int, object>();
                 if (!String.IsNullOrWhiteSpace(actionData))
                 {
-                    actionDataList = JsonConvert.DeserializeObject<List<object>>(actionData);
+                    actionDataList = JsonConvert.DeserializeObject<Dictionary<int, object>>(actionData);
                 }
+                eventItem.ActionData = actionDataList;
+
+                var result = await eventItem.ProcessAction(formData, actionId);
 
                 foreach (var item in result)
                 {
-                    actionDataList.ForEach(a => item.ActionData.Add(a));
+                    foreach (var key in actionDataList.Keys)
+                    {
+                        if (!item.ActionData.ContainsKey(key))
+                        {
+                            item.ActionData.Add(key, actionDataList[key]);
+                        }
+                    }
+                    
                     if (!String.IsNullOrWhiteSpace(data))
                     {
-                        item.ActionData.Add(data);
+                        if (!item.ActionData.ContainsKey(eventId))
+                        {
+                            item.ActionData.Add(eventId, data);
+                        }
                     }
                 }
 
@@ -266,10 +278,10 @@ namespace WebsiteTemplate.Controllers
             data = json.GetValue("Data").ToString();
             var actionData = json.GetValue("ActionData").ToString();
 
-            var actionDataList = new List<object>();
+            var actionDataList = new Dictionary<int, object>();
             if (!String.IsNullOrWhiteSpace(actionData))
             {
-                actionDataList = JsonConvert.DeserializeObject<List<object>>(actionData);
+                actionDataList = JsonConvert.DeserializeObject<Dictionary<int, object>>(actionData);
 
             }
 
@@ -292,6 +304,8 @@ namespace WebsiteTemplate.Controllers
             eventItem.Store = Store;
             eventItem.Request = Request;
 
+            eventItem.ActionData = actionDataList;
+
             if (eventItem is ShowView)
             {
                 var action = eventItem as ShowView;
@@ -299,10 +313,14 @@ namespace WebsiteTemplate.Controllers
                 using (var session = Store.OpenSession())
                 {
                     var parentData = data;
-                    if (actionDataList.Count > 0)
+                    if (actionDataList.ContainsKey(eventId))
                     {
-                        parentData = actionDataList.First().ToString();
-                    };
+                        parentData = actionDataList[eventId].ToString();
+                    }
+                    //if (actionDataList.Count > 0)
+                    //{
+                        //parentData = actionDataList.First().ToString();
+                    //};
                     var list = action.GetData(parentData);
                     action.ViewData = list;
                     result.Add(action);
@@ -316,6 +334,7 @@ namespace WebsiteTemplate.Controllers
             else if (eventItem is GetInput)
             {
                 var inputResult = eventItem as GetInput;
+                
                 var initializeResult = await inputResult.Initialize(data);
                 if (!initializeResult.Success)
                 {
@@ -339,10 +358,20 @@ namespace WebsiteTemplate.Controllers
 
             foreach (var item in result)
             {
-                actionDataList.ForEach(a => item.ActionData.Add(a));
+                foreach (var key in actionDataList.Keys)
+                {
+                    if (!item.ActionData.ContainsKey(key))
+                    {
+                        item.ActionData.Add(key, actionDataList[key]);
+                    }
+                }
+
                 if (!String.IsNullOrWhiteSpace(data))
                 {
-                    item.ActionData.Add(data);
+                    if (!item.ActionData.ContainsKey(eventId))
+                    {
+                        item.ActionData.Add(eventId, data);
+                    }
                 }
             }
             return Json(result);
