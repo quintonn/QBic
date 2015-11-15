@@ -1,5 +1,6 @@
 syntax: glob
 bin/*
 obj/Debug/*
-packages/*
 *.suo
+*.nupkg
+packages/**
