@@ -1,14 +1,6 @@
 ﻿using FluentNHibernate.Mapping;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Dynamic;
-using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Web;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Mappings

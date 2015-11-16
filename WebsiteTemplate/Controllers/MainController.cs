@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Http;
 using WebsiteTemplate.Data;
 using BasicAuthentication.ControllerHelpers;
@@ -12,18 +11,13 @@ using BasicAuthentication.Users;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using WebsiteTemplate.SiteSpecific;
-using WebsiteTemplate.SiteSpecific.Utilities;
 using WebsiteTemplate.Menus.BaseItems;
-using System.Net.Http;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.InputItems;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using WebsiteTemplate.SiteSpecific.EventItems;
-using WebsiteTemplate.Mappings;
-using System.Reflection;
-using NHibernate;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -145,6 +139,20 @@ namespace WebsiteTemplate.Controllers
                         };
 
                         session.Save(menu1);
+                    }
+
+                    var menuList2 = session.CreateCriteria<Menu>()
+                                           .Add(Restrictions.Eq("Event", EventNumber.ViewMenus))
+                                           .List<Menu>();
+                    if (menuList2.Count == 0)
+                    {
+                        var menu2 = new Menu()
+                        {
+                            Event = EventNumber.ViewMenus,
+                            Name = "View Menus",
+                            AllowedUserRoles = new List<UserRole>() { UserRole.AnyOne }
+                        };
+                        session.Save(menu2);
                     }
 
                     session.Flush();
@@ -381,9 +389,12 @@ namespace WebsiteTemplate.Controllers
                     list.AddRange(tempQuery.List<Menu>());
                 }
 
+                var tQuery = session.QueryOver<Menu>().WhereRestrictionOn(x => x.UserRoleString).IsLike("AnyOne");
+                list.AddRange(tQuery.List<Menu>());
+
                 foreach (var menu in list)
                 {
-                    if (menu.Event != null && EventList.ContainsKey(menu.Event))
+                    if (EventList.ContainsKey(menu.Event))
                     {
                         var eventItem = EventList[menu.Event];
                         results.Add((int)eventItem.GetId(), eventItem.Description);

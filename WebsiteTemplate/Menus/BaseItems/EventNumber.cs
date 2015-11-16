@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace WebsiteTemplate.Menus.BaseItems
+﻿namespace WebsiteTemplate.Menus.BaseItems
 {
     public enum EventNumber
     {
@@ -17,6 +12,8 @@ namespace WebsiteTemplate.Menus.BaseItems
         ViewUserRoleAssociations = 1100,
         AddUserRoleAssociation = 1110,
         DeleteUserRoleAssociation = 1120,
+
+        ViewMenus = 1200,
 
         ShowMessage = 9000,
         UserConfirmation = 9500,
