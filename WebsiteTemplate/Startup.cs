@@ -2,15 +2,11 @@
 using Microsoft.Owin;
 using Owin;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using BasicAuthentication.Authentication;
 using System.Web.Http;
 using System.Net.Http.Formatting;
-using Newtonsoft.Json.Serialization;
 using WebsiteTemplate.Data;
-using Microsoft.Owin;
 
 [assembly: OwinStartup(typeof(WebsiteTemplate.Startup))]
 namespace WebsiteTemplate

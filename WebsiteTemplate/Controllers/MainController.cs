@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Http;
 using WebsiteTemplate.Data;
 using BasicAuthentication.ControllerHelpers;
@@ -12,18 +11,13 @@ using BasicAuthentication.Users;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using WebsiteTemplate.SiteSpecific;
-using WebsiteTemplate.SiteSpecific.Utilities;
 using WebsiteTemplate.Menus.BaseItems;
-using System.Net.Http;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.InputItems;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using WebsiteTemplate.SiteSpecific.EventItems;
-using WebsiteTemplate.Mappings;
-using System.Reflection;
-using NHibernate;
 
 namespace WebsiteTemplate.Controllers
 {
