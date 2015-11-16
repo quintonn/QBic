@@ -132,9 +132,6 @@ namespace WebsiteTemplate.Controllers
                         session.Save(role2);
                     }
 
-                    //var menuList1 = session.QueryOver<Menu>()
-                    //                   .WhereRestrictionOn(x => x.UserRoleString).IsLike("")
-                    //                   .List<Menu>();
                     var menuList1 = session.CreateCriteria<Menu>()
                                            .Add(Restrictions.Eq("Event", EventNumber.ViewUsers))
                                            .List<Menu>();
@@ -149,23 +146,6 @@ namespace WebsiteTemplate.Controllers
 
                         session.Save(menu1);
                     }
-
-                    //var menuList2 = session.CreateCriteria<Menu>()
-                    //                       .Add(Restrictions.Eq("Event", EventNumber.ViewUserRoleAssociations))
-                    //                       .List<Menu>();
-                    
-                    
-                    //if (menuList2.Count == 0)
-                    //{
-                    //    var menu2 = new Menu()
-                    //    {
-                    //        Event = EventNumber.ViewUserRoleAssociations,
-                    //        Name = "View User Role Associations",
-                    //        AllowedUserRoles = new List<UserRole>() { UserRole.ViewUserRoleAssociations }
-                    //    };
-
-                    //    session.Save(menu2);
-                    //}
 
                     session.Flush();
                 }

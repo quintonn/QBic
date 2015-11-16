@@ -41,11 +41,13 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             return Menus.BaseItems.EventNumber.ViewUserRoleAssociations;
         }
 
+        private string mDescription { get; set; }
         public override string Description
         {
             get
             {
-                return "View User Role Associations";
+                //return "View User Role Associations";
+                return mDescription;
             }
         }
 
@@ -70,20 +72,17 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             }
         }
 
-
-        public override string GetViewMessage()
-        {
-            return "TODO: Make this be not a menu item as such but a link from users screen";
-        }
-
         public override System.Collections.IEnumerable GetData(string data)
         {
             if (String.IsNullOrWhiteSpace(data))
             {
-                throw new ArgumentNullException(data, "Cannot show view of user role associations without data");
+                throw new ArgumentNullException(data, "Cannot show view of user role without data");
             }
             using (var session = Store.OpenSession())
             {
+                var user = session.Get<User>(data);
+                mDescription = "View User Roles: " + user.UserName;
+                                
                 var results = session.CreateCriteria<UserRoleAssociation>()
                        .CreateAlias("User", "user")
                        .Add(Restrictions.Eq("user.Id", data))

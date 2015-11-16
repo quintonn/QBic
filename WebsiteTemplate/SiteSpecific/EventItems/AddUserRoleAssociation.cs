@@ -19,11 +19,12 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             return EventNumber.AddUserRoleAssociation;
         }
 
+        private string mDescription { get; set; }
         public override string Description
         {
             get
             {
-                return "Add User Role";
+                return mDescription;
             }
         }
 
@@ -70,10 +71,13 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
         {
             ListItems = new List<string>();
 
-            var userId = ActionData[(int)EventNumber.ViewUserRoleAssociations];
+            //var userId = ActionData[(int)EventNumber.ViewUserRoleAssociations];
 
             using (var session = Store.OpenSession())
             {
+                var user = session.Get<User>(data);
+                mDescription = "Add User Role: " + user.UserName;
+
                 var existingUserRoles = session.CreateCriteria<UserRoleAssociation>()
                                               .CreateAlias("User", "user")
                                               .Add(Restrictions.Eq("user.Id", data))
