@@ -144,6 +144,20 @@ namespace WebsiteTemplate.Controllers
                         session.Save(menu1);
                     }
 
+                    var menuList2 = session.CreateCriteria<Menu>()
+                                           .Add(Restrictions.Eq("Event", EventNumber.ViewMenus))
+                                           .List<Menu>();
+                    if (menuList2.Count == 0)
+                    {
+                        var menu2 = new Menu()
+                        {
+                            Event = EventNumber.ViewMenus,
+                            Name = "View Menus",
+                            AllowedUserRoles = new List<UserRole>() { UserRole.AnyOne }
+                        };
+                        session.Save(menu2);
+                    }
+
                     //var menuList2 = session.CreateCriteria<Menu>()
                     //                       .Add(Restrictions.Eq("Event", EventNumber.ViewUserRoleAssociations))
                     //                       .List<Menu>();
@@ -394,6 +408,9 @@ namespace WebsiteTemplate.Controllers
                     var tempQuery = session.QueryOver<Menu>().WhereRestrictionOn(x => x.UserRoleString).IsLike(role.UserRoleString);
                     list.AddRange(tempQuery.List<Menu>());
                 }
+
+                var tQuery = session.QueryOver<Menu>().WhereRestrictionOn(x => x.UserRoleString).IsLike("AnyOne");
+                list.AddRange(tQuery.List<Menu>());
 
                 foreach (var menu in list)
                 {

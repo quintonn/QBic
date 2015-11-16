@@ -209,6 +209,7 @@
     <Compile Include="SiteSpecific\EventItems\DeleteUser.cs" />
     <Compile Include="SiteSpecific\EventItems\EditUser.cs" />
     <Compile Include="SiteSpecific\EventItems\SendConfirmationEmail.cs" />
+    <Compile Include="SiteSpecific\EventItems\ViewMenus.cs" />
     <Compile Include="SiteSpecific\EventItems\ViewUserRoleAssociations.cs" />
     <Compile Include="SiteSpecific\EventItems\ViewUsers.cs" />
     <Compile Include="SiteSpecific\UserRole.cs" />
