@@ -30,17 +30,21 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             columnConfig.AddLinkColumn("", "Confirm Email", "Id", "Send Confirmation Email", EventNumber.SendConfirmationEmail,
                 new ShowHideColumnSetting()
                 {
-                    Display = ColumnDisplayType.Show,
-                    OtherColumnToCheck = "EmailConfirmed",
-                    OtherColumnValue = "true"
+                    Display = ColumnDisplayType.Hide,
+                    Conditions = new List<Condition>()
+                    {
+                        new Condition("EmailConfirmed", Comparison.Equals, "true")
+                    }
                 }
             );
             columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X",
                 columnSetting: new ShowHideColumnSetting()
                 {
-                    Display = ColumnDisplayType.Hide,
-                    OtherColumnToCheck = "CanDelete",
-                    OtherColumnValue = "true"
+                    Display = ColumnDisplayType.Show,
+                    Conditions = new List<Condition>()
+                   {
+                       new Condition("CanDelete", Comparison.Equals, "true")
+                   }
                 },
                 eventItem: new UserConfirmation("Delete User?")
                 {
@@ -96,7 +100,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             using (var session = Store.OpenSession())
             {
                 var results = session.CreateCriteria<User>()
-                    //.Add(Restrictions.Eq("", ""))   //TODO: Can add filter/query items here
+                       //.Add(Restrictions.Eq("", ""))   //TODO: Can add filter/query items here
                        .List<User>()
                        .ToList();
                 return results;

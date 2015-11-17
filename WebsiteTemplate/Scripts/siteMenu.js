@@ -349,24 +349,45 @@
                         cell.innerHTML = value;
                     }
 
-                    if (column.ColumnSetting != null)
-                    {
+                    if (column.ColumnSetting != null) {
                         if (column.ColumnSetting.ColumnSettingType == 0) /// Show/Hide column
                         {
                             var show = column.ColumnSetting.Display == 0;
-                            var otherColumnValue = data[i][column.ColumnSetting.OtherColumnToCheck].toString();
-                            var showHideValue = column.ColumnSetting.OtherColumnValue.toString();
+                            var compareResult = true;
                             
-                            if ((otherColumnValue == showHideValue && show == true) ||
-                                 (otherColumnValue != showHideValue && show == false))
-                            {
+                            for (var p = 0; p < column.ColumnSetting.Conditions.length; p++) {
+                                var condition = column.ColumnSetting.Conditions[p];
+                                var colName = condition.ColumnName;
+                                var comparison = condition.Comparison;
+                                var colVal = condition.ColumnValue;
+
+                                var actualValue = data[i][colName] || "";
+                                actualValue = actualValue.toString();
+                                
+                                if (comparison == 0) {
+                                    compareResult = compareResult && actualValue == colVal;
+                                }
+                                else if (comparison == 1) {
+                                    compareResult = compareResult && actualValue != colVal;
+                                }
+                                else {
+                                    alert("Unknown comparison: " + comparison);
+                                }
+                            }
+
+                            if ((compareResult == false && show == true) || (compareResult == true && show == false)) {
+
+                                var show = column.ColumnSetting.Display == 0;
+
                                 var cellValue = cell.innerHTML;
                                 var div = document.createElement('div');
                                 div.innerHTML = cellValue;
-                                
+
                                 var newCell = document.createElement('td');
                                 newCell.appendChild(div);
+
                                 div.style.display = 'none';
+
                                 cell = newCell;
                             }
                         }

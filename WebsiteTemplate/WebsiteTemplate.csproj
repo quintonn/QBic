@@ -39,8 +39,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicAuthentication">
-      <HintPath>..\packages\BasicAuthentication.0.0.5797.38917\lib\net45\BasicAuthentication.dll</HintPath>
+    <Reference Include="BasicAuthentication, Version=0.0.5791.20938, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicAuthentication.0.0.5791.20938\lib\net45\BasicAuthentication.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="FluentNHibernate, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -189,6 +190,8 @@
     <Compile Include="Menus\ViewItems\ColumnType.cs" />
     <Compile Include="Menus\InputItems\GetInput.cs" />
     <Compile Include="Menus\BaseItems\Event.cs" />
+    <Compile Include="Menus\ViewItems\Comparison.cs" />
+    <Compile Include="Menus\ViewItems\Condition.cs" />
     <Compile Include="Menus\ViewItems\LinkColumn.cs" />
     <Compile Include="Menus\ViewItems\ShowHideColumnSetting.cs" />
     <Compile Include="Menus\ViewItems\ShowView.cs" />

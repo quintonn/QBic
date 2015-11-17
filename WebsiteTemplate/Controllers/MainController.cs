@@ -33,8 +33,7 @@ namespace WebsiteTemplate.Controllers
         public MainController()
         {
             Store = new DataStore();
-
-            //CheckDefaultValues();
+            PopulateEventList();
         }
 
         static MainController()
@@ -43,7 +42,7 @@ namespace WebsiteTemplate.Controllers
             {
                 Log = new List<string>();
                 CheckDefaultValues();
-                PopulateEventList();
+                //PopulateEventList(); /// If this is here, the menu descriptions get overriden. Need to fix this: TODO
             }
             catch (Exception e)
             {
@@ -91,7 +90,6 @@ namespace WebsiteTemplate.Controllers
                         if (!result.Result.Succeeded)
                         {
                             throw new Exception("Unable to create user: " + "Admin");
-                            //return result.Result.ToString();
                         }
                     }
 
@@ -135,7 +133,7 @@ namespace WebsiteTemplate.Controllers
                         {
                             Event = EventNumber.ViewUsers,
                             Name = "View Users",
-                            AllowedUserRoles = new List<UserRole>() { UserRole.ViewUsers }
+                            AllowedUserRoles = new List<UserRole>() { UserRole.AnyOne, UserRole.ViewUsers }
                         };
 
                         session.Save(menu1);
@@ -155,12 +153,41 @@ namespace WebsiteTemplate.Controllers
                         session.Save(menu2);
                     }
 
+                    var testMenuList = session.CreateCriteria<Menu>()
+                                              .Add(Restrictions.Eq("Name", "Test1"))
+                                              .List<Menu>();
+                    if (testMenuList.Count == 0)
+                    {
+                        var testMenu = new Menu()
+                        {
+                            Name = "Test1",
+                            AllowedUserRoles = new List<UserRole>() { UserRole.AnyOne }
+                        };
+                        session.Save(testMenu);
+
+                        var testMenuList2 = session.CreateCriteria<Menu>()
+                                           .Add(Restrictions.Eq("Name", "Test2"))
+                                           .List<Menu>();
+                        if (testMenuList2.Count == 0)
+                        {
+                            var testMenu2 = new Menu()
+                            {
+                                Name = "Test2",
+                                AllowedUserRoles = new List<UserRole>() { UserRole.AnyOne },
+                                ParentMenu = testMenu,
+                                Event = EventNumber.ViewMenus
+                            };
+                            session.Save(testMenu2);
+                        }
+                    }
+
+
                     session.Flush();
+
                 }
             }
             catch (Exception e)
             {
-
                 Console.WriteLine(e);
                 Trace.WriteLine(e);
                 Debug.WriteLine(e);
@@ -293,7 +320,7 @@ namespace WebsiteTemplate.Controllers
             eventItem.Request = Request;
 
             eventItem.ActionData = actionDataList;
-
+            
             if (eventItem is ShowView)
             {
                 var action = eventItem as ShowView;
@@ -343,7 +370,7 @@ namespace WebsiteTemplate.Controllers
             {
                 return BadRequest("ERROR: Unknown UIActionType: " + eventItem.GetType().ToString().Split(".".ToCharArray()).Last() + " with id " + id);
             }
-
+            
             foreach (var item in result)
             {
                 foreach (var key in actionDataList.Keys)
@@ -385,19 +412,27 @@ namespace WebsiteTemplate.Controllers
                 var list = new List<Menu>();
                 foreach (var role in roles)
                 {
-                    var tempQuery = session.QueryOver<Menu>().WhereRestrictionOn(x => x.UserRoleString).IsLike(role.UserRoleString);
+                    var tempQuery = session.QueryOver<Menu>().WhereRestrictionOn(x => x.UserRoleString).IsLike("%" + role.UserRoleString + "%");
                     list.AddRange(tempQuery.List<Menu>());
                 }
 
-                var tQuery = session.QueryOver<Menu>().WhereRestrictionOn(x => x.UserRoleString).IsLike("AnyOne");
+                var tQuery = session.QueryOver<Menu>().WhereRestrictionOn(x => x.UserRoleString).IsLike("%AnyOne%");
                 list.AddRange(tQuery.List<Menu>());
 
+                var xx = -1;
                 foreach (var menu in list)
                 {
                     if (EventList.ContainsKey(menu.Event))
                     {
                         var eventItem = EventList[menu.Event];
-                        results.Add((int)eventItem.GetId(), eventItem.Description);
+                        if (!results.ContainsKey((int)eventItem.GetId()))
+                        {
+                            results.Add((int)eventItem.GetId(), eventItem.Description);
+                        }
+                    }
+                    else if (menu.Event == EventNumber.Nothing && menu.ParentMenu == null)
+                    {
+                        results.Add(xx--, menu.Name);
                     }
                 }
             }

@@ -19,9 +19,11 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X",
                columnSetting: new ShowHideColumnSetting()
                {
-                   Display = ColumnDisplayType.Hide,
-                   OtherColumnToCheck = "CanDelete",
-                   OtherColumnValue = "true"
+                   Display = ColumnDisplayType.Show,
+                   Conditions = new List<Condition>()
+                   {
+                       new Condition("CanDelete", Comparison.Equals, "true")
+                   }
                },
                eventItem: new UserConfirmation("Delete User Role?")
                {

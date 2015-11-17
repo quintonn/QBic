@@ -2,7 +2,7 @@
 {
     public enum EventNumber
     {
-        Nothing = -1,
+        Nothing = 0,
         ViewUsers = 1000,
         AddUser = 1010,
         SendConfirmationEmail = 1011,
@@ -18,6 +18,6 @@
         ShowMessage = 9000,
         UserConfirmation = 9500,
         ExecuteAction = 10000,
-        CancelInputDialog = 0,
+        CancelInputDialog = 10001,
     }
 }

@@ -22,6 +22,14 @@ namespace WebsiteTemplate.Menus.ViewItems
             Columns.Add(new StringColumn(columnLabel, columnName));
         }
 
+        public void AddStringColumn(string columnLabel, string columnName, ColumnSetting columnSetting)
+        {
+            Columns.Add(new StringColumn(columnLabel, columnName)
+            {
+                ColumnSetting = columnSetting
+            });
+        }
+
         public void AddBooleanColumn(string columnLabel, string columnName, string trueValue = "True", string falseValue = "False")
         {
             Columns.Add(new BooleanColumn(columnLabel, columnName, trueValue, falseValue));
@@ -43,6 +51,14 @@ namespace WebsiteTemplate.Menus.ViewItems
         public void AddButtonColumn(string columnLabel, string columnName, ButtonTextSource buttonTextSource, string buttonText)
         {
             Columns.Add(new ButtonColumn(columnLabel, columnName, buttonTextSource, buttonText));
+        }
+
+        public void AddButtonColumn(string columnLabel, string columnName, ButtonTextSource buttonTextSource, string buttonText, ColumnSetting columnSetting)
+        {
+            Columns.Add(new ButtonColumn(columnLabel, columnName, buttonTextSource, buttonText)
+            {
+                ColumnSetting = columnSetting
+            });
         }
 
         public void AddButtonColumn(string columnLabel, string columnName, ButtonTextSource buttonTextSource, string buttonText, ColumnSetting columnSetting, Event eventItem)

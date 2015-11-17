@@ -20,11 +20,12 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             }
         }
 
+        private string mDescription = "View Menus";
         public override string Description
         {
             get
             {
-                return "View Menus";
+                return mDescription;
             }
         }
 
@@ -38,8 +39,26 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
 
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
-            columnConfig.AddStringColumn("Id", "Id");
             columnConfig.AddStringColumn("Name", "Name");
+            columnConfig.AddStringColumn("Allowed Roles", "UserRoleString");
+            columnConfig.AddStringColumn("Event", "Event", new ShowHideColumnSetting()
+            {
+                Display = ColumnDisplayType.Hide,
+                Conditions = new List<Condition>()
+                {
+                    new Condition("Event", Comparison.Equals, "")
+                }
+            });
+
+            columnConfig.AddButtonColumn("Sub Menus", "", ButtonTextSource.Fixed, "...", new ShowHideColumnSetting()
+            {
+                Display = ColumnDisplayType.Show,
+                Conditions = new List<Condition>()
+                {
+                    new Condition("Event", Comparison.Equals, ""),
+                    new Condition("ParentMenu", Comparison.Equals, "")
+                }
+            }, new ExecuteAction(EventNumber.ViewMenus));
         }
 
         public override IEnumerable GetData(string data)
@@ -51,9 +70,16 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 {
                     query = query.CreateAlias("ParentMenu", "parent")
                                  .Add(Restrictions.Eq("parent.Id", data));
+
+                    var parentMenu = session.Get<Menu>(data);
+                    mDescription = "View Sub-menus: " + parentMenu.Name;
+                }
+                else
+                {
+                    mDescription = "View Menus";
+                    query = query.Add(Restrictions.IsNull("ParentMenu"));
                 }
                 var results = query
-                       //.Add(Restrictions.Eq("", ""))   //TODO: Can add filter/query items here
                        .List<Menu>()
                        .ToList();
                 return results;
