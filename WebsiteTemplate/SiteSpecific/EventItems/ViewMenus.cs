@@ -72,7 +72,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                                  .Add(Restrictions.Eq("parent.Id", data));
 
                     var parentMenu = session.Get<Menu>(data);
-                    mDescription = "View Sub-menus: " + parentMenu.Name;
+                    mDescription = "View Menus: " + parentMenu.Name;
                 }
                 else
                 {

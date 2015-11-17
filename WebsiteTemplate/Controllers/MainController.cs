@@ -50,7 +50,7 @@ namespace WebsiteTemplate.Controllers
             }
         }
 
-        private static void PopulateEventList()
+        private void PopulateEventList()
         {
             EventList = new Dictionary<EventNumber, Event>();
 
@@ -60,6 +60,7 @@ namespace WebsiteTemplate.Controllers
                 if (type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(Event)))
                 {
                     var instance = (Event)Activator.CreateInstance(type);
+                    instance.Store = Store;
                     EventList.Add(instance.GetId(), instance);
                 }
             }
@@ -334,11 +335,11 @@ namespace WebsiteTemplate.Controllers
             var eventItem = EventList[id];
             eventItem.ActionData.Clear();
 
-            eventItem.Store = Store;
+            //eventItem.Store = Store;
             eventItem.Request = Request;
 
             eventItem.ActionData = actionDataList;
-
+            
             if (eventItem is ShowView)
             {
                 var action = eventItem as ShowView;
@@ -346,14 +347,12 @@ namespace WebsiteTemplate.Controllers
                 using (var session = Store.OpenSession())
                 {
                     var parentData = data;
-                    if (actionDataList.ContainsKey(eventId))
+
+                    if (actionDataList.ContainsKey(eventId) && !(eventItem is ShowView))
                     {
                         parentData = actionDataList[eventId].ToString();
                     }
-                    //if (actionDataList.Count > 0)
-                    //{
-                    //parentData = actionDataList.First().ToString();
-                    //};
+                    
                     var list = action.GetData(parentData);
                     action.ViewData = list;
                     result.Add(action);
@@ -367,7 +366,7 @@ namespace WebsiteTemplate.Controllers
             else if (eventItem is GetInput)
             {
                 var inputResult = eventItem as GetInput;
-
+                
                 var initializeResult = await inputResult.Initialize(data);
                 if (!initializeResult.Success)
                 {
@@ -388,24 +387,19 @@ namespace WebsiteTemplate.Controllers
             {
                 return BadRequest("ERROR: Unknown UIActionType: " + eventItem.GetType().ToString().Split(".".ToCharArray()).Last() + " with id " + id);
             }
-
-            var results = new List<Event>();
-            //foreach (var item in result)
-            for (var i = 0; i < result.Count; i++)
+            
+            foreach (var item in result)
             {
-                var item = result[i];
-                //foreach (var key in actionDataList.Keys)
-                for (var j = 0; j < actionDataList.Keys.Count; j++)
+                foreach (var key in actionDataList.Keys)
                 {
-                    var key = actionDataList.Keys.ToList()[j];
-
                     if (!item.ActionData.ContainsKey(key))
                     {
                         item.ActionData.Add(key, actionDataList[key]);
                     }
                     else
                     {
-                        item.ActionData[key] = actionDataList[key];
+                        //item.ActionData[key] = actionDataList[key];
+                        //item.ActionData.Add(item.ActionData.Count, actionDataList[key]);
                     }
                 }
 
@@ -417,14 +411,11 @@ namespace WebsiteTemplate.Controllers
                     }
                     else
                     {
-                        item.ActionData[eventId] = data;
+                        //item.ActionData.Add(item.ActionData.Count, data);
                     }
                 }
-                results.Add(item);
             }
-            
-
-            return Json(results);
+            return Json(result);
         }
 
         [HttpGet]
