@@ -175,9 +175,18 @@ namespace WebsiteTemplate.Controllers
                                 Name = "Test2",
                                 AllowedUserRoles = new List<UserRole>() { UserRole.AnyOne },
                                 ParentMenu = testMenu,
-                                Event = EventNumber.ViewMenus
                             };
                             session.Save(testMenu2);
+
+                            var menu3 = new Menu()
+                            {
+                                Name = "Test3",
+                                AllowedUserRoles = new List<UserRole>() { UserRole.AnyOne },
+                                ParentMenu = testMenu2,
+                                Event = EventNumber.ViewMenus
+                            };
+
+                            session.Save(menu3);
                         }
                     }
 
@@ -254,6 +263,7 @@ namespace WebsiteTemplate.Controllers
 
                 var result = await eventItem.ProcessAction(formData, actionId);
 
+
                 foreach (var item in result)
                 {
                     foreach (var key in actionDataList.Keys)
@@ -262,6 +272,10 @@ namespace WebsiteTemplate.Controllers
                         {
                             item.ActionData.Add(key, actionDataList[key]);
                         }
+                        else
+                        {
+                            item.ActionData[key] = actionDataList[key];
+                        }
                     }
                     
                     if (!String.IsNullOrWhiteSpace(data))
@@ -269,6 +283,10 @@ namespace WebsiteTemplate.Controllers
                         if (!item.ActionData.ContainsKey(eventId))
                         {
                             item.ActionData.Add(eventId, data);
+                        }
+                        else
+                        {
+                            item.ActionData[eventId] = data;
                         }
                     }
                 }
@@ -320,7 +338,7 @@ namespace WebsiteTemplate.Controllers
             eventItem.Request = Request;
 
             eventItem.ActionData = actionDataList;
-            
+
             if (eventItem is ShowView)
             {
                 var action = eventItem as ShowView;
@@ -334,7 +352,7 @@ namespace WebsiteTemplate.Controllers
                     }
                     //if (actionDataList.Count > 0)
                     //{
-                        //parentData = actionDataList.First().ToString();
+                    //parentData = actionDataList.First().ToString();
                     //};
                     var list = action.GetData(parentData);
                     action.ViewData = list;
@@ -349,7 +367,7 @@ namespace WebsiteTemplate.Controllers
             else if (eventItem is GetInput)
             {
                 var inputResult = eventItem as GetInput;
-                
+
                 var initializeResult = await inputResult.Initialize(data);
                 if (!initializeResult.Success)
                 {
@@ -370,14 +388,24 @@ namespace WebsiteTemplate.Controllers
             {
                 return BadRequest("ERROR: Unknown UIActionType: " + eventItem.GetType().ToString().Split(".".ToCharArray()).Last() + " with id " + id);
             }
-            
-            foreach (var item in result)
+
+            var results = new List<Event>();
+            //foreach (var item in result)
+            for (var i = 0; i < result.Count; i++)
             {
-                foreach (var key in actionDataList.Keys)
+                var item = result[i];
+                //foreach (var key in actionDataList.Keys)
+                for (var j = 0; j < actionDataList.Keys.Count; j++)
                 {
+                    var key = actionDataList.Keys.ToList()[j];
+
                     if (!item.ActionData.ContainsKey(key))
                     {
                         item.ActionData.Add(key, actionDataList[key]);
+                    }
+                    else
+                    {
+                        item.ActionData[key] = actionDataList[key];
                     }
                 }
 
@@ -387,9 +415,16 @@ namespace WebsiteTemplate.Controllers
                     {
                         item.ActionData.Add(eventId, data);
                     }
+                    else
+                    {
+                        item.ActionData[eventId] = data;
+                    }
                 }
+                results.Add(item);
             }
-            return Json(result);
+            
+
+            return Json(results);
         }
 
         [HttpGet]

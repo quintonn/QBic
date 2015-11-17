@@ -56,7 +56,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 Conditions = new List<Condition>()
                 {
                     new Condition("Event", Comparison.Equals, ""),
-                    new Condition("ParentMenu", Comparison.Equals, "")
+                    //new Condition("ParentMenu", Comparison.Equals, "")
                 }
             }, new ExecuteAction(EventNumber.ViewMenus));
         }
