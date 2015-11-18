@@ -56,7 +56,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             //columnConfig.AddLinkColumn("Associated Roles", "Roles", "Id", "...", EventNumber.EditUser);
             columnConfig.AddButtonColumn("Roles", "", ButtonTextSource.Fixed, "...",
                 columnSetting: null,
-                eventItem: new ExecuteAction(EventNumber.ViewUserRoleAssociations)
+                eventItem: new ExecuteAction(EventNumber.ViewUserRoleAssociations, String.Empty) /// The data is passed from the view automatically
             );
         }
 

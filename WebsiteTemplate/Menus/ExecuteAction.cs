@@ -8,14 +8,17 @@ namespace WebsiteTemplate.Menus
     {
         public EventNumber EventNumber { get; private set; }
 
+        public string ParametersToPass { get; private set; }
+
         public ExecuteAction()
         {
 
         }
 
-        public ExecuteAction(EventNumber eventNumber)
+        public ExecuteAction(EventNumber eventNumber, string parametersToPass)
         {
             EventNumber = eventNumber;
+            ParametersToPass = parametersToPass;
         }
 
         public override EventNumber GetId()

@@ -48,6 +48,8 @@
 
     showMessage: function (settings, callback, args, actionData)
     {
+        console.log("ShowMessage args:");
+        console.log(args);
         /// TODO: Need to store the current state of the input dialog 
         //        For eg, what I need to show a message box while on an input page
         menuBuilder.clearNode('dlgMessage');
@@ -87,7 +89,7 @@
             {
                 var okButtonEvent = function ()
                 {
-                    if (settings.OnConfirmationUIAction > -1)
+                    if (settings.OnConfirmationUIAction > 0)
                     {
                         siteMenu.executeUIAction(settings.OnConfirmationUIAction, args, actionData);
                     }
@@ -108,7 +110,7 @@
             {
                 var cancelButtonEvent = function ()
                 {
-                    if (settings.OnCancelUIAction > -1)
+                    if (settings.OnCancelUIAction > 0)
                     {
                         siteMenu.executeUIAction(settings.OnCancelUIAction, args, actionData);
                     }

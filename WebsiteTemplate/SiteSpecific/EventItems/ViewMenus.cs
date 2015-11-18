@@ -37,6 +37,8 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             }
         }
 
+        private string MenuId { get; set; }
+
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
             columnConfig.AddStringColumn("Name", "Name");
@@ -58,11 +60,12 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                     new Condition("Event", Comparison.Equals, ""),
                     //new Condition("ParentMenu", Comparison.Equals, "")
                 }
-            }, new ExecuteAction(EventNumber.ViewMenus));
+            }, new ExecuteAction(EventNumber.ViewMenus, MenuId));
         }
 
         public override IEnumerable GetData(string data)
         {
+            MenuId = data;
             using (var session = Store.OpenSession())
             {
                 var query = session.CreateCriteria<Menu>();

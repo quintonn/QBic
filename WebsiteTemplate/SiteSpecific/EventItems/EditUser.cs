@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Menus;
@@ -43,7 +44,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 {
                     new ShowMessage("User modified successfully."),
                     new CancelInputDialog(),
-                    new ExecuteAction(EventNumber.ViewUsers)
+                    new ExecuteAction(EventNumber.ViewUsers, String.Empty)
                 };
             }
 

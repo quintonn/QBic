@@ -76,7 +76,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 return new List<Event>()
                 {
                     new CancelInputDialog(),
-                    new ExecuteAction(EventNumber.ViewUsers)
+                    new ExecuteAction(EventNumber.ViewUsers, String.Empty)
                 };
             }
             else if (actionNumber == 0)
@@ -143,7 +143,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                     {
                         new ShowMessage("User created but there was an error sending activation email:\n" + message),
                         new CancelInputDialog(),
-                        new ExecuteAction(EventNumber.ViewUsers)
+                        new ExecuteAction(EventNumber.ViewUsers, String.Empty)
                     };
                 }
 
@@ -151,7 +151,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 {
                     new ShowMessage("User created successfully.\nCheck your inbox for activation email."),
                     new CancelInputDialog(),
-                    new ExecuteAction(EventNumber.ViewUsers)
+                    new ExecuteAction(EventNumber.ViewUsers, String.Empty)
                 };
             }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Menus;
@@ -55,11 +56,13 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 };
             }
 
+            var user = jObject.GetValue("User") as JObject;
+            var userId = user.GetValue("Id").ToString();
             return new List<Event>()
                 {
                     new ShowMessage("User role deleted successfully"),
                     new CancelInputDialog(),
-                    new ExecuteAction(EventNumber.ViewUserRoleAssociations)
+                    new ExecuteAction(EventNumber.ViewUserRoleAssociations, userId)
                 };
         }
     }

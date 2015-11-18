@@ -102,7 +102,7 @@
                 inputDialog.showMessage(data, callback, null, settings.ActionData);
                 break;
             case 6: // Execute action
-                siteMenu.executeUIAction(settings.EventNumber, args, settings.ActionData);
+                siteMenu.executeUIAction(settings.EventNumber, settings.ParametersToPass, settings.ActionData);
                 callback();
                 break;
             default:
@@ -116,10 +116,11 @@
         {
             var title = document.getElementById('pageTitle');
             title.innerHTML = settings.Description;
-
+            console.log(settings.InputFields);
             var inputTable = document.getElementById('inputTable');
             for (var i = 0; i < settings.InputFields.length; i++)
             {
+                console.log('processing another input field: ' + i);
                 var row = document.createElement('tr');
 
                 var inputField = settings.InputFields[i];
@@ -151,6 +152,7 @@
 
                         break;
                     case 2: /// Hidden input
+                        console.log("Adding hidden input: " + inputField.InputName + " = " + inputField.DefaultValue);
                         inputDialog.addHiddenField("_" + inputField.InputName, inputField.DefaultValue);
                         break;
                     case 3: /// Combo Box
@@ -161,10 +163,10 @@
                         var combo = document.createElement('select');
                         combo.id = "_" + inputField.InputName;
                         var array = inputField.ListItems;
-                        for (var i = 0; i < array.length; i++) {
+                        for (var j = 0; j < array.length; j++) {
                             var option = document.createElement("option");
-                            option.value = array[i];
-                            option.text = array[i];
+                            option.value = array[j];
+                            option.text = array[j];
                             combo.appendChild(option);
                         }
 
@@ -197,7 +199,6 @@
                     {
                         var data = {};
 
-
                         for (var j = 0; j < uiAction.InputFields.length; j++)
                         {
                             var inputField = uiAction.InputFields[j];
@@ -210,7 +211,6 @@
                         {
                             //data["parentId"] = args;
                         }
-                        
                         
                         siteMenu.processEvent(settings.Id, data, id, args, settings.ActionData);
                     }

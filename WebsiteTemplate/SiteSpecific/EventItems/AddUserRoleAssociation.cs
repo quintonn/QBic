@@ -47,12 +47,15 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 var comboBoxInput = new ComboBoxInput("UserRole", "User Role");
                 comboBoxInput.ListItems = ListItems;
                 list.Add(comboBoxInput);
+
+                list.Add(new HiddenInput("UserId", UserId));
                 
                 return list;
             }
         }
 
         private List<string> ListItems { get; set; }
+        private string UserId { get; set; }
 
         public override IList<InputButton> InputButtons
         {
@@ -71,15 +74,16 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             ListItems = new List<string>();
 
             //var userId = ActionData[(int)EventNumber.ViewUserRoleAssociations];
+            UserId = data;
 
             using (var session = Store.OpenSession())
             {
-                var user = session.Get<User>(data);
+                var user = session.Get<User>(UserId);
                 mDescription = "Add User Role: " + user.UserName;
 
                 var existingUserRoles = session.CreateCriteria<UserRoleAssociation>()
                                               .CreateAlias("User", "user")
-                                              .Add(Restrictions.Eq("user.Id", data))
+                                              .Add(Restrictions.Eq("user.Id", UserId))
                                               .List<UserRoleAssociation>()
                                               .Select(r => r.UserRoleString)
                                               .ToList();
@@ -99,21 +103,20 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
 
         public override async System.Threading.Tasks.Task<IList<Menus.BaseItems.Event>> ProcessAction(string data, int actionNumber)
         {
+            var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
+            var userId = parameters["UserId"];
+
             if (actionNumber == 1)
             {
                 return new List<Event>()
                 {
                     new CancelInputDialog(),
-                    new ExecuteAction(EventNumber.ViewUserRoleAssociations)
+                    new ExecuteAction(EventNumber.ViewUserRoleAssociations, userId)
                 };
             }
             else if (actionNumber == 0)
             {
-                var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
-
-                var userId = ActionData[(int)EventNumber.ViewUserRoleAssociations];
-
-                var role = parameters["UserRole"];
+               var role = parameters["UserRole"];
 
                 UserRole userRole;
                 if (!Enum.TryParse<UserRole>(role, out userRole))
@@ -152,7 +155,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 {
                     new ShowMessage("User role created successfully."),
                     new CancelInputDialog(),
-                    new ExecuteAction(EventNumber.ViewUserRoleAssociations)
+                    new ExecuteAction(EventNumber.ViewUserRoleAssociations, userId)
                 };
             }
 

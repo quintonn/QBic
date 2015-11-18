@@ -57,7 +57,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             {
                 new ShowMessage("User deleted successfully"),
                 new CancelInputDialog(),
-                new ExecuteAction(EventNumber.ViewUsers)
+                new ExecuteAction(EventNumber.ViewUsers, String.Empty)
             };
         }
     }
