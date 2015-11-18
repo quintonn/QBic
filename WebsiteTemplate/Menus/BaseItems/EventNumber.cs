@@ -14,6 +14,8 @@
         DeleteUserRoleAssociation = 1120,
 
         ViewMenus = 1200,
+        AddMenu = 1210,
+        DeleteMenu = 1220,
 
         ShowMessage = 9000,
         UserConfirmation = 9500,

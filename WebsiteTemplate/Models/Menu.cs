@@ -34,6 +34,6 @@ namespace WebsiteTemplate.Models
 
         public virtual Menu ParentMenu { get; set; }
 
-        public virtual EventNumber Event { get; set; }
+        public virtual EventNumber? Event { get; set; }
     }
 }

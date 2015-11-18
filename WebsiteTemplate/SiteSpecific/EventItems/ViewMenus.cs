@@ -33,14 +33,16 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
         {
             get
             {
-                var menus = new List<MenuItem>();
+                var results = new List<MenuItem>();
 
                 if (!String.IsNullOrWhiteSpace(MenuId))
                 {
-                    menus.Add(new MenuItem("Back", EventNumber.ViewMenus, ParentId));
+                    results.Add(new MenuItem("Back", EventNumber.ViewMenus, ParentId));
                 }
 
-                return menus;
+                results.Add(new MenuItem("Add", EventNumber.AddMenu, MenuId));
+
+                return results;
             }
         }
 

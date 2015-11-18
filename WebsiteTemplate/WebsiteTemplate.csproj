@@ -172,6 +172,7 @@
     <Compile Include="Menus\BaseItems\EventType.cs" />
     <Compile Include="Menus\DoSomething.cs" />
     <Compile Include="Menus\ExecuteAction.cs" />
+    <Compile Include="Menus\InputItems\BooleanInput.cs" />
     <Compile Include="Menus\InputItems\ComboBoxInput.cs" />
     <Compile Include="Menus\InputItems\HiddenInput.cs" />
     <Compile Include="Menus\InputItems\InitializeResult.cs" />
@@ -207,6 +208,7 @@
     <Compile Include="Models\UserStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\UserContext.cs" />
+    <Compile Include="SiteSpecific\EventItems\AddMenu.cs" />
     <Compile Include="SiteSpecific\EventItems\AddUser.cs" />
     <Compile Include="SiteSpecific\EventItems\AddUserRoleAssociation.cs" />
     <Compile Include="SiteSpecific\EventItems\CancelInputDialog.cs" />

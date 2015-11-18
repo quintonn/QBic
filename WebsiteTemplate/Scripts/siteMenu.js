@@ -114,13 +114,90 @@
         {
             var title = document.getElementById('pageTitle');
             title.innerHTML = settings.Description;
-            console.log(settings.InputFields);
             var inputTable = document.getElementById('inputTable');
+
+            var conditionList = [];
+
+            var conditionListContains = function (inputName)
+            {
+                for (var i = 0; i < conditionList.length; i++)
+                {
+                    var item = conditionList[i];
+                    if (item.TriggerInputName == inputName)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            };
+
             for (var i = 0; i < settings.InputFields.length; i++)
             {
-                console.log('processing another input field: ' + i);
-                var row = document.createElement('tr');
+                var inputField = settings.InputFields[i];
+                if (inputField.VisibilityConditions != null && inputField.VisibilityConditions.length > 0)
+                {
+                    var inputName = inputField.InputName;
+                    
+                    for (var j = 0; j < inputField.VisibilityConditions.length; j++)
+                    {
+                        var condition = inputField.VisibilityConditions[j];
+                        //var inputName = condition.ColumnName;
+                        var conditionItem =
+                        {
+                            InputName: inputName,
+                            Condition: condition,
+                            TriggerInputName: condition.ColumnName
+                        };
+                        conditionList.push(conditionItem);
+                    }
+                }
+            }
 
+            var onChangeFunc = function (input, inputName)
+            {
+                var value = input.value;
+                if (input.type == "checkbox")
+                {
+                    value = input.checked;
+                }
+                value = value + "";
+                for (var i = 0; i < conditionList.length; i++)
+                {
+                    var item = conditionList[i];
+                    if (item.TriggerInputName != inputName)
+                    {
+                        continue;
+                    }
+                    var inputFieldToUpdate = "_" + item.InputName;
+                    var showInput = true;
+                    if (item.Condition.Comparison == 0)
+                    {
+                        showInput = value === item.Condition.ColumnValue;
+                    }
+                    else if (item.Condition.Comparison == 1)
+                    {
+                        showInput = value != item.Condition.ColumnValue;
+                    }
+                    else
+                    {
+                        alert("Unknown comparison " + item.Condition.Comparison);
+                    }
+                    var input = document.getElementById(inputFieldToUpdate);
+                    
+                    while (input.tagName != "TR")
+                    {
+                        input = input.parentNode;
+                    }
+                    
+                    input.style.display = showInput ? "" : "none";
+                    //input.style.visibility = showInput ? "visible" : "hidden";
+                }
+            };
+
+            for (var i = 0; i < settings.InputFields.length; i++)
+            {
+                var row = document.createElement('tr');
+                conditionList.push(i);
                 var inputField = settings.InputFields[i];
                 switch (inputField.InputType)
                 {
@@ -144,13 +221,24 @@
                         {
                             inp.value = inputField.DefaultValue;
                         }
+
+                        if (conditionListContains(inputField.InputName))
+                        {
+                            inp.onchange = (function (inputName)
+                            {
+                                return function ()
+                                {
+                                    onChangeFunc(this, inputName);
+                                }
+                            })(inputField.InputName);
+                        }
+
                         var inputCell = document.createElement('td');
                         inputCell.appendChild(inp);
                         row.appendChild(inputCell);
 
                         break;
                     case 2: /// Hidden input
-                        console.log("Adding hidden input: " + inputField.InputName + " = " + inputField.DefaultValue);
                         inputDialog.addHiddenField("_" + inputField.InputName, inputField.DefaultValue);
                         break;
                     case 3: /// Combo Box
@@ -159,6 +247,16 @@
                         row.appendChild(labelCell);
 
                         var combo = document.createElement('select');
+                        if (conditionListContains(inputField.InputName))
+                        {
+                            combo.onchange = (function (inputName)
+                            {
+                                return function ()
+                                {
+                                    onChangeFunc(this, inputName);
+                                }
+                            })(inputField.InputName);
+                        }
                         combo.id = "_" + inputField.InputName;
                         var array = inputField.ListItems;
                         for (var j = 0; j < array.length; j++) {
@@ -173,6 +271,39 @@
                         row.appendChild(inputCell);
 
                         break;
+                    case 4: /// Boolean Input
+                        var labelCell = document.createElement('td');
+                        labelCell.innerHTML = inputField.InputLabel;
+                        row.appendChild(labelCell);
+
+                        var inp = document.createElement('input');
+                        if (conditionListContains(inputField.InputName))
+                        {
+                            inp.onchange = (function (inputName)
+                            {
+                                return function ()
+                                {
+                                    onChangeFunc(this, inputName);
+                                }
+                            })(inputField.InputName);
+                        }
+                        inp.type = "checkbox";
+                        
+                        inp.id = "_" + inputField.InputName;
+                        if (inputField.DefaultValue != null)
+                        {
+                            inp.checked = inputField.DefaultValue;
+                        }
+
+                        //inp.onchange = function ()
+                        //{
+                        //    alert(conditionList.length);
+                        //};
+                        
+                        var inputCell = document.createElement('td');
+                        inputCell.appendChild(inp);
+                        row.appendChild(inputCell);
+                        break;
                     default:
                         inputDialog.showMessage('Unknown input type: ' + inputField.InputType);
                         continue;
@@ -180,7 +311,7 @@
                 }
                 inputTable.appendChild(row);
             }
-
+            
             var buttonRow = document.createElement('tr');
             var buttonCell = document.createElement('td');
             buttonCell.colSpan = 2;
@@ -200,7 +331,13 @@
                         for (var j = 0; j < uiAction.InputFields.length; j++)
                         {
                             var inputField = uiAction.InputFields[j];
-                            var inputValue = document.getElementById("_" + inputField.InputName).value;
+                            var theInput = document.getElementById("_" + inputField.InputName);
+                            var inputValue = theInput.value;
+                            if (theInput.type == "checkbox")
+                            {
+                                inputValue = theInput.checked;
+                            }
+                            console.log(theInput);
 
                             data[inputField.InputName] = inputValue;
                         }

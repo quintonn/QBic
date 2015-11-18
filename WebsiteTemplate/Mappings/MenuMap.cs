@@ -20,7 +20,7 @@ namespace WebsiteTemplate.Mappings
 
             Map(x => x.Event)
               .CustomType<EventNumber>()
-              .Not
+              //.Not
               .Nullable();
         }
     }

@@ -1,4 +1,6 @@
-﻿namespace WebsiteTemplate.Menus.InputItems
+﻿using System.Collections.Generic;
+using WebsiteTemplate.Menus.ViewItems;
+namespace WebsiteTemplate.Menus.InputItems
 {
     public abstract class InputField
     {
@@ -10,11 +12,15 @@
 
         public object DefaultValue { get; set; }
 
+        public List<Condition> VisibilityConditions { get; set; }
+
         public InputField(string name, string label, object defaultValue)
         {
             InputName = name;
             InputLabel = label;
             DefaultValue = defaultValue;
+
+            VisibilityConditions = new List<Condition>();
         }
     }
 }

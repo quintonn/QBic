@@ -294,8 +294,16 @@ namespace WebsiteTemplate.Controllers
                 {
                     var parentData = data;
 
-                    var list = action.GetData(parentData);
-                    action.ViewData = list;
+                    try
+                    {
+                        var list = action.GetData(parentData);
+                        action.ViewData = list;
+                    }
+                    catch (Exception e)
+                    {
+                        //Console.WriteLine(e);
+                        throw;
+                    }
                     result.Add(action);
                 }
             }
@@ -307,7 +315,7 @@ namespace WebsiteTemplate.Controllers
             else if (eventItem is GetInput)
             {
                 var inputResult = eventItem as GetInput;
-                
+
                 var initializeResult = await inputResult.Initialize(data);
                 if (!initializeResult.Success)
                 {
@@ -360,11 +368,21 @@ namespace WebsiteTemplate.Controllers
                 list.AddRange(tQuery.List<Menu>());
 
                 var xx = -1;
+
                 foreach (var menu in list)
                 {
-                    if (EventList.ContainsKey(menu.Event))
+                    if (menu.Event == null)
                     {
-                        var eventItem = EventList[menu.Event];
+                        if (menu.ParentMenu == null)
+                        {
+                            results.Add(xx--, menu.Name);
+                        }
+                        continue;
+                    }
+                    var eventNumber = (EventNumber)menu.Event;
+                    if (EventList.ContainsKey(eventNumber))
+                    {
+                        var eventItem = EventList[eventNumber];
                         if (!results.ContainsKey((int)eventItem.GetId()))
                         {
                             results.Add((int)eventItem.GetId(), eventItem.Description);
