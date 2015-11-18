@@ -24,24 +24,22 @@
         }
     },
 
-    processEvent: function (eventId, params, actionId, args, actionData)
+    processEvent: function (eventId, params, actionId, args)
     {
         var data =
             {
                 Data: params || "",
                 ActionId: actionId,
-                ActionData: actionData || ""
             };
         data = JSON.stringify(data);
         
         main.makeWebCall(main.webApiURL + "processEvent/" + eventId, "POST", siteMenu.processUIActionResponse, data, args);
     },
 
-    executeUIAction: function(actionId, params, actionData)
+    executeUIAction: function(actionId, params)
     {
         var data =
             {
-                ActionData: actionData || "",
                 Data: params || ""
             };
         
@@ -82,7 +80,7 @@
         switch (actionType)
         {
             case -1:
-                inputDialog.showMessage(data, callback, null, settings.ActionData);
+                inputDialog.showMessage(data, callback, null);
                 /// Should not really be here
                 break;
             case 0: /// DataView
@@ -99,14 +97,14 @@
                 callback();
                 break;
             case 5: // Show Message
-                inputDialog.showMessage(data, callback, null, settings.ActionData);
+                inputDialog.showMessage(data, callback, null);
                 break;
             case 6: // Execute action
-                siteMenu.executeUIAction(settings.EventNumber, settings.ParametersToPass, settings.ActionData);
+                siteMenu.executeUIAction(settings.EventNumber, settings.ParametersToPass);
                 callback();
                 break;
             default:
-                inputDialog.showMessage('unknown action type: ' + actionType, callback, null, settings.ActionData);
+                inputDialog.showMessage('unknown action type: ' + actionType, callback, null);
         }
     },
 
@@ -212,7 +210,7 @@
                             //data["parentId"] = args;
                         }
                         
-                        siteMenu.processEvent(settings.Id, data, id, args, settings.ActionData);
+                        siteMenu.processEvent(settings.Id, data, id, args);
                     }
                 })(buttonItem.ActionNumber, settings);
 
@@ -295,14 +293,14 @@
 
                                 if (theColumn.Event.ActionType == 5)
                                 {
-                                    inputDialog.showMessage(theColumn.Event, null, formData, settings.ActionData);
+                                    inputDialog.showMessage(theColumn.Event, null, formData);
                                 }
                                 else if (theColumn.Event.ActionType == 6)
                                 {
                                     var eventId = theColumn.Event.EventNumber;
                                     var formData = data[index]["Id"];
                                     
-                                    siteMenu.executeUIAction(eventId, formData, settings.ActionData);
+                                    siteMenu.executeUIAction(eventId, formData);
                                 }
                                 else
                                 {
@@ -310,7 +308,6 @@
                                 }
                             }
                         })(i, j);
-                        //alert(settings.ActionData);
 
                         if (column.ButtonTextSource == 0) //Fixed button text
                         {
@@ -337,7 +334,7 @@
                                 var formData = data[index][col.KeyColumn];
                                 
                                 var id = col.EventNumber;
-                                siteMenu.executeUIAction(id, formData, settings.ActionData);
+                                siteMenu.executeUIAction(id, formData);
                             }
                         })(column, i);
                         cell.appendChild(a);
@@ -411,7 +408,7 @@
                 {
                     return function ()
                     {
-                        siteMenu.executeUIAction(id, args, settings.ActionData);
+                        siteMenu.executeUIAction(id, args);
                     }
                 })(menu.EventNumber);
 

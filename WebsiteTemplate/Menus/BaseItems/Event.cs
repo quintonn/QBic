@@ -48,16 +48,5 @@ namespace WebsiteTemplate.Menus.BaseItems
         public abstract IList<UserRole> AuthorizedUserRoles { get; }
 
         public abstract EventType ActionType { get; }
-
-        /// <summary>
-        /// This is data that is passed between events.
-        /// Foreach event in a series of events, there will be 1 item in this list.
-        /// </summary>
-        public Dictionary<int, object> ActionData { get; set; }
-
-        public Event()
-        {
-            ActionData = new Dictionary<int, object>();
-        }
     }
 }

@@ -73,7 +73,6 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
         {
             ListItems = new List<string>();
 
-            //var userId = ActionData[(int)EventNumber.ViewUserRoleAssociations];
             UserId = data;
 
             using (var session = Store.OpenSession())

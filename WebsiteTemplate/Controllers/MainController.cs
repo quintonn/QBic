@@ -240,11 +240,8 @@ namespace WebsiteTemplate.Controllers
                 var formData = parameters["Data"].ToString();
                 var actionId = Convert.ToInt32(parameters["ActionId"]);
 
-                var actionData = json.GetValue("ActionData").ToString();
-                
                 var id = (EventNumber)eventId;
                 var eventItem = EventList[id] as GetInput;
-                eventItem.ActionData.Clear();
 
                 var inputButtons = eventItem.InputButtons;
                 if (inputButtons.Where(i => i.ActionNumber == actionId).Count() == 0)
@@ -255,42 +252,7 @@ namespace WebsiteTemplate.Controllers
                     });
                 };
 
-                var actionDataList = new Dictionary<int, object>();
-                if (!String.IsNullOrWhiteSpace(actionData))
-                {
-                    actionDataList = JsonConvert.DeserializeObject<Dictionary<int, object>>(actionData);
-                }
-                eventItem.ActionData = actionDataList;
-
                 var result = await eventItem.ProcessAction(formData, actionId);
-
-
-                foreach (var item in result)
-                {
-                    foreach (var key in actionDataList.Keys)
-                    {
-                        if (!item.ActionData.ContainsKey(key))
-                        {
-                            item.ActionData.Add(key, actionDataList[key]);
-                        }
-                        else
-                        {
-                            item.ActionData[key] = actionDataList[key];
-                        }
-                    }
-                    
-                    if (!String.IsNullOrWhiteSpace(data))
-                    {
-                        if (!item.ActionData.ContainsKey(eventId))
-                        {
-                            item.ActionData.Add(eventId, data);
-                        }
-                        else
-                        {
-                            item.ActionData[eventId] = data;
-                        }
-                    }
-                }
 
                 return Json(result);
             }
@@ -310,20 +272,8 @@ namespace WebsiteTemplate.Controllers
             var data = await Request.Content.ReadAsStringAsync();
             var json = JObject.Parse(data);
             data = json.GetValue("Data").ToString();
-            var actionData = json.GetValue("ActionData").ToString();
 
-            var actionDataList = new Dictionary<int, object>();
-            if (!String.IsNullOrWhiteSpace(actionData))
-            {
-                actionDataList = JsonConvert.DeserializeObject<Dictionary<int, object>>(actionData);
-
-            }
-
-            //var id = (EventNumber)Enum.Parse(typeof(EventNumber), eventId);
             var id = (EventNumber)eventId;
-
-            //var temp = HttpUtility.UrlDecode(data);
-            //var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(temp);
 
             if (!EventList.ContainsKey(id))
             {
@@ -333,13 +283,9 @@ namespace WebsiteTemplate.Controllers
             var result = new List<Event>();
 
             var eventItem = EventList[id];
-            eventItem.ActionData.Clear();
 
-            //eventItem.Store = Store;
             eventItem.Request = Request;
 
-            eventItem.ActionData = actionDataList;
-            
             if (eventItem is ShowView)
             {
                 var action = eventItem as ShowView;
@@ -348,11 +294,6 @@ namespace WebsiteTemplate.Controllers
                 {
                     var parentData = data;
 
-                    if (actionDataList.ContainsKey(eventId) && !(eventItem is ShowView))
-                    {
-                        parentData = actionDataList[eventId].ToString();
-                    }
-                    
                     var list = action.GetData(parentData);
                     action.ViewData = list;
                     result.Add(action);
@@ -388,33 +329,6 @@ namespace WebsiteTemplate.Controllers
                 return BadRequest("ERROR: Unknown UIActionType: " + eventItem.GetType().ToString().Split(".".ToCharArray()).Last() + " with id " + id);
             }
             
-            foreach (var item in result)
-            {
-                foreach (var key in actionDataList.Keys)
-                {
-                    if (!item.ActionData.ContainsKey(key))
-                    {
-                        item.ActionData.Add(key, actionDataList[key]);
-                    }
-                    else
-                    {
-                        //item.ActionData[key] = actionDataList[key];
-                        //item.ActionData.Add(item.ActionData.Count, actionDataList[key]);
-                    }
-                }
-
-                if (!String.IsNullOrWhiteSpace(data))
-                {
-                    if (!item.ActionData.ContainsKey(eventId))
-                    {
-                        item.ActionData.Add(eventId, data);
-                    }
-                    else
-                    {
-                        //item.ActionData.Add(item.ActionData.Count, data);
-                    }
-                }
-            }
             return Json(result);
         }
 
