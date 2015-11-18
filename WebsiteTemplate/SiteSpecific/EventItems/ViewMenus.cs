@@ -33,11 +33,19 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
         {
             get
             {
-                return new List<MenuItem>();
+                var menus = new List<MenuItem>();
+
+                if (!String.IsNullOrWhiteSpace(MenuId))
+                {
+                    menus.Add(new MenuItem("Back", EventNumber.ViewMenus, ParentId));
+                }
+
+                return menus;
             }
         }
 
         private string MenuId { get; set; }
+        private string ParentId { get; set; }
 
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
@@ -75,6 +83,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                                  .Add(Restrictions.Eq("parent.Id", data));
 
                     var parentMenu = session.Get<Menu>(data);
+                    ParentId = parentMenu.ParentMenu != null ? parentMenu.ParentMenu.Id : "";
                     mDescription = "View Menus: " + parentMenu.Name;
                 }
                 else

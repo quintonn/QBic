@@ -65,7 +65,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             get
             {
                 var results = new List<MenuItem>();
-                results.Add(new MenuItem("Add", EventNumber.AddUser));
+                results.Add(new MenuItem("Add", EventNumber.AddUser, String.Empty));
                 return results;
             }
         }

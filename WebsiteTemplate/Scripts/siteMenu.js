@@ -404,13 +404,14 @@
                 var button = document.createElement('button');
                 button.innerHTML = menu.Label;
 
-                button.onclick = (function (id)
+                button.onclick = (function (id, index)
                 {
                     return function ()
                     {
-                        siteMenu.executeUIAction(id, args);
+                        var vm = settings.ViewMenu[index];
+                        siteMenu.executeUIAction(id, vm.ParametersToPass);
                     }
-                })(menu.EventNumber);
+                })(menu.EventNumber, i);
 
                 viewMenu.appendChild(button);
             }

@@ -8,10 +8,13 @@ namespace WebsiteTemplate.Menus
 
         public EventNumber EventNumber { get; set; }
 
-        public MenuItem(string label, EventNumber eventNumber)
+        public string ParametersToPass { get; set; }
+
+        public MenuItem(string label, EventNumber eventNumber, string parametersToPass)
         {
             Label = label;
             EventNumber = eventNumber;
+            ParametersToPass = parametersToPass;
         }
     }
 }
