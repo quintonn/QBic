@@ -51,9 +51,9 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                     OnConfirmationUIAction = EventNumber.DeleteUser
                 }
             );
+
             columnConfig.AddLinkColumn("", "Edit", "Id", "Edit", EventNumber.EditUser);
 
-            //columnConfig.AddLinkColumn("Associated Roles", "Roles", "Id", "...", EventNumber.EditUser);
             columnConfig.AddButtonColumn("Roles", "", ButtonTextSource.Fixed, "...",
                 columnSetting: null,
                 eventItem: new ExecuteAction(EventNumber.ViewUserRoleAssociations, String.Empty) /// The data is passed from the view automatically

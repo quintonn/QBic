@@ -260,11 +260,17 @@
                         }
                         combo.id = "_" + inputField.InputName;
                         var array = inputField.ListItems;
+
                         for (var j = 0; j < array.length; j++) {
                             var option = document.createElement("option");
                             option.value = array[j];
                             option.text = array[j];
                             combo.appendChild(option);
+                        }
+
+                        if (inputField.DefaultValue != null && inputField.DefaultValue.length > 0)
+                        {
+                            combo.value = inputField.DefaultValue;
                         }
 
                         var inputCell = document.createElement('td');
@@ -348,7 +354,25 @@
                             var option = document.createElement('option');
                             option.value = item.Key;
                             option.text = item.Value;
-                            select2.appendChild(option);
+
+                            var isDefault = false;
+                            var defaultValues = inputField.DefaultValue || [];
+                            for (var q = 0; q < defaultValues.length; q++)
+                            {
+                                var defaultItem = defaultValues[q];
+                                if (defaultItem == item.Key)
+                                {
+                                    isDefault = true;
+                                    break;
+                                }
+                            }
+
+                            if (isDefault) {
+                                select1.appendChild(option);
+                            }
+                            else {
+                                select2.appendChild(option);
+                            }
                         }
 
                         var container1 = document.createElement('td');
@@ -425,6 +449,18 @@
                 }
                 inputTable.appendChild(row);
             }
+
+            for (var i = 0; i < settings.InputFields.length; i++)
+            {
+                var inputField = settings.InputFields[i];
+                var name = "_" + inputField.InputName;
+                var inputItem = document.getElementById(name);
+                if (inputItem == null)
+                {
+                    continue;
+                }
+                onChangeFunc(inputItem, inputField.InputName);
+            }
             
             var buttonRow = document.createElement('tr');
             var buttonCell = document.createElement('td');
@@ -452,12 +488,10 @@
                                 inputValue = [];
                                 theInput = document.getElementById("_" + inputField.InputName + "_1");
                                 var options = theInput.options;
+                                
                                 for (var k = 0; k < options.length; k++)
                                 {
-                                    if (options[k].selected)
-                                    {
-                                        inputValue.push(options[k].value);
-                                    }
+                                    inputValue.push(options[k].value);
                                 }
                             }
                             else

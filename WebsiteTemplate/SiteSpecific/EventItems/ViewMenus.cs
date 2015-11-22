@@ -62,6 +62,8 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 }
             });
 
+            columnConfig.AddLinkColumn("", "Edit", "Id", "Edit", EventNumber.EditMenu);
+
             columnConfig.AddButtonColumn("Sub Menus", "", ButtonTextSource.Fixed, "...", new ShowHideColumnSetting()
             {
                 Display = ColumnDisplayType.Show,

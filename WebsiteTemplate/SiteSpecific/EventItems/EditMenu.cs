@@ -12,29 +12,23 @@ using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.SiteSpecific.EventItems
 {
-    public class AddMenu : GetInput
+    public class EditMenu : GetInput
     {
-        public override EventNumber GetId()
+        private Menu Menu { get; set; }
+
+        public override IList<UserRole> AuthorizedUserRoles
         {
-            return EventNumber.AddMenu;
+            get
+            {
+                return new List<UserRole>();
+            }
         }
 
         public override string Description
         {
             get
             {
-                return "Add Menu";
-            }
-        }
-
-        public override IList<UserRole> AuthorizedUserRoles
-        {
-            get
-            {
-                return new List<UserRole>()
-                {
-                    UserRole.AnyOne
-                };
+                return "Edit Menu";
             }
         }
 
@@ -56,46 +50,56 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             {
                 var list = new List<InputField>();
 
-                list.Add(new StringInput("Name", "Menu Name"));
-                list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", false));
+                list.Add(new StringInput("Name", "Menu Name", Menu.Name));
+                list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", Menu.Event == null));
 
                 var events = Enum.GetNames(typeof(EventNumber))
                                     .Where(u => !u.Equals("Nothing", StringComparison.InvariantCultureIgnoreCase))
                                     .ToList();
 
-                list.Add(new ComboBoxInput("Event", "Menu Action")
-                    {
-                        ListItems = events,
-                        VisibilityConditions = new List<Menus.ViewItems.Condition>()
+                list.Add(new ComboBoxInput("Event", "Menu Action", Menu.Event == null ? "" : Menu.Event.ToString())
+                {
+                    ListItems = events,
+                    VisibilityConditions = new List<Menus.ViewItems.Condition>()
                         {
                             new Condition("HasSubmenus", Comparison.Equals, "false")
                         }
-                    });
+                });
 
                 var userRoles = Enum.GetValues(typeof(UserRole)).Cast<int>().ToDictionary(e => e.ToString(), e => (object)Enum.GetName(typeof(UserRole), e));
-                
-                var listSelection = new ListSelectionInput("UserRoles", "Allowed User Roles")
+
+                var currentRoles = Menu.AllowedUserRoles.Select(r => (int)r);
+                var listSelection = new ListSelectionInput("UserRoles", "Allowed User Roles", currentRoles)
                 {
                     AvailableItemsLabel = "User Roles:",
                     SelectedItemsLabel = "Chosen User Roles:",
-                    ListSource =  userRoles
+                    ListSource = userRoles
                 };
                 
                 list.Add(listSelection);
 
-                list.Add(new HiddenInput("ParentMenuId", ParentMenuId));
-
+                list.Add(new HiddenInput("Id", Menu.Id));
 
                 return list;
             }
         }
 
-        private string ParentMenuId { get; set; }
-
-        public override async Task<InitializeResult> Initialize(string data)
+        public override EventNumber GetId()
         {
-            ParentMenuId = data;
-            return new InitializeResult(true);
+            return EventNumber.EditMenu;
+        }
+
+        public override Task<InitializeResult> Initialize(string data)
+        {
+            var id = data;
+            var results = new List<Event>();
+            using (var session = Store.OpenSession())
+            {
+                Menu = session.Get<Menu>(id);
+
+                session.Flush();
+            }
+            return Task.FromResult<InitializeResult>(new InitializeResult(true));
         }
 
         public override async Task<IList<Event>> ProcessAction(string data, int actionNumber)
@@ -120,10 +124,10 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
 
                 var json = JObject.Parse(data);
 
+                var id = json.GetValue("Id").ToString();
                 var name = json.GetValue("Name").ToString();
                 var hasSubMenus = Convert.ToBoolean(json.GetValue("HasSubmenus"));
                 var eventName = json.GetValue("Event").ToString();
-                ParentMenuId = json.GetValue("ParentMenuId").ToString();
 
                 var userRoles = (json.GetValue("UserRoles") as JArray).Select(u => (UserRole)Convert.ToInt32(u)).ToList();
 
@@ -149,21 +153,16 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                     eventNumber = (EventNumber)Enum.Parse(typeof(EventNumber), eventName);
                 }
 
-                Menu parentMenu = null;
+                var parentMenuId = String.Empty;
                 using (var session = Store.OpenSession())
                 {
-                    if (!String.IsNullOrWhiteSpace(ParentMenuId))
-                    {
-                        parentMenu = session.Get<Menu>(ParentMenuId);
-                    }
+                    var menu = session.Get<Menu>(id);
+                    menu.Event = eventNumber;
+                    menu.Name = name;
+                    menu.AllowedUserRoles = userRoles;
+                    var n = menu.UserRoleString;
 
-                    var menu = new Menu()
-                    {
-                        Event = eventNumber,
-                        Name = name,
-                        ParentMenu = parentMenu,
-                        AllowedUserRoles = userRoles
-                    };
+                    parentMenuId = menu.ParentMenu != null ? menu.ParentMenu.Id.ToString() : "";
 
                     session.Save(menu);
                     session.Flush();
@@ -173,7 +172,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 {
                     new ShowMessage("Menu created successfully."),
                     new CancelInputDialog(),
-                    new ExecuteAction(EventNumber.ViewMenus, ParentMenuId)
+                    new ExecuteAction(EventNumber.ViewMenus, parentMenuId)
                 };
             }
 

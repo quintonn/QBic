@@ -15,6 +15,7 @@
 
         ViewMenus = 1200,
         AddMenu = 1210,
+        EditMenu = 1212,
         DeleteMenu = 1220,
 
         ShowMessage = 9000,
