@@ -73,6 +73,21 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                     //new Condition("ParentMenu", Comparison.Equals, "")
                 }
             }, new ExecuteAction(EventNumber.ViewMenus, MenuId));
+
+            columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X",
+                columnSetting: new ShowHideColumnSetting()
+                {
+                    Display = ColumnDisplayType.Show,
+                    Conditions = new List<Condition>()
+                   {
+                       new Condition("CanDelete", Comparison.Equals, "true")
+                   }
+                },
+                eventItem: new UserConfirmation("Delete Menu Item?")
+                {
+                    OnConfirmationUIAction = EventNumber.DeleteMenu
+                }
+            );
         }
 
         public override IEnumerable GetData(string data)

@@ -45,6 +45,8 @@ namespace WebsiteTemplate.Menus
 
         public EventNumber OnCancelUIAction { get; set; }
 
+        public object Data { get; set; }
+
         public UserConfirmation()
         {
 

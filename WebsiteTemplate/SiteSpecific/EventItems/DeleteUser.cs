@@ -36,21 +36,11 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
             var id = parameters["Id"];
 
-            try
+            using (var session = Store.OpenSession())
             {
-                using (var session = Store.OpenSession())
-                {
-                    var user = session.Get<User>(id);
-                    session.Delete(user);
-                    session.Flush();
-                }
-            }
-            catch (Exception eee)
-            {
-                return new List<Event>()
-                {
-                    new ShowMessage(eee.Message)
-                };
+                var user = session.Get<User>(id);
+                session.Delete(user);
+                session.Flush();
             }
 
             return new List<Event>()

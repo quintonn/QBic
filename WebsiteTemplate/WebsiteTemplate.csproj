@@ -213,6 +213,7 @@
     <Compile Include="SiteSpecific\EventItems\AddUser.cs" />
     <Compile Include="SiteSpecific\EventItems\AddUserRoleAssociation.cs" />
     <Compile Include="SiteSpecific\EventItems\CancelInputDialog.cs" />
+    <Compile Include="SiteSpecific\EventItems\DeleteMenu.cs" />
     <Compile Include="SiteSpecific\EventItems\DeleteUserRoleAssociation.cs" />
     <Compile Include="SiteSpecific\EventItems\DeleteUser.cs" />
     <Compile Include="SiteSpecific\EventItems\EditMenu.cs" />

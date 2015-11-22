@@ -37,6 +37,14 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                     }
                 }
             );
+            
+            columnConfig.AddLinkColumn("", "Edit", "Id", "Edit", EventNumber.EditUser);
+
+            columnConfig.AddButtonColumn("Roles", "", ButtonTextSource.Fixed, "...",
+                columnSetting: null,
+                eventItem: new ExecuteAction(EventNumber.ViewUserRoleAssociations, String.Empty) /// The data is passed from the view automatically
+            );
+
             columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X",
                 columnSetting: new ShowHideColumnSetting()
                 {
@@ -50,13 +58,6 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 {
                     OnConfirmationUIAction = EventNumber.DeleteUser
                 }
-            );
-
-            columnConfig.AddLinkColumn("", "Edit", "Id", "Edit", EventNumber.EditUser);
-
-            columnConfig.AddButtonColumn("Roles", "", ButtonTextSource.Fixed, "...",
-                columnSetting: null,
-                eventItem: new ExecuteAction(EventNumber.ViewUserRoleAssociations, String.Empty) /// The data is passed from the view automatically
             );
         }
 
