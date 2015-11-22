@@ -211,7 +211,6 @@ namespace WebsiteTemplate.Controllers
         public IHttpActionResult Initialize()
         {
             var user = this.GetLoggedInUser() as User;
-            //var user = GetLoggedInUser();
             var json = new
             {
                 User = user.UserName,

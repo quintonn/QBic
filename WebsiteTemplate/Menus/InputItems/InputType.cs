@@ -6,6 +6,7 @@
         Password = 1,
         Hidden = 2,
         ComboBox = 3,
-        Boolean = 4
+        Boolean = 4,
+        ListSelection = 5
     }
 }

@@ -72,7 +72,22 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                         }
                     });
 
+                //var userRoles = Enum.GetNames(typeof(UserRole))
+                //                   .Where(u => !u.Equals("AnyOne", StringComparison.InvariantCultureIgnoreCase))
+                //                   .Select(u => u)
+                var userRoles = Enum.GetValues(typeof(UserRole)).Cast<int>().ToDictionary(e => e.ToString(), e => (object)Enum.GetName(typeof(UserRole), e));
+                
+                var listSelection = new ListSelectionInput("UserRoles", "Allowed User Roles")
+                {
+                    AvailableItemsLabel = "User Roles:",
+                    SelectedItemsLabel = "Chosen User Roles:",
+                    ListSource =  userRoles
+                };
+                //list.Add(new StringInput("UserRoles", "Allowed User Roles"));
+                list.Add(listSelection);
+
                 list.Add(new HiddenInput("ParentMenuId", ParentMenuId));
+
 
                 return list;
             }
@@ -114,6 +129,8 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 var eventName = json.GetValue("Event").ToString();
                 ParentMenuId = json.GetValue("ParentMenuId").ToString();
 
+                var userRoles = (json.GetValue("UserRoles") as JArray).Select(u => (UserRole)Convert.ToInt32(u)).ToList();
+
                 if (String.IsNullOrWhiteSpace(name))
                 {
                     return new List<Event>()
@@ -149,8 +166,8 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                         Event = eventNumber,
                         Name = name,
                         ParentMenu = parentMenu,
-                        UserRoleString = "AnyOne"
-                        //AllowedUserRoles = TODO
+                        UserRoleString = "AnyOne",
+                        AllowedUserRoles = userRoles
                     };
 
                     session.Save(menu);

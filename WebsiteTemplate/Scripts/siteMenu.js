@@ -199,6 +199,7 @@
                 var row = document.createElement('tr');
                 conditionList.push(i);
                 var inputField = settings.InputFields[i];
+                
                 switch (inputField.InputType)
                 {
                     case 0: /// Text
@@ -294,15 +295,128 @@
                         {
                             inp.checked = inputField.DefaultValue;
                         }
-
-                        //inp.onchange = function ()
-                        //{
-                        //    alert(conditionList.length);
-                        //};
                         
                         var inputCell = document.createElement('td');
                         inputCell.appendChild(inp);
                         row.appendChild(inputCell);
+                        break;
+                    case 5: /// List selection input
+
+                        var labelCell = document.createElement('td');
+                        
+                        labelCell.innerHTML = inputField.InputLabel;
+                        row.appendChild(labelCell);
+                        inputTable.appendChild(row);
+
+                        row = document.createElement('tr');
+                        var table = document.createElement('table');
+                        table.style.fontSize = "75%";
+                        table.frame = "box";
+                        table.cellPadding = "0";
+                        table.style.padding = "0";
+
+                        var row1 = document.createElement('tr');
+                        var row2 = document.createElement('tr');
+                        var row3 = document.createElement('tr');
+                        var row4 = document.createElement('tr');
+
+                        var label1 = document.createElement('td');
+                        label1.innerHTML = inputField.SelectedItemsLabel;
+                        var spacer = document.createElement("td");
+                        var label2 = document.createElement("td");
+                        label2.innerHTML = inputField.AvailableItemsLabel;
+
+                        row1.appendChild(label1);
+                        row1.appendChild(spacer);
+                        row1.appendChild(label2);
+
+                        var select1 = document.createElement('select');
+                        select1.multiple = true;
+                        select1.id = "_" + inputField.InputName + "_1";
+                        select1.size = 5;
+                        select1.style.width = "100%";
+
+                        var select2 = document.createElement('select');
+                        select2.multiple = true;
+                        select2.id = "_" + inputField.InputName + "_2";
+                        select2.size = 5;
+                        select2.style.width = "100%";
+
+                        for (var p = 0; p < inputField.ListSource.length; p++)
+                        {
+                            var item = inputField.ListSource[p];
+                            var option = document.createElement('option');
+                            option.value = item.Key;
+                            option.text = item.Value;
+                            select2.appendChild(option);
+                        }
+
+                        var container1 = document.createElement('td');
+                        container1.rowSpan = 3;
+                        container1.appendChild(select1);
+                        row2.appendChild(container1);
+
+                        var buttonContainer1 = document.createElement('td');
+                        buttonContainer1.rowSpan = 3;
+
+                        var button1 = document.createElement("button");
+                        button1.innerHTML = "<<";
+                        button1.onclick = (function (inputName)
+                        {
+                            return function ()
+                            {
+                                var select1Name = "_" + inputName + "_1";
+                                var select2Name = "_" + inputName + "_2";
+                                var select1 = document.getElementById(select1Name);
+                                var select2 = document.getElementById(select2Name);
+                                
+                                for (var k = select2.options.length-1; k >= 0; k--) {
+                                    if (select2.options[k].selected) {
+                                        select1.appendChild(select2.options[k]);
+                                    }
+                                }
+                            }
+                        })(inputField.InputName);
+                        buttonContainer1.appendChild(button1);
+
+                        var br = document.createElement('br');
+                        buttonContainer1.appendChild(br);
+                        
+                        var button2 = document.createElement('button');
+                        button2.innerHTML = ">>";
+                        button2.onclick = (function (inputName) {
+                            return function () {
+                                var select1Name = "_" + inputName + "_1";
+                                var select2Name = "_" + inputName + "_2";
+                                var select1 = document.getElementById(select1Name);
+                                var select2 = document.getElementById(select2Name);
+                                
+                                for (var k = select1.options.length - 1; k >= 0; k--) {
+                                    if (select1.options[k].selected) {
+                                        select2.appendChild(select1.options[k]);
+                                    }
+                                }
+                            }
+                        })(inputField.InputName);
+                        buttonContainer1.appendChild(button2);
+
+                        row2.appendChild(buttonContainer1);
+
+                        var container2 = document.createElement('td');
+                        container2.rowSpan = 3;
+                        container2.appendChild(select2);
+                        row2.appendChild(container2);
+
+                        table.appendChild(row1);
+                        table.appendChild(row2);
+                        table.appendChild(row3);
+                        table.appendChild(row4);
+
+                        var tableCell = document.createElement('td');
+                        tableCell.colSpan = 3;
+                        tableCell.appendChild(table);
+                        row.appendChild(tableCell);
+                        
                         break;
                     default:
                         inputDialog.showMessage('Unknown input type: ' + inputField.InputType);
@@ -331,14 +445,35 @@
                         for (var j = 0; j < uiAction.InputFields.length; j++)
                         {
                             var inputField = uiAction.InputFields[j];
-                            var theInput = document.getElementById("_" + inputField.InputName);
-                            var inputValue = theInput.value;
-                            if (theInput.type == "checkbox")
+                            var theInput;
+                            var inputValue;
+                            if (inputField.InputType == 5)
                             {
-                                inputValue = theInput.checked;
+                                inputValue = [];
+                                theInput = document.getElementById("_" + inputField.InputName + "_1");
+                                var options = theInput.options;
+                                for (var k = 0; k < options.length; k++)
+                                {
+                                    if (options[k].selected)
+                                    {
+                                        inputValue.push(options[k].value);
+                                    }
+                                }
                             }
-                            console.log(theInput);
+                            else
+                            {
+                                theInput = document.getElementById("_" + inputField.InputName);
+                                if (theInput == null) {
+                                    continue;
+                                }
+                                inputValue = theInput.value;
+                                if (theInput.type == "checkbox")
+                                {
+                                    inputValue = theInput.checked;
+                                }
+                            }
 
+                            
                             data[inputField.InputName] = inputValue;
                         }
 
