@@ -22,21 +22,18 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
-        public override IList<MenuItem> ViewMenu
+        public override IList<MenuItem> GetViewMenu()
         {
-            get
+            var results = new List<MenuItem>();
+
+            if (!String.IsNullOrWhiteSpace(MenuId))
             {
-                var results = new List<MenuItem>();
-
-                if (!String.IsNullOrWhiteSpace(MenuId))
-                {
-                    results.Add(new MenuItem("Back", EventNumber.ViewMenus, ParentId));
-                }
-
-                results.Add(new MenuItem("Add", EventNumber.AddMenu, MenuId));
-
-                return results;
+                results.Add(new MenuItem("Back", EventNumber.ViewMenus, ParentId));
             }
+
+            results.Add(new MenuItem("Add", EventNumber.AddMenu, MenuId));
+
+            return results;
         }
 
         private string MenuId { get; set; }
@@ -46,7 +43,6 @@ namespace WebsiteTemplate.Backend.Menus
         {
             columnConfig.AddStringColumn("Name", "Name");
             //columnConfig.AddStringColumn("IsView", "IsView");
-            columnConfig.AddStringColumn("Allowed Roles", "UserRoleString");
             columnConfig.AddStringColumn("Event", "Event", new ShowHideColumnSetting()
             {
                 Display = ColumnDisplayType.Hide,
@@ -111,19 +107,16 @@ namespace WebsiteTemplate.Backend.Menus
                 //var eventIds = results.Select(r => r.Event).ToList();
                 //var events = Controllers.MainController.EventList.Where(e => eventIds.Contains(e.Key) && e.Value is ShowView).ToList();
 
-                //var newList = results.Select(r => new
-                //{
-                //    Name = r.Name,
-                //    Id = r.Id,
-                //    Event = r.Event == null ? "" : r.Event.Value.ToString(),
-                //    ParentMenu = r.ParentMenu,
-                //    UserRoleString = r.UserRoleString,
-                //    CanDelete = r.CanDelete,
-                //    AllowedUserRoles = r.AllowedUserRoles,
-                //    IsView = r.Event != null && events.Where(e => e.Key == r.Event).Count() != 0
-                //}).ToList();
+                var newList = results.Select(r => new
+                {
+                    Name = r.Name,
+                    Id = r.Id,
+                    Event = r.Event == null ? "" : r.Event.Value.ToString(),
+                    ParentMenu = r.ParentMenu,
+                    CanDelete = r.CanDelete,
+                }).ToList();
 
-                return results;
+                return newList;
             }
         }
 

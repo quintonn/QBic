@@ -43,6 +43,7 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
 
                 var events = Enum.GetNames(typeof(EventNumber))
                                     .Where(u => !u.Equals("Nothing", StringComparison.InvariantCultureIgnoreCase))
+                                    .OrderBy(e => e)
                                     .ToList();
 
                 list.Add(new ComboBoxInput("Event", "Event")
@@ -51,6 +52,7 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
                 });
 
                 var userRoles = Enum.GetNames(typeof(UserRole))
+                                    .OrderBy(u => u)
                                     .ToList();
 
                 list.Add(new ComboBoxInput("UserRole", "Allowed User Role")

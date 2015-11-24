@@ -17,7 +17,6 @@
         AddMenu = 1210,
         EditMenu = 1212,
         DeleteMenu = 1220,
-        View_ViewMenus = 1230,
 
         ViewEventRoleAssociation = 1300,
         AddEventRoleAssociation = 1310,

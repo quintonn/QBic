@@ -16,8 +16,6 @@ namespace WebsiteTemplate.Mappings
 
             Map(x => x.Name).Not.Nullable();
 
-            Map(x => x.UserRoleString).Not.Nullable().Length(10000);
-
             Map(x => x.Event)
               .CustomType<EventNumber>()
               //.Not

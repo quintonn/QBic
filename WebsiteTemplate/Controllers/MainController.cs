@@ -17,7 +17,7 @@ using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.InputItems;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-
+using NHibernate;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -94,6 +94,21 @@ namespace WebsiteTemplate.Controllers
                         }
                     }
 
+                    var adminRole = session.CreateCriteria<UserRoleAssociation>()
+                                           .CreateAlias("User", "user")
+                                           .Add(Restrictions.Eq("user.Id", adminUser.Id))
+                                           .Add(Restrictions.Eq("UserRole", UserRole.Admin))
+                                           .UniqueResult<UserRoleAssociation>();
+                    if (adminRole == null)
+                    {
+                        adminRole = new UserRoleAssociation()
+                        {
+                            User = adminUser,
+                            UserRole = UserRole.Admin
+                        };
+                        session.Save(adminRole);
+                    }
+
                     var viewUsersRoleAssociation = session.CreateCriteria<UserRoleAssociation>()
                                                       .CreateAlias("User", "user")
                                                       .Add(Restrictions.Eq("user.Id", adminUser.Id))
@@ -134,7 +149,6 @@ namespace WebsiteTemplate.Controllers
                         {
                             Event = EventNumber.ViewUsers,
                             Name = "Users",
-                            AllowedUserRoles = new List<UserRole>() { UserRole.AnyOne, UserRole.ViewUsers }
                         };
 
                         session.Save(menu1);
@@ -149,7 +163,6 @@ namespace WebsiteTemplate.Controllers
                         {
                             Event = EventNumber.ViewMenus,
                             Name = "Menus",
-                            AllowedUserRoles = new List<UserRole>() { UserRole.AnyOne }
                         };
                         session.Save(menu2);
                     }
@@ -163,15 +176,14 @@ namespace WebsiteTemplate.Controllers
                         {
                             Event = EventNumber.ViewEventRoleAssociation,
                             Name = "Event Role Associations",
-                            AllowedUserRoles = new List<UserRole>() {  UserRole.ViewEventRoleAssociations}
                         };
                         session.Save(menu3);
                     }
 
-                    var eventRoleAssociations1 = session.CreateCriteria<EventRoleAssociation>()
-                                                        .Add(Restrictions.Eq("Event", EventNumber.ViewEventRoleAssociation))
-                                                        .List<EventRoleAssociation>();
-                    if (eventRoleAssociations1.Count == 0)
+                    var era1 = session.CreateCriteria<EventRoleAssociation>()
+                                      .Add(Restrictions.Eq("Event", EventNumber.ViewEventRoleAssociation))
+                                      .List<EventRoleAssociation>();
+                    if (era1.Count == 0)
                     {
                         var evn = new EventRoleAssociation()
                         {
@@ -179,6 +191,42 @@ namespace WebsiteTemplate.Controllers
                             UserRole = UserRole.ViewEventRoleAssociations
                         };
                         session.Save(evn);
+                    }
+
+                    var era2 = session.CreateCriteria<EventRoleAssociation>()
+                                      .Add(Restrictions.Eq("Event", EventNumber.AddEventRoleAssociation))
+                                      .List<EventRoleAssociation>();
+                    if (era2.Count == 0)
+                    {
+                        var evn = new EventRoleAssociation()
+                        {
+                            Event = EventNumber.AddEventRoleAssociation,
+                            UserRole = UserRole.AddEventRoleAssociation
+                        };
+                        session.Save(evn);
+                    }
+
+                    var allEvents = Enum.GetValues(typeof(EventNumber)).Cast<int>().Where(e => e != (int)EventNumber.Nothing).ToList();
+                    var eras = session.CreateCriteria<EventRoleAssociation>()
+                                      .Add(Restrictions.Eq("UserRole", UserRole.Admin))
+                                      .List<EventRoleAssociation>()
+                                      .ToList();
+                    if (eras.Count != allEvents.Count)
+                    {
+                        eras.ForEach(e =>
+                        {
+                            session.Delete(e);
+                        });
+                        session.Flush();
+                        foreach (var evt in allEvents)
+                        {
+                            var era = new EventRoleAssociation()
+                            {
+                                Event = (EventNumber)evt,
+                                UserRole = UserRole.Admin
+                            };
+                            session.Save(era);
+                        }
                     }
 
                     var testMenuList = session.CreateCriteria<Menu>()
@@ -189,7 +237,6 @@ namespace WebsiteTemplate.Controllers
                         var testMenu = new Menu()
                         {
                             Name = "Test1",
-                            AllowedUserRoles = new List<UserRole>() { UserRole.AnyOne }
                         };
                         session.Save(testMenu);
 
@@ -201,7 +248,6 @@ namespace WebsiteTemplate.Controllers
                             var testMenu2 = new Menu()
                             {
                                 Name = "Test2",
-                                AllowedUserRoles = new List<UserRole>() { UserRole.AnyOne },
                                 ParentMenu = testMenu,
                             };
                             session.Save(testMenu2);
@@ -209,7 +255,6 @@ namespace WebsiteTemplate.Controllers
                             var menu3 = new Menu()
                             {
                                 Name = "Test3",
-                                AllowedUserRoles = new List<UserRole>() { UserRole.AnyOne },
                                 ParentMenu = testMenu2,
                                 Event = EventNumber.ViewMenus
                             };
@@ -328,9 +373,16 @@ namespace WebsiteTemplate.Controllers
                     }
                     catch (Exception e)
                     {
-                        //Console.WriteLine(e);
+                        Console.WriteLine(e);
                         throw;
                     }
+                    var viewMenu = action.GetViewMenu();
+
+                    var allowedEvents = GetAllowedEventsForUser(session, user.Id);
+                    var allowedMenuItems = viewMenu.Where(m => allowedEvents.Contains(m.EventNumber)).ToList();
+
+                    action.ViewMenu = allowedMenuItems; //TODO: this should work differently. because this can be changed in the view's code.
+
                     result.Add(action);
                 }
             }
@@ -367,6 +419,23 @@ namespace WebsiteTemplate.Controllers
             return Json(result);
         }
 
+        private List<EventNumber> GetAllowedEventsForUser(ISession session, string userId)
+        {
+            var roles = session.CreateCriteria<UserRoleAssociation>()
+                                   .CreateAlias("User", "user")
+                                   .Add(Restrictions.Eq("user.Id", userId))
+                                   .List<UserRoleAssociation>()
+                                   .ToList();
+
+            var userRoles = roles.Select(r => r.UserRole).ToArray();
+            var eventRoleAssociations = session.CreateCriteria<EventRoleAssociation>()
+                                               .Add(Restrictions.In("UserRole", userRoles))
+                                               .List<EventRoleAssociation>();
+
+            var events = eventRoleAssociations.Select(e => e.Event).ToList();
+            return events;
+        }
+
         [HttpGet]
         [Route("getUserMenu")]
         [RequireHttps]
@@ -378,21 +447,30 @@ namespace WebsiteTemplate.Controllers
             var results = new Dictionary<int, string>();
             using (var session = Store.OpenSession())
             {
-                var roles = session.CreateCriteria<UserRoleAssociation>()
-                                   .CreateAlias("User", "user")
-                                   .Add(Restrictions.Eq("user.Id", user.Id))
-                                   .List<UserRoleAssociation>()
-                                   .ToList();
+                var events = GetAllowedEventsForUser(session, user.Id).ToArray();
 
-                var list = new List<Menu>();
+                var userMenus = session.CreateCriteria<Menu>()
+                                       .Add(Restrictions.In("Event", events))
+                                       .Add(Restrictions.IsNull("ParentMenu"))
+                                       .List<Menu>()
+                                       .ToList();
+
+                userMenus.ForEach(m =>
+                {
+                    results.Add((int)m.Event, m.Name);
+                });
+
+                /*var list = new List<Menu>();
+
+                list = session.CreateCriteria<Menu>().List<Menu>().ToList();
                 foreach (var role in roles)
                 {
-                    var tempQuery = session.QueryOver<Menu>().WhereRestrictionOn(x => x.UserRoleString).IsLike("%" + role.UserRoleString + "%");
-                    list.AddRange(tempQuery.List<Menu>());
+                    //var tempQuery = session.QueryOver<Menu>().WhereRestrictionOn(x => x.UserRoleString).IsLike("%" + role.UserRoleString + "%");
+                    //list.AddRange(tempQuery.List<Menu>());
                 }
 
-                var tQuery = session.QueryOver<Menu>().WhereRestrictionOn(x => x.UserRoleString).IsLike("%AnyOne%");
-                list.AddRange(tQuery.List<Menu>());
+                //var tQuery = session.QueryOver<Menu>().WhereRestrictionOn(x => x.UserRoleString).IsLike("%AnyOne%");
+                //list.AddRange(tQuery.List<Menu>());
 
                 var xx = -1;
 
@@ -423,7 +501,7 @@ namespace WebsiteTemplate.Controllers
                     {
                         results.Add(xx--, menu.Name);
                     }
-                }
+                }*/
             }
             return Json(results);
         }

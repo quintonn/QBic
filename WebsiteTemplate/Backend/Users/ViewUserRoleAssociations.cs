@@ -55,16 +55,12 @@ namespace WebsiteTemplate.Backend.Users
             }
         }
 
-        public override IList<MenuItem> ViewMenu
+        public override IList<MenuItem> GetViewMenu()
         {
-            get
-            {
-                var results = new List<MenuItem>();
-                results.Add(new MenuItem("Add", EventNumber.AddUserRoleAssociation, UserId));
-                return results;
-            }
+            var results = new List<MenuItem>();
+            results.Add(new MenuItem("Add", EventNumber.AddUserRoleAssociation, UserId));
+            return results;
         }
-
         public override System.Collections.IEnumerable GetData(string data)
         {
             UserId = data;

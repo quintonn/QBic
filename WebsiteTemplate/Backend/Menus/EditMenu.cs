@@ -60,17 +60,17 @@ namespace WebsiteTemplate.Backend.Menus
                         }
                 });
 
-                var userRoles = Enum.GetValues(typeof(UserRole)).Cast<int>().ToDictionary(e => e.ToString(), e => (object)Enum.GetName(typeof(UserRole), e));
+                //var userRoles = Enum.GetValues(typeof(UserRole)).Cast<int>().ToDictionary(e => e.ToString(), e => (object)Enum.GetName(typeof(UserRole), e));
 
-                var currentRoles = Menu.AllowedUserRoles.Select(r => (int)r);
-                var listSelection = new ListSelectionInput("UserRoles", "Allowed User Roles", currentRoles)
-                {
-                    AvailableItemsLabel = "User Roles:",
-                    SelectedItemsLabel = "Chosen User Roles:",
-                    ListSource = userRoles
-                };
+                //var currentRoles = Menu.AllowedUserRoles.Select(r => (int)r);
+                //var listSelection = new ListSelectionInput("UserRoles", "Allowed User Roles", currentRoles)
+                //{
+                //    AvailableItemsLabel = "User Roles:",
+                //    SelectedItemsLabel = "Chosen User Roles:",
+                //    ListSource = userRoles
+                //};
                 
-                list.Add(listSelection);
+                //list.Add(listSelection);
 
                 list.Add(new HiddenInput("Id", Menu.Id));
 
@@ -123,8 +123,6 @@ namespace WebsiteTemplate.Backend.Menus
                 var hasSubMenus = Convert.ToBoolean(json.GetValue("HasSubmenus"));
                 var eventName = json.GetValue("Event").ToString();
 
-                var userRoles = (json.GetValue("UserRoles") as JArray).Select(u => (UserRole)Convert.ToInt32(u)).ToList();
-
                 if (String.IsNullOrWhiteSpace(name))
                 {
                     return new List<Event>()
@@ -153,8 +151,6 @@ namespace WebsiteTemplate.Backend.Menus
                     var menu = session.Get<Menu>(id);
                     menu.Event = eventNumber;
                     menu.Name = name;
-                    menu.AllowedUserRoles = userRoles;
-                    var n = menu.UserRoleString;
 
                     parentMenuId = menu.ParentMenu != null ? menu.ParentMenu.Id.ToString() : "";
 

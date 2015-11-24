@@ -21,16 +21,13 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
             }
         }
 
-        public override IList<MenuItem> ViewMenu
+        public override IList<MenuItem> GetViewMenu()
         {
-            get
-            {
-                var results = new List<MenuItem>();
+            var results = new List<MenuItem>();
 
-                results.Add(new MenuItem("Add", EventNumber.AddEventRoleAssociation));
+            results.Add(new MenuItem("Add", EventNumber.AddEventRoleAssociation));
 
-                return results;
-            }
+            return results;
         }
 
         public override void ConfigureColumns(ColumnConfiguration columnConfig)

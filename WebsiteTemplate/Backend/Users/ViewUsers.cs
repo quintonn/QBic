@@ -61,14 +61,11 @@ namespace WebsiteTemplate.Backend.Users
             );
         }
 
-        public override IList<MenuItem> ViewMenu
+        public override IList<MenuItem> GetViewMenu()
         {
-            get
-            {
-                var results = new List<MenuItem>();
-                results.Add(new MenuItem("Add", EventNumber.AddUser));
-                return results;
-            }
+            var results = new List<MenuItem>();
+            results.Add(new MenuItem("Add", EventNumber.AddUser));
+            return results;
         }
 
         public override string Description
