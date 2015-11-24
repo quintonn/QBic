@@ -23,7 +23,6 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
 
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
-            columnConfig.AddStringColumn("Id", "Id");
             columnConfig.AddStringColumn("Name", "UserName");
             columnConfig.AddStringColumn("Email", "Email");
             columnConfig.AddBooleanColumn("Email Confirmed", "EmailConfirmed", "Yes", "No");
@@ -66,7 +65,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             get
             {
                 var results = new List<MenuItem>();
-                results.Add(new MenuItem("Add", EventNumber.AddUser, String.Empty));
+                results.Add(new MenuItem("Add", EventNumber.AddUser));
                 return results;
             }
         }
@@ -75,7 +74,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
         {
             get
             {
-                return "View Users";
+                return "Users";
             }
         }
 

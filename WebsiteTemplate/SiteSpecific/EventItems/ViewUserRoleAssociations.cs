@@ -86,7 +86,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             using (var session = Store.OpenSession())
             {
                 var user = session.Get<User>(data);
-                mDescription = "View User Roles: " + user.UserName;
+                mDescription = "User Roles: " + user.UserName;
                                 
                 var results = session.CreateCriteria<UserRoleAssociation>()
                        .CreateAlias("User", "user")

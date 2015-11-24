@@ -20,7 +20,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             }
         }
 
-        private string mDescription = "View Menus";
+        private string mDescription = "Menus";
         public override string Description
         {
             get
@@ -103,17 +103,27 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
 
                     var parentMenu = session.Get<Menu>(data);
                     ParentId = parentMenu.ParentMenu != null ? parentMenu.ParentMenu.Id : "";
-                    mDescription = "View Menus: " + parentMenu.Name;
+                    mDescription = "Menus: " + parentMenu.Name;
                 }
                 else
                 {
-                    mDescription = "View Menus";
+                    mDescription = "Menus";
                     query = query.Add(Restrictions.IsNull("ParentMenu"));
                 }
                 var results = query
                        .List<Menu>()
                        .ToList();
-                return results;
+                var newList = results.Select(r => new
+                {
+                    Name = r.Name,
+                    Id = r.Id,
+                    Event = r.Event,
+                    ParentMenu = r.ParentMenu,
+                    UserRoleString = r.UserRoleString,
+                    CanDelete = r.CanDelete,
+                    AllowedUserRoles = r.AllowedUserRoles
+                }).ToList();
+                return newList;
             }
         }
 

@@ -133,7 +133,7 @@ namespace WebsiteTemplate.Controllers
                         var menu1 = new Menu()
                         {
                             Event = EventNumber.ViewUsers,
-                            Name = "View Users",
+                            Name = "Users",
                             AllowedUserRoles = new List<UserRole>() { UserRole.AnyOne, UserRole.ViewUsers }
                         };
 
@@ -148,7 +148,7 @@ namespace WebsiteTemplate.Controllers
                         var menu2 = new Menu()
                         {
                             Event = EventNumber.ViewMenus,
-                            Name = "View Menus",
+                            Name = "Menus",
                             AllowedUserRoles = new List<UserRole>() { UserRole.AnyOne }
                         };
                         session.Save(menu2);
@@ -389,7 +389,7 @@ namespace WebsiteTemplate.Controllers
                         var eventItem = EventList[eventNumber];
                         if (!results.ContainsKey((int)eventItem.GetId()))
                         {
-                            results.Add((int)eventItem.GetId(), eventItem.Description);
+                            results.Add((int)eventItem.GetId(), menu.Name);
                         }
                     }
                     else if (menu.Event == EventNumber.Nothing && menu.ParentMenu == null)
