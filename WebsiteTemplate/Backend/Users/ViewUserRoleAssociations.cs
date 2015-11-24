@@ -6,8 +6,9 @@ using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.SiteSpecific;
 
-namespace WebsiteTemplate.SiteSpecific.EventItems
+namespace WebsiteTemplate.Backend.Users
 {
     public class ViewUserRoleAssociations : ShowView
     {
@@ -39,9 +40,9 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             return typeof(UserRoleAssociation);
         }
 
-        public override Menus.BaseItems.EventNumber GetId()
+        public override EventNumber GetId()
         {
-            return Menus.BaseItems.EventNumber.ViewUserRoleAssociations;
+            return EventNumber.ViewUserRoleAssociations;
         }
 
         private string mDescription { get; set; }

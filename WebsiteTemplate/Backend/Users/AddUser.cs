@@ -7,9 +7,10 @@ using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
-using WebsiteTemplate.SiteSpecific.UIActionItems;
+using WebsiteTemplate.SiteSpecific;
 
-namespace WebsiteTemplate.SiteSpecific.EventItems
+
+namespace WebsiteTemplate.Backend.Users
 {
     public class AddUser : GetInput
     {

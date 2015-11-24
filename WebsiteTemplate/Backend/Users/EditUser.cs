@@ -6,8 +6,10 @@ using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.SiteSpecific;
 
-namespace WebsiteTemplate.SiteSpecific.EventItems
+
+namespace WebsiteTemplate.Backend.Users
 {
     public class EditUser : GetInput
     {

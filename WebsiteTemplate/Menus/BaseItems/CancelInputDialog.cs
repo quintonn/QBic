@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using WebsiteTemplate.Menus.BaseItems;
+using WebsiteTemplate.SiteSpecific;
 
-namespace WebsiteTemplate.SiteSpecific.EventItems
+namespace WebsiteTemplate.Menus.BaseItems
 {
     public class CancelInputDialog : Event
     {

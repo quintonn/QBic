@@ -12,8 +12,9 @@ using WebsiteTemplate.Models;
 using WebsiteTemplate.SiteSpecific.Utilities;
 using System.Net.Mail;
 using System.Net.Http;
+using WebsiteTemplate.SiteSpecific;
 
-namespace WebsiteTemplate.SiteSpecific.UIActionItems
+namespace WebsiteTemplate.Backend.Users
 {
     public class SendConfirmationEmail : DoSomething
     {

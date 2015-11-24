@@ -9,8 +9,10 @@ using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.SiteSpecific;
 
-namespace WebsiteTemplate.SiteSpecific.EventItems
+
+namespace WebsiteTemplate.Backend.Menus
 {
     public class EditMenu : GetInput
     {
@@ -60,7 +62,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 list.Add(new ComboBoxInput("Event", "Menu Action", Menu.Event == null ? "" : Menu.Event.ToString())
                 {
                     ListItems = events,
-                    VisibilityConditions = new List<Menus.ViewItems.Condition>()
+                    VisibilityConditions = new List<Condition>()
                         {
                             new Condition("HasSubmenus", Comparison.Equals, "false")
                         }

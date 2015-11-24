@@ -6,8 +6,9 @@ using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.SiteSpecific;
 
-namespace WebsiteTemplate.SiteSpecific.EventItems
+namespace WebsiteTemplate.Backend.Users
 {
     public class ViewUsers : ShowView
     {

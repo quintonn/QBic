@@ -1,14 +1,15 @@
-﻿using System;
+﻿using NHibernate.Criterion;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
-using System.Linq;
-using NHibernate.Criterion;
+using WebsiteTemplate.SiteSpecific;
 
-namespace WebsiteTemplate.SiteSpecific.EventItems
+namespace WebsiteTemplate.Backend.Menus
 {
     public class ViewMenus : ShowView
     {

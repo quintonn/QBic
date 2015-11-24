@@ -8,12 +8,14 @@ using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.SiteSpecific;
 
-namespace WebsiteTemplate.SiteSpecific.EventItems
+
+namespace WebsiteTemplate.Backend.Users
 {
     public class AddUserRoleAssociation : GetInput
     {
-        public override Menus.BaseItems.EventNumber GetId()
+        public override EventNumber GetId()
         {
             return EventNumber.AddUserRoleAssociation;
         }
@@ -100,7 +102,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             return Task.FromResult<InitializeResult>(new InitializeResult(true));
         }
 
-        public override async System.Threading.Tasks.Task<IList<Menus.BaseItems.Event>> ProcessAction(string data, int actionNumber)
+        public override async System.Threading.Tasks.Task<IList<Event>> ProcessAction(string data, int actionNumber)
         {
             var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
             var userId = parameters["UserId"];

@@ -9,8 +9,10 @@ using System.Web;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.SiteSpecific;
 
-namespace WebsiteTemplate.SiteSpecific.EventItems
+
+namespace WebsiteTemplate.Backend.Menus
 {
     public class DeleteMenu : DoSomething
     {
