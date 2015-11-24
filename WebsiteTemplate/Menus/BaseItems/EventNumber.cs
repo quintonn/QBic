@@ -17,6 +17,13 @@
         AddMenu = 1210,
         EditMenu = 1212,
         DeleteMenu = 1220,
+        View_ViewMenus = 1230,
+
+        ViewEventRoleAssociation = 1300,
+        AddEventRoleAssociation = 1310,
+        EditEventRoleAssociation = 1320,
+        DeleteEventRoleAssociation = 1330,
+
 
         ShowMessage = 9000,
         UserConfirmation = 9500,

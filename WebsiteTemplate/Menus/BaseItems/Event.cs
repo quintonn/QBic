@@ -42,11 +42,6 @@ namespace WebsiteTemplate.Menus.BaseItems
         /// </summary>
         //public abstract string MenuLabel { get; }
 
-        /// <summary>
-        /// Authorized user roles that can execute this UI Action
-        /// </summary>
-        public abstract IList<UserRole> AuthorizedUserRoles { get; }
-
         public abstract EventType ActionType { get; }
     }
 }

@@ -16,14 +16,6 @@ namespace WebsiteTemplate.Backend.Menus
 {
     public class DeleteMenu : DoSomething
     {
-        public override IList<UserRole> AuthorizedUserRoles
-        {
-            get
-            {
-                return new List<UserRole>();
-            }
-        }
-
         public override string Description
         {
             get

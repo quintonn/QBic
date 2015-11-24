@@ -25,14 +25,6 @@ namespace WebsiteTemplate.Backend.Users
             }
         }
 
-        public override IList<UserRole> AuthorizedUserRoles
-        {
-            get
-            {
-                return new List<UserRole>();
-            }
-        }
-
         public override async Task<IList<Event>> ProcessAction(string data)
         {
             var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);

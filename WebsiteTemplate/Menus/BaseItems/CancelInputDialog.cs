@@ -19,17 +19,6 @@ namespace WebsiteTemplate.Menus.BaseItems
             }
         }
 
-        public override IList<UserRole> AuthorizedUserRoles
-        {
-            get
-            {
-                return new List<UserRole>()
-                {
-                    UserRole.AnyOne
-                };
-            }
-        }
-
         public override EventType ActionType
         {
             get

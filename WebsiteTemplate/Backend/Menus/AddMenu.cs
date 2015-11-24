@@ -28,17 +28,6 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
-        public override IList<UserRole> AuthorizedUserRoles
-        {
-            get
-            {
-                return new List<UserRole>()
-                {
-                    UserRole.AnyOne
-                };
-            }
-        }
-
         public override IList<InputButton> InputButtons
         {
             get

@@ -18,14 +18,6 @@ namespace WebsiteTemplate.Backend.Menus
     {
         private Menu Menu { get; set; }
 
-        public override IList<UserRole> AuthorizedUserRoles
-        {
-            get
-            {
-                return new List<UserRole>();
-            }
-        }
-
         public override string Description
         {
             get

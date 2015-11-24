@@ -79,17 +79,6 @@ namespace WebsiteTemplate.Backend.Users
             }
         }
 
-        public override IList<UserRole> AuthorizedUserRoles
-        {
-            get
-            {
-                return new List<UserRole>()
-                {
-                    UserRole.ViewUsers
-                };
-            }
-        }
-
         public override string GetViewMessage()
         {
             return "TODO: Need to add ability to limit number of results as well as ability to sort items\n" +

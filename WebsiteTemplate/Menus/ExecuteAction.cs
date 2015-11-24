@@ -15,7 +15,7 @@ namespace WebsiteTemplate.Menus
 
         }
 
-        public ExecuteAction(EventNumber eventNumber, string parametersToPass)
+        public ExecuteAction(EventNumber eventNumber, string parametersToPass = null)
         {
             EventNumber = eventNumber;
             ParametersToPass = parametersToPass;
@@ -31,14 +31,6 @@ namespace WebsiteTemplate.Menus
             get
             {
                 return "Execute Action";
-            }
-        }
-
-        public override IList<SiteSpecific.UserRole> AuthorizedUserRoles
-        {
-            get
-            {
-                return new List<UserRole>();
             }
         }
 

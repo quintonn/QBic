@@ -69,7 +69,7 @@ namespace WebsiteTemplate.Controllers
         private static void CheckDefaultValues()
         {
             var store = new DataStore();
-
+            
             try
             {
                 using (var session = store.OpenSession())
@@ -152,6 +152,33 @@ namespace WebsiteTemplate.Controllers
                             AllowedUserRoles = new List<UserRole>() { UserRole.AnyOne }
                         };
                         session.Save(menu2);
+                    }
+
+                    var menuList3 = session.CreateCriteria<Menu>()
+                                           .Add(Restrictions.Eq("Event", EventNumber.ViewEventRoleAssociation))
+                                           .List<Menu>();
+                    if (menuList3.Count == 0)
+                    {
+                        var menu3 = new Menu()
+                        {
+                            Event = EventNumber.ViewEventRoleAssociation,
+                            Name = "Event Role Associations",
+                            AllowedUserRoles = new List<UserRole>() {  UserRole.ViewEventRoleAssociations}
+                        };
+                        session.Save(menu3);
+                    }
+
+                    var eventRoleAssociations1 = session.CreateCriteria<EventRoleAssociation>()
+                                                        .Add(Restrictions.Eq("Event", EventNumber.ViewEventRoleAssociation))
+                                                        .List<EventRoleAssociation>();
+                    if (eventRoleAssociations1.Count == 0)
+                    {
+                        var evn = new EventRoleAssociation()
+                        {
+                            Event = EventNumber.ViewEventRoleAssociation,
+                            UserRole = UserRole.ViewEventRoleAssociations
+                        };
+                        session.Save(evn);
                     }
 
                     var testMenuList = session.CreateCriteria<Menu>()

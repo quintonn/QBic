@@ -8,6 +8,7 @@
         AddUser = 2,
         ViewUserRoleAssociations = 3,
         ViewMenus = 4,
+        ViewEventRoleAssociations = 5,
 
         AnyOne = 999, /// Any user can do this...
     }

@@ -19,14 +19,6 @@ namespace WebsiteTemplate.Menus
             }
         }
 
-        public override IList<SiteSpecific.UserRole> AuthorizedUserRoles
-        {
-            get
-            {
-                return new List<UserRole>();
-            }
-        }
-
         public ShowMessage()
             : base()
         {

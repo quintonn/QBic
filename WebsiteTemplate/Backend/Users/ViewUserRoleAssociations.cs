@@ -55,17 +55,6 @@ namespace WebsiteTemplate.Backend.Users
             }
         }
 
-        public override IList<UserRole> AuthorizedUserRoles
-        {
-            get
-            {
-                return new List<UserRole>()
-                {
-                    UserRole.AnyOne
-                };
-            }
-        }
-
         public override IList<MenuItem> ViewMenu
         {
             get

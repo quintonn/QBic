@@ -71,14 +71,6 @@ namespace WebsiteTemplate.Backend.Users
             }
         }
 
-        public override IList<UserRole> AuthorizedUserRoles
-        {
-            get
-            {
-                return new List<UserRole>();
-            }
-        }
-
         public override IList<InputField> InputFields
         {
             get

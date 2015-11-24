@@ -158,6 +158,10 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Backend\EventRoleAssociations\AddEventRoleAssociation.cs" />
+    <Compile Include="Backend\EventRoleAssociations\DeleteEventRoleAssociation.cs" />
+    <Compile Include="Backend\EventRoleAssociations\ViewEventRoleAssociations.cs" />
+    <Compile Include="Backend\Menus\View_ViewMenus.cs" />
     <Compile Include="Controllers\MenuController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\RoleAuthorization.cs" />
@@ -203,6 +207,7 @@
     <Compile Include="Menus\ViewItems\ViewColumn.cs" />
     <Compile Include="Models\BaseClass.cs" />
     <Compile Include="Models\CustomIdentifierGenerator.cs" />
+    <Compile Include="Models\EventRoleAssociation.cs" />
     <Compile Include="Models\Menu.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserRoleAssociation.cs" />
