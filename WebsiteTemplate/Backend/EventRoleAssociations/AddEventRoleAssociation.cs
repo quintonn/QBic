@@ -53,7 +53,7 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
                 var userRoles = Enum.GetNames(typeof(UserRole))
                                     .ToList();
 
-                list.Add(new ComboBoxInput("UserRole", "User Role")
+                list.Add(new ComboBoxInput("UserRole", "Allowed User Role")
                 {
                     ListItems = userRoles
                 });

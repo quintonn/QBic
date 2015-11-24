@@ -36,7 +36,7 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
             columnConfig.AddStringColumn("Event", "Event");
-            columnConfig.AddStringColumn("User Role", "UserRole");
+            columnConfig.AddStringColumn("Allowed User Role", "UserRole");
 
             //columnConfig.AddLinkColumn("", "Edit", "Id", "Edit", EventNumber.EditEventRoleAssociation);
 
