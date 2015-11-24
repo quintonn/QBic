@@ -82,9 +82,6 @@
 
             var buttonAdded = false;
 
-            console.log('args');
-            console.log(args);
-
             /// Add the Confirmation button
             if (settings.ConfirmationButtonText != null && settings.ConfirmationButtonText.length > 0)
             {

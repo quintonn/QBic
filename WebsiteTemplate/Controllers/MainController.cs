@@ -251,6 +251,7 @@ namespace WebsiteTemplate.Controllers
                     });
                 };
 
+                eventItem.Request = Request;
                 var result = await eventItem.ProcessAction(formData, actionId);
 
                 return Json(result);
@@ -376,6 +377,10 @@ namespace WebsiteTemplate.Controllers
                         {
                             results.Add(xx--, menu.Name);
                         }
+                        continue;
+                    }
+                    if (menu.ParentMenu != null)
+                    {
                         continue;
                     }
                     var eventNumber = (EventNumber)menu.Event;

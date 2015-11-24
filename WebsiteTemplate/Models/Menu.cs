@@ -26,7 +26,7 @@ namespace WebsiteTemplate.Models
             set
             {
                 //mUserRoleString = value;
-                AllowedUserRoles = value.Split(",".ToCharArray()).Select(u => (UserRole)Enum.Parse(typeof(UserRole), u)).ToList();
+                AllowedUserRoles = value.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Select(u => (UserRole)Enum.Parse(typeof(UserRole), u)).ToList();
             }
         }
 

@@ -11,6 +11,8 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
 {
     public class ViewUserRoleAssociations : ShowView
     {
+        public string UserId { get; set; }
+
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
             columnConfig.AddStringColumn("User", "User.UserName");    /// User.UserName will be processed at runtime in javascript.
@@ -68,13 +70,15 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
             get
             {
                 var results = new List<MenuItem>();
-                results.Add(new MenuItem("Add", EventNumber.AddUserRoleAssociation, String.Empty));
+                results.Add(new MenuItem("Add", EventNumber.AddUserRoleAssociation, UserId));
                 return results;
             }
         }
 
         public override System.Collections.IEnumerable GetData(string data)
         {
+            UserId = data;
+
             if (String.IsNullOrWhiteSpace(data))
             {
                 throw new ArgumentNullException(data, "Cannot show view of user role without data");
