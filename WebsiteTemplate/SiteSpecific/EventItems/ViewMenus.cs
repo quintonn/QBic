@@ -52,6 +52,7 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
             columnConfig.AddStringColumn("Name", "Name");
+            //columnConfig.AddStringColumn("IsView", "IsView");
             columnConfig.AddStringColumn("Allowed Roles", "UserRoleString");
             columnConfig.AddStringColumn("Event", "Event", new ShowHideColumnSetting()
             {
@@ -62,8 +63,6 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 }
             });
 
-            columnConfig.AddLinkColumn("", "Edit", "Id", "Edit", EventNumber.EditMenu);
-
             columnConfig.AddButtonColumn("Sub Menus", "", ButtonTextSource.Fixed, "...", new ShowHideColumnSetting()
             {
                 Display = ColumnDisplayType.Show,
@@ -73,6 +72,18 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                     //new Condition("ParentMenu", Comparison.Equals, "")
                 }
             }, new ExecuteAction(EventNumber.ViewMenus, MenuId));
+
+            columnConfig.AddButtonColumn("View Menu Items", "", ButtonTextSource.Fixed, "...", new ShowHideColumnSetting()
+            {
+                Display = ColumnDisplayType.Show,
+                Conditions = new List<Condition>()
+                {
+                    new Condition("IsView", Comparison.Equals, "true")
+                }
+            }, new ExecuteAction(EventNumber.Nothing, MenuId));
+
+
+            columnConfig.AddLinkColumn("", "Edit", "Id", "Edit", EventNumber.EditMenu);
 
             columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X",
                 columnSetting: new ShowHideColumnSetting()
@@ -113,6 +124,10 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                 var results = query
                        .List<Menu>()
                        .ToList();
+
+                var eventIds = results.Select(r => r.Event).ToList();
+                var events = Controllers.MainController.EventList.Where(e => eventIds.Contains(e.Key) && e.Value is ShowView);
+
                 var newList = results.Select(r => new
                 {
                     Name = r.Name,
@@ -121,8 +136,10 @@ namespace WebsiteTemplate.SiteSpecific.EventItems
                     ParentMenu = r.ParentMenu,
                     UserRoleString = r.UserRoleString,
                     CanDelete = r.CanDelete,
-                    AllowedUserRoles = r.AllowedUserRoles
+                    AllowedUserRoles = r.AllowedUserRoles,
+                    IsView = r.Event != null && events.Where(e => e.Key == r.Event).Count() != 0
                 }).ToList();
+
                 return newList;
             }
         }
