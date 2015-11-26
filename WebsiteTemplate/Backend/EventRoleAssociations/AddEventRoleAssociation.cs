@@ -41,24 +41,27 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
             {
                 var list = new List<InputField>();
 
-                var events = Enum.GetNames(typeof(EventNumber))
-                                    .Where(u => !u.Equals("Nothing", StringComparison.InvariantCultureIgnoreCase))
-                                    .OrderBy(e => e)
-                                    .ToList();
-
-                list.Add(new ComboBoxInput("Event", "Event")
+                using (var session = Store.OpenSession())
                 {
-                    ListItems = events,
-                });
+                    var eventNumber = (EventNumber)Convert.ToInt32(EventId);
+                    var eventRoles = session.CreateCriteria<EventRoleAssociation>()
+                                            .Add(Restrictions.Eq("Event", eventNumber))
+                                            .List<EventRoleAssociation>()
+                                            .Select(r => r.UserRole.ToString())
+                                            .ToList();
 
-                var userRoles = Enum.GetNames(typeof(UserRole))
+                    var userRoles = Enum.GetNames(typeof(UserRole))
                                     .OrderBy(u => u)
+                                    .Where(u => !eventRoles.Contains(u.ToString()))
                                     .ToList();
 
-                list.Add(new ComboBoxInput("UserRole", "Allowed User Role")
-                {
-                    ListItems = userRoles
-                });
+                    list.Add(new ComboBoxInput("UserRole", "Allowed User Role")
+                    {
+                        ListItems = userRoles
+                    });
+                }
+                
+                list.Add(new HiddenInput("EventId", EventId));
 
                 return list;
             }
@@ -69,37 +72,41 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
             return EventNumber.AddEventRoleAssociation;
         }
 
+        private string EventId { get; set; }
+
         public override async Task<InitializeResult> Initialize(string data)
         {
+            EventId = data;
             return new InitializeResult(true);
         }
 
         public override async Task<IList<Event>> ProcessAction(string data, int actionNumber)
         {
+            if (String.IsNullOrWhiteSpace(data))
+            {
+                return new List<Event>()
+                    {
+                        new ShowMessage("There was an error creating the event role association. No input was received.")
+                    };
+            };
+
+            var json = JObject.Parse(data);
+
+            var eventId = json.GetValue("EventId").ToString();
+
             if (actionNumber == 1)
             {
                 return new List<Event>()
                 {
                     new CancelInputDialog(),
-                    new ExecuteAction(EventNumber.ViewEventRoleAssociation, "")
+                    new ExecuteAction(EventNumber.ViewEventRoleAssociations, eventId)
                 };
             }
             else if (actionNumber == 0)
             {
-                if (String.IsNullOrWhiteSpace(data))
-                {
-                    return new List<Event>()
-                    {
-                        new ShowMessage("There was an error creating the event role association. No input was received.")
-                    };
-                };
-
-                var json = JObject.Parse(data);
-
-                var eventName = json.GetValue("Event").ToString();
                 var userRoleName = json.GetValue("UserRole").ToString();
 
-                var theEvent = (EventNumber)Enum.Parse(typeof(EventNumber), eventName);
+                var theEvent = (EventNumber)Convert.ToInt32(eventId);
                 var userRole = (UserRole)Enum.Parse(typeof(UserRole), userRoleName);
 
                 var eventRoleAssociation = new EventRoleAssociation()
@@ -130,7 +137,7 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
                 {
                     new ShowMessage("Event role association created successfully."),
                     new CancelInputDialog(),
-                    new ExecuteAction(EventNumber.ViewEventRoleAssociation)
+                    new ExecuteAction(EventNumber.ViewEventRoleAssociations, eventId)
                 };
             }
             return null;

@@ -18,10 +18,12 @@
         EditMenu = 1212,
         DeleteMenu = 1220,
 
-        ViewEventRoleAssociation = 1300,
+        ViewEventRoleAssociations = 1300,
         AddEventRoleAssociation = 1310,
         EditEventRoleAssociation = 1320,
         DeleteEventRoleAssociation = 1330,
+
+        ViewUserEvents = 1400,
 
 
         ShowMessage = 9000,

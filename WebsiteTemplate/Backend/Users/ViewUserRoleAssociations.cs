@@ -35,11 +35,6 @@ namespace WebsiteTemplate.Backend.Users
            );
         }
 
-        public override Type GetDataType()
-        {
-            return typeof(UserRoleAssociation);
-        }
-
         public override EventNumber GetId()
         {
             return EventNumber.ViewUserRoleAssociations;

@@ -38,12 +38,6 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// </summary>
         //public abstract string DbQuery { get; }
 
-
-        /// <summary>
-        /// The type/class to retrieve from the DB. (Using NHibernat -> this is what i need at this point).
-        /// </summary>
-        public abstract Type GetDataType();
-
         /// <summary>
         /// This method is called to obtain all the information
         /// </summary>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NHibernate.Criterion;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,8 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
         {
             var results = new List<MenuItem>();
 
-            results.Add(new MenuItem("Add", EventNumber.AddEventRoleAssociation));
+            results.Add(new MenuItem("Back", EventNumber.ViewUserEvents));
+            results.Add(new MenuItem("Add", EventNumber.AddEventRoleAssociation, EventId));
 
             return results;
         }
@@ -34,8 +36,6 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
         {
             columnConfig.AddStringColumn("Event", "Event");
             columnConfig.AddStringColumn("Allowed User Role", "UserRole");
-
-            //columnConfig.AddLinkColumn("", "Edit", "Id", "Edit", EventNumber.EditEventRoleAssociation);
 
             columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X",
                 columnSetting: new ShowHideColumnSetting()
@@ -48,16 +48,21 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
                 },
                 eventItem: new UserConfirmation("Delete Menu Item?")
                 {
-                    OnConfirmationUIAction = EventNumber.DeleteEventRoleAssociation
+                    OnConfirmationUIAction = EventNumber.DeleteEventRoleAssociation,
                 }
             );
         }
+
+        private string EventId { get; set; }
 
         public override IEnumerable GetData(string data)
         {
             using (var session = Store.OpenSession())
             {
+                EventId = data;
+                var eventNumber = (EventNumber)Enum.Parse(typeof(EventNumber), data);
                 var results = session.CreateCriteria<EventRoleAssociation>()
+                                     .Add(Restrictions.Eq("Event", eventNumber))
                                      .List<EventRoleAssociation>()
                                      .Select(r => new
                                      {
@@ -73,14 +78,9 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
             }
         }
 
-        public override Type GetDataType()
-        {
-            return typeof(EventRoleAssociation);
-        }
-
         public override EventNumber GetId()
         {
-            return EventNumber.ViewEventRoleAssociation;
+            return EventNumber.ViewEventRoleAssociations;
         }
     }
 }

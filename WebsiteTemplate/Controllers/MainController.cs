@@ -168,26 +168,27 @@ namespace WebsiteTemplate.Controllers
                     }
 
                     var menuList3 = session.CreateCriteria<Menu>()
-                                           .Add(Restrictions.Eq("Event", EventNumber.ViewEventRoleAssociation))
+                                           .Add(Restrictions.Eq("Event", EventNumber.ViewUserEvents))
                                            .List<Menu>();
                     if (menuList3.Count == 0)
                     {
                         var menu3 = new Menu()
                         {
-                            Event = EventNumber.ViewEventRoleAssociation,
-                            Name = "Event Role Associations",
+                            Event = EventNumber.ViewUserEvents,
+                            Name = "User Events",
                         };
                         session.Save(menu3);
                     }
 
+
                     var era1 = session.CreateCriteria<EventRoleAssociation>()
-                                      .Add(Restrictions.Eq("Event", EventNumber.ViewEventRoleAssociation))
+                                      .Add(Restrictions.Eq("Event", EventNumber.ViewEventRoleAssociations))
                                       .List<EventRoleAssociation>();
                     if (era1.Count == 0)
                     {
                         var evn = new EventRoleAssociation()
                         {
-                            Event = EventNumber.ViewEventRoleAssociation,
+                            Event = EventNumber.ViewEventRoleAssociations,
                             UserRole = UserRole.ViewEventRoleAssociations
                         };
                         session.Save(evn);

@@ -17,11 +17,6 @@ namespace WebsiteTemplate.Backend.Users
             return EventNumber.ViewUsers;
         }
 
-        public override Type GetDataType()
-        {
-            return typeof(User);
-        }
-
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
             columnConfig.AddStringColumn("Name", "UserName");

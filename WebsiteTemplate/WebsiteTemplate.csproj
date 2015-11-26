@@ -161,6 +161,7 @@
     <Compile Include="Backend\EventRoleAssociations\AddEventRoleAssociation.cs" />
     <Compile Include="Backend\EventRoleAssociations\DeleteEventRoleAssociation.cs" />
     <Compile Include="Backend\EventRoleAssociations\ViewEventRoleAssociations.cs" />
+    <Compile Include="Backend\UserEvents\ViewUserEvents.cs" />
     <Compile Include="Controllers\MenuController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\RoleAuthorization.cs" />

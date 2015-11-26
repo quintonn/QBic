@@ -120,11 +120,6 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
-        public override Type GetDataType()
-        {
-            return typeof(Menu);
-        }
-
         public override EventNumber GetId()
         {
             return EventNumber.ViewMenus;

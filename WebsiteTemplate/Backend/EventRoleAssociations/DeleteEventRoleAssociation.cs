@@ -31,9 +31,11 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
 
             var id = json.GetValue("Id").ToString();
 
+            EventNumber eventNumber;
             using (var session = Store.OpenSession())
             {
                 var eventRoleAssociation = session.Get<EventRoleAssociation>(id);
+                eventNumber = eventRoleAssociation.Event;
                 session.Delete(eventRoleAssociation);
                 session.Flush();
             }
@@ -42,7 +44,7 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
             {
                 new ShowMessage("Event role association deleted successfully"),
                 new CancelInputDialog(),
-                new ExecuteAction(EventNumber.ViewEventRoleAssociation)
+                new ExecuteAction(EventNumber.ViewEventRoleAssociations, ((int)eventNumber).ToString())
             };
         }
     }
