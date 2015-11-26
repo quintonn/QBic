@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.SiteSpecific;
 
@@ -27,6 +28,12 @@ namespace WebsiteTemplate.Menus
 
         public ShowMessage(string message)
             : base(message, "Ok", "")
+        {
+
+        }
+
+        public ShowMessage(string format, params object[] args)
+            : base(String.Format(format, args), "Ok", "")
         {
 
         }

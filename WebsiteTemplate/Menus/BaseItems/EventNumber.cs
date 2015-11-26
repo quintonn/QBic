@@ -25,6 +25,10 @@
 
         ViewUserEvents = 1400,
 
+        ViewUserRoles = 1500,
+        AddUserRole = 1510,
+        EditUserRole = 1520,
+        DeleteUserRole = 1530,
 
         ShowMessage = 9000,
         UserConfirmation = 9500,

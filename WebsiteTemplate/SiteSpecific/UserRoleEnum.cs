@@ -1,6 +1,6 @@
 ﻿namespace WebsiteTemplate.SiteSpecific
 {
-    public enum UserRole
+    public enum UserRoleEnum
     {
         Admin = -1,
         ViewUsers = 0,

@@ -94,51 +94,68 @@ namespace WebsiteTemplate.Controllers
                         }
                     }
 
-                    var adminRole = session.CreateCriteria<UserRoleAssociation>()
-                                           .CreateAlias("User", "user")
-                                           .Add(Restrictions.Eq("user.Id", adminUser.Id))
-                                           .Add(Restrictions.Eq("UserRole", UserRole.Admin))
-                                           .UniqueResult<UserRoleAssociation>();
+
+                    var adminRole = session.CreateCriteria<UserRole>()
+                                           .Add(Restrictions.Eq("Name", "Admin"))
+                                           .UniqueResult<UserRole>();
                     if (adminRole == null)
                     {
-                        adminRole = new UserRoleAssociation()
+                        adminRole = new UserRole()
                         {
-                            User = adminUser,
-                            UserRole = UserRole.Admin
+                            Name = "Admin",
+                            Description = "Administrator"
                         };
                         session.Save(adminRole);
                     }
 
-                    var viewUsersRoleAssociation = session.CreateCriteria<UserRoleAssociation>()
+                    var adminRoleAssociation = session.CreateCriteria<UserRoleAssociation>()
                                                       .CreateAlias("User", "user")
+                                                      .CreateAlias("UserRole", "role")
                                                       .Add(Restrictions.Eq("user.Id", adminUser.Id))
-                                                      .Add(Restrictions.Eq("UserRole", UserRole.ViewUsers))
+                                                      .Add(Restrictions.Eq("role.Id", adminRole.Id))
                                                       .UniqueResult<UserRoleAssociation>();
-
-                    if (viewUsersRoleAssociation == null)
+                    if (adminRoleAssociation == null)
                     {
-                        viewUsersRoleAssociation = new UserRoleAssociation(false)
+                        adminRoleAssociation = new UserRoleAssociation()
                         {
                             User = adminUser,
-                            UserRole = UserRole.ViewUsers,
+                            UserRole = adminRole
                         };
-                        session.Save(viewUsersRoleAssociation);
+                        session.Save(adminRoleAssociation);
                     }
 
-                    var role2 = session.CreateCriteria<UserRoleAssociation>()
-                                                      .CreateAlias("User", "user")
-                                                      .Add(Restrictions.Eq("user.Id", adminUser.Id))
-                                                      .Add(Restrictions.Eq("UserRole", UserRole.ViewUserRoleAssociations))
-                                                      .UniqueResult<UserRoleAssociation>();
-                    if (role2 == null)
-                    {
-                        role2 = new UserRoleAssociation(false)
-                        {
-                            User = adminUser,
-                            UserRole = UserRole.ViewUserRoleAssociations
-                        };
-                        session.Save(role2);
-                    }
+                    //var viewUsersRoleAssociation = session.CreateCriteria<UserRoleAssociation>()
+                    //                                  .CreateAlias("User", "user")
+                    //                                  .CreateAlias("UserRole", "role")
+                    //                                  .Add(Restrictions.Eq("user.Id", adminUser.Id))
+                    //                                  .Add(Restrictions.Eq("role.Id", adminRole.Id))
+                    //                                  .UniqueResult<UserRoleAssociation>();
+
+                    //if (viewUsersRoleAssociation == null)
+                    //{
+                    //    viewUsersRoleAssociation = new UserRoleAssociation(false)
+                    //    {
+                    //        User = adminUser,
+                    //        UserRole = adminRole,
+                    //    };
+                    //    session.Save(viewUsersRoleAssociation);
+                    //}
+
+                    //var role2 = session.CreateCriteria<UserRoleAssociation>()
+                    //                                  .CreateAlias("User", "user")
+                    //                                  .CreateAlias("UserRole", "role")
+                    //                                  .Add(Restrictions.Eq("user.Id", adminUser.Id))
+                    //                                  .Add(Restrictions.Eq("role.Id", adminRole.Id))
+                    //                                  .UniqueResult<UserRoleAssociation>();
+                    //if (role2 == null)
+                    //{
+                    //    role2 = new UserRoleAssociation(false)
+                    //    {
+                    //        User = adminUser,
+                    //        UserRole = adminRole
+                    //    };
+                    //    session.Save(role2);
+                    //}
 
                     var menuList1 = session.CreateCriteria<Menu>()
                                            .Add(Restrictions.Eq("Event", EventNumber.ViewUsers))
@@ -180,6 +197,19 @@ namespace WebsiteTemplate.Controllers
                         session.Save(menu3);
                     }
 
+                    var userRoleMenu = session.CreateCriteria<Menu>()
+                                              .Add(Restrictions.Eq("Event", EventNumber.ViewUserRoles))
+                                              .UniqueResult<Menu>();
+                    if (userRoleMenu == null)
+                    {
+                        userRoleMenu = new Menu()
+                        {
+                            Event = EventNumber.ViewUserRoles,
+                            Name = "User Roles"
+                        };
+                        session.Save(userRoleMenu);
+                    }
+
 
                     var era1 = session.CreateCriteria<EventRoleAssociation>()
                                       .Add(Restrictions.Eq("Event", EventNumber.ViewEventRoleAssociations))
@@ -189,7 +219,7 @@ namespace WebsiteTemplate.Controllers
                         var evn = new EventRoleAssociation()
                         {
                             Event = EventNumber.ViewEventRoleAssociations,
-                            UserRole = UserRole.ViewEventRoleAssociations
+                            UserRole = UserRoleEnum.ViewEventRoleAssociations
                         };
                         session.Save(evn);
                     }
@@ -202,14 +232,14 @@ namespace WebsiteTemplate.Controllers
                         var evn = new EventRoleAssociation()
                         {
                             Event = EventNumber.AddEventRoleAssociation,
-                            UserRole = UserRole.AddEventRoleAssociation
+                            UserRole = UserRoleEnum.AddEventRoleAssociation
                         };
                         session.Save(evn);
                     }
 
                     var allEvents = Enum.GetValues(typeof(EventNumber)).Cast<int>().Where(e => e != (int)EventNumber.Nothing).ToList();
                     var eras = session.CreateCriteria<EventRoleAssociation>()
-                                      .Add(Restrictions.Eq("UserRole", UserRole.Admin))
+                                      .Add(Restrictions.Eq("UserRole", UserRoleEnum.Admin))
                                       .List<EventRoleAssociation>()
                                       .ToList();
                     if (eras.Count != allEvents.Count)
@@ -224,7 +254,7 @@ namespace WebsiteTemplate.Controllers
                             var era = new EventRoleAssociation()
                             {
                                 Event = (EventNumber)evt,
-                                UserRole = UserRole.Admin
+                                UserRole = UserRoleEnum.Admin
                             };
                             session.Save(era);
                         }
@@ -263,7 +293,6 @@ namespace WebsiteTemplate.Controllers
                             session.Save(menu3);
                         }
                     }
-
 
                     session.Flush();
 
@@ -430,7 +459,7 @@ namespace WebsiteTemplate.Controllers
 
             var userRoles = roles.Select(r => r.UserRole).ToArray();
             var eventRoleAssociations = session.CreateCriteria<EventRoleAssociation>()
-                                               .Add(Restrictions.In("UserRole", userRoles))
+                                               //.Add(Restrictions.In("UserRole", userRoles))
                                                .List<EventRoleAssociation>();
 
             var events = eventRoleAssociations.Select(e => e.Event).ToList();
@@ -444,67 +473,74 @@ namespace WebsiteTemplate.Controllers
         public async Task<IHttpActionResult> GetUserMenu()
         {
             var user = await this.GetLoggedInUserAsync();
-            
-            var results = new Dictionary<int, string>();
-            using (var session = Store.OpenSession())
+
+            try
             {
-                var events = GetAllowedEventsForUser(session, user.Id).ToArray();
-
-                var userMenus = session.CreateCriteria<Menu>()
-                                       .Add(Restrictions.In("Event", events))
-                                       .Add(Restrictions.IsNull("ParentMenu"))
-                                       .List<Menu>()
-                                       .ToList();
-
-                userMenus.ForEach(m =>
+                var results = new Dictionary<int, string>();
+                using (var session = Store.OpenSession())
                 {
-                    results.Add((int)m.Event, m.Name);
-                });
+                    var events = GetAllowedEventsForUser(session, user.Id).ToArray();
 
-                /*var list = new List<Menu>();
+                    var userMenus = session.CreateCriteria<Menu>()
+                                           .Add(Restrictions.In("Event", events))
+                                           .Add(Restrictions.IsNull("ParentMenu"))
+                                           .List<Menu>()
+                                           .ToList();
 
-                list = session.CreateCriteria<Menu>().List<Menu>().ToList();
-                foreach (var role in roles)
-                {
-                    //var tempQuery = session.QueryOver<Menu>().WhereRestrictionOn(x => x.UserRoleString).IsLike("%" + role.UserRoleString + "%");
-                    //list.AddRange(tempQuery.List<Menu>());
-                }
-
-                //var tQuery = session.QueryOver<Menu>().WhereRestrictionOn(x => x.UserRoleString).IsLike("%AnyOne%");
-                //list.AddRange(tQuery.List<Menu>());
-
-                var xx = -1;
-
-                foreach (var menu in list)
-                {
-                    if (menu.Event == null)
+                    userMenus.ForEach(m =>
                     {
-                        if (menu.ParentMenu == null)
+                        results.Add((int)m.Event, m.Name);
+                    });
+
+                    /*var list = new List<Menu>();
+
+                    list = session.CreateCriteria<Menu>().List<Menu>().ToList();
+                    foreach (var role in roles)
+                    {
+                        //var tempQuery = session.QueryOver<Menu>().WhereRestrictionOn(x => x.UserRoleString).IsLike("%" + role.UserRoleString + "%");
+                        //list.AddRange(tempQuery.List<Menu>());
+                    }
+
+                    //var tQuery = session.QueryOver<Menu>().WhereRestrictionOn(x => x.UserRoleString).IsLike("%AnyOne%");
+                    //list.AddRange(tQuery.List<Menu>());
+
+                    var xx = -1;
+
+                    foreach (var menu in list)
+                    {
+                        if (menu.Event == null)
+                        {
+                            if (menu.ParentMenu == null)
+                            {
+                                results.Add(xx--, menu.Name);
+                            }
+                            continue;
+                        }
+                        if (menu.ParentMenu != null)
+                        {
+                            continue;
+                        }
+                        var eventNumber = (EventNumber)menu.Event;
+                        if (EventList.ContainsKey(eventNumber))
+                        {
+                            var eventItem = EventList[eventNumber];
+                            if (!results.ContainsKey((int)eventItem.GetId()))
+                            {
+                                results.Add((int)eventItem.GetId(), menu.Name);
+                            }
+                        }
+                        else if (menu.Event == EventNumber.Nothing && menu.ParentMenu == null)
                         {
                             results.Add(xx--, menu.Name);
                         }
-                        continue;
-                    }
-                    if (menu.ParentMenu != null)
-                    {
-                        continue;
-                    }
-                    var eventNumber = (EventNumber)menu.Event;
-                    if (EventList.ContainsKey(eventNumber))
-                    {
-                        var eventItem = EventList[eventNumber];
-                        if (!results.ContainsKey((int)eventItem.GetId()))
-                        {
-                            results.Add((int)eventItem.GetId(), menu.Name);
-                        }
-                    }
-                    else if (menu.Event == EventNumber.Nothing && menu.ParentMenu == null)
-                    {
-                        results.Add(xx--, menu.Name);
-                    }
-                }*/
+                    }*/
+                }
+                return Json(results);
             }
-            return Json(results);
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }

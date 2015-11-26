@@ -75,11 +75,16 @@ namespace WebsiteTemplate.Backend.Users
                                               .CreateAlias("User", "user")
                                               .Add(Restrictions.Eq("user.Id", UserId))
                                               .List<UserRoleAssociation>()
-                                              .Select(r => r.UserRoleString)
+                                              .Select(r => r.UserRole.Name)
                                               .ToList();
-                var userRoles = Enum.GetNames(typeof(UserRole))
-                                    .Where(u => !u.Equals("AnyOne", StringComparison.InvariantCultureIgnoreCase))
-                                    .ToList();
+                var userRoles = session.CreateCriteria<UserRole>()
+                                       .List<UserRole>()
+                                       .Select(u => u.Name)
+                                       .ToList();
+
+                //var userRoles = Enum.GetNames(typeof(UserRoleEnum))
+                //                    .Where(u => !u.Equals("AnyOne", StringComparison.InvariantCultureIgnoreCase))
+                //                    .ToList();
 
                 ListItems = userRoles.Except(existingUserRoles).ToList();
                 if (ListItems.Count == 0)
@@ -108,17 +113,28 @@ namespace WebsiteTemplate.Backend.Users
             {
                var role = parameters["UserRole"];
 
-                UserRole userRole;
-                if (!Enum.TryParse<UserRole>(role, out userRole))
-                {
-                    return new List<Event>()
-                    {
-                         new ShowMessage("Unable to create user role.\nUnknown user role '" + role + "'")
-                    };
-                }
+                //UserRoleEnum userRole;
+                //if (!Enum.TryParse<UserRoleEnum>(role, out userRole))
+                //{
+                //    return new List<Event>()
+                //    {
+                //         new ShowMessage("Unable to create user role.\nUnknown user role '" + role + "'")
+                //    };
+                //}
 
                 using (var session = Store.OpenSession())
                 {
+                    var userRole = session.CreateCriteria<UserRole>()
+                                          .Add(Restrictions.Eq("Name", role))
+                                          .UniqueResult<UserRole>();
+                    if (userRole == null)
+                    {
+                        return new List<Event>()
+                        {
+                             new ShowMessage("Unable to create user role.\nUnknown user role '" + role + "'")
+                        };
+                    }
+
                     var user = session.Get<User>(userId);
                     var existingUserRole = session.CreateCriteria<UserRoleAssociation>()
                                                   .CreateAlias("User", "user")

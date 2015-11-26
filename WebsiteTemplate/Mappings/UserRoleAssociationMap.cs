@@ -14,9 +14,12 @@ namespace WebsiteTemplate.Mappings
                            .Not.Nullable()
                            .LazyLoad(Laziness.False);
 
-            Map(x => x.UserRole)
-              .CustomType<UserRole>()
-              .Not.Nullable();
+            References(x => x.UserRole).Column("IdUserRole")
+                           .Not.Nullable()
+                           .LazyLoad(Laziness.False);
+            //Map(x => x.UserRole)
+            //  .CustomType<UserRoleEnum>()
+            //  .Not.Nullable();
         }
     }
 }

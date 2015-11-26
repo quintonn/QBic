@@ -86,7 +86,7 @@ namespace WebsiteTemplate.Backend.Menus
         public override Task<InitializeResult> Initialize(string data)
         {
             var id = data;
-            var results = new List<Event>();
+            
             using (var session = Store.OpenSession())
             {
                 Menu = session.Get<Menu>(id);
@@ -112,7 +112,7 @@ namespace WebsiteTemplate.Backend.Menus
                 {
                     return new List<Event>()
                     {
-                        new ShowMessage("There was an error creating the menu item. No input was received.")
+                        new ShowMessage("There was an error modifying the menu item. No input was received.")
                     };
                 };
 

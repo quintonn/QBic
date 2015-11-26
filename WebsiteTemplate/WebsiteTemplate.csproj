@@ -162,6 +162,10 @@
     <Compile Include="Backend\EventRoleAssociations\DeleteEventRoleAssociation.cs" />
     <Compile Include="Backend\EventRoleAssociations\ViewEventRoleAssociations.cs" />
     <Compile Include="Backend\UserEvents\ViewUserEvents.cs" />
+    <Compile Include="Backend\UserRoles\AddUserRole.cs" />
+    <Compile Include="Backend\UserRoles\DeleteUserRole.cs" />
+    <Compile Include="Backend\UserRoles\EditUserRole.cs" />
+    <Compile Include="Backend\UserRoles\ViewUserRoles.cs" />
     <Compile Include="Controllers\MenuController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\RoleAuthorization.cs" />
@@ -210,6 +214,7 @@
     <Compile Include="Models\EventRoleAssociation.cs" />
     <Compile Include="Models\Menu.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\UserRole.cs" />
     <Compile Include="Models\UserRoleAssociation.cs" />
     <Compile Include="Models\UserStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -227,7 +232,7 @@
     <Compile Include="Backend\Menus\ViewMenus.cs" />
     <Compile Include="Backend\Users\ViewUserRoleAssociations.cs" />
     <Compile Include="Backend\Users\ViewUsers.cs" />
-    <Compile Include="SiteSpecific\UserRole.cs" />
+    <Compile Include="SiteSpecific\UserRoleEnum.cs" />
     <Compile Include="Menus\BaseItems\EventNumber.cs" />
     <Compile Include="SiteSpecific\Utilities\WebsiteTemplateConstants.cs" />
     <Compile Include="Startup.cs" />

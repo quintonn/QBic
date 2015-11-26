@@ -50,7 +50,7 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
                                             .Select(r => r.UserRole.ToString())
                                             .ToList();
 
-                    var userRoles = Enum.GetNames(typeof(UserRole))
+                    var userRoles = Enum.GetNames(typeof(UserRoleEnum))
                                     .OrderBy(u => u)
                                     .Where(u => !eventRoles.Contains(u.ToString()))
                                     .ToList();
@@ -107,7 +107,7 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
                 var userRoleName = json.GetValue("UserRole").ToString();
 
                 var theEvent = (EventNumber)Convert.ToInt32(eventId);
-                var userRole = (UserRole)Enum.Parse(typeof(UserRole), userRoleName);
+                var userRole = (UserRoleEnum)Enum.Parse(typeof(UserRoleEnum), userRoleName);
 
                 var eventRoleAssociation = new EventRoleAssociation()
                 {
