@@ -56,7 +56,8 @@ namespace WebsiteTemplate.Backend.UserRoles
 
         public override Task<InitializeResult> Initialize(string data)
         {
-            var id = data;
+            var json = JObject.Parse(data);
+            var id = json.GetValue("Id").ToString();
             
             using (var session = Store.OpenSession())
             {

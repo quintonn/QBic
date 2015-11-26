@@ -39,8 +39,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicAuthentication, Version=0.0.5797.38917, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BasicAuthentication.0.0.5797.38917\lib\net45\BasicAuthentication.dll</HintPath>
+    <Reference Include="BasicAuthentication, Version=0.0.5791.20938, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicAuthentication.0.0.5791.20938\lib\net45\BasicAuthentication.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FluentNHibernate, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -219,13 +219,14 @@
     <Compile Include="Models\UserStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\UserContext.cs" />
-    <Compile Include="Backend\Menus\ModifyMenu.cs" />
+    <Compile Include="Backend\Menus\AddMenu.cs" />
     <Compile Include="Backend\Users\AddUser.cs" />
     <Compile Include="Backend\Users\AddUserRoleAssociation.cs" />
     <Compile Include="Menus\BaseItems\CancelInputDialog.cs" />
     <Compile Include="Backend\Menus\DeleteMenu.cs" />
     <Compile Include="Backend\Users\DeleteUserRoleAssociation.cs" />
     <Compile Include="Backend\Users\DeleteUser.cs" />
+    <Compile Include="Backend\Menus\EditMenu.cs" />
     <Compile Include="Backend\Users\EditUser.cs" />
     <Compile Include="Backend\Users\SendConfirmationEmail.cs" />
     <Compile Include="Backend\Menus\ViewMenus.cs" />

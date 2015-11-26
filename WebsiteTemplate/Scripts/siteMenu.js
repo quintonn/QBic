@@ -631,13 +631,15 @@
                     {
                         var a = document.createElement('a');
                         a.href = "#";
-                        //alert(column.LinkLabel);
                         a.innerHTML = column.LinkLabel;
                         a.onclick = (function (col, index)
                         {
                             return function ()
                             {
-                                var formData = data[index][col.KeyColumn];
+                                var formData =
+                                    {
+                                        Id: data[index][col.KeyColumn]
+                                    };
                                 
                                 var id = col.EventNumber;
                                 siteMenu.executeUIAction(id, formData);

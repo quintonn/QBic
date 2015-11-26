@@ -13,18 +13,20 @@ using WebsiteTemplate.SiteSpecific;
 
 namespace WebsiteTemplate.Backend.Menus
 {
-    public class AddMenu : GetInput
+    public class ModifyMenu : GetInput
     {
+        private Menu Menu { get; set; } = new Menu();
+        private bool IsNew { get; set; } = true;
         public override EventNumber GetId()
         {
-            return EventNumber.AddMenu;
+            return EventNumber.ModifyMenu;
         }
 
         public override string Description
         {
             get
             {
-                return "Add Menu";
+                return IsNew ? "Add Menu" : "Edit Menu";
             }
         }
 
@@ -46,14 +48,14 @@ namespace WebsiteTemplate.Backend.Menus
             {
                 var list = new List<InputField>();
 
-                list.Add(new StringInput("Name", "Menu Name"));
-                list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", false));
+                list.Add(new StringInput("Name", "Menu Name", Menu.Name));
+                list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", Menu.Event == null));
 
                 var events = Enum.GetNames(typeof(EventNumber))
                                     .Where(u => !u.Equals("Nothing", StringComparison.InvariantCultureIgnoreCase))
                                     .ToList();
 
-                list.Add(new ComboBoxInput("Event", "Menu Action")
+                list.Add(new ComboBoxInput("Event", "Menu Action", Menu.Event?.ToString())
                     {
                         ListItems = events,
                         VisibilityConditions = new List<Condition>()
@@ -74,6 +76,8 @@ namespace WebsiteTemplate.Backend.Menus
                 //list.Add(listSelection);
 
                 list.Add(new HiddenInput("ParentMenuId", ParentMenuId));
+                list.Add(new HiddenInput("IsNew", IsNew));
+                list.Add(new HiddenInput("Id", Menu?.Id));
 
 
                 return list;
@@ -84,7 +88,24 @@ namespace WebsiteTemplate.Backend.Menus
 
         public override async Task<InitializeResult> Initialize(string data)
         {
-            ParentMenuId = data;
+            var jobject = JObject.Parse(data);
+            JToken tmp;
+            if (jobject.TryGetValue("IsNew", out tmp))
+            {
+                IsNew = Convert.ToBoolean(tmp);
+                var parentId = jobject.GetValue("ParentId").ToString();
+                ParentMenuId = parentId;
+            }
+            else
+            {
+                IsNew = false;
+                var id = jobject.GetValue("Id").ToString();
+                using (var session = Store.OpenSession())
+                {
+                    Menu = session.Get<Menu>(id);
+                }
+            }
+            
             return new InitializeResult(true);
         }
 
@@ -110,9 +131,11 @@ namespace WebsiteTemplate.Backend.Menus
 
                 var json = JObject.Parse(data);
 
+                var isNew = Convert.ToBoolean(json.GetValue("IsNew").ToString());
                 var name = json.GetValue("Name").ToString();
                 var hasSubMenus = Convert.ToBoolean(json.GetValue("HasSubmenus"));
                 var eventName = json.GetValue("Event").ToString();
+                var menuId = json.GetValue("Id").ToString();
                 ParentMenuId = json.GetValue("ParentMenuId").ToString();
 
                 //var userRoles = (json.GetValue("UserRoles") as JArray).Select(u => (UserRole)Convert.ToInt32(u)).ToList();
@@ -142,17 +165,25 @@ namespace WebsiteTemplate.Backend.Menus
                 Menu parentMenu = null;
                 using (var session = Store.OpenSession())
                 {
+                    Menu menu;
+                    if (!isNew)
+                    {
+                        menu = session.Get<Menu>(menuId);
+                        ParentMenuId = menu.ParentMenu.Id;
+                    }
+                    else
+                    {
+                        menu = new Menu();
+                    }
+
                     if (!String.IsNullOrWhiteSpace(ParentMenuId))
                     {
                         parentMenu = session.Get<Menu>(ParentMenuId);
                     }
 
-                    var menu = new Menu()
-                    {
-                        Event = eventNumber,
-                        Name = name,
-                        ParentMenu = parentMenu,
-                    };
+                    menu.Event = eventNumber;
+                    menu.Name = name;
+                    menu.ParentMenu = parentMenu;
 
                     session.Save(menu);
                     session.Flush();
@@ -160,12 +191,11 @@ namespace WebsiteTemplate.Backend.Menus
 
                 return new List<Event>()
                 {
-                    new ShowMessage("Menu created successfully."),
+                    new ShowMessage("Menu {0} successfully.", isNew ? "created" : "modified"),
                     new CancelInputDialog(),
                     new ExecuteAction(EventNumber.ViewMenus, ParentMenuId)
                 };
             }
-
             return null;
         }
     }

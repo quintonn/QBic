@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using NHibernate.Criterion;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,7 +17,8 @@ namespace WebsiteTemplate.Backend.Users
     {
         public override System.Threading.Tasks.Task<InitializeResult> Initialize(string data)
         {
-            var id = data;
+            var json = JObject.Parse(data);
+            var id = json.GetValue("Id").ToString();
             var results = new List<Event>();
             using (var session = Store.OpenSession())
             {
@@ -35,6 +38,20 @@ namespace WebsiteTemplate.Backend.Users
                 using (var session = Store.OpenSession())
                 {
                     var id = parameters["Id"];
+                    var userName = parameters["UserName"];
+
+                    var existingUser = session.CreateCriteria<User>()
+                                              .Add(Restrictions.Eq("UserName", userName))
+                                              .Add(Restrictions.Not(Restrictions.Eq("Id", id)))
+                                              .UniqueResult<User>();
+                    if (existingUser != null)
+                    {
+                        return new List<Event>()
+                        {
+                            new ShowMessage("Unable to modify user. User with name {0} already exists.", userName)
+                        };
+                    }
+
                     var dbUser = session.Get<User>(id);
                     dbUser.UserName = parameters["UserName"];
                     dbUser.Email = parameters["Email"];
@@ -46,7 +63,7 @@ namespace WebsiteTemplate.Backend.Users
                 {
                     new ShowMessage("User modified successfully."),
                     new CancelInputDialog(),
-                    new ExecuteAction(EventNumber.ViewUsers, String.Empty)
+                    new ExecuteAction(EventNumber.ViewUsers)
                 };
             }
 

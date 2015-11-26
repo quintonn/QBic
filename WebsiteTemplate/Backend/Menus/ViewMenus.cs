@@ -1,4 +1,5 @@
-﻿using NHibernate.Criterion;
+﻿using Newtonsoft.Json.Linq;
+using NHibernate.Criterion;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,7 +32,11 @@ namespace WebsiteTemplate.Backend.Menus
                 results.Add(new MenuItem("Back", EventNumber.ViewMenus, ParentId));
             }
 
-            results.Add(new MenuItem("Add", EventNumber.AddMenu, MenuId));
+            var jsonObject = new JObject();
+            jsonObject.Add("IsNew", true);
+            jsonObject.Add("ParentId", MenuId);
+            var json = jsonObject.ToString();
+            results.Add(new MenuItem("Add", EventNumber.ModifyMenu, json));
 
             return results;
         }
@@ -62,7 +67,7 @@ namespace WebsiteTemplate.Backend.Menus
             }, new ExecuteAction(EventNumber.ViewMenus, MenuId));
 
 
-            columnConfig.AddLinkColumn("", "Edit", "Id", "Edit", EventNumber.EditMenu);
+            columnConfig.AddLinkColumn("", "", "Id", "Edit", EventNumber.ModifyMenu);
 
             columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X",
                 columnSetting: new ShowHideColumnSetting()

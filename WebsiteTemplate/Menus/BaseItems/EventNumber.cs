@@ -14,8 +14,9 @@
         DeleteUserRoleAssociation = 1120,
 
         ViewMenus = 1200,
+        ModifyMenu = 1201,
         AddMenu = 1210,
-        EditMenu = 1212,
+        
         DeleteMenu = 1220,
 
         ViewEventRoleAssociations = 1300,
