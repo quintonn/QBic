@@ -66,6 +66,8 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
                                          CanDelete = r.CanDelete,
                                          Id = r.Id
                                      })
+                                     .OrderBy(e => e.Event)
+                                     .ThenBy(e => e.UserRole)
                                      .ToList();
                 return results;
             }
