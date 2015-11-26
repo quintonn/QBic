@@ -69,7 +69,6 @@ namespace WebsiteTemplate.Controllers
         private static void CheckDefaultValues()
         {
             var store = new DataStore();
-            
             try
             {
                 using (var session = store.OpenSession())
@@ -482,59 +481,30 @@ namespace WebsiteTemplate.Controllers
                 {
                     var events = GetAllowedEventsForUser(session, user.Id).ToArray();
 
-                    var userMenus = session.CreateCriteria<Menu>()
+                var mainMenus = session.CreateCriteria<Menu>()
                                            .Add(Restrictions.In("Event", events))
                                            .Add(Restrictions.IsNull("ParentMenu"))
                                            .List<Menu>()
                                            .ToList();
-
-                    userMenus.ForEach(m =>
+                mainMenus.ForEach(m =>
                     {
                         results.Add((int)m.Event, m.Name);
                     });
 
-                    /*var list = new List<Menu>();
-
-                    list = session.CreateCriteria<Menu>().List<Menu>().ToList();
-                    foreach (var role in roles)
+                var subMenus = session.CreateCriteria<Menu>()
+                                      .Add(Restrictions.In("Event", events))
+                                      .Add(Restrictions.IsNotNull("ParentMenu"))
+                                      .List<Menu>()
+                                      .ToList();
+                foreach (var subMenu in subMenus)
+                {
+                    var tmp = subMenu;
+                    while (tmp.ParentMenu != null)
                     {
-                        //var tempQuery = session.QueryOver<Menu>().WhereRestrictionOn(x => x.UserRoleString).IsLike("%" + role.UserRoleString + "%");
-                        //list.AddRange(tempQuery.List<Menu>());
+                        tmp = tmp.ParentMenu;
                     }
-
-                    //var tQuery = session.QueryOver<Menu>().WhereRestrictionOn(x => x.UserRoleString).IsLike("%AnyOne%");
-                    //list.AddRange(tQuery.List<Menu>());
-
-                    var xx = -1;
-
-                    foreach (var menu in list)
-                    {
-                        if (menu.Event == null)
-                        {
-                            if (menu.ParentMenu == null)
-                            {
-                                results.Add(xx--, menu.Name);
-                            }
-                            continue;
-                        }
-                        if (menu.ParentMenu != null)
-                        {
-                            continue;
-                        }
-                        var eventNumber = (EventNumber)menu.Event;
-                        if (EventList.ContainsKey(eventNumber))
-                        {
-                            var eventItem = EventList[eventNumber];
-                            if (!results.ContainsKey((int)eventItem.GetId()))
-                            {
-                                results.Add((int)eventItem.GetId(), menu.Name);
-                            }
-                        }
-                        else if (menu.Event == EventNumber.Nothing && menu.ParentMenu == null)
-                        {
-                            results.Add(xx--, menu.Name);
-                        }
-                    }*/
+                    results.Add(-99, tmp.Name); //TODO: Here is should maybe build the sub-menu structure.  --> Maybe return the entire menu structure here.
+                }
                 }
                 return Json(results);
             }
