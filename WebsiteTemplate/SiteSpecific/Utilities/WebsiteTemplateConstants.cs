@@ -2,6 +2,6 @@
 {
     public static class WebsiteTemplateConstants
     {
-        public static readonly string ApplicatoinName = "";
+        public static readonly string ApplicatoinName = "Test Application";
     }
 }

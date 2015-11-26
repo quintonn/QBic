@@ -219,7 +219,7 @@ namespace WebsiteTemplate.Controllers
                         var evn = new EventRoleAssociation()
                         {
                             Event = EventNumber.ViewEventRoleAssociations,
-                            UserRole = UserRoleEnum.ViewEventRoleAssociations
+                            UserRole = adminRole
                         };
                         session.Save(evn);
                     }
@@ -232,14 +232,15 @@ namespace WebsiteTemplate.Controllers
                         var evn = new EventRoleAssociation()
                         {
                             Event = EventNumber.AddEventRoleAssociation,
-                            UserRole = UserRoleEnum.AddEventRoleAssociation
+                            UserRole = adminRole
                         };
                         session.Save(evn);
                     }
 
                     var allEvents = Enum.GetValues(typeof(EventNumber)).Cast<int>().Where(e => e != (int)EventNumber.Nothing).ToList();
                     var eras = session.CreateCriteria<EventRoleAssociation>()
-                                      .Add(Restrictions.Eq("UserRole", UserRoleEnum.Admin))
+                                      .CreateAlias("UserRole", "role")
+                                      .Add(Restrictions.Eq("role.Id", adminRole.Id))
                                       .List<EventRoleAssociation>()
                                       .ToList();
                     if (eras.Count != allEvents.Count)
@@ -254,7 +255,7 @@ namespace WebsiteTemplate.Controllers
                             var era = new EventRoleAssociation()
                             {
                                 Event = (EventNumber)evt,
-                                UserRole = UserRoleEnum.Admin
+                                UserRole = adminRole
                             };
                             session.Save(era);
                         }

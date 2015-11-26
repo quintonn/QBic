@@ -8,6 +8,6 @@ namespace WebsiteTemplate.Models
     {
         public virtual EventNumber Event { get; set; }
 
-        public virtual UserRoleEnum UserRole { get; set; }
+        public virtual UserRole UserRole { get; set; }
     }
 }

@@ -47,13 +47,19 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
                     var eventRoles = session.CreateCriteria<EventRoleAssociation>()
                                             .Add(Restrictions.Eq("Event", eventNumber))
                                             .List<EventRoleAssociation>()
-                                            .Select(r => r.UserRole.ToString())
+                                            .Select(r => r.UserRole.Name)
                                             .ToList();
 
-                    var userRoles = Enum.GetNames(typeof(UserRoleEnum))
-                                    .OrderBy(u => u)
-                                    .Where(u => !eventRoles.Contains(u.ToString()))
-                                    .ToList();
+                    var userRoles = session.CreateCriteria<UserRole>()
+                                           .List<UserRole>()
+                                           .Where(u => !eventRoles.Contains(u.Name))
+                                           .OrderBy(u => u.Name)
+                                           .Select(u => u.Name)
+                                           .ToList();
+                    //var userRoles = Enum.GetNames(typeof(UserRoleEnum))
+                    //                .OrderBy(u => u)
+                    //                .Where(u => !eventRoles.Contains(u.ToString()))
+                    //                .ToList();
 
                     list.Add(new ComboBoxInput("UserRole", "Allowed User Role")
                     {
@@ -107,19 +113,23 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
                 var userRoleName = json.GetValue("UserRole").ToString();
 
                 var theEvent = (EventNumber)Convert.ToInt32(eventId);
-                var userRole = (UserRoleEnum)Enum.Parse(typeof(UserRoleEnum), userRoleName);
-
-                var eventRoleAssociation = new EventRoleAssociation()
-                {
-                    Event = theEvent,
-                    UserRole = userRole
-                };
-
+                
                 using (var session = Store.OpenSession())
                 {
+                    var userRole = session.CreateCriteria<UserRole>()
+                                          .Add(Restrictions.Eq("Name", userRoleName))
+                                          .UniqueResult<UserRole>();
+
+                    var eventRoleAssociation = new EventRoleAssociation()
+                    {
+                        Event = theEvent,
+                        UserRole = userRole
+                    };
+
                     var existingItem = session.CreateCriteria<EventRoleAssociation>()
+                                              .CreateAlias("UserRole", "role")
                                               .Add(Restrictions.Eq("Event", theEvent))
-                                              .Add(Restrictions.Eq("UserRole", userRole))
+                                              .Add(Restrictions.Eq("role.Id", userRole.Id))
                                               .UniqueResult<EventRoleAssociation>();
                     if (existingItem != null)
                     {

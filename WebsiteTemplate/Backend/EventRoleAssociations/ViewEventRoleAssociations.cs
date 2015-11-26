@@ -67,7 +67,7 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
                                      .Select(r => new
                                      {
                                          Event = r.Event.ToString(),
-                                         UserRole = r.UserRole.ToString(),
+                                         UserRole = r.UserRole.Name,
                                          CanDelete = r.CanDelete,
                                          Id = r.Id
                                      })

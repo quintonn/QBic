@@ -232,7 +232,6 @@
     <Compile Include="Backend\Menus\ViewMenus.cs" />
     <Compile Include="Backend\Users\ViewUserRoleAssociations.cs" />
     <Compile Include="Backend\Users\ViewUsers.cs" />
-    <Compile Include="SiteSpecific\UserRoleEnum.cs" />
     <Compile Include="Menus\BaseItems\EventNumber.cs" />
     <Compile Include="SiteSpecific\Utilities\WebsiteTemplateConstants.cs" />
     <Compile Include="Startup.cs" />
