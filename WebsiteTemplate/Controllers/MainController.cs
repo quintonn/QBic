@@ -300,6 +300,7 @@ namespace WebsiteTemplate.Controllers
             }
             catch (Exception e)
             {
+
                 Console.WriteLine(e);
                 Trace.WriteLine(e);
                 Debug.WriteLine(e);
@@ -336,7 +337,7 @@ namespace WebsiteTemplate.Controllers
                 var data = await Request.Content.ReadAsStringAsync();
                 //var json = JsonConvert.DeserializeObject<JObject>(data);
                 var json = JObject.Parse(data);
-                
+
                 var parameters = json.ToObject<Dictionary<string, object>>();
                 var formData = parameters["Data"].ToString();
                 var actionId = Convert.ToInt32(parameters["ActionId"]);
@@ -445,7 +446,7 @@ namespace WebsiteTemplate.Controllers
             {
                 return BadRequest("ERROR: Unknown UIActionType: " + eventItem.GetType().ToString().Split(".".ToCharArray()).Last() + " with id " + id);
             }
-            
+
             return Json(result);
         }
 
@@ -481,30 +482,38 @@ namespace WebsiteTemplate.Controllers
                 {
                     var events = GetAllowedEventsForUser(session, user.Id).ToArray();
 
-                var mainMenus = session.CreateCriteria<Menu>()
-                                           .Add(Restrictions.In("Event", events))
-                                           .Add(Restrictions.IsNull("ParentMenu"))
-                                           .List<Menu>()
-                                           .ToList();
-                mainMenus.ForEach(m =>
-                    {
-                        results.Add((int)m.Event, m.Name);
-                    });
+                    var mainMenus = session.CreateCriteria<Menu>()
+                                               .Add(Restrictions.In("Event", events))
+                                               .Add(Restrictions.IsNull("ParentMenu"))
+                                               .List<Menu>()
+                                               .ToList();
+                    mainMenus.ForEach(m =>
+                        {
+                            results.Add((int)m.Event, m.Name);
+                        });
 
-                var subMenus = session.CreateCriteria<Menu>()
-                                      .Add(Restrictions.In("Event", events))
-                                      .Add(Restrictions.IsNotNull("ParentMenu"))
-                                      .List<Menu>()
-                                      .ToList();
-                foreach (var subMenu in subMenus)
-                {
-                    var tmp = subMenu;
-                    while (tmp.ParentMenu != null)
+                    var subMenus = session.CreateCriteria<Menu>()
+                                          .Add(Restrictions.In("Event", events))
+                                          .Add(Restrictions.IsNotNull("ParentMenu"))
+                                          .List<Menu>()
+                                          .ToList();
+
+                    var x = -99;
+                    var submenusAdded = new List<string>();
+                    foreach (var subMenu in subMenus)
                     {
-                        tmp = tmp.ParentMenu;
+                        var tmp = subMenu;
+                        while (tmp.ParentMenu != null)
+                        {
+                            tmp = tmp.ParentMenu;
+                        }
+                        if (submenusAdded.Contains(tmp.Name))
+                        {
+                            continue;
+                        }
+                        results.Add(x--, tmp.Name); //TODO: Here is should maybe build the sub-menu structure.  --> Maybe return the entire menu structure here.
+                        submenusAdded.Add(tmp.Name);
                     }
-                    results.Add(-99, tmp.Name); //TODO: Here is should maybe build the sub-menu structure.  --> Maybe return the entire menu structure here.
-                }
                 }
                 return Json(results);
             }
