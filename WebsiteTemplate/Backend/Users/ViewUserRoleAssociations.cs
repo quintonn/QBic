@@ -17,7 +17,7 @@ namespace WebsiteTemplate.Backend.Users
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
             columnConfig.AddStringColumn("User", "User.UserName");    /// User.UserName will be processed at runtime in javascript.
-            columnConfig.AddStringColumn("User Role", "UserRoleString");
+            columnConfig.AddStringColumn("User Role", "UserRole.Name");
 
             columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X",
                columnSetting: new ShowHideColumnSetting()
