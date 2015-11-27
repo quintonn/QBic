@@ -13,6 +13,7 @@ using WebsiteTemplate.SiteSpecific.Utilities;
 using System.Net.Mail;
 using System.Net.Http;
 using WebsiteTemplate.SiteSpecific;
+using Newtonsoft.Json.Linq;
 
 namespace WebsiteTemplate.Backend.Users
 {
@@ -36,19 +37,13 @@ namespace WebsiteTemplate.Backend.Users
             var results = new List<Event>();
 
             var emailSentResultMessage = String.Empty;
-            var id = data;
+            var json = JObject.Parse(data);
+            var id = json.GetValue("Id").ToString();
 
             using (var session = Store.OpenSession())
             {
                 var user = session.Get<User>(id);
-                //try
-                //{
-                    emailSentResultMessage = await SendEmail(user.Id, user.UserName, user.Email);
-                //}
-                //catch (FormatException e)
-                //{
-                    //emailSentResultMessage = e.Message;
-                //}
+                emailSentResultMessage = await SendEmail(user.Id, user.UserName, user.Email);
             }
 
             if (String.IsNullOrWhiteSpace(emailSentResultMessage))

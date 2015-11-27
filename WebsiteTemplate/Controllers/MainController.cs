@@ -123,39 +123,6 @@ namespace WebsiteTemplate.Controllers
                         session.Save(adminRoleAssociation);
                     }
 
-                    //var viewUsersRoleAssociation = session.CreateCriteria<UserRoleAssociation>()
-                    //                                  .CreateAlias("User", "user")
-                    //                                  .CreateAlias("UserRole", "role")
-                    //                                  .Add(Restrictions.Eq("user.Id", adminUser.Id))
-                    //                                  .Add(Restrictions.Eq("role.Id", adminRole.Id))
-                    //                                  .UniqueResult<UserRoleAssociation>();
-
-                    //if (viewUsersRoleAssociation == null)
-                    //{
-                    //    viewUsersRoleAssociation = new UserRoleAssociation(false)
-                    //    {
-                    //        User = adminUser,
-                    //        UserRole = adminRole,
-                    //    };
-                    //    session.Save(viewUsersRoleAssociation);
-                    //}
-
-                    //var role2 = session.CreateCriteria<UserRoleAssociation>()
-                    //                                  .CreateAlias("User", "user")
-                    //                                  .CreateAlias("UserRole", "role")
-                    //                                  .Add(Restrictions.Eq("user.Id", adminUser.Id))
-                    //                                  .Add(Restrictions.Eq("role.Id", adminRole.Id))
-                    //                                  .UniqueResult<UserRoleAssociation>();
-                    //if (role2 == null)
-                    //{
-                    //    role2 = new UserRoleAssociation(false)
-                    //    {
-                    //        User = adminUser,
-                    //        UserRole = adminRole
-                    //    };
-                    //    session.Save(role2);
-                    //}
-
                     var menuList1 = session.CreateCriteria<Menu>()
                                            .Add(Restrictions.Eq("Event", EventNumber.ViewUsers))
                                            .List<Menu>();
@@ -317,12 +284,9 @@ namespace WebsiteTemplate.Controllers
             var json = new
             {
                 User = user.UserName,
-                //Email = user.Email,
-                //Role = user.UserRole.Name,
                 Role = "Admin",
                 Id = user.Id
             };
-            //var json = JsonConvert.SerializeObject(user);
             return Json(json);
         }
 
@@ -335,7 +299,6 @@ namespace WebsiteTemplate.Controllers
             try
             {
                 var data = await Request.Content.ReadAsStringAsync();
-                //var json = JsonConvert.DeserializeObject<JObject>(data);
                 var json = JObject.Parse(data);
 
                 var parameters = json.ToObject<Dictionary<string, object>>();
@@ -458,9 +421,10 @@ namespace WebsiteTemplate.Controllers
                                    .List<UserRoleAssociation>()
                                    .ToList();
 
-            var userRoles = roles.Select(r => r.UserRole).ToArray();
+            var userRoles = roles.Select(r => r.UserRole.Id).ToArray();
             var eventRoleAssociations = session.CreateCriteria<EventRoleAssociation>()
-                                               //.Add(Restrictions.In("UserRole", userRoles))
+                                               .CreateAlias("UserRole", "role")
+                                               .Add(Restrictions.In("role.Id", userRoles))
                                                .List<EventRoleAssociation>();
 
             var events = eventRoleAssociations.Select(e => e.Event).ToList();

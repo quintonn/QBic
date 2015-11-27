@@ -16,27 +16,23 @@ namespace WebsiteTemplate
         public void Configuration(IAppBuilder app)
         {
             var myApp = app;
-            //app.Map("/jbq", myApp =>
-              //  {
-                    var options = new UserAuthenticationOptions()
-                    {
-                        AccessControlAllowOrigin = "*",
-                        AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30), //Refresh the token every 30 minutes
-                        AllowInsecureHttp = false,
-                        TokenEndpointPath = new PathString("/api/v1/token"), //path is actually now /jbq/web/api/token
-                        UserContext = new UserContext()
-                    };
-                    myApp.UseBasicUserTokenAuthentication(options);
+            var options = new UserAuthenticationOptions()
+            {
+                AccessControlAllowOrigin = "*",
+                AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30), //Refresh the token every 30 minutes
+                AllowInsecureHttp = false,
+                TokenEndpointPath = new PathString("/api/v1/token"), //path is actually now /jbq/web/api/token
+                UserContext = new UserContext()
+            };
+            myApp.UseBasicUserTokenAuthentication(options);
 
-                    var configuration = new HttpConfiguration();
-                    configuration.MapHttpAttributeRoutes();
+            var configuration = new HttpConfiguration();
+            configuration.MapHttpAttributeRoutes();
 
-                    var jsonFormatter = configuration.Formatters.OfType<JsonMediaTypeFormatter>().First();
-                    //jsonFormatter.SerializerSettings.ContractResolver =  new CamelCasePropertyNamesContractResolver();
+            var jsonFormatter = configuration.Formatters.OfType<JsonMediaTypeFormatter>().First();
 
-                    myApp.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
-                    myApp.UseWebApi(configuration);
-               // });
+            myApp.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
+            myApp.UseWebApi(configuration);
         }
     }
 }
