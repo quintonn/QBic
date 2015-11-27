@@ -1,6 +1,7 @@
 ﻿var main = {
     applicationName: "websiteTemplate",
-    baseURL: "https://localhost/WebsiteTemplate/",
+    //baseURL: "https://localhost/WebsiteTemplate/",
+    baseURL: "",
     webApiURL: "api/v1/",
     menuApiUrl: "",
     tokenNameSuffix: "UserToken",
@@ -12,6 +13,7 @@
 
     bodyOnLoad: function ()
     {
+        main.baseURL = "https://" + window.location.host + window.location.pathname;
         main.init();
     },
 

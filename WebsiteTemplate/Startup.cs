@@ -24,6 +24,7 @@ namespace WebsiteTemplate
                 TokenEndpointPath = new PathString("/api/v1/token"), //path is actually now /api/v1/token
                 UserContext = new UserContext()
             };
+
             myApp.UseBasicUserTokenAuthentication(options);
 
             var configuration = new HttpConfiguration();

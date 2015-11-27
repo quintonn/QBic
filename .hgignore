@@ -4,3 +4,7 @@ obj/Debug/*
 *.suo
 *.nupkg
 packages/**
+ImplementationTest/css/*
+ImplementationTest/Pages/*
+ImplementationTest/Scripts/*
+ImplementationTest/Index.html
