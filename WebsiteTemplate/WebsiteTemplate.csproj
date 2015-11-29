@@ -271,7 +271,7 @@
     <PostBuildEvent>nuget pack -OutputDirectory "..\..\..\NugetSource"  "..\WebsiteTemplate.csproj"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>D:\Projects\WebsiteTemplate\BuildHelper\bin\Debug\BuildHelper.exe</PreBuildEvent>
+    <PreBuildEvent>..\..\BuildHelper\bin\Debug\BuildHelper.exe</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
