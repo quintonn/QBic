@@ -431,6 +431,20 @@ namespace WebsiteTemplate.Controllers
             return events;
         }
 
+        private void AddSubMenu(Menu menu, ISession session)
+        {
+            var subMenus = session.CreateCriteria<Menu>()
+                                  .CreateAlias("ParentMenu", "parent")
+                                  .Add(Restrictions.Eq("parent.Id", menu.Id))
+                                  .List<Menu>()
+                                  .ToList();
+            foreach (var subMenu in subMenus)
+            {
+                AddSubMenu(subMenu, session);
+            }
+            menu.SubMenus = subMenus;
+        }
+
         [HttpGet]
         [Route("getUserMenu")]
         [RequireHttps]
@@ -441,7 +455,7 @@ namespace WebsiteTemplate.Controllers
 
             try
             {
-                var results = new Dictionary<int, string>();
+                var results = new Dictionary<int, Menu>();
                 using (var session = Store.OpenSession())
                 {
                     var events = GetAllowedEventsForUser(session, user.Id).ToArray();
@@ -453,32 +467,45 @@ namespace WebsiteTemplate.Controllers
                                                .ToList();
                     mainMenus.ForEach(m =>
                         {
-                            results.Add((int)m.Event, m.Name);
+                            results.Add((int)m.Event, m);
                         });
 
-                    var subMenus = session.CreateCriteria<Menu>()
-                                          .Add(Restrictions.In("Event", events))
-                                          .Add(Restrictions.IsNotNull("ParentMenu"))
-                                          .List<Menu>()
-                                          .ToList();
-
                     var x = -99;
-
-                    var submenusAdded = new List<string>();
-                    foreach (var subMenu in subMenus)
+                    var mainMenusWithSubMenus = session.CreateCriteria<Menu>()
+                                               .Add(Restrictions.IsNull("Event"))
+                                               .Add(Restrictions.IsNull("ParentMenu"))
+                                               .List<Menu>()
+                                               .ToList();
+                    mainMenusWithSubMenus.ForEach(m =>
                     {
-                        var tmp = subMenu;
-                        while (tmp.ParentMenu != null)
-                        {
-                            tmp = tmp.ParentMenu;
-                        }
-                        if (submenusAdded.Contains(tmp.Name))
-                        {
-                            continue;
-                        }
-                        results.Add(x--, tmp.Name); //TODO: Here is should maybe build the sub-menu structure.  --> Maybe return the entire menu structure here.
-                        submenusAdded.Add(tmp.Name);
-                    }
+                        AddSubMenu(m, session);
+                        results.Add(x--, m);
+                    });
+
+                    //var subMenus = session.CreateCriteria<Menu>()
+                    //                      .Add(Restrictions.In("Event", events))
+                    //                      .Add(Restrictions.IsNotNull("ParentMenu"))
+                    //                      .List<Menu>()
+                    //                      .ToList();
+
+                    //var x = -99;
+
+                    //var submenusAdded = new List<string>();
+                    //foreach (var subMenu in subMenus)
+                    //{
+                    //    var tmp = subMenu;
+                    //    while (tmp.ParentMenu != null)
+                    //    {
+                    //        tmp = tmp.ParentMenu;
+                    //    }
+                    //    if (submenusAdded.Contains(tmp.Name))
+                    //    {
+                    //        continue;
+                    //    }
+                        
+                    //    results.Add(x--, tmp.Name); //TODO: Here is should maybe build the sub-menu structure.  --> Maybe return the entire menu structure here.
+                    //    submenusAdded.Add(tmp.Name);
+                    //}
                 }
                 return Json(results);
             }

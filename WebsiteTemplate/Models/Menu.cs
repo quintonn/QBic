@@ -12,6 +12,13 @@ namespace WebsiteTemplate.Models
 
         public virtual Menu ParentMenu { get; set; }
 
+        public virtual List<Menu> SubMenus { get; set; }
+
         public virtual EventNumber? Event { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

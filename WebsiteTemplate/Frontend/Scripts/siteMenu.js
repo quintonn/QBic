@@ -7,16 +7,26 @@
             navigation.entryPoint();
         });
 
+        console.log(menuList);
         for (var key in menuList)
         {
+            console.log(key);
             var id = key;
-            var label = menuList[key];
+            var menu = menuList[key];
+            var label = menu.Name;
 
             var buttonClickEvent = (function (actionId)
             {
                 return function ()
                 {
-                    siteMenu.executeUIAction(actionId);
+                    if (actionId >= 0) {
+                        siteMenu.executeUIAction(actionId);
+                    }
+                    else {
+                        
+                        console.log(label);
+                        alert('z')
+                    }
                 }
             })(id);
 

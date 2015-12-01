@@ -16,6 +16,8 @@ namespace WebsiteTemplate.Mappings
 
             Map(x => x.Name).Not.Nullable();
 
+            //HasMany<Menu>(x => x.SubMenus).KeyColumn("Id").Table("Menu").AsList();
+
             Map(x => x.Event)
               .CustomType<EventNumber>()
               //.Not
