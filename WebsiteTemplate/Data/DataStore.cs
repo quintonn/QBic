@@ -5,6 +5,7 @@ using NHibernate.Criterion;
 using NHibernate.Tool.hbm2ddl;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -50,7 +51,7 @@ namespace WebsiteTemplate.Data
         private static object xlock = new object();
 
         private static ISessionFactory Store;
-        private static Configuration Configuration;
+        private static NHibernate.Cfg.Configuration Configuration;
 
         static DataStore()
         {
@@ -68,12 +69,13 @@ namespace WebsiteTemplate.Data
 
         private static ISessionFactory CreateSessionFactory()
         {
-            FluentMappingsContainer container = new FluentMappingsContainer();
+            var container = new FluentMappingsContainer();
+            var mainConnectionString = ConfigurationManager.ConnectionStrings["MainDataStore"].ConnectionString;
 
             var config = Fluently.Configure()
               .Database(
 
-                FluentNHibernate.Cfg.Db.MsSqlConfiguration.MsSql2012.ConnectionString("Integrated Security=SSPI;Persist Security Info=False;Data Source=localhost;Initial Catalog=websiteTemplate")
+                FluentNHibernate.Cfg.Db.MsSqlConfiguration.MsSql2012.ConnectionString(mainConnectionString)
                 //.UsingFile("firstProject.db")
               )
               
