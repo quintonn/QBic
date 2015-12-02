@@ -4,10 +4,6 @@
     display:block;
 }
 
-#subMenuContainer {
-    display: block;
-}
-
 #menuContent button {
     text-align:center;
     /*padding:5px;*/
@@ -32,25 +28,4 @@
 #userDetail button {
     margin-left: 10px;
     text-align:center;
-    /*padding:5px;*/
-}
-
-#subMenuContainer {
-    margin-top:10px;
-}
-
-#subMenuContainer button {
-    margin-right:5px;
-}
-
-#subMenuContainer button:disabled {
-    background-color:#BCBCB6;
-}
-
-#subMenuContainer button:disabled:hover {
-    background-color:#BCBCB6;
-}
-
-#subMenuContainer button:hover {
-    background-color:#EBEBE4; 
 }

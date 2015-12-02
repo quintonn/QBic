@@ -482,31 +482,6 @@ namespace WebsiteTemplate.Controllers
                         AddSubMenu(m, session);
                         results.Add(m);
                     });
-
-                    //var subMenus = session.CreateCriteria<Menu>()
-                    //                      .Add(Restrictions.In("Event", events))
-                    //                      .Add(Restrictions.IsNotNull("ParentMenu"))
-                    //                      .List<Menu>()
-                    //                      .ToList();
-
-                    //var x = -99;
-
-                    //var submenusAdded = new List<string>();
-                    //foreach (var subMenu in subMenus)
-                    //{
-                    //    var tmp = subMenu;
-                    //    while (tmp.ParentMenu != null)
-                    //    {
-                    //        tmp = tmp.ParentMenu;
-                    //    }
-                    //    if (submenusAdded.Contains(tmp.Name))
-                    //    {
-                    //        continue;
-                    //    }
-                        
-                    //    results.Add(x--, tmp.Name); //TODO: Here is should maybe build the sub-menu structure.  --> Maybe return the entire menu structure here.
-                    //    submenusAdded.Add(tmp.Name);
-                    //}
                 }
                 return Json(results);
             }
