@@ -20,7 +20,7 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
             }
         }
 
-        public override EventNumber GetId()
+        public override int GetId()
         {
             return EventNumber.DeleteEventRoleAssociation;
         }
@@ -31,7 +31,7 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
 
             var id = json.GetValue("Id").ToString();
 
-            EventNumber eventNumber;
+            int eventNumber;
             using (var session = Store.OpenSession())
             {
                 var eventRoleAssociation = session.Get<EventRoleAssociation>(id);
@@ -44,7 +44,7 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
             {
                 new ShowMessage("Event role association deleted successfully"),
                 new CancelInputDialog(),
-                new ExecuteAction(EventNumber.ViewEventRoleAssociations, ((int)eventNumber).ToString())
+                new ExecuteAction(EventNumber.ViewEventRoleAssociations, eventNumber.ToString())
             };
         }
     }

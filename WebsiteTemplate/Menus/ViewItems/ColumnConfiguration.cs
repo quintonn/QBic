@@ -35,12 +35,12 @@ namespace WebsiteTemplate.Menus.ViewItems
             Columns.Add(new BooleanColumn(columnLabel, columnName, trueValue, falseValue));
         }
 
-        public void AddLinkColumn(string columnLabel, string columnName, string keyColumn, string linkLabel, EventNumber eventNumber)
+        public void AddLinkColumn(string columnLabel, string columnName, string keyColumn, string linkLabel, int eventNumber)
         {
             AddLinkColumn(columnLabel, columnName, keyColumn, linkLabel, eventNumber, null);
         }
 
-        public void AddLinkColumn(string columnLabel, string columnName, string keyColumn, string linkLabel, EventNumber eventNumber, ColumnSetting columnSetting)
+        public void AddLinkColumn(string columnLabel, string columnName, string keyColumn, string linkLabel, int eventNumber, ColumnSetting columnSetting)
         {
             Columns.Add(new LinkColumn(columnLabel, columnName, keyColumn, linkLabel, eventNumber)
             {

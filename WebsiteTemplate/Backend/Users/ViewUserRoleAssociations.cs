@@ -35,7 +35,7 @@ namespace WebsiteTemplate.Backend.Users
            );
         }
 
-        public override EventNumber GetId()
+        public override int GetId()
         {
             return EventNumber.ViewUserRoleAssociations;
         }

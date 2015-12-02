@@ -24,7 +24,7 @@ namespace WebsiteTemplate.Controllers
     [RoutePrefix("api/v1")]
     public class MainController : ApiController
     {
-        public static IDictionary<EventNumber, Event> EventList { get; set; }
+        public static IDictionary<int, Event> EventList { get; set; }
 
         public static List<string> Log { get; set; }
 
@@ -52,7 +52,7 @@ namespace WebsiteTemplate.Controllers
 
         private void PopulateEventList()
         {
-            EventList = new Dictionary<EventNumber, Event>();
+            EventList = new Dictionary<int, Event>();
 
             var types = typeof(Event).Assembly.GetTypes();
             foreach (var type in types)
@@ -203,7 +203,9 @@ namespace WebsiteTemplate.Controllers
                         session.Save(evn);
                     }
 
-                    var allEvents = Enum.GetValues(typeof(EventNumber)).Cast<int>().Where(e => e != (int)EventNumber.Nothing).ToList();
+                    var fields = typeof(EventNumber).GetFields();
+                    var allEvents = fields.Select(p => (int)p.GetValue(null)).Where(e => e != EventNumber.Nothing).ToList();
+                    
                     var eras = session.CreateCriteria<EventRoleAssociation>()
                                       .CreateAlias("UserRole", "role")
                                       .Add(Restrictions.Eq("role.Id", adminRole.Id))
@@ -220,7 +222,7 @@ namespace WebsiteTemplate.Controllers
                         {
                             var era = new EventRoleAssociation()
                             {
-                                Event = (EventNumber)evt,
+                                Event = evt,
                                 UserRole = adminRole
                             };
                             session.Save(era);
@@ -305,7 +307,7 @@ namespace WebsiteTemplate.Controllers
                 var formData = parameters["Data"].ToString();
                 var actionId = Convert.ToInt32(parameters["ActionId"]);
 
-                var id = (EventNumber)eventId;
+                var id = eventId;
                 var eventItem = EventList[id] as GetInput;
 
                 var inputButtons = eventItem.InputButtons;
@@ -339,7 +341,7 @@ namespace WebsiteTemplate.Controllers
             var json = JObject.Parse(data);
             data = json.GetValue("Data").ToString();
 
-            var id = (EventNumber)eventId;
+            var id = eventId;
 
             if (!EventList.ContainsKey(id))
             {
@@ -413,7 +415,7 @@ namespace WebsiteTemplate.Controllers
             return Json(result);
         }
 
-        private List<EventNumber> GetAllowedEventsForUser(ISession session, string userId)
+        private List<int> GetAllowedEventsForUser(ISession session, string userId)
         {
             var roles = session.CreateCriteria<UserRoleAssociation>()
                                    .CreateAlias("User", "user")

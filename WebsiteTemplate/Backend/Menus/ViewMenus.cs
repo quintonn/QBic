@@ -125,7 +125,7 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
-        public override EventNumber GetId()
+        public override int GetId()
         {
             return EventNumber.ViewMenus;
         }

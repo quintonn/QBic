@@ -6,11 +6,11 @@ namespace WebsiteTemplate.Menus
     {
         public string Label { get; set; }
 
-        public EventNumber EventNumber { get; set; }
+        public int EventNumber { get; set; }
 
         public string ParametersToPass { get; set; }
 
-        public MenuItem(string label, EventNumber eventNumber, string parametersToPass = null)
+        public MenuItem(string label, int eventNumber, string parametersToPass = null)
         {
             Label = label;
             EventNumber = eventNumber;

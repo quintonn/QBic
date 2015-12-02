@@ -43,7 +43,7 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
 
                 using (var session = Store.OpenSession())
                 {
-                    var eventNumber = (EventNumber)Convert.ToInt32(EventId);
+                    var eventNumber = Convert.ToInt32(EventId);
                     var eventRoles = session.CreateCriteria<EventRoleAssociation>()
                                             .Add(Restrictions.Eq("Event", eventNumber))
                                             .List<EventRoleAssociation>()
@@ -73,7 +73,7 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
             }
         }
 
-        public override EventNumber GetId()
+        public override int GetId()
         {
             return EventNumber.AddEventRoleAssociation;
         }
@@ -112,7 +112,7 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
             {
                 var userRoleName = json.GetValue("UserRole").ToString();
 
-                var theEvent = (EventNumber)Convert.ToInt32(eventId);
+                var theEvent = Convert.ToInt32(eventId);
                 
                 using (var session = Store.OpenSession())
                 {

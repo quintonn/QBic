@@ -6,7 +6,7 @@ namespace WebsiteTemplate.Menus.BaseItems
 {
     public class CancelInputDialog : Event
     {
-        public override EventNumber GetId()
+        public override int GetId()
         {
             return EventNumber.CancelInputDialog;
         }

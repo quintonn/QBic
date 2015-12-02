@@ -19,7 +19,7 @@ namespace WebsiteTemplate.Mappings
             //HasMany<Menu>(x => x.SubMenus).KeyColumn("Id").Table("Menu").AsList();
 
             Map(x => x.Event)
-              .CustomType<EventNumber>()
+              //.CustomType<EventNumber>()
               //.Not
               .Nullable();
         }

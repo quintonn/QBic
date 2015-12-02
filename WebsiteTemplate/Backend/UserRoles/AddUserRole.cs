@@ -47,7 +47,7 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
         }
 
-        public override EventNumber GetId()
+        public override int GetId()
         {
             return EventNumber.AddUserRole;
         }

@@ -26,14 +26,14 @@ namespace WebsiteTemplate.Menus.BaseItems
         /// <summary>
         /// Hard coded Id.
         /// </summary>
-        public abstract EventNumber GetId();
+        public abstract int GetId();
 
         public string GetEventId()
         {
             return ((int)GetId()).ToString();
         }
 
-        public EventNumber Id { get { return GetId(); } }
+        public int Id { get { return GetId(); } }
 
         public abstract string Description { get; }
 

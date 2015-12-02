@@ -17,7 +17,7 @@ namespace WebsiteTemplate.Backend.Menus
     {
         private Menu Menu { get; set; } = new Menu();
         private bool IsNew { get; set; } = true;
-        public override EventNumber GetId()
+        public override int GetId()
         {
             return EventNumber.ModifyMenu;
         }
@@ -51,9 +51,13 @@ namespace WebsiteTemplate.Backend.Menus
                 list.Add(new StringInput("Name", "Menu Name", Menu.Name));
                 list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", Menu.Event == null));
 
-                var events = Enum.GetNames(typeof(EventNumber))
-                                    .Where(u => !u.Equals("Nothing", StringComparison.InvariantCultureIgnoreCase))
-                                    .ToList();
+                var events = typeof(EventNumber).GetFields()
+                                                .Select(p => p.Name)
+                                                .Where(e => e != "Nothing")
+                                                .ToList();
+                //var events = Enum.GetNames(typeof(EventNumber))
+                //                    .Where(u => !u.Equals("Nothing", StringComparison.InvariantCultureIgnoreCase))
+                //                    .ToList();
 
                 list.Add(new ComboBoxInput("Event", "Menu Action", Menu.Event?.ToString())
                     {
@@ -148,7 +152,7 @@ namespace WebsiteTemplate.Backend.Menus
                     };
                 }
 
-                EventNumber? eventNumber = null;
+                int? eventNumber = null;
                 if (hasSubMenus == false)
                 {
                     if (String.IsNullOrWhiteSpace(eventName))
@@ -159,7 +163,8 @@ namespace WebsiteTemplate.Backend.Menus
                         };
                     }
 
-                    eventNumber = (EventNumber)Enum.Parse(typeof(EventNumber), eventName);
+                    //eventNumber = (int)typeof(EventNumber).GetProperty(eventName).GetValue(null, null);
+                    eventNumber = (int)typeof(EventNumber).GetField(eventName).GetValue(null);
                 }
 
                 Menu parentMenu = null;

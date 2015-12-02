@@ -60,7 +60,7 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
             using (var session = Store.OpenSession())
             {
                 EventId = data;
-                var eventNumber = (EventNumber)Enum.Parse(typeof(EventNumber), data);
+                var eventNumber = Convert.ToInt32(data);
                 var results = session.CreateCriteria<EventRoleAssociation>()
                                      .Add(Restrictions.Eq("Event", eventNumber))
                                      .List<EventRoleAssociation>()
@@ -78,7 +78,7 @@ namespace WebsiteTemplate.Backend.EventRoleAssociations
             }
         }
 
-        public override EventNumber GetId()
+        public override int GetId()
         {
             return EventNumber.ViewEventRoleAssociations;
         }

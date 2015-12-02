@@ -9,7 +9,7 @@ namespace WebsiteTemplate.Menus.ViewItems
         {
         }
 
-        public LinkColumn(string columnLabel, string columnName, string keyColumn, string linkLabel, EventNumber eventNumber)
+        public LinkColumn(string columnLabel, string columnName, string keyColumn, string linkLabel, int eventNumber)
             : this(columnLabel, columnName)
         {
             KeyColumn = keyColumn;
@@ -38,6 +38,6 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// <summary>
         /// The Event Number to execute when the link is clicked.
         /// </summary>
-        public EventNumber EventNumber { get; set; }
+        public int EventNumber { get; set; }
     }
 }

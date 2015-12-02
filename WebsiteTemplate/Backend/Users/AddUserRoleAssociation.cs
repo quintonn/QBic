@@ -15,7 +15,7 @@ namespace WebsiteTemplate.Backend.Users
 {
     public class AddUserRoleAssociation : GetInput
     {
-        public override EventNumber GetId()
+        public override int GetId()
         {
             return EventNumber.AddUserRoleAssociation;
         }

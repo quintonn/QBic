@@ -6,7 +6,7 @@ namespace WebsiteTemplate.Menus
 {
     public class ExecuteAction : Event
     {
-        public EventNumber EventNumber { get; private set; }
+        public int EventNumber { get; private set; }
 
         public string ParametersToPass { get; private set; }
 
@@ -15,15 +15,15 @@ namespace WebsiteTemplate.Menus
 
         }
 
-        public ExecuteAction(EventNumber eventNumber, string parametersToPass = null)
+        public ExecuteAction(int eventNumber, string parametersToPass = null)
         {
             EventNumber = eventNumber;
             ParametersToPass = parametersToPass;
         }
 
-        public override EventNumber GetId()
+        public override int GetId()
         {
-            return EventNumber.ExecuteAction;
+            return Menus.BaseItems.EventNumber.ExecuteAction;
         }
 
         public override string Description

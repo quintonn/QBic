@@ -75,7 +75,7 @@ namespace WebsiteTemplate.Backend.Users
 
         private User User { get; set; }
 
-        public override EventNumber GetId()
+        public override int GetId()
         {
             return EventNumber.EditUser;
         }

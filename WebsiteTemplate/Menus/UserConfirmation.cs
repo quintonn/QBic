@@ -6,7 +6,7 @@ namespace WebsiteTemplate.Menus
 {
     public class UserConfirmation : Event
     {
-        public override EventNumber GetId()
+        public override int GetId()
         {
             return EventNumber.UserConfirmation;
         }
@@ -33,9 +33,9 @@ namespace WebsiteTemplate.Menus
 
         public string ConfirmationButtonText { get; set; }
 
-        public EventNumber OnConfirmationUIAction { get; set; }
+        public int OnConfirmationUIAction { get; set; }
 
-        public EventNumber OnCancelUIAction { get; set; }
+        public int OnCancelUIAction { get; set; }
 
         public object Data { get; set; }
 

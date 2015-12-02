@@ -12,7 +12,7 @@ namespace WebsiteTemplate.Backend.Users
 {
     public class DeleteUserRoleAssociation : DoSomething
     {
-        public override EventNumber GetId()
+        public override int GetId()
         {
             return EventNumber.DeleteUserRoleAssociation;
         }

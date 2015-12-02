@@ -14,7 +14,7 @@ namespace WebsiteTemplate.Models
 
         public virtual List<Menu> SubMenus { get; set; }
 
-        public virtual EventNumber? Event { get; set; }
+        public virtual int? Event { get; set; }
 
         public Menu()
         {

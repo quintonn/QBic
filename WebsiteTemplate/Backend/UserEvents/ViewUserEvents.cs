@@ -47,7 +47,7 @@ namespace WebsiteTemplate.Backend.UserEvents
             return results;
         }
 
-        public override EventNumber GetId()
+        public override int GetId()
         {
             return EventNumber.ViewUserEvents;
         }

@@ -19,7 +19,7 @@ namespace WebsiteTemplate.Backend.Users
 {
     public class SendConfirmationEmail : DoSomething
     {
-        public override EventNumber GetId()
+        public override int GetId()
         {
             return EventNumber.SendConfirmationEmail;
         }
