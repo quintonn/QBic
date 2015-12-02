@@ -43,6 +43,22 @@ namespace WebsiteTemplate.Backend.UserRoles
                 list.Add(new StringInput("Name", "Name"));
                 list.Add(new StringInput("Description", "Description"));
 
+                var items = typeof(EventNumber).GetFields()
+                                               .ToDictionary(e => e.GetValue(null).ToString(), e => (object)e.Name)
+                                               .Where(e => e.Value.ToString() != "Nothing")
+                                               .OrderBy(e => e.Value)
+                                               .ToDictionary(e => e.Key, e => e.Value);
+                                               
+
+                var listSelection = new ListSelectionInput("Events", "Allowed Events")
+                {
+                    AvailableItemsLabel = "List of Events:",
+                    SelectedItemsLabel = "Chosen Events:",
+                    ListSource = items
+                };
+
+                list.Add(listSelection);
+
                 return list;
             }
         }
@@ -64,7 +80,7 @@ namespace WebsiteTemplate.Backend.UserRoles
                 return new List<Event>()
                 {
                     new CancelInputDialog(),
-                    new ExecuteAction(EventNumber.ViewMenus, "")
+                    new ExecuteAction(EventNumber.ViewUserRoles, "")
                 };
             }
             else if (actionNumber == 0)
@@ -81,6 +97,7 @@ namespace WebsiteTemplate.Backend.UserRoles
 
                 var name = json.GetValue("Name").ToString();
                 var description = json.GetValue("Description").ToString();
+                var events = (json.GetValue("Events") as JArray).ToList();
 
                 if (String.IsNullOrWhiteSpace(name))
                 {
@@ -116,6 +133,17 @@ namespace WebsiteTemplate.Backend.UserRoles
                         Description = description
                     };
                     session.Save(dbUserRole);
+
+                    foreach (var item in events)
+                    {
+                        var eventItem = new EventRoleAssociation()
+                        {
+                            Event = Convert.ToInt32(item),
+                            UserRole = dbUserRole
+                        };
+                        session.Save(eventItem);
+                    }
+
                     session.Flush();
                 }
 

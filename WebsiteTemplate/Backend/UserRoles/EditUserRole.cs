@@ -45,6 +45,34 @@ namespace WebsiteTemplate.Backend.UserRoles
                 list.Add(new StringInput("Description", "Description", UserRole.Description));
                 list.Add(new HiddenInput("Id", UserRole.Id));
 
+                var items = typeof(EventNumber).GetFields()
+                                               .ToDictionary(e => e.GetValue(null).ToString(), e => (object)e.Name)
+                                               .Where(e => e.Value.ToString() != "Nothing")
+                                               .OrderBy(e => e.Value)
+                                               .ToDictionary(e => e.Key, e => e.Value);
+
+                var existingItems = new List<string>();
+                using (var session = Store.OpenSession())
+                {
+                    var events = session.CreateCriteria<EventRoleAssociation>()
+                                        .CreateAlias("UserRole", "role")
+                                        .Add(Restrictions.Eq("role.Id", UserRole.Id))
+                                        .List<EventRoleAssociation>()
+                                        .Select(e => e.Event)
+                                        .ToList();
+
+                    existingItems = items.Where(e => events.Contains(Convert.ToInt32(e.Key))).Select(i => i.Key.ToString()).ToList();
+
+                }
+                var listSelection = new ListSelectionInput("Events", "Allowed Events", existingItems)
+                {
+                    AvailableItemsLabel = "List of Events:",
+                    SelectedItemsLabel = "Chosen Events:",
+                    ListSource = items
+                };
+
+                list.Add(listSelection);
+
                 return list;
             }
         }
@@ -94,6 +122,8 @@ namespace WebsiteTemplate.Backend.UserRoles
                 var name = json.GetValue("Name").ToString();
                 var description = json.GetValue("Description").ToString();
 
+                var events = (json.GetValue("Events") as JArray).ToList();                
+
                 if (String.IsNullOrWhiteSpace(name))
                 {
                     return new List<Event>()
@@ -128,12 +158,33 @@ namespace WebsiteTemplate.Backend.UserRoles
                     dbUserRole.Description = description;
                     session.Save(dbUserRole);
 
+
+                    var existingEvents = session.CreateCriteria<EventRoleAssociation>()
+                                       .CreateAlias("UserRole", "role")
+                                       .Add(Restrictions.Eq("role.Id", dbUserRole.Id))
+                                       .List<EventRoleAssociation>()
+                                       .ToList();
+                    existingEvents.ForEach(e =>
+                    {
+                        session.Delete(e);
+                    });
+                    foreach (var item in events)
+                    {
+                        var eventItem = new EventRoleAssociation()
+                        {
+                            Event = Convert.ToInt32(item),
+                            UserRole = dbUserRole
+                        };
+                        session.Save(eventItem);
+                    }
+
+
                     session.Flush();
                 }
 
                 return new List<Event>()
                 {
-                    new ShowMessage("User role created successfully."),
+                    new ShowMessage("User role modified successfully."),
                     new CancelInputDialog(),
                     new ExecuteAction(EventNumber.ViewUserRoles)
                 };
