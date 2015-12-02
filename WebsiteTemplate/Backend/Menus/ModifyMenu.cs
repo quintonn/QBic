@@ -57,15 +57,6 @@ namespace WebsiteTemplate.Backend.Menus
                                                      .OrderBy(m => m)
                                                      .ToList();
 
-                //var events = typeof(EventNumber).GetFields()
-                //                                .Select(p => p.Name)
-                //                                .Where(e => e != "Nothing")
-                //                                .OrderBy(m => m)
-                //                                .ToList();
-                //var events = Enum.GetNames(typeof(EventNumber))
-                //                    .Where(u => !u.Equals("Nothing", StringComparison.InvariantCultureIgnoreCase))
-                //                    .ToList();
-
                 list.Add(new ComboBoxInput("Event", "Menu Action", Menu.Event?.ToString())
                     {
                         ListItems = events,
@@ -170,9 +161,7 @@ namespace WebsiteTemplate.Backend.Menus
                         };
                     }
 
-                    //eventNumber = (int)typeof(EventNumber).GetProperty(eventName).GetValue(null, null);
                     eventNumber = MainController.EventList.Where(e => e.Value.Description == eventName).Select(e => Convert.ToInt32(e.Value.GetEventId())).First();
-                    //eventNumber = (int)typeof(EventNumber).GetField(eventName).GetValue(null);
                 }
 
                 Menu parentMenu = null;

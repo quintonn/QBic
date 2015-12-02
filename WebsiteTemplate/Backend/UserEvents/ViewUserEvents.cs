@@ -34,7 +34,7 @@ namespace WebsiteTemplate.Backend.UserEvents
 
         public override IEnumerable GetData(string data)
         {
-            var items = Enum.GetValues(typeof(EventNumber)).Cast<int>().ToDictionary(e => e.ToString(), e => (object)Enum.GetName(typeof(EventNumber), e));
+            var items = typeof(EventNumber).GetFields().ToDictionary(e => e.GetValue(null).ToString(), e => e.Name);
             var results = items.Select(i => new
                                 {
                                     EventNumber = i.Key,
