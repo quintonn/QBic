@@ -18,6 +18,8 @@ using WebsiteTemplate.Menus.InputItems;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using NHibernate;
+using System.IO;
+using System.Reflection;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -42,6 +44,7 @@ namespace WebsiteTemplate.Controllers
             {
                 Log = new List<string>();
                 CheckDefaultValues();
+                EventList = new Dictionary<int, Event>();
                 //PopulateEventList(); /// If this is here, the menu descriptions get overriden. Need to fix this: TODO
             }
             catch (Exception e)
@@ -52,16 +55,49 @@ namespace WebsiteTemplate.Controllers
 
         private void PopulateEventList()
         {
-            EventList = new Dictionary<int, Event>();
+            if (EventList.Count > 0)
+            {
+                return;
+            }
+            
+            var curDir = System.Web.HttpRuntime.AppDomainAppPath;
+            var dlls = Directory.GetFiles(curDir, "*.dll", SearchOption.AllDirectories);
+            var types = new List<Type>();
 
-            var types = typeof(Event).Assembly.GetTypes();
+            var appDomain = AppDomain.CreateDomain("tmpDomainForWebTemplate");
+            foreach (var dll in dlls)
+            {
+                var assembly = appDomain.Load(File.ReadAllBytes(dll));
+                
+                try
+                {
+                    var eventTypes = assembly.GetTypes()
+                                            .Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(Event)))
+                                            .ToList();
+                    if (eventTypes.Count > 0)
+                    {
+                        types.AddRange(eventTypes);
+                    }
+                    
+                }
+                catch (ReflectionTypeLoadException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+
+            AppDomain.Unload(appDomain);
+
             foreach (var type in types)
             {
                 if (type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(Event)))
                 {
                     var instance = (Event)Activator.CreateInstance(type);
                     instance.Store = Store;
-                    EventList.Add(instance.GetId(), instance);
+                    if (!EventList.ContainsKey(instance.GetId()))
+                    {
+                        EventList.Add(instance.GetId(), instance);
+                    }
                 }
             }
         }
@@ -204,8 +240,10 @@ namespace WebsiteTemplate.Controllers
                     }
 
                     var fields = typeof(EventNumber).GetFields();
-                    var allEvents = fields.Select(p => (int)p.GetValue(null)).Where(e => e != EventNumber.Nothing).ToList();
                     
+                    var allEvents = EventList.Select(e => Convert.ToInt32(e.Value.GetEventId()))
+                                          .ToList();
+
                     var eras = session.CreateCriteria<EventRoleAssociation>()
                                       .CreateAlias("UserRole", "role")
                                       .Add(Restrictions.Eq("role.Id", adminRole.Id))

@@ -43,16 +43,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AjaxMin, Version=5.14.5506.26196, Culture=neutral, PublicKeyToken=21ef50ce11b5d80f, processorArchitecture=MSIL">
-      <HintPath>..\packages\AjaxMin.5.14.5506.26202\lib\net40\AjaxMin.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="BasicAuthentication, Version=0.0.5797.38917, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BasicAuthentication.0.0.5797.38917\lib\net45\BasicAuthentication.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EcmaScript.NET, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\EcmaScript.Net.1.0.1.0\lib\net20\EcmaScript.NET.dll</HintPath>
+    <Reference Include="BasicAuthentication, Version=0.0.5814.28178, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicAuthentication.0.0.5814.28178\lib\net45\BasicAuthentication.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FluentNHibernate, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -139,16 +131,14 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
-    <Reference Include="WebsiteTemplate, Version=0.0.5809.39632, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WebsiteTemplate.0.0.5809.39632\lib\net45\WebsiteTemplate.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Yahoo.Yui.Compressor, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\YUICompressor.NET.2.7.0.0\lib\NET20\Yahoo.Yui.Compressor.dll</HintPath>
+    <Reference Include="WebsiteTemplate, Version=0.0.5814.36591, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebsiteTemplate.0.0.5814.36591\lib\net45\WebsiteTemplate.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Frontend\Scripts\_references.js" />
+    <Content Include="CustomMenuItems\Getting Started.txt" />
     <Content Include="Frontend\css\busyIndicator.css" />
     <Content Include="Frontend\css\inputDialog.css" />
     <Content Include="Frontend\css\login.css" />
@@ -171,7 +161,6 @@
     <Content Include="Frontend\Scripts\navigation.js" />
     <Content Include="Frontend\Scripts\siteMenu.js" />
     <Content Include="Frontend\Scripts\views.js" />
-    <None Include="Frontend\Scripts\_references.js" />
     <Content Include="Frontend\webFiles\scripts.min.js" />
     <Content Include="Frontend\webFiles\styles.min.css" />
     <Content Include="Index.html" />
@@ -190,6 +179,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomMenuItems\NewMenuTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

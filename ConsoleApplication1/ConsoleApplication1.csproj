@@ -100,8 +100,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WebsiteTemplate, Version=0.0.5814.28210, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WebsiteTemplate.0.0.5814.28210\lib\net45\WebsiteTemplate.dll</HintPath>
+    <Reference Include="WebsiteTemplate, Version=0.0.5814.34851, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebsiteTemplate.0.0.5814.34851\lib\net45\WebsiteTemplate.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -116,6 +116,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CustomMenuItems\Getting Started.txt" />
     <Content Include="Frontend\css\busyIndicator.css" />
     <Content Include="Frontend\css\inputDialog.css" />
     <Content Include="Frontend\css\login.css" />

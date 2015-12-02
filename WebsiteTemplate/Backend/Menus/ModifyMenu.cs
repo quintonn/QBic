@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
@@ -51,10 +52,16 @@ namespace WebsiteTemplate.Backend.Menus
                 list.Add(new StringInput("Name", "Menu Name", Menu.Name));
                 list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", Menu.Event == null));
 
-                var events = typeof(EventNumber).GetFields()
-                                                .Select(p => p.Name)
-                                                .Where(e => e != "Nothing")
-                                                .ToList();
+                var events = MainController.EventList.Select(e => e.Value.Description)
+                                                     .Where(m => !String.IsNullOrWhiteSpace(m))
+                                                     .OrderBy(m => m)
+                                                     .ToList();
+
+                //var events = typeof(EventNumber).GetFields()
+                //                                .Select(p => p.Name)
+                //                                .Where(e => e != "Nothing")
+                //                                .OrderBy(m => m)
+                //                                .ToList();
                 //var events = Enum.GetNames(typeof(EventNumber))
                 //                    .Where(u => !u.Equals("Nothing", StringComparison.InvariantCultureIgnoreCase))
                 //                    .ToList();
@@ -164,7 +171,8 @@ namespace WebsiteTemplate.Backend.Menus
                     }
 
                     //eventNumber = (int)typeof(EventNumber).GetProperty(eventName).GetValue(null, null);
-                    eventNumber = (int)typeof(EventNumber).GetField(eventName).GetValue(null);
+                    eventNumber = MainController.EventList.Where(e => e.Value.Description == eventName).Select(e => Convert.ToInt32(e.Value.GetEventId())).First();
+                    //eventNumber = (int)typeof(EventNumber).GetField(eventName).GetValue(null);
                 }
 
                 Menu parentMenu = null;

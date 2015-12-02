@@ -9,8 +9,16 @@
         navigation.loadHtmlBody('menuContainer', 'Menu.html', function()
         {
             menuBuilder.clearNode('menuDiv');
+            
             siteMenu.buildMenu(menuList);
         });
+    },
+
+    createSubMenu: function (menuList, parentId)
+    {
+        menuBuilder.clearNode('menuDiv');
+        
+        siteMenu.buildMenu(menuList, parentId);
     },
 
     addMenuButton: function(btnLabel, onClickEvent)
