@@ -39,8 +39,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicAuthentication, Version=0.0.5791.20938, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BasicAuthentication.0.0.5791.20938\lib\net45\BasicAuthentication.dll</HintPath>
+    <Reference Include="BasicAuthentication, Version=0.0.5814.28178, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicAuthentication.0.0.5814.28178\lib\net45\BasicAuthentication.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FluentNHibernate, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -268,7 +268,7 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>nuget pack -OutputDirectory "..\..\..\NugetSource"  "..\WebsiteTemplate.csproj"</PostBuildEvent>
+    <PostBuildEvent>"..\nuget publish.bat"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>..\..\BuildHelper\bin\Debug\BuildHelper.exe</PreBuildEvent>

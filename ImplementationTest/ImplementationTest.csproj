@@ -175,7 +175,9 @@
     <Content Include="Frontend\webFiles\scripts.min.js" />
     <Content Include="Frontend\webFiles\styles.min.css" />
     <Content Include="Index.html" />
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
