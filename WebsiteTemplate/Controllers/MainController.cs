@@ -433,6 +433,7 @@ namespace WebsiteTemplate.Controllers
 
         private void AddSubMenu(Menu menu, ISession session)
         {
+            menu.ParentMenu = null;
             var subMenus = session.CreateCriteria<Menu>()
                                   .CreateAlias("ParentMenu", "parent")
                                   .Add(Restrictions.Eq("parent.Id", menu.Id))
@@ -455,7 +456,7 @@ namespace WebsiteTemplate.Controllers
 
             try
             {
-                var results = new Dictionary<int, Menu>();
+                var results = new List<Menu>();
                 using (var session = Store.OpenSession())
                 {
                     var events = GetAllowedEventsForUser(session, user.Id).ToArray();
@@ -467,10 +468,9 @@ namespace WebsiteTemplate.Controllers
                                                .ToList();
                     mainMenus.ForEach(m =>
                         {
-                            results.Add((int)m.Event, m);
+                            results.Add(m);
                         });
 
-                    var x = -99;
                     var mainMenusWithSubMenus = session.CreateCriteria<Menu>()
                                                .Add(Restrictions.IsNull("Event"))
                                                .Add(Restrictions.IsNull("ParentMenu"))
@@ -478,8 +478,9 @@ namespace WebsiteTemplate.Controllers
                                                .ToList();
                     mainMenusWithSubMenus.ForEach(m =>
                     {
+                        m.ParentMenu = null;
                         AddSubMenu(m, session);
-                        results.Add(x--, m);
+                        results.Add(m);
                     });
 
                     //var subMenus = session.CreateCriteria<Menu>()

@@ -16,6 +16,11 @@ namespace WebsiteTemplate.Models
 
         public virtual EventNumber? Event { get; set; }
 
+        public Menu()
+        {
+            Event = null;
+        }
+
         public override string ToString()
         {
             return Name;

@@ -1,34 +1,67 @@
 ﻿var siteMenu = {
 
-    buildMenu: function (menuList)
+    findMenu: function(menuId, menuList)
+    {
+        for (var key in menuList)
+        {
+            var m = menuList[key];
+            if (m.Id == menuId)
+            {
+                return m.SubMenus;
+            }
+            var tmp = siteMenu.findMenu(menuId, m.SubMenus);
+            if (tmp != null)
+            {
+                return tmp;
+            }
+        }
+        return null;
+    },
+
+    buildMenu: function (menuList, menuId, parentId)
     {
         menuBuilder.addMenuButton("Home", function ()
         {
             navigation.entryPoint();
         });
-
-        console.log(menuList);
-        for (var key in menuList)
+        if (menuId != null)
         {
-            console.log(key);
+            menuBuilder.addMenuButton("<<", function ()
+            {
+                menuBuilder.clearNode("menuDiv");
+                siteMenu.buildMenu(menuList, parentId);
+            });
+        }
+        var theMenu = menuList;
+        if (menuId != null)
+        {
+            theMenu = siteMenu.findMenu(menuId, menuList);
+        }
+        for (var key in theMenu)
+        {
             var id = key;
-            var menu = menuList[key];
+            var menu = theMenu[key];
             var label = menu.Name;
 
             var buttonClickEvent = (function (actionId)
             {
                 return function ()
                 {
-                    if (actionId >= 0) {
-                        siteMenu.executeUIAction(actionId);
-                    }
-                    else {
-                        
-                        console.log(label);
-                        alert('z')
-                    }
+                    siteMenu.executeUIAction(actionId);
                 }
-            })(id);
+            })(menu.Event);
+
+            if (menu.Event == null)
+            {
+                buttonClickEvent = (function (m)
+                {
+                    return function ()
+                    {
+                        menuBuilder.clearNode('menuDiv');
+                        siteMenu.buildMenu(menuList, m.Id, menuId);
+                    }
+                })(menu);
+            }
 
             menuBuilder.addMenuButton(label, buttonClickEvent);
         }
@@ -42,28 +75,28 @@
                 ActionId: actionId,
             };
         data = JSON.stringify(data);
-        
+
         main.makeWebCall(main.webApiURL + "processEvent/" + eventId, "POST", siteMenu.processUIActionResponse, data, args);
     },
 
-    executeUIAction: function(actionId, params)
+    executeUIAction: function (actionId, params)
     {
         var data =
             {
                 Data: params || ""
             };
-        
+
         data = JSON.stringify(data);
-        
+
         main.makeWebCall(main.webApiURL + "executeUIAction/" + actionId, "POST", siteMenu.processUIActionResponse, data, params);
     },
 
     processUIActionResponse: function (responseItems, args) /// args is for data passed between calls
     {
         var response = responseItems[0]; // Get the first item
-            
+
         responseItems.splice(0, 1); // Remove the first item
-        
+
 
         var callback = function () { };
         if (responseItems.length > 0)
@@ -78,7 +111,7 @@
         }
 
         var settings = response;
-        
+
         var actionType = -1;
         if (settings != null && settings.ActionType != null)
         {
@@ -86,7 +119,7 @@
         }
 
         var data = response;
-        
+
         switch (actionType)
         {
             case -1:
@@ -118,7 +151,7 @@
         }
     },
 
-    buildInput: function(settings, args)
+    buildInput: function (settings, args)
     {
         inputDialog.loadInputPage("InputDialog.html", function ()
         {
@@ -147,7 +180,7 @@
                 if (inputField.VisibilityConditions != null && inputField.VisibilityConditions.length > 0)
                 {
                     var inputName = inputField.InputName;
-                    
+
                     for (var j = 0; j < inputField.VisibilityConditions.length; j++)
                     {
                         var condition = inputField.VisibilityConditions[j];
@@ -193,12 +226,12 @@
                         alert("Unknown comparison " + item.Condition.Comparison);
                     }
                     var input = document.getElementById(inputFieldToUpdate);
-                    
+
                     while (input.tagName != "TR")
                     {
                         input = input.parentNode;
                     }
-                    
+
                     input.style.display = showInput ? "" : "none";
                     //input.style.visibility = showInput ? "visible" : "hidden";
                 }
@@ -209,7 +242,7 @@
                 var row = document.createElement('tr');
                 conditionList.push(i);
                 var inputField = settings.InputFields[i];
-                
+
                 switch (inputField.InputType)
                 {
                     case 0: /// Text
@@ -271,7 +304,8 @@
                         combo.id = "_" + inputField.InputName;
                         var array = inputField.ListItems;
 
-                        for (var j = 0; j < array.length; j++) {
+                        for (var j = 0; j < array.length; j++)
+                        {
                             var option = document.createElement("option");
                             option.value = array[j];
                             option.text = array[j];
@@ -305,13 +339,13 @@
                             })(inputField.InputName);
                         }
                         inp.type = "checkbox";
-                        
+
                         inp.id = "_" + inputField.InputName;
                         if (inputField.DefaultValue != null)
                         {
                             inp.checked = inputField.DefaultValue;
                         }
-                        
+
                         var inputCell = document.createElement('td');
                         inputCell.appendChild(inp);
                         row.appendChild(inputCell);
@@ -319,7 +353,7 @@
                     case 5: /// List selection input
 
                         var labelCell = document.createElement('td');
-                        
+
                         labelCell.innerHTML = inputField.InputLabel;
                         row.appendChild(labelCell);
                         inputTable.appendChild(row);
@@ -377,10 +411,12 @@
                                 }
                             }
 
-                            if (isDefault) {
+                            if (isDefault)
+                            {
                                 select1.appendChild(option);
                             }
-                            else {
+                            else
+                            {
                                 select2.appendChild(option);
                             }
                         }
@@ -403,9 +439,11 @@
                                 var select2Name = "_" + inputName + "_2";
                                 var select1 = document.getElementById(select1Name);
                                 var select2 = document.getElementById(select2Name);
-                                
-                                for (var k = select2.options.length-1; k >= 0; k--) {
-                                    if (select2.options[k].selected) {
+
+                                for (var k = select2.options.length - 1; k >= 0; k--)
+                                {
+                                    if (select2.options[k].selected)
+                                    {
                                         select1.appendChild(select2.options[k]);
                                     }
                                 }
@@ -415,18 +453,22 @@
 
                         var br = document.createElement('br');
                         buttonContainer1.appendChild(br);
-                        
+
                         var button2 = document.createElement('button');
                         button2.innerHTML = ">>";
-                        button2.onclick = (function (inputName) {
-                            return function () {
+                        button2.onclick = (function (inputName)
+                        {
+                            return function ()
+                            {
                                 var select1Name = "_" + inputName + "_1";
                                 var select2Name = "_" + inputName + "_2";
                                 var select1 = document.getElementById(select1Name);
                                 var select2 = document.getElementById(select2Name);
-                                
-                                for (var k = select1.options.length - 1; k >= 0; k--) {
-                                    if (select1.options[k].selected) {
+
+                                for (var k = select1.options.length - 1; k >= 0; k--)
+                                {
+                                    if (select1.options[k].selected)
+                                    {
                                         select2.appendChild(select1.options[k]);
                                     }
                                 }
@@ -450,7 +492,7 @@
                         tableCell.colSpan = 3;
                         tableCell.appendChild(table);
                         row.appendChild(tableCell);
-                        
+
                         break;
                     default:
                         inputDialog.showMessage('Unknown input type: ' + inputField.InputType);
@@ -471,7 +513,7 @@
                 }
                 onChangeFunc(inputItem, inputField.InputName);
             }
-            
+
             var buttonRow = document.createElement('tr');
             var buttonCell = document.createElement('td');
             buttonCell.colSpan = 2;
@@ -498,7 +540,7 @@
                                 inputValue = [];
                                 theInput = document.getElementById("_" + inputField.InputName + "_1");
                                 var options = theInput.options;
-                                
+
                                 for (var k = 0; k < options.length; k++)
                                 {
                                     inputValue.push(options[k].value);
@@ -507,7 +549,8 @@
                             else
                             {
                                 theInput = document.getElementById("_" + inputField.InputName);
-                                if (theInput == null) {
+                                if (theInput == null)
+                                {
                                     continue;
                                 }
                                 inputValue = theInput.value;
@@ -517,7 +560,7 @@
                                 }
                             }
 
-                            
+
                             data[inputField.InputName] = inputValue;
                         }
 
@@ -525,7 +568,7 @@
                         {
                             //data["parentId"] = args;
                         }
-                        
+
                         siteMenu.processEvent(settings.Id, data, id, args);
                     }
                 })(buttonItem.ActionNumber, settings);
@@ -538,7 +581,7 @@
         });
     },
 
-    populateView: function(data, settings, callback, args)
+    populateView: function (data, settings, callback, args)
     {
         navigation.loadHtmlBody('mainContent', 'Views.html', function ()
         {
@@ -559,14 +602,14 @@
             for (var i = 0; i < data.length; i++)
             {
                 var row = document.createElement("tr");
-                
+
                 for (var j = 0; j < settings.Columns.length; j++)
                 {
                     var column = settings.Columns[j];
                     var cell = document.createElement("td");
 
                     var value = "";
-                    
+
                     if (column.ColumnName != null && column.ColumnName.length > 0)
                     {
                         value = data[i];
@@ -575,13 +618,13 @@
                         {
                             var index = colName.indexOf('.');
                             var partName = colName.substring(0, index);
-                            
+
                             value = value[partName];
-                            colName = colName.substring(index+1);
+                            colName = colName.substring(index + 1);
                         }
                         value = value[colName];
                     }
-                    
+
                     if (column.ColumnType == 1) /// Boolean
                     {
                         if (value == true)
@@ -603,7 +646,7 @@
                             return function ()
                             {
                                 var id = data[index]["Id"];
-                                
+
                                 var formData = JSON.stringify(data[index]);
                                 var theColumn = settings.Columns[ind];
 
@@ -615,7 +658,7 @@
                                 {
                                     var eventId = theColumn.Event.EventNumber;
                                     var formData = data[index]["Id"];
-                                    
+
                                     siteMenu.executeUIAction(eventId, formData);
                                 }
                                 else
@@ -650,7 +693,7 @@
                                     {
                                         Id: data[index][col.KeyColumn]
                                     };
-                                
+
                                 var id = col.EventNumber;
                                 siteMenu.executeUIAction(id, formData);
                             }
@@ -660,17 +703,19 @@
                     else
                     {
                         /// Don't do anything to the value
-                        
+
                         cell.innerHTML = value;
                     }
 
-                    if (column.ColumnSetting != null) {
+                    if (column.ColumnSetting != null)
+                    {
                         if (column.ColumnSetting.ColumnSettingType == 0) /// Show/Hide column
                         {
                             var show = column.ColumnSetting.Display == 0;
                             var compareResult = true;
-                            
-                            for (var p = 0; p < column.ColumnSetting.Conditions.length; p++) {
+
+                            for (var p = 0; p < column.ColumnSetting.Conditions.length; p++)
+                            {
                                 var condition = column.ColumnSetting.Conditions[p];
                                 var colName = condition.ColumnName;
                                 var comparison = condition.Comparison;
@@ -678,19 +723,23 @@
 
                                 var actualValue = data[i][colName] || "";
                                 actualValue = actualValue.toString();
-                                
-                                if (comparison == 0) {
+
+                                if (comparison == 0)
+                                {
                                     compareResult = compareResult && actualValue == colVal;
                                 }
-                                else if (comparison == 1) {
+                                else if (comparison == 1)
+                                {
                                     compareResult = compareResult && actualValue != colVal;
                                 }
-                                else {
+                                else
+                                {
                                     alert("Unknown comparison: " + comparison);
                                 }
                             }
 
-                            if ((compareResult == false && show == true) || (compareResult == true && show == false)) {
+                            if ((compareResult == false && show == true) || (compareResult == true && show == false))
+                            {
 
                                 var show = column.ColumnSetting.Display == 0;
 
@@ -707,7 +756,7 @@
                             }
                         }
                     }
-                    
+
                     row.appendChild(cell);
                 }
                 table.appendChild(row);
