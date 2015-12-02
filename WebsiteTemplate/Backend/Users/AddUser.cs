@@ -117,7 +117,12 @@ namespace WebsiteTemplate.Backend.Users
                     sendEmail.Store = Store;
                     sendEmail.Request = Request;
 
-                    var emailResult = await sendEmail.ProcessAction(user.Id);
+                    var data2 = new
+                    {
+                        Id = user.Id
+                    };
+                    var json = JsonConvert.SerializeObject(data2);
+                    var emailResult = await sendEmail.ProcessAction(json);
                     success = true;
                 }
                 catch (FormatException e)
