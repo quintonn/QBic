@@ -190,19 +190,6 @@ namespace WebsiteTemplate.Controllers
                         session.Save(menu2);
                     }
 
-                    //var menuList3 = session.CreateCriteria<Menu>()
-                    //                       .Add(Restrictions.Eq("Event", EventNumber.ViewUserEvents))
-                    //                       .List<Menu>();
-                    //if (menuList3.Count == 0)
-                    //{
-                    //    var menu3 = new Menu()
-                    //    {
-                    //        Event = EventNumber.ViewUserEvents,
-                    //        Name = "User Events",
-                    //    };
-                    //    session.Save(menu3);
-                    //}
-
                     var userRoleMenu = session.CreateCriteria<Menu>()
                                               .Add(Restrictions.Eq("Event", EventNumber.ViewUserRoles))
                                               .UniqueResult<Menu>();
@@ -215,33 +202,6 @@ namespace WebsiteTemplate.Controllers
                         };
                         session.Save(userRoleMenu);
                     }
-
-
-                    //var era1 = session.CreateCriteria<EventRoleAssociation>()
-                    //                  .Add(Restrictions.Eq("Event", EventNumber.ViewEventRoleAssociations))
-                    //                  .List<EventRoleAssociation>();
-                    //if (era1.Count == 0)
-                    //{
-                    //    var evn = new EventRoleAssociation()
-                    //    {
-                    //        Event = EventNumber.ViewEventRoleAssociations,
-                    //        UserRole = adminRole
-                    //    };
-                    //    session.Save(evn);
-                    //}
-
-                    //var era2 = session.CreateCriteria<EventRoleAssociation>()
-                    //                  .Add(Restrictions.Eq("Event", EventNumber.AddEventRoleAssociation))
-                    //                  .List<EventRoleAssociation>();
-                    //if (era2.Count == 0)
-                    //{
-                    //    var evn = new EventRoleAssociation()
-                    //    {
-                    //        Event = EventNumber.AddEventRoleAssociation,
-                    //        UserRole = adminRole
-                    //    };
-                    //    session.Save(evn);
-                    //}
 
                     var fields = typeof(EventNumber).GetFields();
                     
@@ -438,7 +398,7 @@ namespace WebsiteTemplate.Controllers
                 {
                     if (String.IsNullOrWhiteSpace(initializeResult.Error))
                     {
-                        return BadRequest("There was an initialization error for GetInput " + eventItem.GetId() + " but there are not error details.");
+                        return BadRequest("There was an initialization error for ExecuteUIAction " + eventItem.GetId() + " but there are not error details.");
                     }
                     return BadRequest(initializeResult.Error);
                 }
