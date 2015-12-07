@@ -29,6 +29,7 @@
             menuBuilder.addMenuButton("<<", function ()
             {
                 menuBuilder.clearNode("menuDiv");
+                menuBuilder.clearNode('viewsMenu');
                 siteMenu.buildMenu(menuList, parentId);
             });
         }
