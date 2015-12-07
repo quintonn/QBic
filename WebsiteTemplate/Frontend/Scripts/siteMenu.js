@@ -495,6 +495,35 @@
                         row.appendChild(tableCell);
 
                         break;
+                    case 6: /// Date
+                        var labelCell = document.createElement('td');
+                        labelCell.innerHTML = inputField.InputLabel;
+                        row.appendChild(labelCell);
+
+                        var inp = document.createElement('input');
+                        
+                        var id = "_" + inputField.InputName;
+                        inp.type = "text";
+                        
+                        inp.id = id;
+
+                        if (inputField.DefaultValue != null && inputField.DefaultValue.length > 0) {
+                            inp.value = inputField.DefaultValue;
+                        }
+
+                        if (conditionListContains(inputField.InputName)) {
+                            inp.onchange = (function (inputName) {
+                                return function () {
+                                    onChangeFunc(this, inputName);
+                                }
+                            })(inputField.InputName);
+                        }
+
+                        var inputCell = document.createElement('td');
+                        inputCell.appendChild(inp);
+                        row.appendChild(inputCell);
+
+                        break;
                     default:
                         inputDialog.showMessage('Unknown input type: ' + inputField.InputType);
                         continue;

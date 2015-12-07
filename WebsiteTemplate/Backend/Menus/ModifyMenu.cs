@@ -171,7 +171,7 @@ namespace WebsiteTemplate.Backend.Menus
                     if (!isNew)
                     {
                         menu = session.Get<Menu>(menuId);
-                        ParentMenuId = menu.ParentMenu.Id;
+                        ParentMenuId = menu.ParentMenu?.Id;
                     }
                     else
                     {

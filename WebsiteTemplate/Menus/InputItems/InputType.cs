@@ -7,6 +7,7 @@
         Hidden = 2,
         ComboBox = 3,
         Boolean = 4,
-        ListSelection = 5
+        ListSelection = 5,
+        Date = 6
     }
 }

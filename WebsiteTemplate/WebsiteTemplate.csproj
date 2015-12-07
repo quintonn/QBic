@@ -144,10 +144,10 @@
     <Content Include="Frontend\css\busyIndicator.css" />
     <Content Include="Frontend\css\spinner1.css" />
     <Content Include="Frontend\css\views.css" />
+    <Content Include="Frontend\webFiles\scripts.min.js" />
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Frontend\webFiles\scripts.min.js" />
     <Content Include="Frontend\webFiles\styles.min.css" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -201,6 +201,7 @@
     <Compile Include="Menus\ExecuteAction.cs" />
     <Compile Include="Menus\InputItems\BooleanInput.cs" />
     <Compile Include="Menus\InputItems\ComboBoxInput.cs" />
+    <Compile Include="Menus\InputItems\DateInput.cs" />
     <Compile Include="Menus\InputItems\HiddenInput.cs" />
     <Compile Include="Menus\InputItems\InitializeResult.cs" />
     <Compile Include="Menus\InputItems\InputButton.cs" />
