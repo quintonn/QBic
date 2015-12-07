@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using NHibernate.Criterion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,31 @@ namespace WebsiteTemplate.Backend.UserRoles
 
             using (var session = Store.OpenSession())
             {
+                var userRoleAssociations = session.CreateCriteria<UserRoleAssociation>()
+                                                  .CreateAlias("UserRole", "role")
+                                                  .Add(Restrictions.Eq("role.Id", id))
+                                                  .List<UserRoleAssociation>()
+                                                  .ToList();
+                if (userRoleAssociations.Count > 0)
+                {
+                    return new List<Event>()
+                    {
+                        new ShowMessage("Cannot delete user role, it is assigned to users.")
+                    };
+                }
+
+                var eventRoles = session.CreateCriteria<EventRoleAssociation>()
+                                        .CreateAlias("UserRole", "role")
+                                        .Add(Restrictions.Eq("role.Id", id))
+                                        .List<EventRoleAssociation>()
+                                        .ToList();
+                eventRoles.ForEach(e =>
+                {
+                    session.Delete(e);
+                });
+
                 var userRole = session.Get<UserRole>(id);
+
                 session.Delete(userRole);
                 session.Flush();
             }

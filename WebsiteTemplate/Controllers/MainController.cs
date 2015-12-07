@@ -364,83 +364,90 @@ namespace WebsiteTemplate.Controllers
         [Authorize]
         public async Task<IHttpActionResult> ExecuteUIAction(int eventId)
         {
-            var user = await this.GetLoggedInUserAsync();
-            var data = await Request.Content.ReadAsStringAsync();
-            var json = JObject.Parse(data);
-            data = json.GetValue("Data").ToString();
-
-            var id = eventId;
-
-            if (!EventList.ContainsKey(id))
+            try
             {
-                return BadRequest("No action has been found for event number: " + id);
-            }
+                var user = await this.GetLoggedInUserAsync();
+                var data = await Request.Content.ReadAsStringAsync();
+                var json = JObject.Parse(data);
+                data = json.GetValue("Data").ToString();
 
-            var result = new List<Event>();
+                var id = eventId;
 
-            var eventItem = EventList[id];
-
-            eventItem.Request = Request;
-
-            if (eventItem is ShowView)
-            {
-                var action = eventItem as ShowView;
-
-                using (var session = Store.OpenSession())
+                if (!EventList.ContainsKey(id))
                 {
-                    var parentData = data;
-
-                    try
-                    {
-                        var list = action.GetData(parentData);
-                        action.ViewData = list;
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                        throw;
-                    }
-                    var viewMenu = action.GetViewMenu();
-
-                    var allowedEvents = GetAllowedEventsForUser(session, user.Id);
-                    var allowedMenuItems = viewMenu.Where(m => allowedEvents.Contains(m.EventNumber)).ToList();
-
-                    action.ViewMenu = allowedMenuItems; //TODO: this should work differently. because this can be changed in the view's code.
-
-                    result.Add(action);
-                }
-            }
-            else if (eventItem is DoSomething)
-            {
-                var doResult = await (eventItem as DoSomething).ProcessAction(data);
-                result.AddRange(doResult);
-            }
-            else if (eventItem is GetInput)
-            {
-                var inputResult = eventItem as GetInput;
-
-                var initializeResult = await inputResult.Initialize(data);
-                if (!initializeResult.Success)
-                {
-                    if (String.IsNullOrWhiteSpace(initializeResult.Error))
-                    {
-                        return BadRequest("There was an initialization error for ExecuteUIAction " + eventItem.GetId() + " but there are not error details.");
-                    }
-                    return BadRequest(initializeResult.Error);
+                    return BadRequest("No action has been found for event number: " + id);
                 }
 
-                result.Add(inputResult);
-            }
-            else if (eventItem is CancelInputDialog)
-            {
-                return Ok();
-            }
-            else
-            {
-                return BadRequest("ERROR: Unknown UIActionType: " + eventItem.GetType().ToString().Split(".".ToCharArray()).Last() + " with id " + id);
-            }
+                var result = new List<Event>();
 
-            return Json(result);
+                var eventItem = EventList[id];
+
+                eventItem.Request = Request;
+
+                if (eventItem is ShowView)
+                {
+                    var action = eventItem as ShowView;
+
+                    using (var session = Store.OpenSession())
+                    {
+                        var parentData = data;
+
+                        try
+                        {
+                            var list = action.GetData(parentData);
+                            action.ViewData = list;
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                            throw;
+                        }
+                        var viewMenu = action.GetViewMenu();
+
+                        var allowedEvents = GetAllowedEventsForUser(session, user.Id);
+                        var allowedMenuItems = viewMenu.Where(m => allowedEvents.Contains(m.EventNumber)).ToList();
+
+                        action.ViewMenu = allowedMenuItems; //TODO: this should work differently. because this can be changed in the view's code.
+
+                        result.Add(action);
+                    }
+                }
+                else if (eventItem is DoSomething)
+                {
+                    var doResult = await (eventItem as DoSomething).ProcessAction(data);
+                    result.AddRange(doResult);
+                }
+                else if (eventItem is GetInput)
+                {
+                    var inputResult = eventItem as GetInput;
+
+                    var initializeResult = await inputResult.Initialize(data);
+                    if (!initializeResult.Success)
+                    {
+                        if (String.IsNullOrWhiteSpace(initializeResult.Error))
+                        {
+                            return BadRequest("There was an initialization error for ExecuteUIAction " + eventItem.GetId() + " but there are not error details.");
+                        }
+                        return BadRequest(initializeResult.Error);
+                    }
+
+                    result.Add(inputResult);
+                }
+                else if (eventItem is CancelInputDialog)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("ERROR: Unknown UIActionType: " + eventItem.GetType().ToString().Split(".".ToCharArray()).Last() + " with id " + id);
+                }
+
+                return Json(result);
+            }
+            catch (Exception error)
+            {
+                return BadRequest(error.Message);
+            }
         }
 
         private List<int> GetAllowedEventsForUser(ISession session, string userId)
