@@ -38,7 +38,8 @@
 		</dependencies>
 	</metadata>  
 	<files>
-	    <file src="Frontend\**\*.*" exclude="Frontend\webFiles\*" target="content\Frontend" />
+	    <file src="Frontend\**\*.min.*" exclude="Frontend\webFiles\*" target="content\Frontend" />
+		<file src="Frontend\**\*.html" exclude="Frontend\webFiles\*" target="content\Frontend" />
 		<file src="CustomMenuItems\**\*.*" target="content\CustomMenuItems" />
 	    <!--<file src="D:\Projects\WebsiteTemplate\WebsiteTemplate\Frontend\Scripts\*.*" exclude="**\*.js" />-->
 	    <!--<file src="D:\Projects\WebsiteTemplate\WebsiteTemplate\Frontend\Scripts\*.js" exclude="D:\Projects\WebsiteTemplate\WebsiteTemplate\Frontend\Scripts\*.js" />-->

@@ -10,13 +10,13 @@ using NHibernate.Criterion;
 using BasicAuthentication.Users;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using WebsiteTemplate.SiteSpecific;
+
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.InputItems;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
+
 using NHibernate;
 using System.IO;
 using System.Reflection;
@@ -271,11 +271,23 @@ namespace WebsiteTemplate.Controllers
             }
             catch (Exception e)
             {
-
                 Console.WriteLine(e);
                 Trace.WriteLine(e);
                 Debug.WriteLine(e);
             }
+        }
+
+        [HttpGet]
+        [Route("initializeSystem")]
+        [RequireHttps]
+        public IHttpActionResult InitializeSystem()
+        {
+            var user = this.GetLoggedInUser() as User;
+            var json = new
+            {
+                ApplicationName = "Website Template"
+            };
+            return Json(json);
         }
 
         [HttpGet]
@@ -289,7 +301,7 @@ namespace WebsiteTemplate.Controllers
             {
                 User = user.UserName,
                 Role = "Admin",
-                Id = user.Id
+                Id = user.Id,
             };
             return Json(json);
         }

@@ -20,7 +20,7 @@ namespace WebsiteTemplate.Backend.Users
             return EventNumber.AddUserRoleAssociation;
         }
 
-        private string mDescription { get; set; }
+        private string mDescription { get; set; } = "Add User Role Association";
         public override string Description
         {
             get

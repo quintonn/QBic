@@ -131,8 +131,8 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
-    <Reference Include="WebsiteTemplate, Version=0.0.5814.36591, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WebsiteTemplate.0.0.5814.36591\lib\net45\WebsiteTemplate.dll</HintPath>
+    <Reference Include="WebsiteTemplate, Version=0.0.5819.20862, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebsiteTemplate.0.0.5819.20862\lib\net45\WebsiteTemplate.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
