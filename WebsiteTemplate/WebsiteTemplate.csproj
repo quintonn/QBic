@@ -165,10 +165,6 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Backend\EventRoleAssociations\AddEventRoleAssociation.cs" />
-    <Compile Include="Backend\EventRoleAssociations\DeleteEventRoleAssociation.cs" />
-    <Compile Include="Backend\EventRoleAssociations\ViewEventRoleAssociations.cs" />
-    <Compile Include="Backend\UserEvents\ViewUserEvents.cs" />
     <Compile Include="Backend\UserRoles\AddUserRole.cs" />
     <Compile Include="Backend\UserRoles\DeleteUserRole.cs" />
     <Compile Include="Backend\UserRoles\EditUserRole.cs" />
