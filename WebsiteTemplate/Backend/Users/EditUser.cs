@@ -9,6 +9,7 @@ using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.SiteSpecific;
+using System.Linq;
 
 
 namespace WebsiteTemplate.Backend.Users
@@ -33,12 +34,14 @@ namespace WebsiteTemplate.Backend.Users
         {
             if (actionNumber == 0)
             {
-                var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
+                var json = JObject.Parse(data);
+
+                var userRoles = json.GetValue("UserRoles") as JArray;
 
                 using (var session = Store.OpenSession())
                 {
-                    var id = parameters["Id"];
-                    var userName = parameters["UserName"];
+                    var id = json.GetValue("Id").ToString();
+                    var userName = json.GetValue("UserName").ToString();
 
                     var existingUser = session.CreateCriteria<User>()
                                               .Add(Restrictions.Eq("UserName", userName))
@@ -53,9 +56,34 @@ namespace WebsiteTemplate.Backend.Users
                     }
 
                     var dbUser = session.Get<User>(id);
-                    dbUser.UserName = parameters["UserName"];
-                    dbUser.Email = parameters["Email"];
+                    dbUser.UserName = json.GetValue("UserName").ToString();
+                    dbUser.Email = json.GetValue("Email").ToString();
                     session.Update(dbUser);
+
+                    var existingUserRoles = session.CreateCriteria<UserRoleAssociation>()
+                                                   .CreateAlias("User", "user")
+                                                   .Add(Restrictions.Eq("user.Id", dbUser.Id))
+                                                   .List<UserRoleAssociation>()
+                                                   .ToList();
+                    existingUserRoles.ForEach(u =>
+                    {
+                        session.Delete(u);
+                    });
+
+                    foreach (var role in userRoles)
+                    {
+                        var dbUserRole = session.CreateCriteria<UserRole>()
+                                                .Add(Restrictions.Eq("Name", role.ToString()))
+                                                .UniqueResult<UserRole>();
+
+                        var roleAssociation = new UserRoleAssociation()
+                        {
+                            User = dbUser,
+                            UserRole = dbUserRole
+                        };
+                        session.Save(roleAssociation);
+                    }
+
                     session.Flush();
                 }
 
@@ -97,6 +125,31 @@ namespace WebsiteTemplate.Backend.Users
                 results.Add(new StringInput("UserName", "User Name", User.UserName));
                 results.Add(new StringInput("Email", "Email", User.Email));
                 results.Add(new HiddenInput("Id", User.Id));
+
+                using (var session = Store.OpenSession())
+                {
+                    var items = session.CreateCriteria<UserRole>()
+                                       .List<UserRole>()
+                                       .OrderBy(u => u.Name)
+                                       .ToDictionary(u => u.Name, u => (object)u.Description);
+
+                    var existingItems = session.CreateCriteria<UserRoleAssociation>()
+                                               .CreateAlias("User", "user")
+                                               .Add(Restrictions.Eq("user.Id", User.Id))
+                                               .List<UserRoleAssociation>()
+                                               .Select(u => u.UserRole.Name)
+                                               .OrderBy(u => u)
+                                               .ToList();
+
+                    var listSelection = new ListSelectionInput("UserRoles", "User Roles", existingItems)
+                    {
+                        AvailableItemsLabel = "List of User Roles:",
+                        SelectedItemsLabel = "Chosen User Roles:",
+                        ListSource = items
+                    };
+
+                    results.Add(listSelection);
+                }
 
                 return results;
             }

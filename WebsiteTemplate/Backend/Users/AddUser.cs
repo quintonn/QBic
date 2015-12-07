@@ -8,7 +8,9 @@ using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.SiteSpecific;
-
+using System.Linq;
+using Newtonsoft.Json.Linq;
+using NHibernate.Criterion;
 
 namespace WebsiteTemplate.Backend.Users
 {
@@ -37,6 +39,23 @@ namespace WebsiteTemplate.Backend.Users
                 list.Add(new StringInput("Email", "Email"));
                 list.Add(new PasswordInput("Password", "Password"));
                 list.Add(new PasswordInput("ConfirmPassword", "Confirm Password"));
+
+                using (var session = Store.OpenSession())
+                {
+                    var items = session.CreateCriteria<UserRole>()
+                                       .List<UserRole>()
+                                       .OrderBy(u => u.Name)
+                                       .ToDictionary(u => u.Name, u => (object)u.Description);
+
+                    var listSelection = new ListSelectionInput("UserRoles", "User Roles")
+                    {
+                        AvailableItemsLabel = "List of User Roles:",
+                        SelectedItemsLabel = "Chosen User Roles:",
+                        ListSource = items
+                    };
+
+                    list.Add(listSelection);
+                }
 
                 return list;
             }
@@ -79,15 +98,15 @@ namespace WebsiteTemplate.Backend.Users
                     };
                 };
 
-                var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
+                var json = JObject.Parse(data);
 
                 var user = new User(true)
                 {
-                    Email = parameters["Email"],
-                    UserName = parameters["UserName"],
+                    Email = json.GetValue("Email").ToString(),
+                    UserName = json.GetValue("UserName").ToString(),
                 };
-                var password = parameters["Password"];
-                var confirmPassword = parameters["ConfirmPassword"];
+                var password = json.GetValue("Password").ToString();
+                var confirmPassword = json.GetValue("ConfirmPassword").ToString();
 
                 if (password != confirmPassword)
                 {
@@ -96,6 +115,8 @@ namespace WebsiteTemplate.Backend.Users
                         new ShowMessage("Password and password confirmation do not match")
                     };
                 }
+
+                var userRoles = json.GetValue("UserRoles") as JArray;
 
                 var message = "";
                 var success = false;
@@ -111,6 +132,24 @@ namespace WebsiteTemplate.Backend.Users
                     };
                 }
 
+                using (var session = Store.OpenSession())
+                {
+                    foreach (var role in userRoles)
+                    {
+                        var dbUserRole = session.CreateCriteria<UserRole>()
+                                                .Add(Restrictions.Eq("Name", role.ToString()))
+                                                .UniqueResult<UserRole>();
+
+                        var roleAssociation = new UserRoleAssociation()
+                        {
+                            User = user,
+                            UserRole = dbUserRole
+                        };
+                        session.Save(roleAssociation);
+                    }
+                    session.Flush();
+                }
+
                 try
                 {
                     var sendEmail = new SendConfirmationEmail();
@@ -121,8 +160,8 @@ namespace WebsiteTemplate.Backend.Users
                     {
                         Id = user.Id
                     };
-                    var json = JsonConvert.SerializeObject(data2);
-                    var emailResult = await sendEmail.ProcessAction(json);
+                    var jsonString = JsonConvert.SerializeObject(data2);
+                    var emailResult = await sendEmail.ProcessAction(jsonString);
                     success = true;
                 }
                 catch (FormatException e)

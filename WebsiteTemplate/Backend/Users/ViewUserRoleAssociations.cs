@@ -53,6 +53,7 @@ namespace WebsiteTemplate.Backend.Users
         public override IList<MenuItem> GetViewMenu()
         {
             var results = new List<MenuItem>();
+            results.Add(new MenuItem("Back", EventNumber.ViewUsers, UserId));
             results.Add(new MenuItem("Add", EventNumber.AddUserRoleAssociation, UserId));
             return results;
         }

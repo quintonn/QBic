@@ -36,6 +36,8 @@ namespace WebsiteTemplate.Controllers
         {
             Store = new DataStore();
             PopulateEventList();
+
+            CheckDefaultValues();
         }
 
         static MainController()
@@ -43,8 +45,9 @@ namespace WebsiteTemplate.Controllers
             try
             {
                 Log = new List<string>();
-                CheckDefaultValues();
+                
                 EventList = new Dictionary<int, Event>();
+                //CheckDefaultValues();
                 //PopulateEventList(); /// If this is here, the menu descriptions get overriden. Need to fix this: TODO
             }
             catch (Exception e)
@@ -59,6 +62,7 @@ namespace WebsiteTemplate.Controllers
             {
                 return;
             }
+
             
             var curDir = System.Web.HttpRuntime.AppDomainAppPath;
             var dlls = Directory.GetFiles(curDir, "*.dll", SearchOption.AllDirectories);

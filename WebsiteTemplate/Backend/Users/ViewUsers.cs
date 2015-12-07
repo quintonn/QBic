@@ -35,10 +35,10 @@ namespace WebsiteTemplate.Backend.Users
             
             columnConfig.AddLinkColumn("", "Edit", "Id", "Edit", EventNumber.EditUser);
 
-            columnConfig.AddButtonColumn("Roles", "", ButtonTextSource.Fixed, "...",
-                columnSetting: null,
-                eventItem: new ExecuteAction(EventNumber.ViewUserRoleAssociations, String.Empty) /// The data is passed from the view automatically
-            );
+            //columnConfig.AddButtonColumn("Roles", "", ButtonTextSource.Fixed, "...",
+            //    columnSetting: null,
+            //    eventItem: new ExecuteAction(EventNumber.ViewUserRoleAssociations, String.Empty) /// The data is passed from the view automatically
+            //);
 
             columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X",
                 columnSetting: new ShowHideColumnSetting()

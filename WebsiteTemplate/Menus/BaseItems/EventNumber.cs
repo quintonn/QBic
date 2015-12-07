@@ -15,13 +15,13 @@
         
         public const int ViewMenus = 1200;
         public const int ModifyMenu = 1201;
-        public const int AddMenu = 1210;
+        //public const int AddMenu = 1210;
         
         public const int DeleteMenu = 1220;
         
         public const int ViewEventRoleAssociations = 1300;
         public const int AddEventRoleAssociation = 1310;
-        public const int EditEventRoleAssociation = 1320;
+        //public const int EditEventRoleAssociation = 1320;
         public const int DeleteEventRoleAssociation = 1330;
         
         public const int ViewUserEvents = 1400;
