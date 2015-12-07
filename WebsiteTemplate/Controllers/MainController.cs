@@ -20,6 +20,10 @@ using Newtonsoft.Json.Linq;
 using NHibernate;
 using System.IO;
 using System.Reflection;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.Configuration;
+using WebsiteTemplate.Backend;
+using WebsiteTemplate.SiteSpecific.Utilities;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -31,6 +35,9 @@ namespace WebsiteTemplate.Controllers
         public static List<string> Log { get; set; }
 
         private DataStore Store { get; set; }
+
+        private static UnityContainer Container { get; set; }
+        private static string ApplicationName { get; set; }
 
         public MainController()
         {
@@ -44,9 +51,17 @@ namespace WebsiteTemplate.Controllers
         {
             try
             {
-                Log = new List<string>();
-                
                 EventList = new Dictionary<int, Event>();
+
+                Container = new UnityContainer();
+                Container.LoadConfiguration();
+
+                var appSettings = Container.Resolve<IApplicationSettings>();
+                ApplicationName = appSettings.GetApplicationName();
+                appSettings.RegisterUnityContainers(Container);
+
+                Log = new List<string>();
+
                 //CheckDefaultValues();
                 //PopulateEventList(); /// If this is here, the menu descriptions get overriden. Need to fix this: TODO
             }
@@ -282,10 +297,9 @@ namespace WebsiteTemplate.Controllers
         [RequireHttps]
         public IHttpActionResult InitializeSystem()
         {
-            var user = this.GetLoggedInUser() as User;
             var json = new
             {
-                ApplicationName = "Website Template"
+                ApplicationName = ApplicationName
             };
             return Json(json);
         }
