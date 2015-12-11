@@ -1,1 +1,0 @@
-mklink /d .hg hg
