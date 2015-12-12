@@ -87,10 +87,15 @@ namespace WebsiteTemplate.Controllers
             var appDomain = AppDomain.CreateDomain("tmpDomainForWebTemplate");
             foreach (var dll in dlls)
             {
-                var assembly = appDomain.Load(File.ReadAllBytes(dll));
-                
+                if (dll.Contains("\\roslyn\\"))
+                {
+                    continue;
+                }
                 try
                 {
+                    var assembly = appDomain.Load(File.ReadAllBytes(dll));
+                
+                
                     var eventTypes = assembly.GetTypes()
                                             .Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(Event)))
                                             .ToList();
