@@ -519,6 +519,48 @@
                             })(inputField.InputName);
                         }
 
+                        if (Modernizr.inputtypes.date == true)
+                        {
+                            inp.type = "date";
+                        }
+                        else
+                        {
+                            MaskedInput({
+                                elm: inp,//document.getElementById('mask'),
+                                format: 'MM/DD/YYYY',
+                                separator: '\/',
+                                typeon: 'MDY',
+                                allowedfx: function (ch, idx)
+                                {
+                                    var str = document.getElementById('_Date').value;
+                                    switch (idx)
+                                    {
+                                        case 1:
+                                            return ('01'.indexOf(ch) > -1);
+                                        case 2:
+                                            if (str[0] === '1')
+                                            {
+                                                // Ensure month does not exceed 12
+                                                return ('012'.indexOf(ch) > -1);
+                                            }
+                                            break;
+                                        case 4:
+                                            return ('0123'.indexOf(ch) > -1);
+                                        case 5:
+                                            if (str[3] === '3')
+                                            {
+                                                // Ensure day does not exceed 31
+                                                return ('01'.indexOf(ch) > -1);
+                                            }
+                                            break;
+                                        case 7:
+                                            return ('12'.indexOf(ch) > -1);
+                                    }
+                                    return true;
+                                }
+                            });
+                        }
+
                         var inputCell = document.createElement('td');
                         inputCell.appendChild(inp);
                         row.appendChild(inputCell);

@@ -144,6 +144,8 @@
     <Content Include="Frontend\css\busyIndicator.css" />
     <Content Include="Frontend\css\spinner1.css" />
     <Content Include="Frontend\css\views.css" />
+    <Content Include="Frontend\Scripts\masked_input_1.4.js" />
+    <Content Include="Frontend\Scripts\modernizr.js" />
     <Content Include="Frontend\webFiles\scripts.min.js" />
     <Content Include="packages.config">
       <SubType>Designer</SubType>

@@ -40,6 +40,8 @@ namespace WebsiteTemplate.Backend.Users
                 list.Add(new PasswordInput("Password", "Password"));
                 list.Add(new PasswordInput("ConfirmPassword", "Confirm Password"));
 
+                list.Add(new DateInput("Date", "Date"));
+
                 using (var session = Store.OpenSession())
                 {
                     var items = session.CreateCriteria<UserRole>()
