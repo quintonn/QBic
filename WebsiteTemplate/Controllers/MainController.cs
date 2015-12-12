@@ -24,6 +24,7 @@ using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
 using WebsiteTemplate.Backend;
 using WebsiteTemplate.SiteSpecific.Utilities;
+using System.Transactions;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -348,8 +349,12 @@ namespace WebsiteTemplate.Controllers
                 };
 
                 eventItem.Request = Request;
-                var result = await eventItem.ProcessAction(formData, actionId);
-
+                IList<Event> result;
+                using (var scope = new TransactionScope())
+                {
+                    result = await eventItem.ProcessAction(formData, actionId);
+                    scope.Complete();
+                }
                 return Json(result);
             }
             catch (Exception ex)

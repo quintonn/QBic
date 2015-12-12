@@ -72,9 +72,7 @@ namespace WebsiteTemplate.Backend.Users
 
                     foreach (var role in userRoles)
                     {
-                        var dbUserRole = session.CreateCriteria<UserRole>()
-                                                .Add(Restrictions.Eq("Name", role.ToString()))
-                                                .UniqueResult<UserRole>();
+                        var dbUserRole = session.Get<UserRole>(role.ToString());
 
                         var roleAssociation = new UserRoleAssociation()
                         {
@@ -130,15 +128,15 @@ namespace WebsiteTemplate.Backend.Users
                 {
                     var items = session.CreateCriteria<UserRole>()
                                        .List<UserRole>()
-                                       .OrderBy(u => u.Name)
-                                       .ToDictionary(u => u.Name, u => (object)u.Description);
+                                       .OrderBy(u => u.Description)
+                                       .ToDictionary(u => u.Id, u => (object)u.Description);
 
                     var existingItems = session.CreateCriteria<UserRoleAssociation>()
                                                .CreateAlias("User", "user")
                                                .Add(Restrictions.Eq("user.Id", User.Id))
                                                .List<UserRoleAssociation>()
-                                               .Select(u => u.UserRole.Name)
-                                               .OrderBy(u => u)
+                                               .OrderBy(u => u.UserRole.Description)
+                                               .Select(u => u.UserRole.Id)
                                                .ToList();
 
                     var listSelection = new ListSelectionInput("UserRoles", "User Roles", existingItems)

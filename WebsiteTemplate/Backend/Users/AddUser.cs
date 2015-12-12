@@ -40,14 +40,12 @@ namespace WebsiteTemplate.Backend.Users
                 list.Add(new PasswordInput("Password", "Password"));
                 list.Add(new PasswordInput("ConfirmPassword", "Confirm Password"));
 
-                list.Add(new DateInput("Date", "Date"));
-
                 using (var session = Store.OpenSession())
                 {
                     var items = session.CreateCriteria<UserRole>()
                                        .List<UserRole>()
-                                       .OrderBy(u => u.Name)
-                                       .ToDictionary(u => u.Name, u => (object)u.Description);
+                                       .OrderBy(u => u.Description)
+                                       .ToDictionary(u => u.Id, u => (object)u.Description);
 
                     var listSelection = new ListSelectionInput("UserRoles", "User Roles")
                     {
@@ -138,9 +136,7 @@ namespace WebsiteTemplate.Backend.Users
                 {
                     foreach (var role in userRoles)
                     {
-                        var dbUserRole = session.CreateCriteria<UserRole>()
-                                                .Add(Restrictions.Eq("Name", role.ToString()))
-                                                .UniqueResult<UserRole>();
+                        var dbUserRole = session.Get<UserRole>(role.ToString());
 
                         var roleAssociation = new UserRoleAssociation()
                         {
