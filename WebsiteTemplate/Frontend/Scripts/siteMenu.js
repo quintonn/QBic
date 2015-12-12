@@ -526,38 +526,40 @@
                         else
                         {
                             MaskedInput({
-                                elm: inp,//document.getElementById('mask'),
-                                format: 'MM/DD/YYYY',
+                                elm: inp,
+                                format: 'YYYY/MM/DD',  //   MM/DD/YYYY
                                 separator: '\/',
                                 typeon: 'MDY',
-                                allowedfx: function (ch, idx)
+                                allowedfx: (function(inputName)
                                 {
-                                    var str = document.getElementById('_Date').value;
-                                    switch (idx)
+                                    return function (ch, idx)
                                     {
-                                        case 1:
-                                            return ('01'.indexOf(ch) > -1);
-                                        case 2:
-                                            if (str[0] === '1')
-                                            {
-                                                // Ensure month does not exceed 12
-                                                return ('012'.indexOf(ch) > -1);
-                                            }
-                                            break;
-                                        case 4:
-                                            return ('0123'.indexOf(ch) > -1);
-                                        case 5:
-                                            if (str[3] === '3')
-                                            {
-                                                // Ensure day does not exceed 31
+                                        var str = document.getElementById('_'+inputName).value;
+                                        switch (idx)
+                                        {
+                                            case 6: // First month character
                                                 return ('01'.indexOf(ch) > -1);
-                                            }
-                                            break;
-                                        case 7:
-                                            return ('12'.indexOf(ch) > -1);
-                                    }
-                                    return true;
-                                }
+                                            case 7:
+                                                if (str[5] === '1')
+                                                {
+                                                    // Ensure month does not exceed 12
+                                                    return ('012'.indexOf(ch) > -1);
+                                                }
+                                                break;
+                                            case 9:
+                                                return ('0123'.indexOf(ch) > -1);
+                                            case 10:
+                                                if (str[8] === '3')
+                                                {
+                                                    // Ensure day does not exceed 31
+                                                    return ('01'.indexOf(ch) > -1);
+                                                }
+                                                break;
+                                            case 7:
+                                                return ('12'.indexOf(ch) > -1);
+                                        }
+                                        return true;
+                                    }})(inputField.InputName)
                             });
                         }
 
