@@ -40,10 +40,11 @@ namespace WebsiteTemplate.Backend.Menus
                 list.Add(new StringInput("Name", "Menu Name", Menu.Name));
                 list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", Menu.Event == null));
 
-                var events = MainController.EventList.Select(e => e.Value.Description)
-                                                     .Where(m => !String.IsNullOrWhiteSpace(m))
-                                                     .OrderBy(m => m)
-                                                     .ToList();
+                var events = MainController.EventList//.Select(e => e.Value.Description)
+                                                     .Where(m => !String.IsNullOrWhiteSpace(m.Value.Description))
+                                                     .OrderBy(m => m.Value.Description)
+                                                     //.ToList();
+                                                     .ToDictionary(m => m.Key.ToString(), m => (object)m.Value.Description);
 
                 list.Add(new ComboBoxInput("Event", "Menu Action", Menu.Event?.ToString())
                     {
@@ -95,6 +96,7 @@ namespace WebsiteTemplate.Backend.Menus
                 {
                     Menu = session.Get<Menu>(id);
                 }
+                ParentMenuId = Menu?.ParentMenu?.Id;
             }
             
             return new InitializeResult(true);
@@ -102,12 +104,15 @@ namespace WebsiteTemplate.Backend.Menus
 
         public override async Task<IList<Event>> ProcessAction(string data, int actionNumber)
         {
+            var json = JObject.Parse(data);
+            ParentMenuId = json.GetValue("ParentMenuId")?.ToString();
+
             if (actionNumber == 1)
             {
                 return new List<Event>()
                 {
                     new CancelInputDialog(),
-                    new ExecuteAction(EventNumber.ViewMenus, "")
+                    new ExecuteAction(EventNumber.ViewMenus, ParentMenuId)
                 };
             }
             else if (actionNumber == 0)
@@ -120,14 +125,12 @@ namespace WebsiteTemplate.Backend.Menus
                     };
                 };
 
-                var json = JObject.Parse(data);
-
                 var isNew = Convert.ToBoolean(json.GetValue("IsNew").ToString());
                 var name = json.GetValue("Name").ToString();
                 var hasSubMenus = Convert.ToBoolean(json.GetValue("HasSubmenus"));
-                var eventName = json.GetValue("Event").ToString();
+                var eventValue = json.GetValue("Event").ToString();
                 var menuId = json.GetValue("Id").ToString();
-                ParentMenuId = json.GetValue("ParentMenuId").ToString();
+                
 
                 //var userRoles = (json.GetValue("UserRoles") as JArray).Select(u => (UserRole)Convert.ToInt32(u)).ToList();
 
@@ -142,7 +145,7 @@ namespace WebsiteTemplate.Backend.Menus
                 int? eventNumber = null;
                 if (hasSubMenus == false)
                 {
-                    if (String.IsNullOrWhiteSpace(eventName))
+                    if (String.IsNullOrWhiteSpace(eventValue))
                     {
                         return new List<Event>()
                         {
@@ -150,7 +153,8 @@ namespace WebsiteTemplate.Backend.Menus
                         };
                     }
 
-                    eventNumber = MainController.EventList.Where(e => e.Value.Description == eventName).Select(e => Convert.ToInt32(e.Value.GetEventId())).First();
+                    eventNumber = Convert.ToInt32(eventValue);
+                    //eventNumber = MainController.EventList.Where(e => e.Value.Description == eventName).Select(e => Convert.ToInt32(e.Value.GetEventId())).First();
                 }
 
                 Menu parentMenu = null;

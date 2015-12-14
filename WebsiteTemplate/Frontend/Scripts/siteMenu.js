@@ -314,12 +314,12 @@
                         }
                         combo.id = "_" + inputField.InputName;
                         var array = inputField.ListItems;
-
+                        
                         for (var j = 0; j < array.length; j++)
                         {
                             var option = document.createElement("option");
-                            option.value = array[j];
-                            option.text = array[j];
+                            option.value = array[j].Key;
+                            option.text = array[j].Value;
                             combo.appendChild(option);
                         }
 
@@ -623,7 +623,7 @@
                             var inputField = uiAction.InputFields[j];
                             var theInput;
                             var inputValue;
-                            if (inputField.InputType == 5)
+                            if (inputField.InputType == 5) // List Selection
                             {
                                 inputValue = [];
                                 theInput = document.getElementById("_" + inputField.InputName + "_1");
@@ -637,6 +637,7 @@
                             else
                             {
                                 theInput = document.getElementById("_" + inputField.InputName);
+                                
                                 if (theInput == null)
                                 {
                                     continue;

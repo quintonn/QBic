@@ -9,10 +9,6 @@
         public const int EditUser = 1003;
         public const int DeleteUser = 1004;
  
-        public const int ViewUserRoleAssociations = 1005;
-        public const int AddUserRoleAssociation = 1006;
-        public const int DeleteUserRoleAssociation = 1007;
-        
         public const int ViewMenus = 1008;
         public const int ModifyMenu = 1009;
         

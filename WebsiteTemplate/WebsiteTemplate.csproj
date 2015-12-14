@@ -244,15 +244,12 @@
     <Compile Include="Data\UserContext.cs" />
     <Compile Include="Backend\Menus\ModifyMenu.cs" />
     <Compile Include="Backend\Users\AddUser.cs" />
-    <Compile Include="Backend\Users\AddUserRoleAssociation.cs" />
     <Compile Include="Menus\BaseItems\CancelInputDialog.cs" />
     <Compile Include="Backend\Menus\DeleteMenu.cs" />
-    <Compile Include="Backend\Users\DeleteUserRoleAssociation.cs" />
     <Compile Include="Backend\Users\DeleteUser.cs" />
     <Compile Include="Backend\Users\EditUser.cs" />
     <Compile Include="Backend\Users\SendConfirmationEmail.cs" />
     <Compile Include="Backend\Menus\ViewMenus.cs" />
-    <Compile Include="Backend\Users\ViewUserRoleAssociations.cs" />
     <Compile Include="Backend\Users\ViewUsers.cs" />
     <Compile Include="Menus\BaseItems\EventNumber.cs" />
     <Compile Include="SiteSpecific\DefaultsForTest\DefaultApplicationSettings.cs" />
