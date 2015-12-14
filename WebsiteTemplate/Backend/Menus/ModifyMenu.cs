@@ -31,18 +31,6 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
-        public override IList<InputButton> InputButtons
-        {
-            get
-            {
-                return new List<InputButton>()
-                {
-                    new InputButton("Submit", 0),
-                    new InputButton("Cancel", 1)
-                };
-            }
-        }
-
         public override IList<InputField> InputFields
         {
             get
@@ -97,6 +85,7 @@ namespace WebsiteTemplate.Backend.Menus
                 IsNew = Convert.ToBoolean(tmp);
                 var parentId = jobject.GetValue("ParentId").ToString();
                 ParentMenuId = parentId;
+                Menu = new Menu();
             }
             else
             {

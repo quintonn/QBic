@@ -317,6 +317,10 @@
                         {
                             combo.value = inputField.DefaultValue;
                         }
+                        else
+                        {
+                            combo.value = "";
+                        }
 
                         var inputCell = document.createElement('td');
                         inputCell.appendChild(combo);

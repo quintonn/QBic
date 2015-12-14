@@ -8,12 +8,16 @@ using System.Runtime.Serialization.Formatters.Binary;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.SiteSpecific;
 using System.Linq;
+using System.Web.Script.Serialization;
 
 namespace WebsiteTemplate.Menus.BaseItems
 {
     public abstract class Event
     {
-        internal DataStore Store { get; set; }
+        [ScriptIgnore]
+        [System.Xml.Serialization.XmlIgnore]
+        [JsonIgnore]
+        public DataStore Store { get; set; }
 
         //
         // Summary:
@@ -21,7 +25,10 @@ namespace WebsiteTemplate.Menus.BaseItems
         //
         // Returns:
         //     The HttpRequestMessage of the current System.Web.Http.ApiController.
-        internal HttpRequestMessage Request { get; set; }
+        [ScriptIgnore]
+        [System.Xml.Serialization.XmlIgnore]
+        [JsonIgnore]
+        public HttpRequestMessage Request { get; set; }
 
         /// <summary>
         /// Hard coded Id.

@@ -20,7 +20,18 @@ namespace WebsiteTemplate.Menus.InputItems
         public abstract IList<InputField> InputFields { get; }
 
         //public abstract IList<Event> InputButtons { get; } //TODO: This should be something else, not event.
-        public abstract IList<InputButton> InputButtons { get; }
+        //public abstract IList<InputButton> InputButtons { get; }
+        public virtual IList<InputButton> InputButtons
+        {
+            get
+            {
+                return new List<InputButton>()
+                {
+                    new InputButton("Submit", 0),
+                    new InputButton("Cancel", 1)
+                };
+            }
+        }
 
         /// <summary>
         /// This is called right before obtaining InputFields and InputButtons.
