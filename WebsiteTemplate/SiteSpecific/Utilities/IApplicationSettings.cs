@@ -1,4 +1,5 @@
 ﻿using Microsoft.Practices.Unity;
+using NHibernate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,7 @@ namespace WebsiteTemplate.SiteSpecific.Utilities
         string GetApplicationName();
 
         void RegisterUnityContainers(IUnityContainer container);
+
+        void SetupDefaults(ISession session);
     }
 }

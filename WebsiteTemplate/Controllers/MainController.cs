@@ -22,9 +22,9 @@ using System.IO;
 using System.Reflection;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
-using WebsiteTemplate.Backend;
 using WebsiteTemplate.SiteSpecific.Utilities;
 using System.Transactions;
+
 
 namespace WebsiteTemplate.Controllers
 {
@@ -130,6 +130,7 @@ namespace WebsiteTemplate.Controllers
         private static void CheckDefaultValues()
         {
             var store = new DataStore();
+
             try
             {
                 using (var session = store.OpenSession())
@@ -224,8 +225,6 @@ namespace WebsiteTemplate.Controllers
                         session.Save(userRoleMenu);
                     }
 
-                    var fields = typeof(EventNumber).GetFields();
-                    
                     var allEvents = EventList.Select(e => Convert.ToInt32(e.Value.GetEventId()))
                                           .ToList();
 
@@ -234,6 +233,7 @@ namespace WebsiteTemplate.Controllers
                                       .Add(Restrictions.Eq("role.Id", adminRole.Id))
                                       .List<EventRoleAssociation>()
                                       .ToList();
+
                     if (eras.Count != allEvents.Count)
                     {
                         eras.ForEach(e =>
@@ -252,42 +252,9 @@ namespace WebsiteTemplate.Controllers
                         }
                     }
 
-                    var testMenuList = session.CreateCriteria<Menu>()
-                                              .Add(Restrictions.Eq("Name", "Test1"))
-                                              .List<Menu>();
-                    if (testMenuList.Count == 0)
-                    {
-                        var testMenu = new Menu()
-                        {
-                            Name = "Test1",
-                        };
-                        session.Save(testMenu);
-
-                        var testMenuList2 = session.CreateCriteria<Menu>()
-                                           .Add(Restrictions.Eq("Name", "Test2"))
-                                           .List<Menu>();
-                        if (testMenuList2.Count == 0)
-                        {
-                            var testMenu2 = new Menu()
-                            {
-                                Name = "Test2",
-                                ParentMenu = testMenu,
-                            };
-                            session.Save(testMenu2);
-
-                            var menu3 = new Menu()
-                            {
-                                Name = "Test3",
-                                ParentMenu = testMenu2,
-                                Event = EventNumber.ViewMenus
-                            };
-
-                            session.Save(menu3);
-                        }
-                    }
+                    Container.Resolve<IApplicationSettings>().SetupDefaults(session);
 
                     session.Flush();
-
                 }
             }
             catch (Exception e)
