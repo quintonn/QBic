@@ -1,4 +1,8 @@
 ﻿using FluentNHibernate.Cfg;
+using FluentNHibernate.Conventions;
+using FluentNHibernate.Conventions.AcceptanceCriteria;
+using FluentNHibernate.Conventions.Inspections;
+using FluentNHibernate.Conventions.Instances;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Criterion;
@@ -7,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using WebsiteTemplate.Mappings;
@@ -24,6 +29,19 @@ namespace WebsiteTemplate.Data
         }
     }
 
+    public class JoinedSubclassIdConvention : IJoinedSubclassConvention, IJoinedSubclassConventionAcceptance
+    {
+        public void Apply(IJoinedSubclassInstance instance)
+        {
+            instance.Key.Column("Id");
+        }
+
+        public void Accept(IAcceptanceCriteria<IJoinedSubclassInspector> criteria)
+        {
+            criteria.Expect(x => true);
+        }
+    }
+
     public static class NothingJere
     {
         public static FluentMappingsContainer AddFromAssemblyOf2<T>(this FluentMappingsContainer mappings)
@@ -32,14 +50,52 @@ namespace WebsiteTemplate.Data
             
             var container = mappings.AddFromAssemblyOf<User>();
 
-            foreach (var type in
-                Assembly.GetAssembly(typeof(T)).GetTypes()
-                .Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(DynamicClass))))
+            var curDir = System.Web.HttpRuntime.AppDomainAppPath;
+            var dlls = Directory.GetFiles(curDir, "*.dll", SearchOption.AllDirectories);
+            var types = new List<Type>();
+
+            var appDomain = AppDomain.CreateDomain("tmpDomainForWebTemplate");
+            foreach (var dll in dlls)
             {
-                var d1 = typeof(DynamicMap<>);
-                Type[] typeArgs = { type };
-                var makeme = d1.MakeGenericType(typeArgs);
-                container.Add(makeme);
+                if (dll.Contains("\\roslyn\\"))
+                {
+                    continue;
+                }
+                try
+                {
+                    var assembly = appDomain.Load(File.ReadAllBytes(dll));
+                    var dynamicTypes = assembly.GetTypes().Where(myType => myType.IsClass /*&& !myType.IsAbstract */&& myType.IsSubclassOf(typeof(DynamicClass)));
+                    types.AddRange(dynamicTypes);
+                }
+                catch (ReflectionTypeLoadException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+
+            var list = new List<string>();
+            foreach (var type in types)
+            {
+                var typeString = type.ToString();
+                if (list.Contains(typeString))
+                {
+                    continue;
+                }
+                list.Add(typeString);
+                if (type.BaseType == typeof(DynamicClass))
+                {
+                    var d1 = typeof(DynamicMap<>);
+                    Type[] typeArgs = { type };
+                    var makeme = d1.MakeGenericType(typeArgs);
+                    container.Add(makeme);
+                }
+                else
+                {
+                    var d1 = typeof(ChildDynamicMap<>);
+                    Type[] typeArgs = { type };
+                    var makeme = d1.MakeGenericType(typeArgs);
+                    container.Add(makeme);
+                }
             }
 
             return container;
@@ -55,6 +111,8 @@ namespace WebsiteTemplate.Data
 
         static DataStore()
         {
+            //if (Debugger.IsAttached == false) Debugger.Launch();
+            
             Store = CreateSessionFactory();
 
             new SchemaUpdate(Configuration).Execute(true, true);
@@ -74,8 +132,8 @@ namespace WebsiteTemplate.Data
 
                 FluentNHibernate.Cfg.Db.MsSqlConfiguration.MsSql2012.ConnectionString(mainConnectionString)
               )
-              
-              .Mappings(m => m.FluentMappings.AddFromAssemblyOf2<User>());
+
+              .Mappings(m => m.FluentMappings.AddFromAssemblyOf2<User>().Conventions.Add<JoinedSubclassIdConvention>());
             
             config.ExposeConfiguration(x =>
             {

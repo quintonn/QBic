@@ -193,6 +193,7 @@
     <Compile Include="Controllers\RoleBlockedAttribute.cs" />
     <Compile Include="Data\DataStore.cs" />
     <Compile Include="Mappings\BaseClassMap.cs" />
+    <Compile Include="Mappings\ChildDynamicMap.cs" />
     <Compile Include="Mappings\DynamicMap.cs" />
     <Compile Include="Mappings\MenuMap.cs" />
     <Compile Include="Mappings\UserRoleAssociationMap.cs" />
