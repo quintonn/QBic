@@ -214,18 +214,23 @@
                     }
                     var inputFieldToUpdate = "_" + item.InputName;
                     var showInput = true;
-                    if (item.Condition.Comparison == 0)
+                    if (item.Condition.Comparison == 0)  // Equals
                     {
                         showInput = value === item.Condition.ColumnValue;
                     }
-                    else if (item.Condition.Comparison == 1)
+                    else if (item.Condition.Comparison == 1) // Not-Equals
                     {
                         showInput = value != item.Condition.ColumnValue;
+                    }
+                    else if (item.Condition.Comparison == 2) // Contains
+                    {
+                        showInput = value.indexOf(item.Condition.ColumnValue) > -1;
                     }
                     else
                     {
                         alert("Unknown comparison " + item.Condition.Comparison);
                     }
+                    
                     var input = document.getElementById(inputFieldToUpdate);
 
                     while (input.tagName != "TR")
@@ -234,6 +239,11 @@
                     }
 
                     input.style.display = showInput ? "" : "none";
+
+                    if (showInput == true)
+                    {
+                        break;
+                    }
                     //input.style.visibility = showInput ? "visible" : "hidden";
                 }
             };

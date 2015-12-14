@@ -8,6 +8,7 @@ namespace WebsiteTemplate.Menus.ViewItems
     public enum Comparison
     {
         Equals = 0,
-        NotEquals = 1
+        NotEquals = 1,
+        Container = 2,
     }
 }
