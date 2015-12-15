@@ -81,7 +81,7 @@
             var buttonRow = document.createElement('tr');
 
             var buttonAdded = false;
-
+            
             /// Add the Confirmation button
             if (settings.ConfirmationButtonText != null && settings.ConfirmationButtonText.length > 0)
             {
@@ -138,6 +138,17 @@
             }
             
             inputTable.appendChild(buttonRow);
+
+            var firstButton = null;
+            var firstButtonCell = buttonRow.children[0];
+            if (firstButtonCell != null)
+            {
+                firstButton = firstButtonCell.children[0];
+            }
+            if (firstButton != null)
+            {
+                firstButton.focus();
+            }
         });
     },
 

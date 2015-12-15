@@ -288,6 +288,11 @@
                             })(inputField.InputName);
                         }
 
+                        inp.onclick = function()
+                        {
+                            this.select();
+                        }
+
                         var inputCell = document.createElement('td');
                         inputCell.appendChild(inp);
                         row.appendChild(inputCell);
@@ -575,6 +580,10 @@
                                         return true;
                                     }})(inputField.InputName)
                             });
+                            inp.onclick = function ()
+                            {
+                                this.select();
+                            };
                         }
 
                         var inputCell = document.createElement('td');
@@ -595,6 +604,14 @@
                 var inputField = settings.InputFields[i];
                 var name = "_" + inputField.InputName;
                 var inputItem = document.getElementById(name);
+                if (i == 0)
+                {
+                    setTimeout(function ()
+                    {
+                        document.getElementById('_' + settings.InputFields[0].InputName).focus();
+                        document.getElementById('_' + settings.InputFields[0].InputName).select();
+                    }, 10);
+                }
                 if (inputItem == null)
                 {
                     continue;
