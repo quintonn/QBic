@@ -322,10 +322,13 @@ namespace WebsiteTemplate.Controllers
 
                 eventItem.Request = Request;
                 IList<Event> result;
-                using (var scope = new TransactionScope())
+
+                //using (var scope = new TransactionScope())
+                using (var session = Store.OpenSession()) // session seems to work better than transaction scope
                 {
                     result = await eventItem.ProcessAction(formData, actionId);
-                    scope.Complete();
+                    session.Flush();
+                    //scope.Complete();
                 }
                 return Json(result);
             }

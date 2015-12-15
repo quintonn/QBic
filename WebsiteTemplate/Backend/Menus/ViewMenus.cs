@@ -47,15 +47,14 @@ namespace WebsiteTemplate.Backend.Menus
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
             columnConfig.AddStringColumn("Name", "Name");
-            //columnConfig.AddStringColumn("IsView", "IsView");
-            columnConfig.AddStringColumn("Event", "Event", new ShowHideColumnSetting()
-            {
-                Display = ColumnDisplayType.Hide,
-                Conditions = new List<Condition>()
-                {
-                    new Condition("Event", Comparison.Equals, "")
-                }
-            });
+            //columnConfig.AddStringColumn("Event", "Event", new ShowHideColumnSetting()
+            //{
+            //    Display = ColumnDisplayType.Hide,
+            //    Conditions = new List<Condition>()
+            //    {
+            //        new Condition("Event", Comparison.Equals, "")
+            //    }
+            //});
 
             columnConfig.AddButtonColumn("Sub Menus", "", ButtonTextSource.Fixed, "...", new ShowHideColumnSetting()
             {
@@ -109,14 +108,11 @@ namespace WebsiteTemplate.Backend.Menus
                        .List<Menu>()
                        .ToList();
 
-                //var eventIds = results.Select(r => r.Event).ToList();
-                //var events = Controllers.MainController.EventList.Where(e => eventIds.Contains(e.Key) && e.Value is ShowView).ToList();
-
                 var newList = results.Select(r => new
                 {
                     Name = r.Name,
                     Id = r.Id,
-                    Event = r.Event == null ? "" : r.Event.Value.ToString(),
+                   // Event = r.Event == null ? "" : r.Event.Value.ToString(),
                     ParentMenu = r.ParentMenu,
                     CanDelete = r.CanDelete,
                 }).ToList();
