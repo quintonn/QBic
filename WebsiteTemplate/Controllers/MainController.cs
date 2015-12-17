@@ -24,7 +24,8 @@ using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
 using WebsiteTemplate.SiteSpecific.Utilities;
 using System.Transactions;
-
+using WebsiteTemplate.Menus.BasicCrudItems;
+using WebsiteTemplate.Backend.TestItem;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -117,11 +118,63 @@ namespace WebsiteTemplate.Controllers
             {
                 if (type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(Event)))
                 {
-                    var instance = (Event)Activator.CreateInstance(type);
-                    instance.Store = Store;
-                    if (!EventList.ContainsKey(instance.GetId()))
+                    if (type == typeof(BasicCrudModify<>))
                     {
-                        EventList.Add(instance.GetId(), instance);
+                        continue;
+                    }
+                    if (type == typeof(BasicCrudView<>))
+                    {
+                        continue;
+                    }
+                    if (type == typeof(BasicCrudDelete<>))
+                    {
+                        continue;
+                    }
+
+
+                    if (type.GetInterface("IBasicCrudMenuItem") != null)
+                    {
+                        var subType = (IBasicCrudMenuItem)Activator.CreateInstance(type);
+
+                        var d1 = typeof(BasicCrudView<>);
+                        Type[] typeArgs1 = { subType.InnerType };
+                        var viewType = d1.MakeGenericType(typeArgs1);
+
+                        var viewInstance = (Event)Activator.CreateInstance(viewType, subType.GetBaseMenuId(), subType.GetBaseItemName(), subType.GetColumnsToShowInView());
+                        viewInstance.Store = Store;
+                        if (!EventList.ContainsKey(viewInstance.GetId()))
+                        {
+                            EventList.Add(viewInstance.GetId(), viewInstance);
+                        }
+
+                        var d2 = typeof(BasicCrudModify<>);
+                        Type[] typeArgs2 = { subType.InnerType };
+                        var modifyType = d2.MakeGenericType(typeArgs2);
+                        var modifyInstance = (Event)Activator.CreateInstance(modifyType, subType.GetBaseMenuId() + 1, subType.GetBaseItemName(), subType.GetInputProperties());
+                        modifyInstance.Store = Store;
+                        if (!EventList.ContainsKey(modifyInstance.GetId()))
+                        {
+                            EventList.Add(modifyInstance.GetId(), modifyInstance);
+                        }
+
+                        var d3 = typeof(BasicCrudDelete<>);
+                        Type[] typeArgs3 = { subType.InnerType };
+                        var deleteType = d3.MakeGenericType(typeArgs2);
+                        var deleteInstance = (Event)Activator.CreateInstance(deleteType, subType.GetBaseMenuId() + 2, subType.GetBaseItemName());
+                        deleteInstance.Store = Store;
+                        if (!EventList.ContainsKey(deleteInstance.GetId()))
+                        {
+                            EventList.Add(deleteInstance.GetId(), deleteInstance);
+                        }
+                    }
+                    else if (type != typeof(BasicCrudMenuItem<>))
+                    {
+                        var instance = (Event)Activator.CreateInstance(type);
+                        instance.Store = Store;
+                        if (!EventList.ContainsKey(instance.GetId()))
+                        {
+                            EventList.Add(instance.GetId(), instance);
+                        }
                     }
                 }
             }

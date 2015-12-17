@@ -183,6 +183,8 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Backend\TestItem\SuperCause.cs" />
+    <Compile Include="Backend\TestItem\SuperMenuItem.cs" />
     <Compile Include="Backend\UserRoles\AddUserRole.cs" />
     <Compile Include="Backend\UserRoles\DeleteUserRole.cs" />
     <Compile Include="Backend\UserRoles\EditUserRole.cs" />
@@ -200,6 +202,10 @@
     <Compile Include="Mappings\UserMap.cs" />
     <Compile Include="Menus\BaseItems\SubMenuAction.cs" />
     <Compile Include="Menus\BaseItems\EventType.cs" />
+    <Compile Include="Menus\BasicCrudItems\BasicCrudDelete.cs" />
+    <Compile Include="Menus\BasicCrudItems\BasicCrudMenuItem.cs" />
+    <Compile Include="Menus\BasicCrudItems\BasicCrudModify.cs" />
+    <Compile Include="Menus\BasicCrudItems\BasicCrudView.cs" />
     <Compile Include="Menus\DoSomething.cs" />
     <Compile Include="Menus\ExecuteAction.cs" />
     <Compile Include="Menus\InputItems\BooleanInput.cs" />
