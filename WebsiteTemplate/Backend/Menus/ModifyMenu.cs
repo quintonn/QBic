@@ -40,10 +40,9 @@ namespace WebsiteTemplate.Backend.Menus
                 list.Add(new StringInput("Name", "Menu Name", Menu.Name));
                 list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", Menu.Event == null));
 
-                var events = MainController.EventList//.Select(e => e.Value.Description)
-                                                     .Where(m => !String.IsNullOrWhiteSpace(m.Value.Description))
+                var events = MainController.EventList.Where(m => !String.IsNullOrWhiteSpace(m.Value.Description))
+                                                     .Where(m => m.Value is ShowView) //TODO: Might have to add isEdit as property to GetInput type or change all edit/add to modify only
                                                      .OrderBy(m => m.Value.Description)
-                                                     //.ToList();
                                                      .ToDictionary(m => m.Key.ToString(), m => (object)m.Value.Description);
 
                 list.Add(new ComboBoxInput("Event", "Menu Action", Menu.Event?.ToString())
@@ -54,17 +53,6 @@ namespace WebsiteTemplate.Backend.Menus
                             new Condition("HasSubmenus", Comparison.Equals, "false")
                         }
                     });
-
-                //var userRoles = Enum.GetValues(typeof(UserRole)).Cast<int>().ToDictionary(e => e.ToString(), e => (object)Enum.GetName(typeof(UserRole), e));
-                
-                //var listSelection = new ListSelectionInput("UserRoles", "Allowed User Roles")
-                //{
-                //    AvailableItemsLabel = "User Roles:",
-                //    SelectedItemsLabel = "Chosen User Roles:",
-                //    ListSource =  userRoles
-                //};
-                
-                //list.Add(listSelection);
 
                 list.Add(new HiddenInput("ParentMenuId", ParentMenuId));
                 list.Add(new HiddenInput("IsNew", IsNew));
