@@ -10,7 +10,7 @@ namespace WebsiteTemplate.Backend.TestItem
     {
         public override string GetBaseItemName()
         {
-            return "Cause";
+            return "Super Cause";
         }
 
         public override int GetBaseMenuId()
