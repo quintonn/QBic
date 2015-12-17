@@ -47,14 +47,6 @@ namespace WebsiteTemplate.Backend.Menus
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
             columnConfig.AddStringColumn("Name", "Name");
-            //columnConfig.AddStringColumn("Event", "Event", new ShowHideColumnSetting()
-            //{
-            //    Display = ColumnDisplayType.Hide,
-            //    Conditions = new List<Condition>()
-            //    {
-            //        new Condition("Event", Comparison.Equals, "")
-            //    }
-            //});
 
             columnConfig.AddButtonColumn("Sub Menus", "", ButtonTextSource.Fixed, "...", new ShowHideColumnSetting()
             {
