@@ -24,7 +24,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
         public BasicCrudModify(int id, string itemName, Dictionary<string, string> inputProperties)
         {
             Id = id;
-            ItemName = ItemName;
+            ItemName = itemName;
             InputProperties = inputProperties;
         }
 

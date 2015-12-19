@@ -591,6 +591,81 @@
                         row.appendChild(inputCell);
 
                         break;
+                    case 7: /// Masked Input
+                        var labelCell = document.createElement('td');
+                        labelCell.innerHTML = inputField.InputLabel;
+                        row.appendChild(labelCell);
+
+                        var inp = document.createElement('input');
+
+                        var id = "_" + inputField.InputName;
+                        inp.type = "text";
+
+                        inp.id = id;
+
+                        if (inputField.DefaultValue != null && inputField.DefaultValue.length > 0)
+                        {
+                            inp.value = inputField.DefaultValue;
+                        }
+
+                        if (conditionListContains(inputField.InputName))
+                        {
+                            inp.onchange = (function (inputName)
+                            {
+                                return function ()
+                                {
+                                    onChangeFunc(this, inputName);
+                                }
+                            })(inputField.InputName);
+                        }
+
+                        var validSeparators = '\/- ';
+
+                        MaskedInput({
+                            elm: inp,
+                            format: inputField.InputMask,//'YYYY/MM/DD',  //   MM/DD/YYYY
+                            separator: validSeparators,
+                            typeon: 'NS_',//'MDY',
+                            allowedfx: (function (iValue)
+                            {
+                                return function (ch, idx)
+                                {
+                                    var inputField = settings.InputFields[iValue];
+                                    var str = document.getElementById('_' + inputField.InputName).value;
+
+                                    var maskValue = inputField.InputMask[idx];
+
+                                    console.log('maskValue = ' + maskValue + ' and character = ' + ch + '/'+str[idx]);
+
+                                    if (maskValue == "N") // Number
+                                    {
+                                        return '0123456789'.indexOf(ch) > -1;
+                                    }
+                                    else if (maskValue == "S") // String
+                                    {
+                                        return ch != ' ';
+                                    }
+                                    else if (validSeparators.indexOf(ch))
+                                    {
+                                        return true;
+                                    }
+                                    console.log('unknown maskValue: ' + maskValue + ' or character ' + ch);
+                                    return false;
+                                    //return true;
+                                }
+                            })(i)
+                        });
+
+                        inp.onclick = function ()
+                        {
+                            this.select();
+                        };
+
+                        var inputCell = document.createElement('td');
+                        inputCell.appendChild(inp);
+                        row.appendChild(inputCell);
+
+                        break;
                     default:
                         inputDialog.showMessage('Unknown input type: ' + inputField.InputType);
                         continue;

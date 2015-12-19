@@ -27,7 +27,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
         public BasicCrudDelete(int id, string itemName)
         {
             Id = id;
-            ItemName = ItemName;
+            ItemName = itemName;
         }
 
         public override int GetId()

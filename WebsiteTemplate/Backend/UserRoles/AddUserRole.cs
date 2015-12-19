@@ -57,6 +57,8 @@ namespace WebsiteTemplate.Backend.UserRoles
                     ListSource = items
                 };
 
+                list.Add(new MaskedInput("MaskValue", "Mask Value", "NN-NN/_N"));
+
                 list.Add(listSelection);
 
                 return list;
