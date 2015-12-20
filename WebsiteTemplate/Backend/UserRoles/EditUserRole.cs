@@ -46,11 +46,6 @@ namespace WebsiteTemplate.Backend.UserRoles
                 list.Add(new StringInput("Description", "Description", UserRole.Description));
                 list.Add(new HiddenInput("Id", UserRole.Id));
 
-                //var items = typeof(EventNumber).GetFields()
-                //                               .ToDictionary(e => e.GetValue(null).ToString(), e => (object)e.Name)
-                //                               .Where(e => e.Value.ToString() != "Nothing")
-                //                               .OrderBy(e => e.Value)
-                //                               .ToDictionary(e => e.Key, e => e.Value);
                 var items = MainController.EventList.ToDictionary(e => e.Key, e => e.Value.Description)
                                                     .OrderBy(e => e.Value)
                                                     .ToDictionary(e => e.Key.ToString(), e => (object)e.Value);

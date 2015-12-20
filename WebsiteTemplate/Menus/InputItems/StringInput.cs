@@ -10,6 +10,8 @@
             }
         }
 
+        public bool MultiLineText { get; set; } = false;
+
         public StringInput(string name, string label, object defaultValue = null)
             : base(name, label, defaultValue)
         {

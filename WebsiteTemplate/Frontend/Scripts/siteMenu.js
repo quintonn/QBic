@@ -267,11 +267,18 @@
                         {
                             inp.type = "password";
                         }
+                        else if (inputField.MultiLineText != null && inputField.MultiLineText == true)
+                        {
+                            inp = document.createElement('textarea');
+                            inp.rows = 5;
+                        }
                         else
                         {
                             inp.type = "text";
                         }
+                        
                         inp.id = "_" + inputField.InputName;
+
                         if (inputField.DefaultValue != null && inputField.DefaultValue.length > 0)
                         {
                             inp.value = inputField.DefaultValue;
@@ -644,11 +651,8 @@
                             {
                                 return function (ch, idx)
                                 {
-                                    console.log(ch + ' = ' + idx);
                                     var inputField = settings.InputFields[iValue];
                                     var str = document.getElementById('_' + inputField.InputName).value;
-
-                                    console.log(str);
 
                                     var maskValue = inputField.InputMask[idx-1];
 
@@ -897,8 +901,11 @@
                     }
                     else
                     {
-                        /// Don't do anything to the value
+                        /// Replace new line characters with HTML breaks
+                        value = value.replace(/\r/g, ',');
+                        value = value.replace(/\n/g, ',');
 
+                        /// Don't do anything to the value
                         cell.innerHTML = value;
                     }
 
