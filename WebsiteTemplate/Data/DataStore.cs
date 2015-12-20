@@ -61,6 +61,7 @@ namespace WebsiteTemplate.Data
                 {
                     continue;
                 }
+
                 try
                 {
                     var assembly = appDomain.Load(File.ReadAllBytes(dll));

@@ -618,40 +618,54 @@
                                 }
                             })(inputField.InputName);
                         }
+                        
+                        var allowedText = "";
+                        for (var charCode = 0; charCode <= 10175; charCode++)
+                        {
+                            allowedText += String.fromCharCode(charCode);
+                        }
 
                         var validSeparators = '\/- ';
 
+                        var typeOnCharacters = inputField.InputMask;
+                        for (var charX = 0; charX < validSeparators.length; charX++)
+                        {
+                            var re = new RegExp(validSeparators[charX], 'g');
+                            typeOnCharacters = typeOnCharacters.replace(re, '');
+                        }
+
                         MaskedInput({
                             elm: inp,
-                            format: inputField.InputMask,//'YYYY/MM/DD',  //   MM/DD/YYYY
+                            format: inputField.InputMask,
                             separator: validSeparators,
-                            typeon: 'NS_',//'MDY',
+                            allowed: allowedText,
+                            typeon: typeOnCharacters,
                             allowedfx: (function (iValue)
                             {
                                 return function (ch, idx)
                                 {
+                                    console.log(ch + ' = ' + idx);
                                     var inputField = settings.InputFields[iValue];
                                     var str = document.getElementById('_' + inputField.InputName).value;
 
-                                    var maskValue = inputField.InputMask[idx];
+                                    console.log(str);
 
-                                    console.log('maskValue = ' + maskValue + ' and character = ' + ch + '/'+str[idx]);
+                                    var maskValue = inputField.InputMask[idx-1];
 
-                                    if (maskValue == "N") // Number
+                                    if (maskValue == "n") // Number
                                     {
                                         return '0123456789'.indexOf(ch) > -1;
                                     }
-                                    else if (maskValue == "S") // String
+                                    else if (maskValue == "_") // Alpha-numeric
                                     {
-                                        return ch != ' ';
+                                        return true;
                                     }
                                     else if (validSeparators.indexOf(ch))
                                     {
                                         return true;
                                     }
-                                    console.log('unknown maskValue: ' + maskValue + ' or character ' + ch);
+                                    
                                     return false;
-                                    //return true;
                                 }
                             })(i)
                         });
