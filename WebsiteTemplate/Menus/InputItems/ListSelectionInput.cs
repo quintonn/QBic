@@ -24,8 +24,8 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public string AvailableItemsLabel { get; set; }
 
-        public ListSelectionInput(string name, string label, object defaultValue = null)
-            :base(name, label, defaultValue)
+        public ListSelectionInput(string name, string label, object defaultValue = null, string tabName = null)
+            :base(name, label, defaultValue, tabName)
         {
             ListSource = new Dictionary<string, object>();
         }

@@ -15,8 +15,8 @@ namespace WebsiteTemplate.Menus.InputItems
             }
         }
 
-        public DateInput(string name, string label, object defaultValue = null)
-            : base(name, label, defaultValue)
+        public DateInput(string name, string label, object defaultValue = null, string tabName = null)
+            : base(name, label, defaultValue, tabName)
         {
         }
     }

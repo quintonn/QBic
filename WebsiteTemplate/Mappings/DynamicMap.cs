@@ -44,7 +44,8 @@ namespace WebsiteTemplate.Mappings
                 }
 
                 Map(FluentNHibernate.Reveal.Member<T>(column))
-                    .Not.Nullable();
+                    //.Not.Nullable();
+                    .Nullable();
             }
 
             foreach (var column in nonPrimitiveColumns)
@@ -59,7 +60,8 @@ namespace WebsiteTemplate.Mappings
                 dynamic tmp = generic.Invoke(this, new object[] { column.Name });
 
                 References(tmp)
-                           .Not.Nullable()
+                           //.Not.Nullable()
+                           .Nullable()
                            .LazyLoad(Laziness.False);
             }
         }

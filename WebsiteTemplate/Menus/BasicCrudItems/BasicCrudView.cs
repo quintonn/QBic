@@ -28,6 +28,10 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
         {
             get
             {
+                if (ItemName.EndsWith("s", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return ItemName;
+                }
                 return ItemName + "s"; //TODO: Add properties for these sort of names
             }
         }

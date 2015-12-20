@@ -2,8 +2,8 @@
 {
     public class HiddenInput : InputField
     {
-        public HiddenInput(string name, object defaultValue = null)
-            : base(name, "", defaultValue)
+        public HiddenInput(string name, object defaultValue = null, string tabName = null)
+            : base(name, "", defaultValue, tabName)
         {
 
         }

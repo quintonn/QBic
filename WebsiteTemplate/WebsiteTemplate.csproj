@@ -291,7 +291,7 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>"..\nuget publish.bat"</PostBuildEvent>
+    <PostBuildEvent>rem "..\nuget publish.bat"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>..\..\BuildHelper\bin\Debug\BuildHelper.exe</PreBuildEvent>
