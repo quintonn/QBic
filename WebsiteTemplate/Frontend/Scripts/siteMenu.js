@@ -158,113 +158,197 @@
         {
             var title = document.getElementById('pageTitle');
             title.innerHTML = settings.Description;
+            
+            var pageDiv = document.createElement('div');
+            pageDiv.style.width = '100%';
+            pageDiv.style.height = '100%';
 
-            for (var tabCount = 0; tabCount < 1; tabCount++)
+            document.getElementById('dlgInput').appendChild(pageDiv);
+
+            var tabButtonRowDiv = document.createElement('div');
+            tabButtonRowDiv.style.width = '100%';
+            tabButtonRowDiv.style.margin = '10px';
+            pageDiv.appendChild(tabButtonRowDiv);
+
+            /// Get tab names
+            var emptyTabNamesPresent = false;
+            var nonEmptyTabNamesPresent = false;
+            var tabNames = [];
+            for (var i = 0; i < settings.InputFields.length; i++)
             {
-                var tabDiv = document.createElement('div');
-                tabDiv.id = 'tabButton' + tabCount;
-                if (tabCount > 0)
+                var inputField = settings.InputFields[i];
+                if (inputField.InputType == 2)  // Hidden input
                 {
-                    tabDiv.style.display = 'none';
+                    continue;
                 }
-                
-                //var inputTable = document.getElementById('inputTable');
-                var inputTable = document.createElement('table');
-                inputTable.className = 'inputTable';
-
-                var conditionList = [];
-
-                var conditionListContains = function (inputName)
+                //inputField.TabName = inputField.TabName || "X"; // userfull for testing
+                if (inputField.TabName != null && inputField.TabName.length > 0)
                 {
-                    for (var i = 0; i < conditionList.length; i++)
+                    if (tabNames.indexOf(inputField.TabName) == -1)
                     {
-                        var item = conditionList[i];
-                        if (item.TriggerInputName == inputName)
-                        {
-                            return true;
-                        }
+                        nonEmptyTabNamesPresent = true;
+                        tabNames.push(inputField.TabName);
                     }
-                    return false;
-                };
+                }
+                else
+                {
+                    emptyTabNamesPresent = true;
+                }
+            }
+            if (nonEmptyTabNamesPresent && emptyTabNamesPresent)
+            {
+                alert('Error: If tab names are used, all input fields should have tab names');
+            }
+            if (tabNames.length == 0)
+            {
+                tabNames.push("");
+            }
 
+            if (tabNames.length > 1)
+            {
+                for (var tabCount = 0; tabCount < tabNames.length; tabCount++)
+                {
+                    var tabDiv = document.createElement('div');
+                    tabDiv.id = 'TabDiv' + tabCount;
+                    tabDiv.setAttribute('tabName', tabNames[tabCount]);
+
+                    var tabButton = document.createElement('button');
+                    tabButton.style.marginRight = "10px";
+                    tabButton.id = 'TabButton' + tabCount;
+                    tabButton.innerHTML = tabNames[tabCount];
+
+                    tabButton.onclick = (function (tabIndex)
+                    {
+                        return function ()
+                        {
+                            for (var j = 0; j < tabNames.length; j++)
+                            {
+                                var _tabDiv = document.getElementById('TabDiv' + j);
+                                var _tabButton = document.getElementById('TabButton' + j);
+
+                                _tabDiv.style.display = j == tabIndex ? 'block' : 'none';
+                                _tabButton.disabled = j == tabIndex;
+                            }
+                        };
+                    })(tabCount);
+
+                    if (tabCount == 0)
+                    {
+                        tabButton.disabled = true;
+                    }
+
+                    tabButtonRowDiv.appendChild(tabButton);
+
+                    if (tabCount > 0)
+                    {
+                        tabDiv.style.display = 'none';
+                    }
+
+                    pageDiv.appendChild(tabDiv);
+                }
+            }
+
+            var conditionList = [];
+
+            var conditionListContains = function (inputName)
+            {
+                for (var i = 0; i < conditionList.length; i++)
+                {
+                    var item = conditionList[i];
+                    if (item.TriggerInputName == inputName)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            };
+
+            for (var i = 0; i < settings.InputFields.length; i++)
+            {
+                var inputField = settings.InputFields[i];
+                if (inputField.VisibilityConditions != null && inputField.VisibilityConditions.length > 0)
+                {
+                    var inputName = inputField.InputName;
+
+                    for (var j = 0; j < inputField.VisibilityConditions.length; j++)
+                    {
+                        var condition = inputField.VisibilityConditions[j];
+                        var conditionItem =
+                        {
+                            InputName: inputName,
+                            Condition: condition,
+                            TriggerInputName: condition.ColumnName
+                        };
+                        conditionList.push(conditionItem);
+                    }
+                }
+            }
+
+            var onChangeFunc = function (input, inputName)
+            {
+                var value = input.value;
+                if (input.type == "checkbox")
+                {
+                    value = input.checked;
+                }
+                value = value + "";
+                for (var i = 0; i < conditionList.length; i++)
+                {
+                    var item = conditionList[i];
+                    if (item.TriggerInputName != inputName)
+                    {
+                        continue;
+                    }
+                    var inputFieldToUpdate = "_" + item.InputName;
+                    var showInput = true;
+                    if (item.Condition.Comparison == 0)  // Equals
+                    {
+                        showInput = value === item.Condition.ColumnValue;
+                    }
+                    else if (item.Condition.Comparison == 1) // Not-Equals
+                    {
+                        showInput = value != item.Condition.ColumnValue;
+                    }
+                    else if (item.Condition.Comparison == 2) // Contains
+                    {
+                        showInput = value.indexOf(item.Condition.ColumnValue) > -1;
+                    }
+                    else
+                    {
+                        alert("Unknown comparison " + item.Condition.Comparison);
+                    }
+
+                    var input = document.getElementById(inputFieldToUpdate);
+
+                    while (input.tagName != "TR")
+                    {
+                        input = input.parentNode;
+                    }
+
+                    input.style.display = showInput ? "" : "none";
+
+                    if (showInput == true)
+                    {
+                        break;
+                    }
+                    //input.style.visibility = showInput ? "visible" : "hidden";
+                }
+            };
+
+            var addInputsToNode = function (node)
+            {
                 for (var i = 0; i < settings.InputFields.length; i++)
                 {
                     var inputField = settings.InputFields[i];
-                    if (inputField.VisibilityConditions != null && inputField.VisibilityConditions.length > 0)
+                    if (inputField.TabName != null && inputField.TabName.length > 0)
                     {
-                        var inputName = inputField.InputName;
-
-                        for (var j = 0; j < inputField.VisibilityConditions.length; j++)
-                        {
-                            var condition = inputField.VisibilityConditions[j];
-                            //var inputName = condition.ColumnName;
-                            var conditionItem =
-                            {
-                                InputName: inputName,
-                                Condition: condition,
-                                TriggerInputName: condition.ColumnName
-                            };
-                            conditionList.push(conditionItem);
-                        }
-                    }
-                }
-
-                var onChangeFunc = function (input, inputName)
-                {
-                    var value = input.value;
-                    if (input.type == "checkbox")
-                    {
-                        value = input.checked;
-                    }
-                    value = value + "";
-                    for (var i = 0; i < conditionList.length; i++)
-                    {
-                        var item = conditionList[i];
-                        if (item.TriggerInputName != inputName)
+                        if (inputField.TabName != tabName)
                         {
                             continue;
                         }
-                        var inputFieldToUpdate = "_" + item.InputName;
-                        var showInput = true;
-                        if (item.Condition.Comparison == 0)  // Equals
-                        {
-                            showInput = value === item.Condition.ColumnValue;
-                        }
-                        else if (item.Condition.Comparison == 1) // Not-Equals
-                        {
-                            showInput = value != item.Condition.ColumnValue;
-                        }
-                        else if (item.Condition.Comparison == 2) // Contains
-                        {
-                            showInput = value.indexOf(item.Condition.ColumnValue) > -1;
-                        }
-                        else
-                        {
-                            alert("Unknown comparison " + item.Condition.Comparison);
-                        }
-
-                        var input = document.getElementById(inputFieldToUpdate);
-
-                        while (input.tagName != "TR")
-                        {
-                            input = input.parentNode;
-                        }
-
-                        input.style.display = showInput ? "" : "none";
-
-                        if (showInput == true)
-                        {
-                            break;
-                        }
-                        //input.style.visibility = showInput ? "visible" : "hidden";
                     }
-                };
-
-                for (var i = 0; i < settings.InputFields.length; i++)
-                {
                     var row = document.createElement('tr');
-                    conditionList.push(i);
-                    var inputField = settings.InputFields[i];
+                    //conditionList.push(i);
 
                     switch (inputField.InputType)
                     {
@@ -706,99 +790,114 @@
                             continue;
                             break;
                     }
-                    inputTable.appendChild(row);
+                    node.appendChild(row);
                 }
+            };
 
-                for (var i = 0; i < settings.InputFields.length; i++)
+            if (tabNames.length > 1)
+            {
+                for (var tabCount = 0; tabCount < tabNames.length; tabCount++)
                 {
-                    var inputField = settings.InputFields[i];
-                    var name = "_" + inputField.InputName;
-                    var inputItem = document.getElementById(name);
-                    if (i == 0)
-                    {
-                        setTimeout(function ()
-                        {
-                            document.getElementById('_' + settings.InputFields[0].InputName).focus();
-                            document.getElementById('_' + settings.InputFields[0].InputName).select();
-                        }, 10);
-                    }
-                    if (inputItem == null)
-                    {
-                        continue;
-                    }
-                    onChangeFunc(inputItem, inputField.InputName);
+                    var tabDiv = document.getElementById('TabDiv' + tabCount);
+                    var tabName = tabDiv.getAttribute('tabName');
+
+                    var inputTable = document.createElement('table');
+                    inputTable.className = 'inputTable';
+
+                    addInputsToNode(inputTable);
+
+                    tabDiv.appendChild(inputTable);
                 }
-
-                var buttonRow = document.createElement('tr');
-                var buttonCell = document.createElement('td');
-                buttonCell.colSpan = 2;
-                for (var i = 0; i < settings.InputButtons.length; i++)
-                {
-                    var buttonItem = settings.InputButtons[i];
-                    var button = document.createElement('button');
-                    button.style.margin = "10px";
-                    button.innerHTML = buttonItem.Label;
-
-                    button.onclick = (function (id, uiAction)
-                    {
-                        return function ()
-                        {
-                            var data = {};
-
-                            for (var j = 0; j < uiAction.InputFields.length; j++)
-                            {
-                                var inputField = uiAction.InputFields[j];
-                                var theInput;
-                                var inputValue;
-                                if (inputField.InputType == 5) // List Selection
-                                {
-                                    inputValue = [];
-                                    theInput = document.getElementById("_" + inputField.InputName + "_1");
-                                    var options = theInput.options;
-
-                                    for (var k = 0; k < options.length; k++)
-                                    {
-                                        inputValue.push(options[k].value);
-                                    }
-                                }
-                                else
-                                {
-                                    theInput = document.getElementById("_" + inputField.InputName);
-
-                                    if (theInput == null)
-                                    {
-                                        continue;
-                                    }
-                                    inputValue = theInput.value;
-                                    if (theInput.type == "checkbox")
-                                    {
-                                        inputValue = theInput.checked;
-                                    }
-                                }
-
-
-                                data[inputField.InputName] = inputValue;
-                            }
-
-                            if (args != null && args.length > 0)
-                            {
-                                //data["parentId"] = args;
-                            }
-
-                            siteMenu.processEvent(settings.Id, data, id, args);
-                        }
-                    })(buttonItem.ActionNumber, settings);
-
-                    buttonCell.appendChild(button);
-                }
-                buttonCell.style.textAlign = "center";
-                buttonCell.style.verticalAlign = "middle";
-                buttonRow.appendChild(buttonCell);
-                inputTable.appendChild(buttonRow);
-
-                tabDiv.appendChild(inputTable);
-                document.getElementById('dlgInput').appendChild(tabDiv);
             }
+            else
+            {
+                var inputTable = document.createElement('table');
+                inputTable.className = 'inputTable';
+
+                addInputsToNode(inputTable);
+                pageDiv.appendChild(inputTable);
+            }
+
+            var buttonRowDiv = document.createElement('div');
+            for (var i = 0; i < settings.InputButtons.length; i++)
+            {
+                var buttonItem = settings.InputButtons[i];
+                var button = document.createElement('button');
+                button.style.margin = "10px";
+                button.innerHTML = buttonItem.Label;
+
+                button.onclick = (function (id, uiAction)
+                {
+                    return function ()
+                    {
+                        var data = {};
+
+                        for (var j = 0; j < uiAction.InputFields.length; j++)
+                        {
+                            var inputField = uiAction.InputFields[j];
+                            var theInput;
+                            var inputValue;
+                            if (inputField.InputType == 5) // List Selection
+                            {
+                                inputValue = [];
+                                theInput = document.getElementById("_" + inputField.InputName + "_1");
+                                var options = theInput.options;
+
+                                for (var k = 0; k < options.length; k++)
+                                {
+                                    inputValue.push(options[k].value);
+                                }
+                            }
+                            else
+                            {
+                                theInput = document.getElementById("_" + inputField.InputName);
+
+                                if (theInput == null)
+                                {
+                                    continue;
+                                }
+                                inputValue = theInput.value;
+                                if (theInput.type == "checkbox")
+                                {
+                                    inputValue = theInput.checked;
+                                }
+                            }
+
+
+                            data[inputField.InputName] = inputValue;
+                        }
+
+                        siteMenu.processEvent(settings.Id, data, id, args);
+                    }
+                })(buttonItem.ActionNumber, settings);
+
+                buttonRowDiv.appendChild(button);
+            }
+            buttonRowDiv.style.textAlign = "center";
+            buttonRowDiv.style.verticalAlign = "middle";
+            
+            document.getElementById('dlgInput').appendChild(buttonRowDiv);
+
+            for (var i = 0; i < settings.InputFields.length; i++)
+            {
+                var inputField = settings.InputFields[i];
+                var name = "_" + inputField.InputName;
+                var inputItem = document.getElementById(name);
+                if (i == 0)
+                {
+                    setTimeout(function ()
+                    {
+                        document.getElementById('_' + settings.InputFields[0].InputName).focus();
+                        document.getElementById('_' + settings.InputFields[0].InputName).select();
+                    }, 10);
+                }
+                if (inputItem == null)
+                {
+                    continue;
+                }
+                onChangeFunc(inputItem, inputField.InputName);
+            }
+            //document.getElementById('dlgInput').appendChild(pageDiv);
         });
     },
 
@@ -924,6 +1023,8 @@
                     else
                     {
                         /// Replace new line characters with HTML breaks
+                        value = value || "";
+                        value = value.toString();
                         value = value.replace(/\r/g, ',');
                         value = value.replace(/\n/g, ',');
 
