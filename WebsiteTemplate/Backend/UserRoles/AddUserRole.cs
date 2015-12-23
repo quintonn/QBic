@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
@@ -43,12 +44,10 @@ namespace WebsiteTemplate.Backend.UserRoles
                 list.Add(new StringInput("Name", "Name"));
                 list.Add(new StringInput("Description", "Description"));
 
-                var items = typeof(EventNumber).GetFields()
-                                               .ToDictionary(e => e.GetValue(null).ToString(), e => (object)e.Name)
-                                               .Where(e => e.Value.ToString() != "Nothing")
-                                               .OrderBy(e => e.Value)
-                                               .ToDictionary(e => e.Key, e => e.Value);
-                                               
+                var items = MainController.EventList.ToDictionary(e => e.Key, e => e.Value.Description)
+                                                   .OrderBy(e => e.Value)
+                                                   .ToDictionary(e => e.Key.ToString(), e => (object)e.Value);
+
 
                 var listSelection = new ListSelectionInput("Events", "Allowed Events")
                 {
