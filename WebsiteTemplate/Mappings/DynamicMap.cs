@@ -85,6 +85,7 @@ namespace WebsiteTemplate.Mappings
                 typeof(double),
                 typeof(decimal),
                 typeof(DateTime),
+                typeof(DateTime?)
             }.Contains(t) || t.IsPrimitive || t.IsEnum;
         }
     }
