@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
@@ -48,6 +49,8 @@ namespace WebsiteTemplate.Backend.Menus
         {
             columnConfig.AddStringColumn("Name", "Name");
 
+            columnConfig.AddStringColumn("Event", "Event");
+
             columnConfig.AddButtonColumn("Sub Menus", "", ButtonTextSource.Fixed, "...", new ShowHideColumnSetting()
             {
                 Display = ColumnDisplayType.Show,
@@ -56,7 +59,6 @@ namespace WebsiteTemplate.Backend.Menus
                     new Condition("Event", Comparison.Equals, ""),
                 }
             }, new ExecuteAction(EventNumber.ViewMenus, MenuId));
-
 
             columnConfig.AddLinkColumn("", "", "Id", "Edit", EventNumber.ModifyMenu);
 
@@ -104,7 +106,7 @@ namespace WebsiteTemplate.Backend.Menus
                 {
                     Name = r.Name,
                     Id = r.Id,
-                   // Event = r.Event == null ? "" : r.Event.Value.ToString(),
+                    Event = r.Event == null ? "" : MainController.EventList[r.Event.Value].Description,
                     ParentMenu = r.ParentMenu,
                     CanDelete = r.CanDelete,
                 }).ToList();
