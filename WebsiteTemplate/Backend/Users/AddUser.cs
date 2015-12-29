@@ -68,7 +68,7 @@ namespace WebsiteTemplate.Backend.Users
                 return new List<InputButton>()
                 {
                     new InputButton("Submit", 0),
-                    new InputButton("Cancel", 1)
+                    new InputButton("Cancel", 1, false)
                 };
             }
         }
@@ -85,7 +85,7 @@ namespace WebsiteTemplate.Backend.Users
                 return new List<Event>()
                 {
                     new CancelInputDialog(),
-                    new ExecuteAction(EventNumber.ViewUsers, String.Empty)
+                    //new ExecuteAction(EventNumber.ViewUsers, String.Empty)
                 };
             }
             else if (actionNumber == 0)

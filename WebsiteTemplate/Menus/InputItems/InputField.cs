@@ -16,12 +16,15 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public List<Condition> VisibilityConditions { get; set; }
 
-        public InputField(string name, string label, object defaultValue, string tabName)
+        public bool Mandatory { get; set; }
+
+        public InputField(string name, string label, object defaultValue, string tabName, bool mandatory)
         {
             InputName = name;
             InputLabel = label;
             DefaultValue = defaultValue;
             TabName = tabName;
+            Mandatory = mandatory;
 
             VisibilityConditions = new List<Condition>();
         }

@@ -17,8 +17,8 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public string InputMask { get; set; }
 
-        public MaskedInput(string name, string label, string inputMask, object defaultValue = null, string tabName = null)
-            : base(name, label, defaultValue, tabName)
+        public MaskedInput(string name, string label, string inputMask, object defaultValue = null, string tabName = null, bool mandatory = false)
+            : base(name, label, defaultValue, tabName, mandatory)
         {
             InputMask = inputMask;
         }

@@ -27,18 +27,18 @@ namespace WebsiteTemplate.Menus.InputItems
             }
 
             var enumValues = Enum.GetValues(typeof(T)).Cast<T>().ToList();
-            var items = enumValues.ToDictionary(e => (T)e, e => e.ToString());
+            var items = enumValues.ToDictionary(e => (T)e, e => e.ToString()).ToList();
 
             //var items = fields.ToDictionary(keyFunc, valueFunc);
             //var items = fields.ToDictionary(e => e.GetValue(null).ToString(), e => e.Name);
             
             if (whereClause != null)
             {
-                items = items.Where(whereClause).ToDictionary(e => e.Key, e => e.Value);
+                items = items.Where(whereClause).ToList();
             }
             if (orderByClause != null)
             {
-                items = items.OrderBy(orderByClause).ToDictionary(e => e.Key, e => e.Value);
+                items = items.OrderBy(orderByClause).ToList();
             }
 
             var listItems = items.ToDictionary(e => e.Key.ToString(), e => (object)e.Value).ToList();

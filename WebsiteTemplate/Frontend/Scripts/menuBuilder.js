@@ -76,6 +76,10 @@
     clearNode: function(nodeName)
     {
         var node = document.getElementById(nodeName);
+        if (node == null)
+        {
+            alert(nodeName + ' = null');
+        }
         while (node.firstChild)
         {
             node.removeChild(node.firstChild);

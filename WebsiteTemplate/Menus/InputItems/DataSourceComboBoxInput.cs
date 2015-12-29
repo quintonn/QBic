@@ -24,6 +24,7 @@ namespace WebsiteTemplate.Menus.InputItems
         /// <param name="whereClause">An optional where clause to pass into the NHibernate query.</param>
         /// <param name="orderByClause">An optional Order by clause to pass into the NHibernate query.</param>
         /// <param name="orderByAsc">If an order by clause is provided, this will set order direction.</param>
+        /// <param name="addBlankValue">If set to true will add an empty option to the combo box.</param>
         public DataSourceComboBoxInput(string name, 
                                        string label,
                                        Func<T, string> keyFunc,
@@ -32,7 +33,8 @@ namespace WebsiteTemplate.Menus.InputItems
                                        string tabName = null, 
                                        Expression<Func<T, bool>> whereClause = null,
                                        Expression<Func<T, object>> orderByClause = null,
-                                       bool orderByAsc = true)
+                                       bool orderByAsc = true,
+                                       bool addBlankValue = false)
             : base(name, label, defaultValue, tabName)
         {
             var store = new DataStore();
@@ -60,6 +62,10 @@ namespace WebsiteTemplate.Menus.InputItems
                 var list = queryOver.List<T>();
 
                 var result = list.ToDictionary(keyFunc, valueFunc);
+                if (addBlankValue)
+                {
+                    result.Add("", "");
+                }
                 ListItems = result;
             }
         }

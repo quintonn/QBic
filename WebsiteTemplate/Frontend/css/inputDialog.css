@@ -8,7 +8,7 @@
     background: rgba(255,255,255, 0.5);
 }
 
-#dlgMessage, #dlgInput {
+#dlgMessage, .dlgInput {
     position: fixed;
     top: 40%;
     left: 50%;
@@ -35,6 +35,6 @@
     padding:10px;
 }
 
-#dlgInput button:disabled {
+.dlgInput button:disabled {
     background-color:gray;
 }

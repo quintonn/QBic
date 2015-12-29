@@ -1,6 +1,6 @@
 ﻿var siteMenu = {
 
-    findMenu: function(menuId, menuList)
+    findMenu: function (menuId, menuList)
     {
         for (var key in menuList)
         {
@@ -156,14 +156,21 @@
     {
         inputDialog.loadInputPage("InputDialog.html", function ()
         {
-            var title = document.getElementById('pageTitle');
+            //var header = document.getElementById('dlgInput' + inputDialog.inputCount).getElementsByTagName('h1')[0];
+            //header.id = 'pageTitle' + inputDialog.inputCount;
+
+            //var title = document.getElementById('pageTitle');
+            //var title = header;
+            var title = document.getElementById('dlgInput' + inputDialog.inputCount).getElementsByTagName('h1')[0];
             title.innerHTML = settings.Description;
-            
+
             var pageDiv = document.createElement('div');
             pageDiv.style.width = '100%';
             pageDiv.style.height = '100%';
 
-            document.getElementById('dlgInput').appendChild(pageDiv);
+            var name = 'dlgInput' + inputDialog.inputCount;
+            
+            document.getElementById('dlgInput' + inputDialog.inputCount).appendChild(pageDiv);
 
             var tabButtonRowDiv = document.createElement('div');
             tabButtonRowDiv.style.width = '100%';
@@ -201,9 +208,9 @@
             }
             if (tabNames.length == 0)
             {
-                tabNames.push("");
+                //tabNames.push("");
             }
-
+            
             if (tabNames.length > 1)
             {
                 for (var tabCount = 0; tabCount < tabNames.length; tabCount++)
@@ -335,14 +342,14 @@
                 }
             };
 
-            var addInputsToNode = function (node)
+            var addInputsToNode = function (node, tabName)
             {
                 for (var i = 0; i < settings.InputFields.length; i++)
                 {
                     var inputField = settings.InputFields[i];
                     if (inputField.TabName != null && inputField.TabName.length > 0)
                     {
-                        if (inputField.TabName != tabName)
+                        if (inputField.TabName != tabName && tabNames.length > 1)
                         {
                             continue;
                         }
@@ -799,12 +806,12 @@
                 for (var tabCount = 0; tabCount < tabNames.length; tabCount++)
                 {
                     var tabDiv = document.getElementById('TabDiv' + tabCount);
-                    var tabName = tabDiv.getAttribute('tabName');
+                    var tabName = tabDiv.getAttribute('tabName', tabName);
 
                     var inputTable = document.createElement('table');
                     inputTable.className = 'inputTable';
 
-                    addInputsToNode(inputTable);
+                    addInputsToNode(inputTable, tabName);
 
                     tabDiv.appendChild(inputTable);
                 }
@@ -814,7 +821,14 @@
                 var inputTable = document.createElement('table');
                 inputTable.className = 'inputTable';
 
-                addInputsToNode(inputTable);
+                var tabName = "";
+                if (tabNames.length > 0)
+                {
+                    tabName = tabNames[0];
+                }
+
+                addInputsToNode(inputTable, tabName);
+                
                 pageDiv.appendChild(inputTable);
             }
 
@@ -826,7 +840,7 @@
                 button.style.margin = "10px";
                 button.innerHTML = buttonItem.Label;
 
-                button.onclick = (function (id, uiAction)
+                button.onclick = (function (id, uiAction, btnIndex)
                 {
                     return function ()
                     {
@@ -862,21 +876,32 @@
                                     inputValue = theInput.checked;
                                 }
                             }
+                            inputValue = inputValue || "";
 
+                            var buttonItem = settings.InputButtons[btnIndex];
+                            
+                            if (buttonItem.ValidateInput == true)
+                            {
+                                if (inputValue.length == 0 && inputField.Mandatory == true)
+                                {
+                                    inputDialog.showMessage(inputField.InputName + ' is mandatory');
+                                    return;
+                                }
+                            }
 
                             data[inputField.InputName] = inputValue;
                         }
 
                         siteMenu.processEvent(settings.Id, data, id, args);
                     }
-                })(buttonItem.ActionNumber, settings);
+                })(buttonItem.ActionNumber, settings, i);
 
                 buttonRowDiv.appendChild(button);
             }
             buttonRowDiv.style.textAlign = "center";
             buttonRowDiv.style.verticalAlign = "middle";
-            
-            document.getElementById('dlgInput').appendChild(buttonRowDiv);
+
+            document.getElementById('dlgInput' + inputDialog.inputCount).appendChild(buttonRowDiv);
 
             for (var i = 0; i < settings.InputFields.length; i++)
             {

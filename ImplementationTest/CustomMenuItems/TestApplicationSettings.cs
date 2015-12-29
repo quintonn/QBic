@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using WebsiteTemplate.SiteSpecific.Utilities;
+using NHibernate;
 
 namespace ImplementationTest.CustomMenuItems
 {
@@ -16,6 +17,11 @@ namespace ImplementationTest.CustomMenuItems
 
 
         public void RegisterUnityContainers(IUnityContainer container)
+        {
+            
+        }
+
+        public void SetupDefaults(ISession session)
         {
             
         }

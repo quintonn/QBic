@@ -1,8 +1,11 @@
 ﻿var inputDialog = {
 
+    inputCount: -0,
+
     loadInputPage: function (pageName, callback)
     {
-        menuBuilder.clearNode('dlgInput');
+        alert('todo: need to make input dialog in messagecontent work the same:\nI.E. when dialog is open, everything else is disabled.');
+        inputDialog.inputCount++;
         document.getElementById('inputContent').style.display = 'inline';
 
         callback = callback || function () { };
@@ -11,18 +14,30 @@
             callback();
         };
 
-        navigation.loadHtmlBody('dlgInput', pageName, newCallback);
+        var dlgInput = document.createElement('div');
+        dlgInput.id = 'dlgInput' + inputDialog.inputCount;
+        dlgInput.className = 'dlgInput';
+        document.getElementById('inputContent').appendChild(dlgInput);
+
+        navigation.loadHtmlBody('dlgInput' + inputDialog.inputCount, pageName, newCallback);
     },
 
     cancelInput: function()
     {
-        document.getElementById('inputContent').style.display = 'none';
-        menuBuilder.clearNode('dlgInput');
+        var dlgInput = document.getElementById('dlgInput' + inputDialog.inputCount);
+        dlgInput.parentNode.removeChild(dlgInput);
+
+        if (inputDialog.inputCount == 1)
+        {
+            document.getElementById('inputContent').style.display = 'none';
+        }
+
+        inputDialog.inputCount--;
     },
 
     addHiddenField: function (fieldName, fieldValue)
     {
-        var inputDiv = document.getElementById("dlgInput");
+        var inputDiv = document.getElementById("dlgInput" + inputDialog.inputCount);
         var hidden = document.createElement("input");
         hidden.type = "hidden";
         hidden.value = fieldValue;
@@ -44,6 +59,7 @@
     {
         document.getElementById('messageContent').style.display = 'none';
         menuBuilder.clearNode('dlgMessage');
+        //var input = document.getElementById(inputDialog.inputCount)
     },
 
     showMessage: function (settings, callback, args)
@@ -51,17 +67,17 @@
         /// TODO: Need to store the current state of the input dialog 
         //        For eg, what I need to show a message box while on an input page
         menuBuilder.clearNode('dlgMessage');
-
+        
         var message = settings.ConfirmationMessage;
-
+        
         if (message == null)
         {
             message = settings;
         }
-
+        
         message = message || "";
         message = message.toString().replace(/\n/g, "<br/>");
-
+        
         document.getElementById('messageContent').style.display = 'inline';
         
         navigation.loadHtmlBody('dlgMessage', "MessageDialog.html", function ()
@@ -127,7 +143,7 @@
             {
                 var buttonEvent = function()
                 {
-                    inputDialog.cancelInput();
+                    document.getElementById('messageContent').style.display = 'none';
                     if (callback != null)
                     {
                         callback();

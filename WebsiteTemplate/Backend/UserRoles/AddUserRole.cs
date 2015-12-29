@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using WebsiteTemplate.Backend.Users;
 using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
@@ -30,7 +31,8 @@ namespace WebsiteTemplate.Backend.UserRoles
                 return new List<InputButton>()
                 {
                     new InputButton("Submit", 0),
-                    new InputButton("Cancel", 1)
+                    new InputButton("Cancel", 1, false),
+                    new InputButton("XX", 2)
                 };
             }
         }
@@ -41,7 +43,7 @@ namespace WebsiteTemplate.Backend.UserRoles
             {
                 var list = new List<InputField>();
 
-                list.Add(new StringInput("Name", "Name"));
+                list.Add(new StringInput("Name", "Name", mandatory:true));
                 list.Add(new StringInput("Description", "Description"));
 
                 var items = MainController.EventList.ToDictionary(e => e.Key, e => e.Value.Description)
@@ -74,6 +76,13 @@ namespace WebsiteTemplate.Backend.UserRoles
 
         public override async Task<IList<Event>> ProcessAction(string data, int actionNumber)
         {
+            if (actionNumber == 2)
+            {
+                return new List<Event>()
+                {
+                   new ExecuteAction(EventNumber.AddUser, "")
+                };
+            }
             if (actionNumber == 1)
             {
                 return new List<Event>()

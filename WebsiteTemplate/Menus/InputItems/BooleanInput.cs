@@ -15,8 +15,8 @@ namespace WebsiteTemplate.Menus.InputItems
             }
         }
 
-        public BooleanInput(string name, string label, object defaultValue = null, string tabName = null)
-            : base(name, label, defaultValue, tabName)
+        public BooleanInput(string name, string label, object defaultValue = null, string tabName = null, bool mandatory = false)
+            : base(name, label, defaultValue, tabName, mandatory)
         {
         }
     }

@@ -147,8 +147,8 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
-    <Reference Include="WebsiteTemplate, Version=0.0.5819.27330, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WebsiteTemplate.0.0.5819.27330\lib\net45\WebsiteTemplate.dll</HintPath>
+    <Reference Include="WebsiteTemplate, Version=0.0.5840.36731, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebsiteTemplate.0.0.5840.36731\lib\net45\WebsiteTemplate.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -173,7 +173,9 @@
     <Content Include="Frontend\Scripts\auth.js" />
     <Content Include="Frontend\Scripts\inputDialog.js" />
     <Content Include="Frontend\Scripts\main.js" />
+    <Content Include="Frontend\Scripts\masked_input_1.4.js" />
     <Content Include="Frontend\Scripts\menuBuilder.js" />
+    <Content Include="Frontend\Scripts\modernizr.js" />
     <Content Include="Frontend\Scripts\navigation.js" />
     <Content Include="Frontend\Scripts\siteMenu.js" />
     <Content Include="Frontend\Scripts\views.js" />

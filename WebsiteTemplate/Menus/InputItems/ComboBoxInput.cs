@@ -13,8 +13,8 @@ namespace WebsiteTemplate.Menus.InputItems
             }
         }
 
-        public ComboBoxInput(string name, string label, object defaultValue = null, string tabName = null)
-            : base(name, label, defaultValue, tabName)
+        public ComboBoxInput(string name, string label, object defaultValue = null, string tabName = null, bool mandatory = false)
+            : base(name, label, defaultValue, tabName, mandatory)
         {
             ListItems = new Dictionary<string, object>();
         }

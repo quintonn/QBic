@@ -48,6 +48,7 @@
 
     showMessage: function (settings, callback, args)
     {
+        alert('todo: be able to show many input dialogs without affecting each other');
         /// TODO: Need to store the current state of the input dialog 
         //        For eg, what I need to show a message box while on an input page
         menuBuilder.clearNode('dlgMessage');
@@ -81,7 +82,7 @@
             var buttonRow = document.createElement('tr');
 
             var buttonAdded = false;
-
+            
             /// Add the Confirmation button
             if (settings.ConfirmationButtonText != null && settings.ConfirmationButtonText.length > 0)
             {
@@ -138,6 +139,17 @@
             }
             
             inputTable.appendChild(buttonRow);
+
+            var firstButton = null;
+            var firstButtonCell = buttonRow.children[0];
+            if (firstButtonCell != null)
+            {
+                firstButton = firstButtonCell.children[0];
+            }
+            if (firstButton != null)
+            {
+                firstButton.focus();
+            }
         });
     },
 

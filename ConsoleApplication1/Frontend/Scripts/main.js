@@ -1,5 +1,6 @@
 ﻿var main = {
-    applicationName: "websiteTemplate",
+    //applicationName: "websiteTemplate",
+    applicationName: "",
     //baseURL: "https://localhost/WebsiteTemplate/",
     baseURL: "",
     webApiURL: "api/v1/",
@@ -14,6 +15,19 @@
     bodyOnLoad: function ()
     {
         main.baseURL = "https://" + window.location.host + window.location.pathname;
+        main.initSystem();
+    },
+
+    initSystem: function()
+    {
+        main.makeWebCall(main.webApiURL + "initializeSystem", "GET", main.processInitSystemResponse);
+    },
+
+    processInitSystemResponse: function (data) {
+        var appInfo = data;
+
+        main.applicationName = appInfo.ApplicationName;
+
         main.init();
     },
 

@@ -28,7 +28,7 @@ namespace WebsiteTemplate.Menus.InputItems
                 return new List<InputButton>()
                 {
                     new InputButton("Submit", 0),
-                    new InputButton("Cancel", 1)
+                    new InputButton("Cancel", 1, false)
                 };
             }
         }

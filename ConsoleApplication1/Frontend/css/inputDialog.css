@@ -34,3 +34,7 @@
 .inputTable td {
     padding:10px;
 }
+
+#dlgInput button:disabled {
+    background-color:gray;
+}
