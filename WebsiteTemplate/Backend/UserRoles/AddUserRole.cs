@@ -32,7 +32,6 @@ namespace WebsiteTemplate.Backend.UserRoles
                 {
                     new InputButton("Submit", 0),
                     new InputButton("Cancel", 1, false),
-                    new InputButton("XX", 2)
                 };
             }
         }
@@ -76,13 +75,6 @@ namespace WebsiteTemplate.Backend.UserRoles
 
         public override async Task<IList<Event>> ProcessAction(string data, int actionNumber)
         {
-            if (actionNumber == 2)
-            {
-                return new List<Event>()
-                {
-                   new ExecuteAction(EventNumber.AddUser, "")
-                };
-            }
             if (actionNumber == 1)
             {
                 return new List<Event>()
