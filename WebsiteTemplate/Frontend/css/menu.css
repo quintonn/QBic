@@ -4,9 +4,8 @@
     display:block;
 }
 
-#menuContent button {
+/*#menuContent button {
     text-align:center;
-    /*padding:5px;*/
 }
 
 #menuDiv button {
@@ -24,6 +23,12 @@
 #menuDiv button:hover {
     background-color:#EBEBE4; 
 }
+
+#userDetail button {
+    margin-left: 10px;
+    text-align:center;
+}*/
+
 
 #userDetail button {
     margin-left: 10px;

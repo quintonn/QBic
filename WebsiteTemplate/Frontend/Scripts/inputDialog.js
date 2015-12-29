@@ -4,7 +4,6 @@
 
     loadInputPage: function (pageName, callback)
     {
-        alert('todo: need to make input dialog in messagecontent work the same:\nI.E. when dialog is open, everything else is disabled.');
         inputDialog.inputCount++;
         document.getElementById('inputContent').style.display = 'inline';
 
@@ -14,22 +13,52 @@
             callback();
         };
 
+        /// disable everything on the page:
+        var elems = document.body.getElementsByTagName('*');
+        for (var i = 0; i < elems.length; i++)
+        {
+            elems[i].disabled = true;
+        }
+
+        var container = document.createElement('div');
+        container.className = 'dlgInputContainer';
+        container.id = 'dlgContainer' + inputDialog.inputCount;
+        container.style.display = 'inline';
         var dlgInput = document.createElement('div');
         dlgInput.id = 'dlgInput' + inputDialog.inputCount;
         dlgInput.className = 'dlgInput';
-        document.getElementById('inputContent').appendChild(dlgInput);
+        
+        container.appendChild(dlgInput);
+        document.getElementById('inputContent').appendChild(container);
 
         navigation.loadHtmlBody('dlgInput' + inputDialog.inputCount, pageName, newCallback);
     },
 
     cancelInput: function()
     {
-        var dlgInput = document.getElementById('dlgInput' + inputDialog.inputCount);
+        var dlgInput = document.getElementById('dlgContainer' + inputDialog.inputCount);
+        
         dlgInput.parentNode.removeChild(dlgInput);
 
         if (inputDialog.inputCount == 1)
         {
             document.getElementById('inputContent').style.display = 'none';
+            /// enable everything on the page:
+            var elems = document.body.getElementsByTagName('*');
+            for (var i = 0; i < elems.length; i++)
+            {
+                elems[i].disabled = false;
+            }
+        }
+        else
+        {
+            /// enable all elements on the next dlgContainer
+            var container = document.getElementById('dlgContainer' + (inputDialog.inputCount - 1));
+            var elems = container.getElementsByTagName('*');
+            for (var i = 0; i < elems.length; i++)
+            {
+                elems[i].disabled = false;
+            }
         }
 
         inputDialog.inputCount--;

@@ -280,3 +280,25 @@ textarea {
         page-break-after: avoid;
     }
 }
+
+
+button {
+    text-align:center;
+    /*padding:5px;*/
+}
+
+button {
+    margin-right:5px;
+}
+
+button:disabled {
+    background-color:#BCBCB6;
+}
+
+button:disabled:hover {
+    background-color:#BCBCB6;
+}
+
+button:hover {
+    background-color:#EBEBE4; 
+}
