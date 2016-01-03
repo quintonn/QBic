@@ -152,6 +152,35 @@
         }
     },
 
+    conditionIsMet: function(condition, value)
+    {
+        if (condition.Comparison == 0)  // Equals
+        {
+            return value === condition.ColumnValue;
+        }
+        else if (condition.Comparison == 1) // Not-Equals
+        {
+            return value != condition.ColumnValue;
+        }
+        else if (condition.Comparison == 2) // Contains
+        {
+            return value.indexOf(condition.ColumnValue) > -1;
+        }
+        else if (condition.Comparison == 3) // IsNotNull
+        {
+            return value != null && (value + "").length > 0;
+        }
+        else if (condition.Comparison == 4) // IsNull
+        {
+            return value == null || (value + "").length == 0;
+        }
+        else
+        {
+            alert("Unknown comparison " + condition.Comparison);
+            return false;
+        }
+    },
+
     buildInput: function (settings, args)
     {
         inputDialog.loadInputPage("InputDialog.html", function ()
@@ -307,23 +336,7 @@
                         continue;
                     }
                     var inputFieldToUpdate = "_" + item.InputName;
-                    var showInput = true;
-                    if (item.Condition.Comparison == 0)  // Equals
-                    {
-                        showInput = value === item.Condition.ColumnValue;
-                    }
-                    else if (item.Condition.Comparison == 1) // Not-Equals
-                    {
-                        showInput = value != item.Condition.ColumnValue;
-                    }
-                    else if (item.Condition.Comparison == 2) // Contains
-                    {
-                        showInput = value.indexOf(item.Condition.ColumnValue) > -1;
-                    }
-                    else
-                    {
-                        alert("Unknown comparison " + item.Condition.Comparison);
-                    }
+                    var showInput = siteMenu.conditionIsMet(item.Condition, value);
 
                     var input = document.getElementById(inputFieldToUpdate);
 
@@ -347,13 +360,11 @@
                 for (var i = 0; i < settings.InputFields.length; i++)
                 {
                     var inputField = settings.InputFields[i];
-                    console.log(inputField.InputName + ' - ' + inputField.TabName);
+                    
                     if (inputField.TabName != null && inputField.TabName.length > 0)
                     {
-                        console.log('aa');
                         if (inputField.TabName != tabName && tabNames.length > 1)
                         {
-                            console.log('bb');
                             continue;
                         }
                     }
@@ -361,8 +372,6 @@
                     {
                         if (tabName != null && tabName.length > 0 && usingTabs == true)
                         {
-                            console.log(usingTabs);
-                            console.log('xxx');
                             continue;
                         }
                     }
@@ -853,6 +862,51 @@
                 pageDiv.appendChild(inputTable);
             }
 
+            var getInputValue = function (inputName, inputType, settings)
+            {
+                var theInput;
+                var inputValue;
+                if (inputType == null)
+                {
+                    for (var k = 0; k < settings.InputFields.length; k++)
+                    {
+                        var inputField = settings.InputFields[k];
+                        if (inputField.InputName == inputName)
+                        {
+                            inputType = inputField.InputType;
+                            break;
+                        }
+                    }
+                }
+                if (inputType == 5) // List Selection
+                {
+                    inputValue = [];
+                    theInput = document.getElementById("_" + inputName + "_1");
+                    var options = theInput.options;
+
+                    for (var k = 0; k < options.length; k++)
+                    {
+                        inputValue.push(options[k].value);
+                    }
+                }
+                else
+                {
+                    theInput = document.getElementById("_" + inputName);
+
+                    if (theInput == null)
+                    {
+                        return null;
+                    }
+                    inputValue = theInput.value;
+                    if (theInput.type == "checkbox")
+                    {
+                        inputValue = theInput.checked + "";
+                    }
+                }
+                inputValue = inputValue || "";
+                return inputValue;
+            };
+                
             var buttonRowDiv = document.createElement('div');
             for (var i = 0; i < settings.InputButtons.length; i++)
             {
@@ -870,43 +924,35 @@
                         for (var j = 0; j < uiAction.InputFields.length; j++)
                         {
                             var inputField = uiAction.InputFields[j];
-                            var theInput;
-                            var inputValue;
-                            if (inputField.InputType == 5) // List Selection
-                            {
-                                inputValue = [];
-                                theInput = document.getElementById("_" + inputField.InputName + "_1");
-                                var options = theInput.options;
 
-                                for (var k = 0; k < options.length; k++)
-                                {
-                                    inputValue.push(options[k].value);
-                                }
-                            }
-                            else
-                            {
-                                theInput = document.getElementById("_" + inputField.InputName);
-
-                                if (theInput == null)
-                                {
-                                    continue;
-                                }
-                                inputValue = theInput.value;
-                                if (theInput.type == "checkbox")
-                                {
-                                    inputValue = theInput.checked + "";
-                                }
-                            }
-                            inputValue = inputValue || "";
+                            // Get the input value
+                            var inputValue = getInputValue(inputField.InputName, inputField.InputType, settings);
 
                             var buttonItem = settings.InputButtons[btnIndex];
                             
                             if (buttonItem.ValidateInput == true)
                             {
-                                if (inputValue.length == 0 && inputField.Mandatory == true)
+                                if (inputValue.length == 0)
                                 {
-                                    inputDialog.showMessage(inputField.InputName + ' is mandatory');
-                                    return;
+                                    if (inputField.Mandatory == true)
+                                    {
+                                        inputDialog.showMessage(inputField.InputName + ' is mandatory');
+                                        return;
+                                    }
+                                    var mandatory = false;
+                                    for (var k = 0; k < inputField.MandatoryConditions.length; k++)
+                                    {
+                                        var condition = inputField.MandatoryConditions[k];
+                                        var conditionalValue = getInputValue(condition.ColumnName, null, settings);
+                                        
+                                        mandatory = siteMenu.conditionIsMet(condition, conditionalValue);
+                                        
+                                        if (mandatory == true)
+                                        {
+                                            inputDialog.showMessage(inputField.InputName + ' is mandatory');
+                                            return;
+                                        }
+                                    }
                                 }
                             }
 
@@ -984,11 +1030,17 @@
                         {
                             var index = colName.indexOf('.');
                             var partName = colName.substring(0, index);
-
+                            if (value == null)
+                            {
+                                break;
+                            }
                             value = value[partName];
                             colName = colName.substring(index + 1);
                         }
-                        value = value[colName];
+                        if (value != null)
+                        {
+                            value = value[colName];
+                        }
                     }
 
                     if (column.ColumnType == 1) /// Boolean

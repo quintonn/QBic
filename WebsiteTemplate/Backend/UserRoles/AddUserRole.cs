@@ -42,15 +42,24 @@ namespace WebsiteTemplate.Backend.UserRoles
             {
                 var list = new List<InputField>();
 
-                list.Add(new StringInput("Name", "Name", mandatory:true));
-                list.Add(new StringInput("Description", "Description"));
+                list.Add(new StringInput("Name", "Name", tabName: "x", mandatory:true));
+                list.Add(new StringInput("Description", "Description", tabName: "x"));
+
+                list.Add(new StringInput("xxx", "xxx", "", "x", true));
+                list.Add(new StringInput("xxx2", "xxx2", "", "x", false)
+                {
+                    MandatoryConditions = new List<WebsiteTemplate.Menus.ViewItems.Condition>()
+                    {
+                        new WebsiteTemplate.Menus.ViewItems.Condition("Name", WebsiteTemplate.Menus.ViewItems.Comparison.Equals, "q")
+                    }
+                });
 
                 var items = MainController.EventList.ToDictionary(e => e.Key, e => e.Value.Description)
                                                    .OrderBy(e => e.Value)
                                                    .ToDictionary(e => e.Key.ToString(), e => (object)e.Value);
 
 
-                var listSelection = new ListSelectionInput("Events", "Allowed Events")
+                var listSelection = new ListSelectionInput("Events", "Allowed Events", tabName: "z")
                 {
                     AvailableItemsLabel = "List of Events:",
                     SelectedItemsLabel = "Chosen Events:",
@@ -58,6 +67,7 @@ namespace WebsiteTemplate.Backend.UserRoles
                 };
 
                 list.Add(listSelection);
+                list.Add(new StringInput("abc", "abc"));
 
                 return list;
             }

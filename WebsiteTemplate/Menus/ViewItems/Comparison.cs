@@ -9,6 +9,8 @@ namespace WebsiteTemplate.Menus.ViewItems
     {
         Equals = 0,
         NotEquals = 1,
-        Container = 2,
+        Contains = 2,
+        IsNotNull = 3,
+        IsNull = 4,
     }
 }

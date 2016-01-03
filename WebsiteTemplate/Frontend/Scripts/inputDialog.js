@@ -37,6 +37,11 @@
     cancelInput: function()
     {
         var dlgInput = document.getElementById('dlgContainer' + inputDialog.inputCount);
+        if (dlgInput == null)
+        {
+            inputDialog.cancelMessage();  // TODO: cancel message and cancelInput should be the same code. this is too confusing
+            return;
+        }
         
         dlgInput.parentNode.removeChild(dlgInput);
 

@@ -18,6 +18,8 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public bool Mandatory { get; set; }
 
+        public List<Condition> MandatoryConditions { get; set; }
+
         public InputField(string name, string label, object defaultValue, string tabName, bool mandatory)
         {
             InputName = name;
@@ -27,6 +29,7 @@ namespace WebsiteTemplate.Menus.InputItems
             Mandatory = mandatory;
 
             VisibilityConditions = new List<Condition>();
+            MandatoryConditions = new List<Condition>();
         }
     }
 }
