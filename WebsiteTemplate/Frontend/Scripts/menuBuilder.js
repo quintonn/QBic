@@ -78,11 +78,14 @@
         var node = document.getElementById(nodeName);
         if (node == null)
         {
-            alert(nodeName + ' = null');
+            //alert(nodeName + ' = null');
         }
-        while (node.firstChild)
+        else
         {
-            node.removeChild(node.firstChild);
+            while (node.firstChild)
+            {
+                node.removeChild(node.firstChild);
+            }
         }
     }
 };

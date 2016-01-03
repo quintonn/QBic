@@ -35,6 +35,20 @@
     padding:10px;
 }
 
+.inputTable td input:not(input[type='checkbox']) {
+    width:100%;
+}
+
+.inputTable td textarea {
+    width:100%;
+}
+.inputTable td select {
+    width:100%;
+}
+.inputTable td table {
+    width:100%;
+}
+
 .dlgInput button:disabled {
     background-color:gray;
 }

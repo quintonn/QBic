@@ -15,11 +15,13 @@
 
         /// disable everything on the page:
         var elems = document.body.getElementsByTagName('*');
+        
         for (var i = 0; i < elems.length; i++)
         {
             elems[i].disabled = true;
         }
-
+        document.getElementById('inputContent').disabled = false;  // For IE
+        
         var container = document.createElement('div');
         container.className = 'dlgInputContainer';
         container.id = 'dlgContainer' + inputDialog.inputCount;
@@ -50,8 +52,10 @@
             document.getElementById('inputContent').style.display = 'none';
             /// enable everything on the page:
             var elems = document.body.getElementsByTagName('*');
+            
             for (var i = 0; i < elems.length; i++)
             {
+                
                 elems[i].disabled = false;
             }
         }
@@ -60,6 +64,7 @@
             /// enable all elements on the next dlgContainer
             var container = document.getElementById('dlgContainer' + (inputDialog.inputCount - 1));
             var elems = container.getElementsByTagName('*');
+            
             for (var i = 0; i < elems.length; i++)
             {
                 elems[i].disabled = false;

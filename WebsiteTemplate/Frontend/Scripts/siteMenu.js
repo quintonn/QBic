@@ -30,6 +30,7 @@
             {
                 menuBuilder.clearNode("menuDiv");
                 menuBuilder.clearNode('viewsMenu');
+                
                 siteMenu.buildMenu(menuList, parentId);
             });
         }
@@ -185,11 +186,6 @@
     {
         inputDialog.loadInputPage("InputDialog.html", function ()
         {
-            //var header = document.getElementById('dlgInput' + inputDialog.inputCount).getElementsByTagName('h1')[0];
-            //header.id = 'pageTitle' + inputDialog.inputCount;
-
-            //var title = document.getElementById('pageTitle');
-            //var title = header;
             var title = document.getElementById('dlgInput' + inputDialog.inputCount).getElementsByTagName('h1')[0];
             title.innerHTML = settings.Description;
 
@@ -387,6 +383,7 @@
                             row.appendChild(labelCell);
 
                             var inp = document.createElement('input');
+                            
                             if (inputField.InputType == 1)
                             {
                                 inp.type = "password";
