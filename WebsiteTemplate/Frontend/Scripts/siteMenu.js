@@ -873,7 +873,7 @@
                                 inputValue = theInput.value;
                                 if (theInput.type == "checkbox")
                                 {
-                                    inputValue = theInput.checked;
+                                    inputValue = theInput.checked + "";
                                 }
                             }
                             inputValue = inputValue || "";
