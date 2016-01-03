@@ -204,7 +204,7 @@
             }
             if (nonEmptyTabNamesPresent && emptyTabNamesPresent)
             {
-                alert('Error: If tab names are used, all input fields should have tab names');
+                //alert('Error: If tab names are used, all input fields should have tab names');
             }
             if (tabNames.length == 0)
             {
@@ -342,15 +342,27 @@
                 }
             };
 
-            var addInputsToNode = function (node, tabName)
+            var addInputsToNode = function (node, tabName, usingTabs)
             {
                 for (var i = 0; i < settings.InputFields.length; i++)
                 {
                     var inputField = settings.InputFields[i];
+                    console.log(inputField.InputName + ' - ' + inputField.TabName);
                     if (inputField.TabName != null && inputField.TabName.length > 0)
                     {
+                        console.log('aa');
                         if (inputField.TabName != tabName && tabNames.length > 1)
                         {
+                            console.log('bb');
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        if (tabName != null && tabName.length > 0 && usingTabs == true)
+                        {
+                            console.log(usingTabs);
+                            console.log('xxx');
                             continue;
                         }
                     }
@@ -811,10 +823,19 @@
                     var inputTable = document.createElement('table');
                     inputTable.className = 'inputTable';
 
-                    addInputsToNode(inputTable, tabName);
+                    addInputsToNode(inputTable, tabName, true);
 
                     tabDiv.appendChild(inputTable);
                 }
+                /// TODO: add a table for the bottom/shared inputs
+
+                var sharedDiv = document.createElement('div');
+                var sharedTable = document.createElement('table');
+                sharedTable.className = "inputTable";
+                sharedDiv.appendChild(sharedTable);
+                pageDiv.appendChild(sharedDiv);
+                
+                addInputsToNode(sharedTable, "", false);
             }
             else
             {
@@ -827,7 +848,7 @@
                     tabName = tabNames[0];
                 }
 
-                addInputsToNode(inputTable, tabName);
+                addInputsToNode(inputTable, tabName, false);
                 
                 pageDiv.appendChild(inputTable);
             }
