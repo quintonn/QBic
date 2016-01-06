@@ -51,7 +51,11 @@ namespace WebsiteTemplate.Backend.UserRoles
                     MandatoryConditions = new List<WebsiteTemplate.Menus.ViewItems.Condition>()
                     {
                         new WebsiteTemplate.Menus.ViewItems.Condition("Name", WebsiteTemplate.Menus.ViewItems.Comparison.Equals, "q")
-                    }
+                    },
+                    VisibilityConditions = new List<WebsiteTemplate.Menus.ViewItems.Condition>()
+                    {
+                        new WebsiteTemplate.Menus.ViewItems.Condition("Name", WebsiteTemplate.Menus.ViewItems.Comparison.Equals, "q")
+                    },
                 });
 
                 var items = MainController.EventList.ToDictionary(e => e.Key, e => e.Value.Description)
