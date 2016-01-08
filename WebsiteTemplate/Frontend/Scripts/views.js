@@ -5,7 +5,184 @@
         return document.getElementById('tblView');
     },
 
-    populateViewWithData: function(table, data, settings)
+    populateRow: function(row, settings, data, rowId, args)
+    {
+        for (var j = 0; j < settings.Columns.length; j++)
+        {
+            var column = settings.Columns[j];
+            var cell = document.createElement("td");
+
+            var value = "";
+
+            if (column.ColumnName != null && column.ColumnName.length > 0)
+            {
+                value = data;//[i];
+                var colName = column.ColumnName;
+                while (colName.indexOf('.') > -1)
+                {
+                    var index = colName.indexOf('.');
+                    var partName = colName.substring(0, index);
+                    if (value == null)
+                    {
+                        break;
+                    }
+                    value = value[partName];
+                    colName = colName.substring(index + 1);
+                }
+                if (value != null)
+                {
+                    value = value[colName];
+                }
+            }
+
+            if (column.ColumnType == 1) /// Boolean
+            {
+                if (value == true)
+                {
+                    value = column.TrueValueDisplay;
+                }
+                else if (value == false)
+                {
+                    value = column.FalseValueDisplay;
+                }
+                cell.innerHTML = value;
+            }
+            else if (column.ColumnType == 2) // Button
+            {
+                var button = document.createElement('button');
+
+                button.onclick = (function (ind)
+                {
+                    return function ()
+                    {
+                        var id = data["Id"];
+
+                        var formData = JSON.stringify(data);
+                        var theColumn = settings.Columns[ind];
+
+                        if (theColumn.Event.ActionType == 5)
+                        {
+                            inputDialog.showMessage(theColumn.Event, null, formData);
+                        }
+                        else if (theColumn.Event.ActionType == 6)
+                        {
+                            var eventId = theColumn.Event.EventNumber;
+                            var formData = data["Id"];
+
+                            siteMenu.executeUIAction(eventId, formData);
+                        }
+                        else
+                        {
+                            inputDialog.showMessage("Unknown action type " + theColumn.Event.ActionType);
+                        }
+                    }
+                })(j);
+
+                if (column.ButtonTextSource == 0) //Fixed button text
+                {
+                    button.innerHTML = column.ButtonText;
+                }
+                else
+                {
+                    inputDialog.showMessage("Unhandled ButtonTextSource: " + column.ButtonTextSource);
+                    button.innerHTML = "????";
+                }
+
+                cell.appendChild(button);
+            }
+            else if (column.ColumnType == 3) /// Link
+            {
+                var a = document.createElement('a');
+                a.href = "#";
+                a.innerHTML = column.LinkLabel;
+                a.onclick = (function (col)
+                {
+                    return function ()
+                    {
+                        var formData =
+                            {
+                                Id: data[col.KeyColumn],
+                            };
+                        console.log('action type ' + settings.ActionType);
+                        if (settings.ActionType == 7) /// View for input
+                        {
+                            formData['rowData'] = data;
+                            formData['rowId'] = rowId;//index
+                        };
+
+                        var id = col.EventNumber;
+                        siteMenu.executeUIAction(id, formData, args);
+                    }
+                })(column);
+                cell.appendChild(a);
+            }
+            else
+            {
+                /// Replace new line characters with HTML breaks
+                value = value || "";
+                value = value.toString();
+                value = value.replace(/\r/g, ',');
+                value = value.replace(/\n/g, ',');
+
+                /// Don't do anything to the value
+                cell.innerHTML = value;
+            }
+
+            if (column.ColumnSetting != null)
+            {
+                if (column.ColumnSetting.ColumnSettingType == 0) /// Show/Hide column
+                {
+                    var show = column.ColumnSetting.Display == 0;
+                    var compareResult = true;
+
+                    for (var p = 0; p < column.ColumnSetting.Conditions.length; p++)
+                    {
+                        var condition = column.ColumnSetting.Conditions[p];
+                        var colName = condition.ColumnName;
+                        var comparison = condition.Comparison;
+                        var colVal = condition.ColumnValue;
+
+                        var actualValue = data[colName] || "";
+                        actualValue = actualValue.toString();
+
+                        if (comparison == 0)
+                        {
+                            compareResult = compareResult && actualValue == colVal;
+                        }
+                        else if (comparison == 1)
+                        {
+                            compareResult = compareResult && actualValue != colVal;
+                        }
+                        else
+                        {
+                            alert("Unknown comparison: " + comparison);
+                        }
+                    }
+
+                    if ((compareResult == false && show == true) || (compareResult == true && show == false))
+                    {
+
+                        var show = column.ColumnSetting.Display == 0;
+
+                        var cellValue = cell.innerHTML;
+                        var div = document.createElement('div');
+                        div.innerHTML = cellValue;
+
+                        var newCell = document.createElement('td');
+                        newCell.appendChild(div);
+
+                        div.style.display = 'none';
+
+                        cell = newCell;
+                    }
+                }
+            }
+
+            row.appendChild(cell);
+        }
+    },
+
+    populateViewWithData: function(table, data, settings, args)
     {
         /// Add headings to table
         var headerRow = document.createElement("tr");
@@ -14,6 +191,7 @@
         {
             var headCell = document.createElement("th");
             headCell.innerHTML = settings.Columns[j].ColumnLabel;
+            headCell.setAttribute('columnName', settings.Columns[j].ColumnName;
             headerRow.appendChild(headCell);
         }
         table.appendChild(headerRow);
@@ -24,178 +202,13 @@
         {
             var row = document.createElement("tr");
 
-            for (var j = 0; j < settings.Columns.length; j++)
-            {
-                var column = settings.Columns[j];
-                var cell = document.createElement("td");
+            views.populateRow(row, settings, data[i], i, args);
 
-                var value = "";
-
-                if (column.ColumnName != null && column.ColumnName.length > 0)
-                {
-                    value = data[i];
-                    var colName = column.ColumnName;
-                    while (colName.indexOf('.') > -1)
-                    {
-                        var index = colName.indexOf('.');
-                        var partName = colName.substring(0, index);
-                        if (value == null)
-                        {
-                            break;
-                        }
-                        value = value[partName];
-                        colName = colName.substring(index + 1);
-                    }
-                    if (value != null)
-                    {
-                        value = value[colName];
-                    }
-                }
-
-                if (column.ColumnType == 1) /// Boolean
-                {
-                    if (value == true)
-                    {
-                        value = column.TrueValueDisplay;
-                    }
-                    else if (value == false)
-                    {
-                        value = column.FalseValueDisplay;
-                    }
-                    cell.innerHTML = value;
-                }
-                else if (column.ColumnType == 2) // Button
-                {
-                    var button = document.createElement('button');
-
-                    button.onclick = (function (index, ind)
-                    {
-                        return function ()
-                        {
-                            var id = data[index]["Id"];
-
-                            var formData = JSON.stringify(data[index]);
-                            var theColumn = settings.Columns[ind];
-
-                            if (theColumn.Event.ActionType == 5)
-                            {
-                                inputDialog.showMessage(theColumn.Event, null, formData);
-                            }
-                            else if (theColumn.Event.ActionType == 6)
-                            {
-                                var eventId = theColumn.Event.EventNumber;
-                                var formData = data[index]["Id"];
-
-                                siteMenu.executeUIAction(eventId, formData);
-                            }
-                            else
-                            {
-                                inputDialog.showMessage("Unknown action type " + theColumn.Event.ActionType);
-                            }
-                        }
-                    })(i, j);
-
-                    if (column.ButtonTextSource == 0) //Fixed button text
-                    {
-                        button.innerHTML = column.ButtonText;
-                    }
-                    else
-                    {
-                        inputDialog.showMessage("Unhandled ButtonTextSource: " + column.ButtonTextSource);
-                        button.innerHTML = "????";
-                    }
-
-                    cell.appendChild(button);
-                }
-                else if (column.ColumnType == 3) /// Link
-                {
-                    var a = document.createElement('a');
-                    a.href = "#";
-                    a.innerHTML = column.LinkLabel;
-                    a.onclick = (function (col, index)
-                    {
-                        return function ()
-                        {
-                            var formData =
-                                {
-                                    Id: data[index][col.KeyColumn]
-                                };
-
-                            var id = col.EventNumber;
-                            siteMenu.executeUIAction(id, formData);
-                        }
-                    })(column, i);
-                    cell.appendChild(a);
-                }
-                else
-                {
-                    /// Replace new line characters with HTML breaks
-                    value = value || "";
-                    value = value.toString();
-                    value = value.replace(/\r/g, ',');
-                    value = value.replace(/\n/g, ',');
-
-                    /// Don't do anything to the value
-                    cell.innerHTML = value;
-                }
-
-                if (column.ColumnSetting != null)
-                {
-                    if (column.ColumnSetting.ColumnSettingType == 0) /// Show/Hide column
-                    {
-                        var show = column.ColumnSetting.Display == 0;
-                        var compareResult = true;
-
-                        for (var p = 0; p < column.ColumnSetting.Conditions.length; p++)
-                        {
-                            var condition = column.ColumnSetting.Conditions[p];
-                            var colName = condition.ColumnName;
-                            var comparison = condition.Comparison;
-                            var colVal = condition.ColumnValue;
-
-                            var actualValue = data[i][colName] || "";
-                            actualValue = actualValue.toString();
-
-                            if (comparison == 0)
-                            {
-                                compareResult = compareResult && actualValue == colVal;
-                            }
-                            else if (comparison == 1)
-                            {
-                                compareResult = compareResult && actualValue != colVal;
-                            }
-                            else
-                            {
-                                alert("Unknown comparison: " + comparison);
-                            }
-                        }
-
-                        if ((compareResult == false && show == true) || (compareResult == true && show == false))
-                        {
-
-                            var show = column.ColumnSetting.Display == 0;
-
-                            var cellValue = cell.innerHTML;
-                            var div = document.createElement('div');
-                            div.innerHTML = cellValue;
-
-                            var newCell = document.createElement('td');
-                            newCell.appendChild(div);
-
-                            div.style.display = 'none';
-
-                            cell = newCell;
-                        }
-                    }
-                }
-
-                row.appendChild(cell);
-            }
             table.appendChild(row);
         }
     },
 
-    populateViewMenu: function(viewMenu, settings)
+    populateViewMenu: function(viewMenu, settings, args)
     {
         while (viewMenu.firstChild)
         {
@@ -213,7 +226,7 @@
                 return function ()
                 {
                     var vm = settings.ViewMenu[index];
-                    siteMenu.executeUIAction(id, vm.ParametersToPass);
+                    siteMenu.executeUIAction(id, vm.ParametersToPass, args);
                 }
             })(menu.EventNumber, i);
 

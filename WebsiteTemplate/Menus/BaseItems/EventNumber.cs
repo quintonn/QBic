@@ -23,5 +23,7 @@
         public const int UserConfirmation = 1101;
         public const int ExecuteAction = 1200;
         public const int CancelInputDialog = 1500;
+
+        public const int UpdateInputView = 1600;
     }
 }

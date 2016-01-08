@@ -846,7 +846,49 @@
 
                                 break;
                             }
-                        
+                        case 8:  /// View Input
+                            var labelCell = document.createElement('td');
+                            labelCell.innerHTML = inputField.InputLabel;
+                            //row.appendChild(labelCell);
+
+                            var mainViewDiv = document.createElement('div');
+                            mainViewDiv.id = "_" + inputField.InputName;
+                            //var menuDiv = document.createElement('div');
+
+                            //var table = document.createElement('table');
+                            //table.className = 'viewTable';
+                            //table.id = "_" + inputField.InputName;
+
+                            var viewSettings = inputField.ViewForInput;
+                            //var data = viewSettings.ViewData;
+                            
+                            //views.populateViewMenu(menuDiv, viewSettings);
+                            //views.populateViewWithData(table, data, viewSettings);
+
+                            //mainViewDiv.appendChild(menuDiv);
+                            //mainViewDiv.appendChild(table);
+
+                            var row = document.createElement('tr');
+                            var td = document.createElement('td');
+                            td.appendChild(mainViewDiv);
+                            td.colSpan = 3;
+
+                            var lbl = document.createElement('label');
+                            lbl.innerHTML = inputField.InputLabel;
+                            mainViewDiv.appendChild(lbl);
+
+                            //var td = document.createElement('td');
+                            //td.appendChild(mainViewDiv);
+                            row.appendChild(td);
+
+                            //node.appendChild(row);
+                            //row = newRow; // this is so the label is on top of the table
+                            //row.appendChild(mainViewDiv);
+
+                            //siteMenu.processEvent(viewSettings.Id); // to get the data
+                            siteMenu.executeUIAction(viewSettings.Id, null, inputField);//mainViewDiv.id); //// to get the data
+
+                            break;
                         default:
                             inputDialog.showMessage('Unknown input type: ' + inputField.InputType);
                             continue;
@@ -976,13 +1018,17 @@
                 {
                     continue;
                 }
+                
                 if (inputField.InputType == 3) //Checkbox
                 {
                     inputItem.onchange();
                 }
                 else
                 {
-                    inputItem.oninput();
+                    if (inputItem != null && inputItem.oninput != null)
+                    {
+                        inputItem.oninput();
+                    }
                 }
                 
             }

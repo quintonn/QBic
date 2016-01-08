@@ -10,5 +10,6 @@
         ListSelection = 5,
         Date = 6,
         MaskedInput = 7,
+        View = 8
     }
 }

@@ -8,6 +8,8 @@
         DoSomething = 3,
         CancelInputDialog = 4,
         ShowMessage = 5,
-        ExecuteAction = 6
+        ExecuteAction = 6,
+        InputDataView = 7,
+        UpdateInputView = 8,
     }
 }

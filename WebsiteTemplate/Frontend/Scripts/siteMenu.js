@@ -81,7 +81,7 @@
         main.makeWebCall(main.webApiURL + "processEvent/" + eventId, "POST", siteMenu.processUIActionResponse, data, args);
     },
 
-    executeUIAction: function (actionId, params)
+    executeUIAction: function (actionId, params, args)
     {
         var data =
             {
@@ -90,7 +90,7 @@
 
         data = JSON.stringify(data);
 
-        main.makeWebCall(main.webApiURL + "executeUIAction/" + actionId, "POST", siteMenu.processUIActionResponse, data, params);
+        main.makeWebCall(main.webApiURL + "executeUIAction/" + actionId, "POST", siteMenu.processUIActionResponse, data, args);
     },
 
     processUIActionResponse: function (responseItems, args) /// args is for data passed between calls
@@ -149,9 +149,55 @@
                 callback();
                 break;
             case 7: // InputDataView  -> View on input screen
-                break;
-                // todo add code here to add a table on input screen and populate it using views.populateViewItem(response.ViewData, viewData, settings);
+                
+                var viewId = "_" + args.InputName;
+                var mainViewDiv = document.getElementById(viewId);
+                var menuDiv = document.createElement('div');
+
+                var table = document.createElement('table');
+                table.className = 'inputViewTable';
+
+                var data = settings.ViewData;
+
+                views.populateViewMenu(menuDiv, settings, args);
+                views.populateViewWithData(table, data, settings, args);
+
+                mainViewDiv.appendChild(menuDiv);
+                mainViewDiv.appendChild(table);
+                
                 callback();
+                break;
+            case 8:   /// Update Input view
+                
+                var viewId = "_" + args.InputName;
+
+                var json = settings.JsonDataToUpdate;
+
+                var div = document.getElementById(viewId);
+                var table = div.getElementsByTagName('table')[0];
+
+                var data = JSON.parse(json);
+
+                var viewSettings = args.ViewForInput;
+                
+                var row;
+                var rowId = parseInt(data['rowId']);
+                console.log('rowId: ' + rowId);
+                if (rowId == -1)  // new item
+                {
+                    row = table.insertRow(table.rows.length);
+                    rowId = table.rows.length - 2;
+                }
+                else
+                {   
+                    table.deleteRow(rowId+1);
+                    row = table.insertRow(rowId+1);
+                }
+
+                views.populateRow(row, viewSettings, data, rowId, args);
+
+                callback();
+                break;
             default:
                 inputDialog.showMessage('unknown action type: ' + actionType, callback, null);
         }

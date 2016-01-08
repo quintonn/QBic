@@ -143,6 +143,7 @@
   <ItemGroup>
     <Content Include="CustomMenuItems\Getting Started.txt" />
     <Content Include="Frontend\css\busyIndicator.css" />
+    <Content Include="Frontend\css\inputView.css" />
     <Content Include="Frontend\css\spinner1.css" />
     <Content Include="Frontend\css\views.css" />
     <Content Include="Frontend\Scripts\masked_input_1.4.js" />
@@ -189,6 +190,8 @@
     <Compile Include="Backend\UserRoles\AddUserRole.cs" />
     <Compile Include="Backend\UserRoles\DeleteUserRole.cs" />
     <Compile Include="Backend\UserRoles\EditUserRole.cs" />
+    <Compile Include="Backend\UserRoles\TestAddForView.cs" />
+    <Compile Include="Backend\UserRoles\TestView.cs" />
     <Compile Include="Backend\UserRoles\ViewUserRoles.cs" />
     <Compile Include="Controllers\MenuController.cs" />
     <Compile Include="Controllers\MainController.cs" />
@@ -203,6 +206,7 @@
     <Compile Include="Mappings\UserMap.cs" />
     <Compile Include="Menus\BaseItems\SubMenuAction.cs" />
     <Compile Include="Menus\BaseItems\EventType.cs" />
+    <Compile Include="Menus\BaseItems\UpdateInputView.cs" />
     <Compile Include="Menus\BasicCrudItems\BasicCrudDelete.cs" />
     <Compile Include="Menus\BasicCrudItems\BasicCrudMenuItem.cs" />
     <Compile Include="Menus\BasicCrudItems\BasicCrudModify.cs" />
@@ -223,6 +227,7 @@
     <Compile Include="Menus\InputItems\MaskedInput.cs" />
     <Compile Include="Menus\InputItems\PasswordInput.cs" />
     <Compile Include="Menus\InputItems\StringInput.cs" />
+    <Compile Include="Menus\InputItems\ViewInput.cs" />
     <Compile Include="Menus\MenuItem.cs" />
     <Compile Include="Menus\ShowMessage.cs" />
     <Compile Include="Menus\UserConfirmation.cs" />
@@ -240,6 +245,7 @@
     <Compile Include="Menus\ViewItems\LinkColumn.cs" />
     <Compile Include="Menus\ViewItems\ShowHideColumnSetting.cs" />
     <Compile Include="Menus\ViewItems\ShowView.cs" />
+    <Compile Include="Menus\ViewItems\ViewForInput.cs" />
     <Compile Include="Menus\ViewItems\StringColumn.cs" />
     <Compile Include="Menus\ViewItems\ViewColumn.cs" />
     <Compile Include="Models\BaseClass.cs" />
@@ -283,7 +289,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>54138</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://localhost/WebsiteTemplate</IISUrl>
+          <IISUrl>https://q10pc/WebsiteTemplate</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

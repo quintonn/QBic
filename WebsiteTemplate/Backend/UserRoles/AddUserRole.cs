@@ -58,6 +58,8 @@ namespace WebsiteTemplate.Backend.UserRoles
                     },
                 });
 
+                list.Add(new ViewInput("view", "View", new TestView(), null, "zadsf", false));
+
                 var items = MainController.EventList.ToDictionary(e => e.Key, e => e.Value.Description)
                                                    .OrderBy(e => e.Value)
                                                    .ToDictionary(e => e.Key.ToString(), e => (object)e.Value);
