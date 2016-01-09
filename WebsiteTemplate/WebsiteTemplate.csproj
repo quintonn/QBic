@@ -191,6 +191,7 @@
     <Compile Include="Backend\UserRoles\DeleteUserRole.cs" />
     <Compile Include="Backend\UserRoles\EditUserRole.cs" />
     <Compile Include="Backend\UserRoles\TestAddForView.cs" />
+    <Compile Include="Backend\UserRoles\TestDeleteView.cs" />
     <Compile Include="Backend\UserRoles\TestView.cs" />
     <Compile Include="Backend\UserRoles\ViewUserRoles.cs" />
     <Compile Include="Controllers\MenuController.cs" />
@@ -204,6 +205,7 @@
     <Compile Include="Mappings\MenuMap.cs" />
     <Compile Include="Mappings\UserRoleAssociationMap.cs" />
     <Compile Include="Mappings\UserMap.cs" />
+    <Compile Include="Menus\BaseItems\DeleteInputViewItem.cs" />
     <Compile Include="Menus\BaseItems\SubMenuAction.cs" />
     <Compile Include="Menus\BaseItems\EventType.cs" />
     <Compile Include="Menus\BaseItems\UpdateInputView.cs" />

@@ -148,7 +148,9 @@
                 callback();
                 break;
             default:
+                alert('xx');
                 inputDialog.showMessage('unknown action type: ' + actionType, callback, null);
+                break;
         }
     },
 

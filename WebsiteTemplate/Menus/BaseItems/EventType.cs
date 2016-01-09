@@ -11,5 +11,6 @@
         ExecuteAction = 6,
         InputDataView = 7,
         UpdateInputView = 8,
+        DeleteInputViewItem = 9,
     }
 }

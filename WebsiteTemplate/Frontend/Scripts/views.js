@@ -103,17 +103,19 @@
                             {
                                 Id: data[col.KeyColumn],
                             };
-                        console.log('action type ' + settings.ActionType);
+                        
                         if (settings.ActionType == 7) /// View for input
                         {
                             formData['rowData'] = data;
-                            formData['rowId'] = rowId;//index
+                            var thisRowId = this.getAttribute('rowId');
+                            formData['rowId'] = thisRowId;
                         };
 
                         var id = col.EventNumber;
                         siteMenu.executeUIAction(id, formData, args);
                     }
                 })(column);
+                a.setAttribute('rowId', rowId);
                 cell.appendChild(a);
             }
             else
@@ -265,5 +267,47 @@
                 callback();
             }
         });
-    }
+    },
+
+    deleteRowFromTable: function(table, rowId, isEdit)
+    {
+        var realRowIdDeleted = -1;
+        var rowToDelete = -1;
+        for (var i = 0; i < table.rows.length; i++)
+        {
+            var deleteRow = false;
+            var row = table.rows[i];
+            
+            var aList = row.getElementsByTagName('a');
+            
+            for (var j = 0; j < aList.length; j++)
+            {
+                var aItem = aList[j];
+                if (aItem.hasAttribute('rowId'))
+                {
+                    var aRowId = parseInt(aItem.getAttribute('rowId'));
+                    
+                    if (rowId == aRowId)
+                    {
+                        if (deleteRow == false)
+                        {
+                            deleteRow = true;
+                            rowToDelete = i;
+                            realRowIdDeleted = aRowId;
+                        }
+                    }
+                    else if (aRowId > rowId && (isEdit == null || isEdit == false))
+                    {
+                        aRowId = aRowId -1;
+                        aItem.setAttribute('rowId', aRowId);
+                    }
+                }
+            }
+        }
+        if (rowToDelete > -1)
+        {
+            table.deleteRow(rowToDelete);
+        }
+        return realRowIdDeleted;
+    },
 };

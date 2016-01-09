@@ -25,5 +25,6 @@
         public const int CancelInputDialog = 1500;
 
         public const int UpdateInputView = 1600;
+        public const int DeleteInputViewItem = 1601;
     }
 }

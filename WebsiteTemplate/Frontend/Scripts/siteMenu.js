@@ -182,21 +182,31 @@
                 
                 var row;
                 var rowId = parseInt(data['rowId']);
-                console.log('rowId: ' + rowId);
+                
                 if (rowId == -1)  // new item
                 {
                     row = table.insertRow(table.rows.length);
                     rowId = table.rows.length - 2;
                 }
                 else
-                {   
-                    table.deleteRow(rowId+1);
+                {
+                    var tableRowId = views.deleteRowFromTable(table, rowId, true);
+                    rowId = Math.max(tableRowId, 0);
                     row = table.insertRow(rowId+1);
                 }
 
                 views.populateRow(row, viewSettings, data, rowId, args);
 
                 callback();
+                break;
+            case 9:  /// Delete input view item
+                var viewId = "_" + args.InputName;
+                var rowId = settings.RowId;
+                var div = document.getElementById(viewId);
+                
+                var table = div.getElementsByTagName('table')[0];
+                
+                views.deleteRowFromTable(table, rowId, false);
                 break;
             default:
                 inputDialog.showMessage('unknown action type: ' + actionType, callback, null);

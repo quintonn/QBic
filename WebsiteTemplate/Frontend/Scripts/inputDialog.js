@@ -107,6 +107,8 @@
         //        For eg, what I need to show a message box while on an input page
         menuBuilder.clearNode('dlgMessage');
         
+        settings = settings || "";
+        console.log('trying to show message??');
         var message = settings.ConfirmationMessage;
         
         if (message == null)
