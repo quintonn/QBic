@@ -2,6 +2,7 @@
 using NHibernate.Criterion;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -57,6 +58,8 @@ namespace WebsiteTemplate.Backend.UserRoles
                         new WebsiteTemplate.Menus.ViewItems.Condition("Name", WebsiteTemplate.Menus.ViewItems.Comparison.Equals, "q")
                     },
                 });
+
+                list.Add(new FileInput("File", "File", null, "x"));
 
                 list.Add(new ViewInput("view", "View", new TestView(), null, "zadsf", false));
 
@@ -114,6 +117,15 @@ namespace WebsiteTemplate.Backend.UserRoles
                 var name = json.GetValue("Name").ToString();
                 var description = json.GetValue("Description").ToString();
                 var events = (json.GetValue("Events") as JArray).ToList();
+
+                var fileData = json.GetValue("File").ToString();
+                var binData = Convert.FromBase64String(fileData);
+
+                using (var stream = new MemoryStream(binData))
+                using (var output = File.Create("D:\\abc.xlsx"))
+                {
+                    stream.CopyTo(output);
+                }
 
                 if (String.IsNullOrWhiteSpace(name))
                 {

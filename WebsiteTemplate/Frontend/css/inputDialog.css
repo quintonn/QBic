@@ -54,3 +54,8 @@
 .dlgInput button:disabled {
     background-color:gray;
 }
+
+.fileInputDiv {
+    display: -webkit-box;
+     /*display: inline-block;*/
+}

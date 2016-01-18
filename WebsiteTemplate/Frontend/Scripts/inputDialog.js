@@ -108,7 +108,7 @@
         menuBuilder.clearNode('dlgMessage');
         
         settings = settings || "";
-        console.log('trying to show message??');
+        console.log('trying to show message??->' + settings);
         var message = settings.ConfirmationMessage;
         
         if (message == null)
@@ -689,83 +689,83 @@
                             break;
                         case 6: /// Date
                             {
-                            var labelCell = document.createElement('td');
-                            labelCell.innerHTML = inputField.InputLabel;
-                            row.appendChild(labelCell);
+                                var labelCell = document.createElement('td');
+                                labelCell.innerHTML = inputField.InputLabel;
+                                row.appendChild(labelCell);
 
-                            var inp = document.createElement('input');
+                                var inp = document.createElement('input');
 
-                            var id = "_" + inputField.InputName;
-                            inp.type = "text";
+                                var id = "_" + inputField.InputName;
+                                inp.type = "text";
 
-                            inp.id = id;
+                                inp.id = id;
 
-                            if (inputField.DefaultValue != null && inputField.DefaultValue.length > 0)
-                            {
-                                inp.value = inputField.DefaultValue;
-                            }
-
-                            if (inputDialog.conditionListContains(conditionList, inputField.InputName))
-                            {
-                                inp.oninput = (inputDialog.inputOnChangeFunc)(inputField.InputName, conditionList);
-                                inp.onpropertychange = inp.oninput; // for IE8
-                            }
-
-                            if (Modernizr.inputtypes.date == true)
-                            {
-                                inp.type = "date";
-                            }
-                            else
-                            {
-                                MaskedInput({
-                                    elm: inp,
-                                    format: 'YYYY/MM/DD',  //   MM/DD/YYYY
-                                    separator: '\/',
-                                    typeon: 'MDY',
-                                    allowedfx: (function (inputName)
-                                    {
-                                        return function (ch, idx)
-                                        {
-                                            var str = document.getElementById('_' + inputName).value;
-                                            switch (idx)
-                                            {
-                                                case 6: // First month character
-                                                    return ('01'.indexOf(ch) > -1);
-                                                case 7:
-                                                    if (str[5] === '1')
-                                                    {
-                                                        // Ensure month does not exceed 12
-                                                        return ('012'.indexOf(ch) > -1);
-                                                    }
-                                                    break;
-                                                case 9:
-                                                    return ('0123'.indexOf(ch) > -1);
-                                                case 10:
-                                                    if (str[8] === '3')
-                                                    {
-                                                        // Ensure day does not exceed 31
-                                                        return ('01'.indexOf(ch) > -1);
-                                                    }
-                                                    break;
-                                                case 7:
-                                                    return ('12'.indexOf(ch) > -1);
-                                            }
-                                            return true;
-                                        }
-                                    })(inputField.InputName)
-                                });
-                                inp.onclick = function ()
+                                if (inputField.DefaultValue != null && inputField.DefaultValue.length > 0)
                                 {
-                                    this.select();
-                                };
+                                    inp.value = inputField.DefaultValue;
+                                }
+
+                                if (inputDialog.conditionListContains(conditionList, inputField.InputName))
+                                {
+                                    inp.oninput = (inputDialog.inputOnChangeFunc)(inputField.InputName, conditionList);
+                                    inp.onpropertychange = inp.oninput; // for IE8
+                                }
+
+                                if (Modernizr.inputtypes.date == true)
+                                {
+                                    inp.type = "date";
+                                }
+                                else
+                                {
+                                    MaskedInput({
+                                        elm: inp,
+                                        format: 'YYYY/MM/DD',  //   MM/DD/YYYY
+                                        separator: '\/',
+                                        typeon: 'MDY',
+                                        allowedfx: (function (inputName)
+                                        {
+                                            return function (ch, idx)
+                                            {
+                                                var str = document.getElementById('_' + inputName).value;
+                                                switch (idx)
+                                                {
+                                                    case 6: // First month character
+                                                        return ('01'.indexOf(ch) > -1);
+                                                    case 7:
+                                                        if (str[5] === '1')
+                                                        {
+                                                            // Ensure month does not exceed 12
+                                                            return ('012'.indexOf(ch) > -1);
+                                                        }
+                                                        break;
+                                                    case 9:
+                                                        return ('0123'.indexOf(ch) > -1);
+                                                    case 10:
+                                                        if (str[8] === '3')
+                                                        {
+                                                            // Ensure day does not exceed 31
+                                                            return ('01'.indexOf(ch) > -1);
+                                                        }
+                                                        break;
+                                                    case 7:
+                                                        return ('12'.indexOf(ch) > -1);
+                                                }
+                                                return true;
+                                            }
+                                        })(inputField.InputName)
+                                    });
+                                    inp.onclick = function ()
+                                    {
+                                        this.select();
+                                    };
+                                }
+
+                                var inputCell = document.createElement('td');
+                                inputCell.appendChild(inp);
+                                row.appendChild(inputCell);
+
+                                break;
                             }
-
-                            var inputCell = document.createElement('td');
-                            inputCell.appendChild(inp);
-                            row.appendChild(inputCell);
-
-                            break;
-                    }
                         case 7: /// Masked Input
                             {
                                 var labelCell = document.createElement('td');
@@ -850,48 +850,94 @@
                                 break;
                             }
                         case 8:  /// View Input
-                            var labelCell = document.createElement('td');
-                            labelCell.innerHTML = inputField.InputLabel;
-                            //row.appendChild(labelCell);
+                            {
+                                var labelCell = document.createElement('td');
+                                labelCell.innerHTML = inputField.InputLabel;
 
-                            var mainViewDiv = document.createElement('div');
-                            mainViewDiv.id = "_" + inputField.InputName;
-                            //var menuDiv = document.createElement('div');
+                                var mainViewDiv = document.createElement('div');
+                                mainViewDiv.id = "_" + inputField.InputName;
 
-                            //var table = document.createElement('table');
-                            //table.className = 'viewTable';
-                            //table.id = "_" + inputField.InputName;
+                                var viewSettings = inputField.ViewForInput;
 
-                            var viewSettings = inputField.ViewForInput;
-                            //var data = viewSettings.ViewData;
-                            
-                            //views.populateViewMenu(menuDiv, viewSettings);
-                            //views.populateViewWithData(table, data, viewSettings);
+                                var row = document.createElement('tr');
+                                var td = document.createElement('td');
+                                td.appendChild(mainViewDiv);
+                                td.colSpan = 3;
 
-                            //mainViewDiv.appendChild(menuDiv);
-                            //mainViewDiv.appendChild(table);
+                                var lbl = document.createElement('label');
+                                lbl.innerHTML = inputField.InputLabel;
+                                mainViewDiv.appendChild(lbl);
 
-                            var row = document.createElement('tr');
-                            var td = document.createElement('td');
-                            td.appendChild(mainViewDiv);
-                            td.colSpan = 3;
+                                row.appendChild(td);
+                                siteMenu.executeUIAction(viewSettings.Id, null, inputField);//mainViewDiv.id); //// to get the data
 
-                            var lbl = document.createElement('label');
-                            lbl.innerHTML = inputField.InputLabel;
-                            mainViewDiv.appendChild(lbl);
+                                break;
+                            }
+                        case 9: /// File Input
+                            {
+                                var labelCell = document.createElement('td');
+                                labelCell.innerHTML = inputField.InputLabel;
+                                row.appendChild(labelCell);
 
-                            //var td = document.createElement('td');
-                            //td.appendChild(mainViewDiv);
-                            row.appendChild(td);
+                                var inp = document.createElement('input');
 
-                            //node.appendChild(row);
-                            //row = newRow; // this is so the label is on top of the table
-                            //row.appendChild(mainViewDiv);
+                                inp.type = "file";
 
-                            //siteMenu.processEvent(viewSettings.Id); // to get the data
-                            siteMenu.executeUIAction(viewSettings.Id, null, inputField);//mainViewDiv.id); //// to get the data
+                                inp.id = "_" + inputField.InputName;
 
-                            break;
+                                if (inputField.DefaultValue != null && inputField.DefaultValue.length > 0)
+                                {
+                                    inp.value = inputField.DefaultValue;
+                                }
+
+                                if (inputDialog.conditionListContains(conditionList, inputField.InputName))
+                                {
+                                    inp.oninput = (inputDialog.inputOnChangeFunc)(inputField.InputName, conditionList);
+                                    inp.onpropertychange = inp.oninput; // for IE8
+                                }
+
+                                var inputCell = document.createElement('td');
+                                inp.style.display = "none";
+
+                                var button = document.createElement('button');
+                                button.innerHTML = "...";
+                                button.onclick = (function (inpName)
+                                {
+                                    return function ()
+                                    {
+                                        var inputItem = document.getElementById("_" + inpName);
+                                        inputItem.click();
+                                    }
+                                })(inputField.InputName);
+
+                                inp.onchange = (function (inputName)
+                                {
+                                    return function (e)
+                                    {
+                                        var fileName = this.files[0].name;
+                                        var lblName = '_txt' + inputName;
+                                        var lbl = document.getElementById(lblName);
+                                        lbl.innerHTML = fileName;
+                                    }
+                                })(inputField.InputName);
+
+                                var fileNameLabel = document.createElement('label');
+                                fileNameLabel.innerHTML = "&#60;select file&#62;";
+                                fileNameLabel.id = '_txt' + inputField.InputName;
+
+                                var div = document.createElement('div');
+                                div.className = 'fileInputDiv';
+
+                                div.appendChild(inp);
+                                div.appendChild(fileNameLabel);
+                                div.appendChild(button);
+
+                                inputCell.appendChild(div);
+
+                                row.appendChild(inputCell);
+
+                                break;
+                            }
                         default:
                             inputDialog.showMessage('Unknown input type: ' + inputField.InputType);
                             continue;
@@ -954,46 +1000,11 @@
                     return function ()
                     {
                         var data = {};
-
-                        for (var j = 0; j < uiAction.InputFields.length; j++)
+                        var finalCallback = function (data)
                         {
-                            var inputField = uiAction.InputFields[j];
-
-                            // Get the input value
-                            var inputValue = inputDialog.getInputValue(inputField.InputName, inputField.InputType, settings);
-
-                            var buttonItem = settings.InputButtons[btnIndex];
-
-                            if (buttonItem.ValidateInput == true)
-                            {
-                                if (inputValue.length == 0)
-                                {
-                                    if (inputField.Mandatory == true)
-                                    {
-                                        inputDialog.showMessage(inputField.InputName + ' is mandatory');
-                                        return;
-                                    }
-                                    var mandatory = false;
-                                    for (var k = 0; k < inputField.MandatoryConditions.length; k++)
-                                    {
-                                        var condition = inputField.MandatoryConditions[k];
-                                        var conditionalValue = inputDialog.getInputValue(condition.ColumnName, null, settings);
-
-                                        mandatory = siteMenu.conditionIsMet(condition, conditionalValue);
-
-                                        if (mandatory == true)
-                                        {
-                                            inputDialog.showMessage(inputField.InputName + ' is mandatory');
-                                            return;
-                                        }
-                                    }
-                                }
-                            }
-
-                            data[inputField.InputName] = inputValue;
-                        }
-
-                        siteMenu.processEvent(settings.Id, data, id, args);
+                            siteMenu.processEvent(settings.Id, data, id, args);
+                        };
+                        inputDialog.getInputValues(data, id, uiAction, btnIndex, 0, finalCallback);
                     }
                 })(buttonItem.ActionNumber, settings, i);
 
@@ -1022,9 +1033,17 @@
                     continue;
                 }
                 
-                if (inputField.InputType == 3) //Checkbox
+                if (inputField.InputType == 4) //Checkbox
                 {
-                    inputItem.onchange();
+                    if (inputItem.onchange != null)
+                    {
+                        inputItem.onchange();
+                    }
+                    else
+                    {
+                        console.log(inputItem);
+                        console.log(inputItem.onchange);
+                    }
                 }
                 else
                 {
@@ -1038,7 +1057,69 @@
         });
     },
 
-    getInputValue : function (inputName, inputType, settings)
+    getInputValues: function (data, id, uiAction, btnIndex, index, finalCallback)
+    {
+        if (index >= uiAction.InputFields.length)
+        {
+            if (finalCallback != null)
+            {
+                finalCallback(data);
+            }
+            return;
+        }
+
+        var j = index;
+        var inputField = uiAction.InputFields[j];
+        if (inputField == null)
+        {
+            alert('null');
+            alert(j);
+            alert(uiAction.InputFields.length);
+            return;
+        }
+
+        // Get the input value
+        inputDialog.getInputValue(inputField.InputName, inputField.InputType, uiAction, (function (indx)
+        {
+            return function (inputValue)
+            {
+                var inputField = uiAction.InputFields[indx];
+                var buttonItem = uiAction.InputButtons[btnIndex];
+
+                if (buttonItem.ValidateInput == true)
+                {
+                    if (inputValue.length == 0)
+                    {
+                        if (inputField.Mandatory == true)
+                        {
+                            inputDialog.showMessage(inputField.InputName + ' is mandatory');
+                            return;
+                        }
+                        var mandatory = false;
+                        for (var k = 0; k < inputField.MandatoryConditions.length; k++)
+                        {
+                            var condition = inputField.MandatoryConditions[k];
+                            inputDialog.getInputValue(condition.ColumnName, null, uiAction, function (conditionalValue)
+                            {
+                                mandatory = siteMenu.conditionIsMet(condition, conditionalValue);
+
+                                if (mandatory == true)
+                                {
+                                    inputDialog.showMessage(inputField.InputName + ' is mandatory');
+                                    return;
+                                }
+                            });
+                        }
+                    }
+                }
+
+                data[inputField.InputName] = inputValue;
+                inputDialog.getInputValues(data, id, uiAction, btnIndex, indx + 1, finalCallback);
+            }
+        })(j));
+    },
+
+    getInputValue : function (inputName, inputType, settings, callback)
     {
         var theInput;
         var inputValue;
@@ -1065,13 +1146,45 @@
                 inputValue.push(options[k].value);
             }
         }
+        else if (inputType == 9) // File Input
+        {
+            var files = document.getElementById("_" + inputName);
+            files = files.files;
+            if (files != null && files.length > 0)
+            {
+
+                var file = files[0]; // For now just get the first file
+                var reader = new FileReader();
+
+                // Closure to capture the file information.
+                var fileData = null;
+                reader.onload = (function (theFile)
+                {
+                    return function (e)
+                    {
+                        fileData = e.target.result;
+                        fileData = window.btoa(fileData);  // base 64 encode
+                        
+                        callback(fileData);
+                    };
+                })(file);
+
+                reader.readAsBinaryString(file);
+                //reader.readAsDataURL(file);
+                return;
+            }
+            else
+            {
+                callback(null);
+            }
+        }
         else
         {
             theInput = document.getElementById("_" + inputName);
 
             if (theInput == null)
             {
-                return null;
+                callback(null);
             }
             inputValue = theInput.value;
             if (theInput.type == "checkbox")
@@ -1080,6 +1193,6 @@
             }
         }
         inputValue = inputValue || "";
-        return inputValue;
+        callback(inputValue);
     },
 };
