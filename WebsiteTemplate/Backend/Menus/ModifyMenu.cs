@@ -38,7 +38,7 @@ namespace WebsiteTemplate.Backend.Menus
                 var list = new List<InputField>();
 
                 list.Add(new StringInput("Name", "Menu Name", Menu.Name));
-                list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", Menu.Event == null));
+                list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", Menu.Event == null && IsNew == false));
 
                 var events = MainController.EventList.Where(m => !String.IsNullOrWhiteSpace(m.Value.Description))
                                                      .Where(m => m.Value is ShowView) //TODO: Might have to add isEdit as property to GetInput type or change all edit/add to modify only

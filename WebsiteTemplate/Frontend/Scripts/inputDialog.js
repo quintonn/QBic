@@ -492,7 +492,8 @@
                             var combo = document.createElement('select');
                             if (inputDialog.conditionListContains(conditionList, inputField.InputName))
                             {
-                                combo.onchange = (inputDialog.inputOnChangeFunc)(inputField.InputName, conditionList);
+                                combo.oninput = (inputDialog.inputOnChangeFunc)(inputField.InputName, conditionList);
+                                combo.onpropertychange = combo.oninput;
                             }
                             combo.id = "_" + inputField.InputName;
                             var array = inputField.ListItems;
@@ -527,8 +528,8 @@
                             var inp = document.createElement('input');
                             if (inputDialog.conditionListContains(conditionList, inputField.InputName))
                             {
-                                inp.oninput = (inputDialog.inputOnChangeFunc)(inputField.InputName, conditionList);
-                                inp.onpropertychange = inp.oninput; // for IE8
+                                inp.onchange = (inputDialog.inputOnChangeFunc)(inputField.InputName, conditionList);
+                                inp.onpropertychange = inp.onchange; // for IE8
                             }
                             inp.type = "checkbox";
 
