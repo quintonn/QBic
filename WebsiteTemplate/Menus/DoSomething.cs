@@ -14,6 +14,6 @@ namespace WebsiteTemplate.Menus
             }
         }
 
-        public abstract Task<IList<Event>> ProcessAction(string data);
+        public abstract Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData);
     }
 }

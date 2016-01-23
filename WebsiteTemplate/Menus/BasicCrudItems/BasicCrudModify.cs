@@ -107,10 +107,8 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             return new InitializeResult(true);
         }
 
-        public override async Task<IList<Event>> ProcessAction(string data, int actionNumber)
+        public override async Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData, int actionNumber)
         {
-            var json = JObject.Parse(data);
-
             if (actionNumber == 1)
             {
                 return new List<Event>()
@@ -121,21 +119,13 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             }
             else if (actionNumber == 0)
             {
-                if (String.IsNullOrWhiteSpace(data))
-                {
-                    return new List<Event>()
-                    {
-                        new ShowMessage("There was an error creating the {0}. No input was received.", ItemName)
-                    };
-                };
-
-                var isNew = Convert.ToBoolean(json.GetValue("IsNew").ToString());
-                var itemId = json.GetValue("Id").ToString();
+                var isNew = (bool)inputData["IsNew"];
+                var itemId = inputData["Id"].ToString();
 
                 var inputs = new Dictionary<string, object>();
                 foreach (var property in InputProperties)
                 {
-                    var value = json.GetValue(property.Key) + "";
+                    var value = inputData[property.Key].ToString();
                     inputs.Add(property.Key, value);
 
                     if (value == null || String.IsNullOrWhiteSpace(value.ToString()))

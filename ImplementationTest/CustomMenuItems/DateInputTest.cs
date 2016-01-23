@@ -55,16 +55,20 @@ namespace ImplementationTest.CustomMenuItems
             return new InitializeResult(true);
         }
 
-        public override async Task<IList<Event>> ProcessAction(string data, int actionNumber)
-        {
-            var json = JObject.Parse(data);
-            var date = json.GetValue("Date");
+        //public override async Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData)
+        //{
+        //    var date = inputData["Date"];
 
-            return new List<Event>()
-                {
-                    new ShowMessage("Date = " + date),
-                    new CancelInputDialog(),
-                };
+        //    return new List<Event>()
+        //        {
+        //            new ShowMessage("Date = " + date),
+        //            new CancelInputDialog(),
+        //        };
+        //}
+
+        public override Task<IList<Event>> ProcessAction(string data, int actionNumber)
+        {
+            throw new NotImplementedException();
         }
     }
 }

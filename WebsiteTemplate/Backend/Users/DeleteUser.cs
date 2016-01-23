@@ -26,10 +26,9 @@ namespace WebsiteTemplate.Backend.Users
             }
         }
 
-        public override async Task<IList<Event>> ProcessAction(string data)
+        public override async Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData)
         {
-            var parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
-            var id = parameters["Id"];
+            var id = inputData["Id"].ToString();
 
             using (var session = Store.OpenSession())
             {

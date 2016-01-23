@@ -35,11 +35,9 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             return Id;
         }
 
-        public override async Task<IList<Event>> ProcessAction(string data)
+        public override async Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData)
         {
-            var json = JObject.Parse(data);
-
-            var id = json.GetValue("Id").ToString();
+            var id = inputData["Id"].ToString();
 
             using (var session = Store.OpenSession())
             {

@@ -1,4 +1,6 @@
-﻿namespace WebsiteTemplate.Menus.InputItems
+﻿using Newtonsoft.Json.Linq;
+
+namespace WebsiteTemplate.Menus.InputItems
 {
     public class PasswordInput : InputField
     {
@@ -13,6 +15,11 @@
         public PasswordInput(string name, string label, object defaultValue = null, string tabName = null, bool mandatory = false)
             : base(name, label, defaultValue, tabName, mandatory)
         {
+        }
+
+        public override object GetValue(JToken jsonToken)
+        {
+            return jsonToken?.ToString();
         }
     }
 }

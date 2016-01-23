@@ -26,6 +26,7 @@ using WebsiteTemplate.SiteSpecific.Utilities;
 using System.Transactions;
 using WebsiteTemplate.Menus.BasicCrudItems;
 using WebsiteTemplate.Backend.TestItem;
+using Newtonsoft.Json;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -376,12 +377,18 @@ namespace WebsiteTemplate.Controllers
                 eventItem.Request = Request;
                 IList<Event> result;
 
-                //using (var scope = new TransactionScope())
-                using (var session = Store.OpenSession()) // session seems to work better than transaction scope
+                var jsonData = JObject.Parse(formData);
+                //var processedFormData = formData;
+                var processedFormData = new Dictionary<string, object>();
+                foreach (var inputField in eventItem.InputFields)
                 {
-                    result = await eventItem.ProcessAction(formData, actionId);
+                    var value = inputField.GetValue(jsonData.GetValue(inputField.InputName));
+                    processedFormData.Add(inputField.InputName, value);
+                }
+                using (var session = Store.OpenSession())
+                {
+                    result = await eventItem.ProcessAction(processedFormData, actionId);
                     session.Flush();
-                    //scope.Complete();
                 }
                 return Json(result);
             }
@@ -447,7 +454,8 @@ namespace WebsiteTemplate.Controllers
                 }
                 else if (eventItem is DoSomething)
                 {
-                    var doResult = await (eventItem as DoSomething).ProcessAction(data);
+                    var processedFormData = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
+                    var doResult = await (eventItem as DoSomething).ProcessAction(processedFormData);
                     result.AddRange(doResult);
                 }
                 else if (eventItem is GetInput)

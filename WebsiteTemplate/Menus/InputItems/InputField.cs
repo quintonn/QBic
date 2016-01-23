@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using WebsiteTemplate.Menus.ViewItems;
 namespace WebsiteTemplate.Menus.InputItems
 {
@@ -31,5 +32,7 @@ namespace WebsiteTemplate.Menus.InputItems
             VisibilityConditions = new List<Condition>();
             MandatoryConditions = new List<Condition>();
         }
+
+        public abstract object GetValue(JToken jsonToken);
     }
 }

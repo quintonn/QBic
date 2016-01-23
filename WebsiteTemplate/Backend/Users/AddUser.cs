@@ -78,7 +78,7 @@ namespace WebsiteTemplate.Backend.Users
             return Task.FromResult<InitializeResult>(new InitializeResult(true));
         }
 
-        public override async System.Threading.Tasks.Task<IList<Event>> ProcessAction(string data, int actionNumber)
+        public override async System.Threading.Tasks.Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData, int actionNumber)
         {
             if (actionNumber == 1)
             {
@@ -90,23 +90,13 @@ namespace WebsiteTemplate.Backend.Users
             }
             else if (actionNumber == 0)
             {
-                if (String.IsNullOrWhiteSpace(data))
-                {
-                    return new List<Event>()
-                    {
-                        new ShowMessage("There was an error creating a new user. No input was received.")
-                    };
-                };
-
-                var json = JObject.Parse(data);
-
                 var user = new User(true)
                 {
-                    Email = json.GetValue("Email").ToString(),
-                    UserName = json.GetValue("UserName").ToString(),
+                    Email = inputData["Email"].ToString(),
+                    UserName = inputData["UserName"].ToString(),
                 };
-                var password = json.GetValue("Password").ToString();
-                var confirmPassword = json.GetValue("ConfirmPassword").ToString();
+                var password = inputData["Password"].ToString();
+                var confirmPassword = inputData["ConfirmPassword"].ToString();
 
                 if (password != confirmPassword)
                 {
@@ -116,7 +106,7 @@ namespace WebsiteTemplate.Backend.Users
                     };
                 }
 
-                var userRoles = json.GetValue("UserRoles") as JArray;
+                var userRoles = inputData["UserRoles"] as JArray;
 
                 var message = "";
                 var success = false;
@@ -154,12 +144,11 @@ namespace WebsiteTemplate.Backend.Users
                     sendEmail.Store = Store;
                     sendEmail.Request = Request;
 
-                    var data2 = new
+                    var formData = new Dictionary<string, object>()
                     {
-                        Id = user.Id
+                        {  "Id", user.Id }
                     };
-                    var jsonString = JsonConvert.SerializeObject(data2);
-                    var emailResult = await sendEmail.ProcessAction(jsonString);
+                    var emailResult = await sendEmail.ProcessAction(formData);
                     success = true;
                 }
                 catch (FormatException e)

@@ -42,13 +42,15 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
-        public override async Task<IList<Event>> ProcessAction(string data)
+        public override async Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData)
         {
-            var json = JObject.Parse(data);
-            
-            var id = json.GetValue("Id").ToString();
+            var id = inputData["Id"].ToString();
 
-            var confirmationString = json.GetValue("Confirmation") + "";
+            var confirmationString = String.Empty;
+            if (inputData.ContainsKey("Confirmation"))
+            {
+                confirmationString = inputData["Confirmation"].ToString();
+            }
             var confirmed = !String.IsNullOrWhiteSpace(confirmationString);
 
             var parentId = String.Empty;
@@ -64,7 +66,9 @@ namespace WebsiteTemplate.Backend.Menus
                                             .List<Menu>();
                 if (childMenuItems.Count > 0 && !confirmed)
                 {
-                    json.Add("Confirmation", true);
+                    //json.Add("Confirmation", true);
+                    var tmpData = new Dictionary<string, object>(inputData);
+                    tmpData.Add("Confirmation", true);
 
                     return new List<Event>()
                     {
@@ -73,7 +77,7 @@ namespace WebsiteTemplate.Backend.Menus
                             OnConfirmationUIAction = EventNumber.DeleteMenu,
                             CancelButtonText = "Cancel",
                             ConfirmationButtonText = "Ok",
-                            Data = json
+                            Data = tmpData
                         }
                     };
                 }

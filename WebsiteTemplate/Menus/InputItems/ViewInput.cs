@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -24,6 +25,11 @@ namespace WebsiteTemplate.Menus.InputItems
             : base(name, label, defaultValue, tabName, mandatory)
         {
             ViewForInput = viewForInput;
+        }
+
+        public override object GetValue(JToken jsonToken)
+        {
+            return jsonToken;
         }
     }
 }

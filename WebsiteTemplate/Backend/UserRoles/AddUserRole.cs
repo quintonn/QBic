@@ -92,7 +92,7 @@ namespace WebsiteTemplate.Backend.UserRoles
             return new InitializeResult(true);
         }
 
-        public override async Task<IList<Event>> ProcessAction(string data, int actionNumber)
+        public override async Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData, int actionNumber)
         {
             if (actionNumber == 1)
             {
@@ -104,22 +104,12 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
             else if (actionNumber == 0)
             {
-                if (String.IsNullOrWhiteSpace(data))
-                {
-                    return new List<Event>()
-                    {
-                        new ShowMessage("There was an error creating the user role. No input was received.")
-                    };
-                };
+                var name = inputData["Name"].ToString();
+                var description = inputData["Description"].ToString();
+                var events = (inputData["Events"] as JArray).ToList();
 
-                var json = JObject.Parse(data);
-
-                var name = json.GetValue("Name").ToString();
-                var description = json.GetValue("Description").ToString();
-                var events = (json.GetValue("Events") as JArray).ToList();
-
-                var fileData = json.GetValue("File").ToString();
-                var binData = Convert.FromBase64String(fileData);
+                var binData = (byte[])inputData["File"];
+                //var binData = Convert.FromBase64String(fileData);
 
                 using (var stream = new MemoryStream(binData))
                 using (var output = File.Create("D:\\abc.xlsx"))

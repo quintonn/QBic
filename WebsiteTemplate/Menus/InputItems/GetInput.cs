@@ -46,6 +46,6 @@ namespace WebsiteTemplate.Menus.InputItems
         /// <param name="data"></param>
         /// <param name="actionNumber">This is the even number of the button pressed</param>
         /// <returns></returns>
-        public abstract Task<IList<Event>> ProcessAction(string data, int actionNumber);
+        public abstract Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData, int actionNumber);
     }
 }

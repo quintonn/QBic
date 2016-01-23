@@ -29,6 +29,11 @@ namespace WebsiteTemplate.Menus.InputItems
         {
             ListSource = new Dictionary<string, object>();
         }
+
+        public override object GetValue(JToken jsonToken)
+        {
+            return jsonToken;
+        }
     }
 
     public class DictionaryJsonConverter : JsonConverter

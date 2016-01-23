@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 
 namespace WebsiteTemplate.Menus.InputItems
@@ -21,5 +22,10 @@ namespace WebsiteTemplate.Menus.InputItems
 
         [JsonProperty(Required = Required.Always), JsonConverter(typeof(DictionaryJsonConverter))]
         public Dictionary<string, object> ListItems { get; set; }
+
+        public override object GetValue(JToken jsonToken)
+        {
+            return jsonToken;
+        }
     }
 }

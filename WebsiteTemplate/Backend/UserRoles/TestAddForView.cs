@@ -60,7 +60,7 @@ namespace WebsiteTemplate.Backend.UserRoles
             return new InitializeResult(true);
         }
 
-        public override async Task<IList<Event>> ProcessAction(string data, int actionNumber)
+        public override async Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData, int actionNumber)
         {
             if (actionNumber == 1)
             {
@@ -71,9 +71,10 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
             else if (actionNumber == 0)
             {
+                var jsonData = JObject.FromObject(inputData).ToString();
                 return new List<Event>()
                 {
-                    new UpdateInputView(data),
+                    new UpdateInputView(jsonData),
                     new CancelInputDialog()
                 };
             }

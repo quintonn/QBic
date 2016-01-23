@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -18,6 +19,11 @@ namespace WebsiteTemplate.Menus.InputItems
         public DateInput(string name, string label, object defaultValue = null, string tabName = null, bool mandatory = false)
             : base(name, label, defaultValue, tabName, mandatory)
         {
+        }
+
+        public override object GetValue(JToken jsonToken)
+        {
+            return jsonToken?.ToString();
         }
     }
 }

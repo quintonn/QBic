@@ -90,10 +90,9 @@ namespace WebsiteTemplate.Backend.Menus
             return new InitializeResult(true);
         }
 
-        public override async Task<IList<Event>> ProcessAction(string data, int actionNumber)
+        public override async Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData, int actionNumber)
         {
-            var json = JObject.Parse(data);
-            ParentMenuId = json.GetValue("ParentMenuId")?.ToString();
+            ParentMenuId = inputData["ParentMenuId"].ToString();
 
             if (actionNumber == 1)
             {
@@ -105,23 +104,12 @@ namespace WebsiteTemplate.Backend.Menus
             }
             else if (actionNumber == 0)
             {
-                if (String.IsNullOrWhiteSpace(data))
-                {
-                    return new List<Event>()
-                    {
-                        new ShowMessage("There was an error creating the menu item. No input was received.")
-                    };
-                };
-
-                var isNew = Convert.ToBoolean(json.GetValue("IsNew").ToString());
-                var name = json.GetValue("Name").ToString();
-                var hasSubMenus = Convert.ToBoolean(json.GetValue("HasSubmenus"));
-                var eventValue = json.GetValue("Event").ToString();
-                var menuId = json.GetValue("Id").ToString();
+                var isNew = Convert.ToBoolean(inputData["IsNew"]);
+                var name = inputData["Name"].ToString();
+                var hasSubMenus = (bool)inputData["HasSubmenus"];
+                var eventValue = inputData["Event"].ToString();
+                var menuId = inputData["Id"].ToString();
                 
-
-                //var userRoles = (json.GetValue("UserRoles") as JArray).Select(u => (UserRole)Convert.ToInt32(u)).ToList();
-
                 if (String.IsNullOrWhiteSpace(name))
                 {
                     return new List<Event>()

@@ -24,11 +24,9 @@ namespace WebsiteTemplate.Backend.UserRoles
             return 778;
         }
 
-        public override async Task<IList<Event>> ProcessAction(string data)
+        public override async Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData)
         {
-            var json = JObject.Parse(data);
-
-            int rowId = Convert.ToInt32(json.GetValue("rowId"));
+            int rowId = Convert.ToInt32(inputData["rowId"].ToString());
             return new List<Event>()
             {
                 //new ExecuteAction(EventNumber.DeleteInputViewItem)

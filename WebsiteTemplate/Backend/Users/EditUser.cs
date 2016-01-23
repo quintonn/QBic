@@ -30,18 +30,16 @@ namespace WebsiteTemplate.Backend.Users
             return Task.FromResult<InitializeResult>(new InitializeResult(true));
         }
 
-        public override async System.Threading.Tasks.Task<IList<Event>> ProcessAction(string data, int actionNumber)
+        public override async System.Threading.Tasks.Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData, int actionNumber)
         {
             if (actionNumber == 0)
             {
-                var json = JObject.Parse(data);
-
-                var userRoles = json.GetValue("UserRoles") as JArray;
+                var userRoles = inputData["UserRoles"] as JArray;
 
                 using (var session = Store.OpenSession())
                 {
-                    var id = json.GetValue("Id").ToString();
-                    var userName = json.GetValue("UserName").ToString();
+                    var id = inputData["Id"].ToString();
+                    var userName = inputData["UserName"].ToString();
 
                     var existingUser = session.CreateCriteria<User>()
                                               .Add(Restrictions.Eq("UserName", userName))
@@ -56,8 +54,8 @@ namespace WebsiteTemplate.Backend.Users
                     }
 
                     var dbUser = session.Get<User>(id);
-                    dbUser.UserName = json.GetValue("UserName").ToString();
-                    dbUser.Email = json.GetValue("Email").ToString();
+                    dbUser.UserName = inputData["UserName"].ToString();
+                    dbUser.Email = inputData["Email"].ToString();
                     session.Update(dbUser);
 
                     var existingUserRoles = session.CreateCriteria<UserRoleAssociation>()

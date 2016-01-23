@@ -1,4 +1,7 @@
-﻿namespace WebsiteTemplate.Menus.InputItems
+﻿using System;
+using Newtonsoft.Json.Linq;
+
+namespace WebsiteTemplate.Menus.InputItems
 {
     public class HiddenInput : InputField
     {
@@ -14,6 +17,11 @@
             {
                 return InputItems.InputType.Hidden;
             }
+        }
+
+        public override object GetValue(JToken jsonToken)
+        {
+            return jsonToken?.ToString();
         }
     }
 }

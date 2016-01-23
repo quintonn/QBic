@@ -96,7 +96,7 @@ namespace WebsiteTemplate.Backend.UserRoles
             return Task.FromResult<InitializeResult>(new InitializeResult(true));
         }
 
-        public override async Task<IList<Event>> ProcessAction(string data, int actionNumber)
+        public override async Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData, int actionNumber)
         {
             if (actionNumber == 1)
             {
@@ -108,21 +108,11 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
             else if (actionNumber == 0)
             {
-                if (String.IsNullOrWhiteSpace(data))
-                {
-                    return new List<Event>()
-                    {
-                        new ShowMessage("There was an error modifying the user role. No input was received.")
-                    };
-                };
+                var id = inputData["Id"].ToString();
+                var name = inputData["Name"].ToString();
+                var description = inputData["Description"].ToString();
 
-                var json = JObject.Parse(data);
-
-                var id = json.GetValue("Id").ToString();
-                var name = json.GetValue("Name").ToString();
-                var description = json.GetValue("Description").ToString();
-
-                var events = (json.GetValue("Events") as JArray).ToList();                
+                var events = (inputData["Events"] as JArray).ToList();                
 
                 if (String.IsNullOrWhiteSpace(name))
                 {
