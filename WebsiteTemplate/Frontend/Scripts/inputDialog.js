@@ -101,7 +101,7 @@
         //var input = document.getElementById(inputDialog.inputCount)
     },
 
-    showMessage: function (settings, callback, args)
+    showMessage: function (settings, callback, params, args)
     {
         /// TODO: Need to store the current state of the input dialog 
         //        For eg, what I need to show a message box while on an input page
@@ -146,7 +146,7 @@
                 {
                     if (settings.OnConfirmationUIAction > 0)
                     {
-                        siteMenu.executeUIAction(settings.OnConfirmationUIAction, args);
+                        siteMenu.executeUIAction(settings.OnConfirmationUIAction, params, args);
                     }
                     if (callback != null)
                     {
@@ -167,7 +167,7 @@
                 {
                     if (settings.OnCancelUIAction > 0)
                     {
-                        siteMenu.executeUIAction(settings.OnCancelUIAction, args);
+                        siteMenu.executeUIAction(settings.OnCancelUIAction, params, args);
                     }
                     if (callback != null && buttonAdded == false)
                     {
@@ -1039,11 +1039,6 @@
                     {
                         inputItem.onchange();
                     }
-                    else
-                    {
-                        console.log(inputItem);
-                        console.log(inputItem.onchange);
-                    }
                 }
                 else
                 {
@@ -1123,6 +1118,7 @@
     {
         var theInput;
         var inputValue;
+        
         if (inputType == null)
         {
             for (var k = 0; k < settings.InputFields.length; k++)
@@ -1145,6 +1141,41 @@
             {
                 inputValue.push(options[k].value);
             }
+        }
+        else if (inputType == 8)  // Input view
+        {
+            var inputDiv = document.getElementById("_" + inputName);
+            var inputTable = inputDiv.getElementsByTagName("table")[0];
+
+            var columnNames = [];
+
+            var headerRow = inputTable.rows[0];
+            var cols = headerRow.getElementsByTagName('th');
+            for (var i = 0; i < cols.length; i++)
+            {
+                var colName = cols[i].getAttribute('columnname');
+                if (colName != null && colName.length > 0)
+                {
+                    columnNames.push({ id: i, name: colName });
+                }
+            }
+
+            var data = [];
+            for (var i = 1; i < inputTable.rows.length; i++)
+            {
+                var row = inputTable.rows[i];
+                var cols = row.getElementsByTagName('td');
+                var record = {};
+                for (var j = 0; j < columnNames.length; j++)
+                {
+                    var col = cols[columnNames[j].id];
+                    record[columnNames[j].name] = col.innerHTML;
+                }
+
+                data.push(record);
+            }
+            
+            inputValue = JSON.stringify(data);
         }
         else if (inputType == 9) // File Input
         {

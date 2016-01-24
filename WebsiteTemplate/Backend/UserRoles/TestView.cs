@@ -24,7 +24,13 @@ namespace WebsiteTemplate.Backend.UserRoles
             columnConfig.AddStringColumn("Name", "name");
             columnConfig.AddStringColumn("Age", "age");
             columnConfig.AddLinkColumn("", "", "name", "edit", 777);
-            columnConfig.AddLinkColumn("", "", "name", "x", 778);
+            //columnConfig.AddLinkColumn("", "", "name", "x", 778);
+            columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X", null,
+                new UserConfirmation("Delete?")
+                {
+                    OnConfirmationUIAction = 778
+                }
+            );
         }
 
         public override IEnumerable GetData(string data)

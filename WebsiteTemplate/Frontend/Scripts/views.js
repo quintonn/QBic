@@ -55,20 +55,29 @@
                 {
                     return function ()
                     {
+                        var theColumn = settings.Columns[ind];
+                        
                         var id = data["Id"];
 
-                        var formData = JSON.stringify(data);
-                        var theColumn = settings.Columns[ind];
+                        //var formData = data;//JSON.stringify(data);
+                        var formData =
+                            {
+                                Id: data[theColumn.KeyColumn],
+                            };
+
+                        formData['rowData'] = data;
+                        var thisRowId = this.getAttribute('rowId');
+                        formData['rowId'] = thisRowId;
 
                         if (theColumn.Event.ActionType == 5)
                         {
-                            inputDialog.showMessage(theColumn.Event, null, formData);
+                            inputDialog.showMessage(theColumn.Event, null, formData, args);
                         }
                         else if (theColumn.Event.ActionType == 6)
                         {
                             var eventId = theColumn.Event.EventNumber;
                             var formData = data["Id"];
-
+                            
                             siteMenu.executeUIAction(eventId, formData);
                         }
                         else
@@ -87,7 +96,7 @@
                     inputDialog.showMessage("Unhandled ButtonTextSource: " + column.ButtonTextSource);
                     button.innerHTML = "????";
                 }
-
+                button.setAttribute('rowId', rowId);
                 cell.appendChild(button);
             }
             else if (column.ColumnType == 3) /// Link
@@ -279,6 +288,7 @@
             var row = table.rows[i];
             
             var aList = row.getElementsByTagName('a');
+            var buttons = row.getElementsByTagName('button');
             
             for (var j = 0; j < aList.length; j++)
             {
@@ -286,7 +296,7 @@
                 if (aItem.hasAttribute('rowId'))
                 {
                     var aRowId = parseInt(aItem.getAttribute('rowId'));
-                    
+
                     if (rowId == aRowId)
                     {
                         if (deleteRow == false)
@@ -298,16 +308,49 @@
                     }
                     else if (aRowId > rowId && (isEdit == null || isEdit == false))
                     {
-                        aRowId = aRowId -1;
+                        aRowId = aRowId - 1;
                         aItem.setAttribute('rowId', aRowId);
                     }
                 }
             }
+            if (rowToDelete > -1)
+            {
+                table.deleteRow(rowToDelete);
+                return realRowIdDeleted;
+            }
+            else
+            {
+                for (var j = 0; j < buttons.length; j++)
+                {
+                    var aItem = buttons[j];
+                    if (aItem.hasAttribute('rowId'))
+                    {
+                        var aRowId = parseInt(aItem.getAttribute('rowId'));
+
+                        if (rowId == aRowId)
+                        {
+                            if (deleteRow == false)
+                            {
+                                deleteRow = true;
+                                rowToDelete = i;
+                                realRowIdDeleted = aRowId;
+                            }
+                        }
+                        else if (aRowId > rowId && (isEdit == null || isEdit == false))
+                        {
+                            aRowId = aRowId - 1;
+                            aItem.setAttribute('rowId', aRowId);
+                        }
+                    }
+                }
+                if (rowToDelete > -1)
+                {
+                    table.deleteRow(rowToDelete);
+                    return realRowIdDeleted;
+                }
+            }
         }
-        if (rowToDelete > -1)
-        {
-            table.deleteRow(rowToDelete);
-        }
+        
         return realRowIdDeleted;
     },
 };

@@ -43,32 +43,32 @@ namespace WebsiteTemplate.Backend.UserRoles
             {
                 var list = new List<InputField>();
 
-                list.Add(new StringInput("Name", "Name", tabName: "x", mandatory:true));
-                list.Add(new StringInput("Description", "Description", tabName: "x"));
+                list.Add(new StringInput("Name", "Name", mandatory:true));
+                list.Add(new StringInput("Description", "Description"));
 
-                list.Add(new StringInput("xxx", "xxx", "", "x", true));
-                list.Add(new StringInput("xxx2", "xxx2", "", "x", false)
-                {
-                    MandatoryConditions = new List<WebsiteTemplate.Menus.ViewItems.Condition>()
-                    {
-                        new WebsiteTemplate.Menus.ViewItems.Condition("Name", WebsiteTemplate.Menus.ViewItems.Comparison.Equals, "q")
-                    },
-                    VisibilityConditions = new List<WebsiteTemplate.Menus.ViewItems.Condition>()
-                    {
-                        new WebsiteTemplate.Menus.ViewItems.Condition("Name", WebsiteTemplate.Menus.ViewItems.Comparison.Equals, "q")
-                    },
-                });
+                //list.Add(new StringInput("xxx", "xxx", "", "", true));
+                //list.Add(new StringInput("xxx2", "xxx2", "", "x", false)
+                //{
+                //    MandatoryConditions = new List<WebsiteTemplate.Menus.ViewItems.Condition>()
+                //    {
+                //        new WebsiteTemplate.Menus.ViewItems.Condition("Name", WebsiteTemplate.Menus.ViewItems.Comparison.Equals, "q")
+                //    },
+                //    VisibilityConditions = new List<WebsiteTemplate.Menus.ViewItems.Condition>()
+                //    {
+                //        new WebsiteTemplate.Menus.ViewItems.Condition("Name", WebsiteTemplate.Menus.ViewItems.Comparison.Equals, "q")
+                //    },
+                //});
 
-                list.Add(new FileInput("File", "File", null, "x"));
+                //list.Add(new FileInput("File", "File", null, "x"));
 
-                list.Add(new ViewInput("view", "View", new TestView(), null, "zadsf", false));
+                //list.Add(new ViewInput("view", "View", new TestView(), null, "zadsf", false));
 
                 var items = MainController.EventList.ToDictionary(e => e.Key, e => e.Value.Description)
                                                    .OrderBy(e => e.Value)
                                                    .ToDictionary(e => e.Key.ToString(), e => (object)e.Value);
 
 
-                var listSelection = new ListSelectionInput("Events", "Allowed Events", tabName: "z")
+                var listSelection = new ListSelectionInput("Events", "Allowed Events")
                 {
                     AvailableItemsLabel = "List of Events:",
                     SelectedItemsLabel = "Chosen Events:",
@@ -76,7 +76,7 @@ namespace WebsiteTemplate.Backend.UserRoles
                 };
 
                 list.Add(listSelection);
-                list.Add(new StringInput("abc", "abc"));
+                //list.Add(new StringInput("abc", "abc"));
 
                 return list;
             }
@@ -108,14 +108,17 @@ namespace WebsiteTemplate.Backend.UserRoles
                 var description = inputData["Description"].ToString();
                 var events = (inputData["Events"] as JArray).ToList();
 
-                var binData = (byte[])inputData["File"];
+                //var viewData = inputData["view"] as List<JToken>;
+                //var x = viewData[0];
+
+                //var binData = (byte[])inputData["File"];
                 //var binData = Convert.FromBase64String(fileData);
 
-                using (var stream = new MemoryStream(binData))
-                using (var output = File.Create("D:\\abc.xlsx"))
-                {
-                    stream.CopyTo(output);
-                }
+                //using (var stream = new MemoryStream(binData))
+                //using (var output = File.Create("D:\\abc.xlsx"))
+                //{
+                //    stream.CopyTo(output);
+                //}
 
                 if (String.IsNullOrWhiteSpace(name))
                 {
