@@ -78,7 +78,8 @@ namespace WebsiteTemplate.Controllers
         {
             if (EventList.Count > 0)
             {
-                return;
+                //return;
+                EventList = new Dictionary<int, Event>();
             }
 
             

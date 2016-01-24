@@ -306,7 +306,7 @@
     <PostBuildEvent>rem "..\nuget publish.bat"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>..\..\BuildHelper\bin\Debug\BuildHelper.exe</PreBuildEvent>
+    <PreBuildEvent>rem ..\..\BuildHelper\bin\Debug\BuildHelper.exe</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

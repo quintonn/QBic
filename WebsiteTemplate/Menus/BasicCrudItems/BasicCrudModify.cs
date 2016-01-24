@@ -119,7 +119,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             }
             else if (actionNumber == 0)
             {
-                var isNew = (bool)inputData["IsNew"];
+                var isNew = Convert.ToBoolean(inputData["IsNew"]);
                 var itemId = inputData["Id"].ToString();
 
                 var inputs = new Dictionary<string, object>();

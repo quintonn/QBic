@@ -193,7 +193,7 @@
         {
             var headCell = document.createElement("th");
             headCell.innerHTML = settings.Columns[j].ColumnLabel;
-            headCell.setAttribute('columnName', settings.Columns[j].ColumnName;
+            headCell.setAttribute('columnName', settings.Columns[j].ColumnName);
             headerRow.appendChild(headCell);
         }
         table.appendChild(headerRow);

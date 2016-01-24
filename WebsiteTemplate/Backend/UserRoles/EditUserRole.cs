@@ -42,9 +42,9 @@ namespace WebsiteTemplate.Backend.UserRoles
             {
                 var list = new List<InputField>();
 
-                list.Add(new StringInput("Name", "Name", UserRole.Name));
-                list.Add(new StringInput("Description", "Description", UserRole.Description));
-                list.Add(new HiddenInput("Id", UserRole.Id));
+                list.Add(new StringInput("Name", "Name", UserRole?.Name));
+                list.Add(new StringInput("Description", "Description", UserRole?.Description));
+                list.Add(new HiddenInput("Id", UserRole?.Id));
 
                 var items = MainController.EventList.ToDictionary(e => e.Key, e => e.Value.Description)
                                                     .OrderBy(e => e.Value)
@@ -56,7 +56,7 @@ namespace WebsiteTemplate.Backend.UserRoles
                 {
                     var events = session.CreateCriteria<EventRoleAssociation>()
                                         .CreateAlias("UserRole", "role")
-                                        .Add(Restrictions.Eq("role.Id", UserRole.Id))
+                                        .Add(Restrictions.Eq("role.Id", UserRole?.Id))
                                         .List<EventRoleAssociation>()
                                         .Select(e => e.Event)
                                         .ToList();

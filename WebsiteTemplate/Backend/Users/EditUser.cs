@@ -118,9 +118,9 @@ namespace WebsiteTemplate.Backend.Users
             {
                 var results = new List<InputField>();
 
-                results.Add(new StringInput("UserName", "User Name", User.UserName));
-                results.Add(new StringInput("Email", "Email", User.Email));
-                results.Add(new HiddenInput("Id", User.Id));
+                results.Add(new StringInput("UserName", "User Name", User?.UserName));
+                results.Add(new StringInput("Email", "Email", User?.Email));
+                results.Add(new HiddenInput("Id", User?.Id));
 
                 using (var session = Store.OpenSession())
                 {
@@ -131,7 +131,7 @@ namespace WebsiteTemplate.Backend.Users
 
                     var existingItems = session.CreateCriteria<UserRoleAssociation>()
                                                .CreateAlias("User", "user")
-                                               .Add(Restrictions.Eq("user.Id", User.Id))
+                                               .Add(Restrictions.Eq("user.Id", User?.Id))
                                                .List<UserRoleAssociation>()
                                                .OrderBy(u => u.UserRole.Description)
                                                .Select(u => u.UserRole.Id)

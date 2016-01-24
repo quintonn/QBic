@@ -1088,7 +1088,7 @@
 
                 if (buttonItem.ValidateInput == true)
                 {
-                    if (inputValue.length == 0)
+                    if (inputValue == null || inputValue.length == 0)
                     {
                         if (inputField.Mandatory == true)
                         {
@@ -1150,7 +1150,7 @@
         {
             var files = document.getElementById("_" + inputName);
             files = files.files;
-            if (files != null && file.length != null && files.length > 0)
+            if (files != null && files.length != null && files.length > 0)
             {
                 var file = files[0]; // For now just get the first file
                 var reader = new FileReader();
