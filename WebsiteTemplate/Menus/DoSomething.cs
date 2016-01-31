@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Menus.BaseItems;
+using WebsiteTemplate.Menus.InputItems;
 
 namespace WebsiteTemplate.Menus
 {
-    public abstract class DoSomething : Event
+    public abstract class DoSomething : InputProcessingEvent
     {
         public override EventType ActionType
         {
@@ -14,6 +15,6 @@ namespace WebsiteTemplate.Menus
             }
         }
 
-        public abstract Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData);
+        public abstract Task<IList<Event>> ProcessAction();
     }
 }

@@ -107,7 +107,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             return new InitializeResult(true);
         }
 
-        public override async Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData, int actionNumber)
+        public override async Task<IList<Event>> ProcessAction(int actionNumber)
         {
             if (actionNumber == 1)
             {
@@ -119,13 +119,13 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             }
             else if (actionNumber == 0)
             {
-                var isNew = Convert.ToBoolean(inputData["IsNew"]);
-                var itemId = inputData["Id"].ToString();
+                var isNew = Convert.ToBoolean(GetValue<string>("IsNew"));
+                var itemId = GetValue<string>("Id");
 
                 var inputs = new Dictionary<string, object>();
                 foreach (var property in InputProperties)
                 {
-                    var value = inputData[property.Key].ToString();
+                    var value = GetValue<object>(property.Key);
                     inputs.Add(property.Key, value);
 
                     if (value == null || String.IsNullOrWhiteSpace(value.ToString()))
@@ -152,14 +152,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                     foreach (var value in inputs)
                     {
                         var prop = typeof(T).GetProperty(value.Key);
-                        if (prop.PropertyType == typeof(bool))
-                        {
-                            prop.SetValue(item, Convert.ToBoolean(value.Value));
-                        }
-                        else
-                        {
-                            prop.SetValue(item, value.Value);
-                        }
+                        prop.SetValue(item, value.Value);
                     }
 
                     session.Save(item);

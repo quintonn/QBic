@@ -55,7 +55,7 @@ namespace ImplementationTest.CustomMenuItems
             return new InitializeResult(true);
         }
 
-        //public override async Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData)
+        //public override async Task<IList<Event>> ProcessAction()
         //{
         //    var date = inputData["Date"];
 

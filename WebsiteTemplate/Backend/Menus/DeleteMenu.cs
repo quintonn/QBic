@@ -42,15 +42,13 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
-        public override async Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData)
+        public override async Task<IList<Event>> ProcessAction()
         {
-            var id = inputData["Id"].ToString();
+            var id = GetValue<string>("Id");
 
             var confirmationString = String.Empty;
-            if (inputData.ContainsKey("Confirmation"))
-            {
-                confirmationString = inputData["Confirmation"].ToString();
-            }
+            confirmationString = GetValue<string>("Confirmation");
+
             var confirmed = !String.IsNullOrWhiteSpace(confirmationString);
 
             var parentId = String.Empty;
@@ -66,8 +64,7 @@ namespace WebsiteTemplate.Backend.Menus
                                             .List<Menu>();
                 if (childMenuItems.Count > 0 && !confirmed)
                 {
-                    //json.Add("Confirmation", true);
-                    var tmpData = new Dictionary<string, object>(inputData);
+                    var tmpData = new Dictionary<string, object>(InputData);
                     tmpData.Add("Confirmation", true);
 
                     return new List<Event>()

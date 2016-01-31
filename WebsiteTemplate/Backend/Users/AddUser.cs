@@ -78,7 +78,7 @@ namespace WebsiteTemplate.Backend.Users
             return Task.FromResult<InitializeResult>(new InitializeResult(true));
         }
 
-        public override async System.Threading.Tasks.Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData, int actionNumber)
+        public override async System.Threading.Tasks.Task<IList<Event>> ProcessAction(int actionNumber)
         {
             if (actionNumber == 1)
             {
@@ -92,11 +92,11 @@ namespace WebsiteTemplate.Backend.Users
             {
                 var user = new User(true)
                 {
-                    Email = inputData["Email"].ToString(),
-                    UserName = inputData["UserName"].ToString(),
+                    Email = GetValue<string>("Email"),
+                    UserName = GetValue<string>("UserName")
                 };
-                var password = inputData["Password"].ToString();
-                var confirmPassword = inputData["ConfirmPassword"].ToString();
+                var password = GetValue<string>("Password");
+                var confirmPassword = GetValue<string>("ConfirmPassword");
 
                 if (password != confirmPassword)
                 {
@@ -106,7 +106,7 @@ namespace WebsiteTemplate.Backend.Users
                     };
                 }
 
-                var userRoles = inputData["UserRoles"] as JArray;
+                var userRoles = GetValue<List<string>>("UserRoles");
 
                 var message = "";
                 var success = false;
@@ -148,7 +148,8 @@ namespace WebsiteTemplate.Backend.Users
                     {
                         {  "Id", user.Id }
                     };
-                    var emailResult = await sendEmail.ProcessAction(formData);
+                    sendEmail.InputData = formData;
+                    var emailResult = await sendEmail.ProcessAction();
                     success = true;
                 }
                 catch (FormatException e)

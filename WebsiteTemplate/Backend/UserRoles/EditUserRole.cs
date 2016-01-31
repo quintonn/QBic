@@ -96,7 +96,7 @@ namespace WebsiteTemplate.Backend.UserRoles
             return Task.FromResult<InitializeResult>(new InitializeResult(true));
         }
 
-        public override async Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData, int actionNumber)
+        public override async Task<IList<Event>> ProcessAction(int actionNumber)
         {
             if (actionNumber == 1)
             {
@@ -108,11 +108,11 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
             else if (actionNumber == 0)
             {
-                var id = inputData["Id"].ToString();
-                var name = inputData["Name"].ToString();
-                var description = inputData["Description"].ToString();
+                var id = GetValue<string>("Id");
+                var name = GetValue<string>("Name");
+                var description = GetValue<string>("Description");
 
-                var events = (inputData["Events"] as JArray).ToList();                
+                var events = GetValue<List<string>>("Events");
 
                 if (String.IsNullOrWhiteSpace(name))
                 {

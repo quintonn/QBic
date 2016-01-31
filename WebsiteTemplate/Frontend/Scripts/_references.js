@@ -8,4 +8,3 @@
 /// <reference path="navigation.js" />
 /// <reference path="siteMenu.js" />
 /// <reference path="views.js" />
-/// <reference path="../webfiles/scripts.min.js" />

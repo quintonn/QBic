@@ -32,12 +32,12 @@ namespace WebsiteTemplate.Backend.Users
             }
         }
 
-        public override async Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData)
+        public override async Task<IList<Event>> ProcessAction()
         {
             var results = new List<Event>();
 
             var emailSentResultMessage = String.Empty;
-            var id = inputData["Id"].ToString();
+            var id = GetValue("Id");
 
             using (var session = Store.OpenSession())
             {

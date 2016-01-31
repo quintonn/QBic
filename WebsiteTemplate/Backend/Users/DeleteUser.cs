@@ -26,9 +26,9 @@ namespace WebsiteTemplate.Backend.Users
             }
         }
 
-        public override async Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData)
+        public override async Task<IList<Event>> ProcessAction()
         {
-            var id = inputData["Id"].ToString();
+            var id = GetValue<string>("Id");
 
             using (var session = Store.OpenSession())
             {

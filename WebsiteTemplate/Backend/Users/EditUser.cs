@@ -30,16 +30,16 @@ namespace WebsiteTemplate.Backend.Users
             return Task.FromResult<InitializeResult>(new InitializeResult(true));
         }
 
-        public override async System.Threading.Tasks.Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData, int actionNumber)
+        public override async System.Threading.Tasks.Task<IList<Event>> ProcessAction(int actionNumber)
         {
             if (actionNumber == 0)
             {
-                var userRoles = inputData["UserRoles"] as JArray;
+                var userRoles = GetValue<List<string>>("UserRoles");
 
                 using (var session = Store.OpenSession())
                 {
-                    var id = inputData["Id"].ToString();
-                    var userName = inputData["UserName"].ToString();
+                    var id = GetValue<string>("Id");
+                    var userName = GetValue<string>("UserName");
 
                     var existingUser = session.CreateCriteria<User>()
                                               .Add(Restrictions.Eq("UserName", userName))
@@ -54,8 +54,8 @@ namespace WebsiteTemplate.Backend.Users
                     }
 
                     var dbUser = session.Get<User>(id);
-                    dbUser.UserName = inputData["UserName"].ToString();
-                    dbUser.Email = inputData["Email"].ToString();
+                    dbUser.UserName = userName;
+                    dbUser.Email = GetValue<string>("Email");
                     session.Update(dbUser);
 
                     var existingUserRoles = session.CreateCriteria<UserRoleAssociation>()

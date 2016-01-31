@@ -148,11 +148,9 @@
     <Content Include="Frontend\css\views.css" />
     <Content Include="Frontend\Scripts\masked_input_1.4.js" />
     <Content Include="Frontend\Scripts\modernizr.js" />
-    <Content Include="Frontend\webFiles\scripts.min.js" />
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Frontend\webFiles\styles.min.css" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -225,6 +223,7 @@
     <Compile Include="Menus\InputItems\InitializeResult.cs" />
     <Compile Include="Menus\InputItems\InputButton.cs" />
     <Compile Include="Menus\InputItems\InputField.cs" />
+    <Compile Include="Menus\InputItems\InputProcessingEvent.cs" />
     <Compile Include="Menus\InputItems\InputType.cs" />
     <Compile Include="Menus\InputItems\ListSelectionInput.cs" />
     <Compile Include="Menus\InputItems\MaskedInput.cs" />
@@ -276,7 +275,9 @@
     <Compile Include="SiteSpecific\Utilities\WebsiteTemplateConstants.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Frontend\webFiles\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -303,7 +304,7 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>rem "..\nuget publish.bat"</PostBuildEvent>
+    <PostBuildEvent>"..\nuget publish.bat"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>rem ..\..\BuildHelper\bin\Debug\BuildHelper.exe</PreBuildEvent>

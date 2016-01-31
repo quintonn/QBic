@@ -130,7 +130,11 @@
             else
             {
                 /// Replace new line characters with HTML breaks
-                value = value || "";
+                if (value == null)
+                {
+                    value = "";
+                }
+                
                 value = value.toString();
                 value = value.replace(/\r/g, ',');
                 value = value.replace(/\n/g, ',');

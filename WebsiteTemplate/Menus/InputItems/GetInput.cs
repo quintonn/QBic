@@ -7,7 +7,7 @@ namespace WebsiteTemplate.Menus.InputItems
     /// <summary>
     /// The class can be inherited for UI actions that require input from the user.
     /// </summary>
-    public abstract class GetInput : Event
+    public abstract class GetInput : InputProcessingEvent
     {
         public override EventType ActionType
         {
@@ -46,6 +46,6 @@ namespace WebsiteTemplate.Menus.InputItems
         /// <param name="data"></param>
         /// <param name="actionNumber">This is the even number of the button pressed</param>
         /// <returns></returns>
-        public abstract Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData, int actionNumber);
+        public abstract Task<IList<Event>> ProcessAction(int actionNumber);
     }
 }

@@ -92,7 +92,7 @@ namespace WebsiteTemplate.Backend.UserRoles
             return new InitializeResult(true);
         }
 
-        public override async Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData, int actionNumber)
+        public override async Task<IList<Event>> ProcessAction(int actionNumber)
         {
             if (actionNumber == 1)
             {
@@ -104,21 +104,9 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
             else if (actionNumber == 0)
             {
-                var name = inputData["Name"].ToString();
-                var description = inputData["Description"].ToString();
-                var events = (inputData["Events"] as JArray).ToList();
-
-                //var viewData = inputData["view"] as List<JToken>;
-                //var x = viewData[0];
-
-                //var binData = (byte[])inputData["File"];
-                //var binData = Convert.FromBase64String(fileData);
-
-                //using (var stream = new MemoryStream(binData))
-                //using (var output = File.Create("D:\\abc.xlsx"))
-                //{
-                //    stream.CopyTo(output);
-                //}
+                var name = GetValue("Name");
+                var description = GetValue("Description");
+                var events = GetValue<List<string>>("Events");
 
                 if (String.IsNullOrWhiteSpace(name))
                 {

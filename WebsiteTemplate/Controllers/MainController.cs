@@ -388,7 +388,8 @@ namespace WebsiteTemplate.Controllers
                 }
                 using (var session = Store.OpenSession())
                 {
-                    result = await eventItem.ProcessAction(processedFormData, actionId);
+                    eventItem.InputData = processedFormData;
+                    result = await eventItem.ProcessAction(actionId);
                     session.Flush();
                 }
                 return Json(result);
@@ -456,7 +457,14 @@ namespace WebsiteTemplate.Controllers
                 else if (eventItem is DoSomething)
                 {
                     var processedFormData = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
-                    var doResult = await (eventItem as DoSomething).ProcessAction(processedFormData);
+                    if (processedFormData.ContainsKey("rowData"))
+                    {
+                        var rowData = processedFormData["rowData"].ToString();
+                        processedFormData = JsonConvert.DeserializeObject<Dictionary<string, object>>(rowData);
+                    }
+
+                    (eventItem as DoSomething).InputData = processedFormData;
+                    var doResult = await (eventItem as DoSomething).ProcessAction();
                     result.AddRange(doResult);
                 }
                 else if (eventItem is GetInput)

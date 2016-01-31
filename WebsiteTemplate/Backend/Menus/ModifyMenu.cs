@@ -90,9 +90,9 @@ namespace WebsiteTemplate.Backend.Menus
             return new InitializeResult(true);
         }
 
-        public override async Task<IList<Event>> ProcessAction(Dictionary<string, object> inputData, int actionNumber)
+        public override async Task<IList<Event>> ProcessAction(int actionNumber)
         {
-            ParentMenuId = inputData["ParentMenuId"].ToString();
+            ParentMenuId = GetValue<string>("ParentMenuId");
 
             if (actionNumber == 1)
             {
@@ -104,11 +104,11 @@ namespace WebsiteTemplate.Backend.Menus
             }
             else if (actionNumber == 0)
             {
-                var isNew = Convert.ToBoolean(inputData["IsNew"]);
-                var name = inputData["Name"].ToString();
-                var hasSubMenus = (bool)inputData["HasSubmenus"];
-                var eventValue = inputData["Event"].ToString();
-                var menuId = inputData["Id"].ToString();
+                var isNew = Convert.ToBoolean(GetValue<string>("IsNew"));
+                var name = GetValue("Name");
+                var hasSubMenus = GetValue<bool>("HasSubmenus");
+                var eventValue = GetValue<string>("Event");
+                var menuId = GetValue("Id");
                 
                 if (String.IsNullOrWhiteSpace(name))
                 {
@@ -130,7 +130,6 @@ namespace WebsiteTemplate.Backend.Menus
                     }
 
                     eventNumber = Convert.ToInt32(eventValue);
-                    //eventNumber = MainController.EventList.Where(e => e.Value.Description == eventName).Select(e => Convert.ToInt32(e.Value.GetEventId())).First();
                 }
 
                 Menu parentMenu = null;
