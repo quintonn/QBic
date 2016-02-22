@@ -104,7 +104,7 @@ namespace WebsiteTemplate.Backend.Menus
             }
             else if (actionNumber == 0)
             {
-                var isNew = Convert.ToBoolean(GetValue<string>("IsNew"));
+                var isNew = GetValue<bool>("IsNew");
                 var name = GetValue("Name");
                 var hasSubMenus = GetValue<bool>("HasSubmenus");
                 var eventValue = GetValue<string>("Event");

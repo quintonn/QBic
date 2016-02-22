@@ -18,13 +18,19 @@ namespace WebsiteTemplate.Menus.InputItems
         /// <returns></returns>
         public T GetValue<T>(string propertyName)
         {
-            var value = default(T);
+            object value = default(T);
 
             if (InputData.ContainsKey(propertyName))
             {
-                value = (T)InputData[propertyName];
+                if (typeof(T) == typeof(bool))
+                {
+                    value = Convert.ToBoolean(InputData[propertyName]);
+                }
+                else {
+                    value = (T)InputData[propertyName];
+                }
             }
-            return value;
+            return (T)value;
         }
 
         public string GetValue(string propertyName)
