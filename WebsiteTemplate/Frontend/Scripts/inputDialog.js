@@ -261,7 +261,26 @@
         }
     },
 
-    inputOnChangeFunc : function (inputName, conditionList)
+    callPropertyChangedEvent: function(inputField, eventId)
+    {
+        var inputFieldToUpdate = "_" + inputField.InputName;
+        var input = document.getElementById(inputFieldToUpdate);
+
+        var data =
+            {
+                Data: 
+                    {
+                        PropertyName: inputField.InputName,
+                        PropertyValue: input.value,
+                        EventId: eventId
+                    }                
+            };
+        data = JSON.stringify(data);
+
+        main.makeWebCall(main.webApiURL + "propertyChanged", "POST", siteMenu.processUIActionResponse, data);
+    },
+
+    inputOnChangeFunc : function (inputField, conditionList, eventId)
     {
         return function()
         {
@@ -273,6 +292,13 @@
                 value = input.checked;
             }
             value = value + "";
+
+            var inputName = inputField.InputName;
+
+            if (inputField.RaisePropertyChangedEvent == true)
+            {
+                inputDialog.callPropertyChangedEvent(inputField, eventId);
+            }
             
             for (var i = 0; i < conditionList.length; i++)
             {
@@ -467,7 +493,7 @@
                             
                             if (inputDialog.conditionListContains(conditionList, inputField.InputName))
                             {
-                                inp.oninput = (inputDialog.inputOnChangeFunc)(inputField.InputName, conditionList);
+                                inp.oninput = (inputDialog.inputOnChangeFunc)(inputField, conditionList, settings.Id);
                                 inp.onpropertychange = inp.oninput; // for IE8
                             }
 
@@ -492,7 +518,7 @@
                             var combo = document.createElement('select');
                             if (inputDialog.conditionListContains(conditionList, inputField.InputName))
                             {
-                                combo.oninput = (inputDialog.inputOnChangeFunc)(inputField.InputName, conditionList);
+                                combo.oninput = (inputDialog.inputOnChangeFunc)(inputField, conditionList, settings.Id);
                                 combo.onpropertychange = combo.oninput;
                             }
                             combo.id = "_" + inputField.InputName;
@@ -528,7 +554,7 @@
                             var inp = document.createElement('input');
                             if (inputDialog.conditionListContains(conditionList, inputField.InputName))
                             {
-                                inp.onchange = (inputDialog.inputOnChangeFunc)(inputField.InputName, conditionList);
+                                inp.onchange = (inputDialog.inputOnChangeFunc)(inputField, conditionList, settings.Id);
                                 inp.onpropertychange = inp.onchange; // for IE8
                             }
                             inp.type = "checkbox";
@@ -707,7 +733,7 @@
 
                                 if (inputDialog.conditionListContains(conditionList, inputField.InputName))
                                 {
-                                    inp.oninput = (inputDialog.inputOnChangeFunc)(inputField.InputName, conditionList);
+                                    inp.oninput = (inputDialog.inputOnChangeFunc)(inputField, conditionList, settings.Id);
                                     inp.onpropertychange = inp.oninput; // for IE8
                                 }
 
@@ -786,7 +812,7 @@
 
                                 if (inputDialog.conditionListContains(conditionList, inputField.InputName))
                                 {
-                                    inp.oninput = (inputDialog.inputOnChangeFunc)(inputField.InputName, conditionList);
+                                    inp.oninput = (inputDialog.inputOnChangeFunc)(inputField, conditionList, settings.Id);
                                     inp.onpropertychange = inp.oninput; // for IE8
                                 }
 
@@ -892,7 +918,7 @@
 
                                 if (inputDialog.conditionListContains(conditionList, inputField.InputName))
                                 {
-                                    inp.oninput = (inputDialog.inputOnChangeFunc)(inputField.InputName, conditionList);
+                                    inp.oninput = (inputDialog.inputOnChangeFunc)(inputField, conditionList, settings.Id);
                                     inp.onpropertychange = inp.oninput; // for IE8
                                 }
 

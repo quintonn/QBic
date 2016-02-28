@@ -208,6 +208,23 @@
                 
                 views.deleteRowFromTable(table, rowId, false);
                 break;
+            case 10: /// Update Data Source Combo Box data source
+                var comboId = "_" + settings.InputName;
+                var combo = document.getElementById(comboId);
+
+                while (combo.options.length > 0)
+                {
+                    combo.remove(0);
+                }
+                
+                for (var j = 0; j < settings.ListItems.length; j++)
+                {
+                    var option = document.createElement("option");
+                    option.value = settings.ListItems[j].Key;
+                    option.text = settings.ListItems[j].Value;
+                    combo.appendChild(option);
+                }
+                break;
             default:
                 inputDialog.showMessage('unknown action type: ' + actionType, callback, null);
         }

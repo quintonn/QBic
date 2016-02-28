@@ -231,6 +231,7 @@
     <Compile Include="Menus\InputItems\StringInput.cs" />
     <Compile Include="Menus\InputItems\ViewInput.cs" />
     <Compile Include="Menus\MenuItem.cs" />
+    <Compile Include="Menus\PropertyChangedEvents\UpdateDataSourceComboBoxSource.cs" />
     <Compile Include="Menus\ShowMessage.cs" />
     <Compile Include="Menus\UserConfirmation.cs" />
     <Compile Include="Menus\ViewItems\BooleanColumn.cs" />
@@ -304,7 +305,7 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>"..\nuget publish.bat"</PostBuildEvent>
+    <PostBuildEvent>rem "..\nuget publish.bat"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>rem ..\..\BuildHelper\bin\Debug\BuildHelper.exe</PreBuildEvent>

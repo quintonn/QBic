@@ -349,6 +349,28 @@ namespace WebsiteTemplate.Controllers
         }
 
         [HttpPost]
+        [Route("propertyChanged")]
+        [RequireHttps]
+        [Authorize]
+        public async Task<IHttpActionResult> OnPropertyChanged()
+        {
+            var data = await Request.Content.ReadAsStringAsync();
+            var json = JObject.Parse(data);
+            data = json.GetValue("Data").ToString();
+
+            json = JObject.Parse(data);
+
+            var eventId = Convert.ToInt32(json.GetValue("EventId"));
+            var propertyName = json.GetValue("PropertyName").ToString();
+            var propertyValue = json.GetValue("PropertyValue") as object;
+            var eventItem = EventList[eventId] as GetInput;
+
+            var result = await eventItem.OnPropertyChanged(propertyName, propertyValue);
+
+            return Json(result);
+        }
+
+        [HttpPost]
         [Route("processEvent/{*eventId}")]
         [RequireHttps]
         [Authorize]

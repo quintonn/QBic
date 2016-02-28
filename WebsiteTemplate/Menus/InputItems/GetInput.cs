@@ -47,5 +47,15 @@ namespace WebsiteTemplate.Menus.InputItems
         /// <param name="actionNumber">This is the even number of the button pressed</param>
         /// <returns></returns>
         public abstract Task<IList<Event>> ProcessAction(int actionNumber);
+
+        /// <summary>
+        /// Event called when an input property is changed when RaisePropertyChangedEvent is set to true.
+        /// </summary>
+        /// <param name="propertyName">Name of property changed as specified in the InputFields.</param>
+        /// <returns>List of events to perform.</returns>
+        public virtual async Task<IList<Event>> OnPropertyChanged(string propertyName, object propertyValue)
+        {
+            return await Task.FromResult<IList<Event>>(new List<Event>());
+        }
     }
 }

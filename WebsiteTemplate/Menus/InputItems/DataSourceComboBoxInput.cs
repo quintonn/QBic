@@ -37,6 +37,19 @@ namespace WebsiteTemplate.Menus.InputItems
                                        bool addBlankValue = false)
             : base(name, label, defaultValue, tabName)
         {
+            KeyFunc = keyFunc;
+            ValueFunc = valueFunc;
+            UpdateList(whereClause, orderByClause, orderByAsc, addBlankValue);   
+        }
+
+        private Func<T, string> KeyFunc { get; set; }
+        private Func<T, object> ValueFunc { get; set; }
+
+        public void UpdateList(Expression<Func<T, bool>> whereClause = null,
+                                       Expression<Func<T, object>> orderByClause = null,
+                                       bool orderByAsc = true,
+                                       bool addBlankValue = false)
+        {
             var store = new DataStore();
             using (var session = store.OpenSession())
             {
@@ -61,7 +74,7 @@ namespace WebsiteTemplate.Menus.InputItems
                 }
                 var list = queryOver.List<T>();
 
-                var result = list.ToDictionary(keyFunc, valueFunc);
+                var result = list.ToDictionary(KeyFunc, ValueFunc);
                 if (orderByClause == null)
                 {
                     result = result.OrderBy(o => o.Value).ToDictionary(o => o.Key, o => o.Value);

@@ -21,6 +21,8 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public List<Condition> MandatoryConditions { get; set; }
 
+        public bool RaisePropertyChangedEvent { get; set; }
+
         public InputField(string name, string label, object defaultValue, string tabName, bool mandatory)
         {
             InputName = name;

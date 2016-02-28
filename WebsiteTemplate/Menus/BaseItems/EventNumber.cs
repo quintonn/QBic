@@ -21,10 +21,12 @@
         
         public const int ShowMessage = 1100;
         public const int UserConfirmation = 1101;
+
         public const int ExecuteAction = 1200;
         public const int CancelInputDialog = 1500;
 
         public const int UpdateInputView = 1600;
         public const int DeleteInputViewItem = 1601;
+        public const int UpdateDataSourceComboBox = 1602;
     }
 }
