@@ -95,12 +95,14 @@
         data = JSON.parse(data);
 
         var expireTime = data[".expires"];
-        //console.log('expire: ' + expireTime);
+        console.log('expire: ' + expireTime);
         expireTime = new Date(expireTime);
-        //console.log('expire: ' + expireTime);
+        console.log('expire: ' + expireTime);
 
         var diff = Math.abs(new Date() - expireTime) - 5000; // refresh a few seconds before timeout
         var expireTimeout = diff;
+
+        console.log('expireTimeout = ' + expireTimeout);
 
         var refreshToken = data.refresh_token;
         

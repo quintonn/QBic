@@ -1050,8 +1050,17 @@
                 {
                     setTimeout(function ()
                     {
-                        document.getElementById('_' + settings.InputFields[0].InputName).focus();
-                        document.getElementById('_' + settings.InputFields[0].InputName).select();
+                        var inputObject = document.getElementById('_' + settings.InputFields[0].InputName);
+                        inputObject.focus();
+                        if (inputObject.select)
+                        {
+                            inputObject.select();
+                        }
+                        else
+                        {
+                            console.log("Inputobject does not have a select method:");
+                            console.log(inputObject);
+                        }
                     }, 10);
                 }
                 if (inputItem == null)

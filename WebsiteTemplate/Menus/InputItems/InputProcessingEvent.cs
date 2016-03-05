@@ -26,7 +26,21 @@ namespace WebsiteTemplate.Menus.InputItems
                 {
                     value = Convert.ToBoolean(InputData[propertyName]);
                 }
-                else {
+                else if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(DateTime?))
+                {
+                    var tempValue = InputData[propertyName];
+                    DateTime date;
+                    if (DateTime.TryParse(tempValue?.ToString(), out date))
+                    {
+                        value = date;
+                    }
+                    else if (typeof(T) == typeof(DateTime))
+                    {
+                        value = new DateTime(1900, 01, 01); ///TODO: What do i do with default dates etc.
+                    }
+                }
+                else
+                {
                     value = (T)InputData[propertyName];
                 }
             }
@@ -36,6 +50,16 @@ namespace WebsiteTemplate.Menus.InputItems
         public string GetValue(string propertyName)
         {
             return GetValue<string>(propertyName);
+        }
+
+        public T GetDataSourceValue<T>(string propertyName)
+        {
+            using (var session = Store.OpenSession())
+            {
+                var id = GetValue(propertyName);
+                var result = session.Get<T>(id);
+                return result;
+            }
         }
     }
 }
