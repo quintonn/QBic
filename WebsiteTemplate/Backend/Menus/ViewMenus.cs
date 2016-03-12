@@ -48,6 +48,7 @@ namespace WebsiteTemplate.Backend.Menus
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
             columnConfig.AddStringColumn("Name", "Name");
+            columnConfig.AddHiddenColumn("Name");
 
             columnConfig.AddStringColumn("Event", "Event");
 

@@ -127,6 +127,21 @@
                 a.setAttribute('rowId', rowId);
                 cell.appendChild(a);
             }
+            //else if (column.ColumnType == 4) /// Hidden Column
+            //{
+            //    /// Replace new line characters with HTML breaks
+            //    if (value == null)
+            //    {
+            //        value = "";
+            //    }
+
+            //    value = value.toString();
+            //    value = value.replace(/\r/g, ',');
+            //    value = value.replace(/\n/g, ',');
+
+            //    /// Don't do anything to the value
+            //    cell.innerHTML = value;
+            //}
             else
             {
                 /// Replace new line characters with HTML breaks
@@ -193,6 +208,10 @@
                 }
             }
 
+            if (column.ColumnType == 4) /// Hidden column
+            {
+                cell.style.display = "none";
+            }
             row.appendChild(cell);
         }
     },
@@ -207,6 +226,10 @@
             var headCell = document.createElement("th");
             headCell.innerHTML = settings.Columns[j].ColumnLabel;
             headCell.setAttribute('columnName', settings.Columns[j].ColumnName);
+            if (settings.Columns[j].ColumnType == 4) /// Hidden column
+            {
+                headCell.style.display = "none";
+            }
             headerRow.appendChild(headCell);
         }
         table.appendChild(headerRow);

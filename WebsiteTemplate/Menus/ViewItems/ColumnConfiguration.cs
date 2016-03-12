@@ -30,6 +30,11 @@ namespace WebsiteTemplate.Menus.ViewItems
             });
         }
 
+        public void AddHiddenColumn(string columnName)
+        {
+            Columns.Add(new HiddenColumn("", columnName));
+        }
+
         public void AddBooleanColumn(string columnLabel, string columnName, string trueValue = "True", string falseValue = "False")
         {
             Columns.Add(new BooleanColumn(columnLabel, columnName, trueValue, falseValue));

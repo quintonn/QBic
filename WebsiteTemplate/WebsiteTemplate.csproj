@@ -245,6 +245,7 @@
     <Compile Include="Menus\BaseItems\Event.cs" />
     <Compile Include="Menus\ViewItems\Comparison.cs" />
     <Compile Include="Menus\ViewItems\Condition.cs" />
+    <Compile Include="Menus\ViewItems\HiddenColumn.cs" />
     <Compile Include="Menus\ViewItems\LinkColumn.cs" />
     <Compile Include="Menus\ViewItems\ShowHideColumnSetting.cs" />
     <Compile Include="Menus\ViewItems\ShowView.cs" />
