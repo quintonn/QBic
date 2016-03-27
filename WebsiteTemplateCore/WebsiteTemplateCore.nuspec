@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<package >
+	<metadata>
+		<id>$id$</id>
+		<version>$version$</version>
+		<title>$title$</title>
+		<authors>$author$</authors>
+		<owners>$author$</owners>
+		<licenseUrl>http://www.example.com</licenseUrl>
+		<projectUrl>http://www.example.com</projectUrl>
+		<iconUrl>http://www.example.com</iconUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>$description$</description>
+		<releaseNotes>TODO</releaseNotes>
+		<copyright>Copyright 2016</copyright>
+		<tags>Website Template Core</tags>
+		<dependencies> 
+			<group>
+				<dependency id="BasicAuthentication" version="0.0.5790.38917"  />
+				<dependency id="FluentNHibernate" version="2.0.3.0"  />
+				<dependency id="Iesi.Collections" version="4.0.1.4000"  />
+				<dependency id="Microsoft.AspNet.Cors" version="5.2.3"  />
+				<dependency id="Microsoft.AspNet.Identity.Core" version="2.2.1"  />
+				<dependency id="Microsoft.AspNet.Identity.Owin" version="2.2.1"  />
+				<dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3"  />
+				<dependency id="Microsoft.AspNet.WebApi.Core" version="5.2.3"  />
+				<dependency id="Microsoft.AspNet.WebApi.Owin" version="5.2.3"  />
+				<dependency id="Microsoft.Owin" version="3.0.1"  />
+				<dependency id="Microsoft.Owin.Cors" version="3.0.1"  />
+				<dependency id="Microsoft.Owin.Host.SystemWeb" version="3.0.1"  />
+				<dependency id="Microsoft.Owin.Security" version="3.0.1"  />
+				<dependency id="Microsoft.Owin.Security.Cookies" version="3.0.1"  />
+				<dependency id="Microsoft.Owin.Security.OAuth" version="3.0.1"  />
+				<dependency id="Newtonsoft.Json" version="7.0.1"  />
+				<dependency id="NHibernate" version="4.0.4.4000"  />
+				<dependency id="Owin" version="1.0"  />
+			</group>
+		</dependencies>
+	</metadata>  
+	<files>
+	    <file src="Frontend\**\*.*" target="content\Frontend" />
+		<file src="Index.html" target="content" />
+		<file src="bin\WebsiteTemplate.dll" target="lib\net45" />
+	    <!--<file src="D:\Projects\WebsiteTemplate\WebsiteTemplate\Frontend\Scripts\*.*" exclude="**\*.js" />-->
+	    <!--<file src="D:\Projects\WebsiteTemplate\WebsiteTemplate\Frontend\Scripts\*.js" exclude="D:\Projects\WebsiteTemplate\WebsiteTemplate\Frontend\Scripts\*.js" />-->
+		<!--<file src="D:\Projects\WebsiteTemplate\WebsiteTemplate\frontend\webFiles\*.*" target="content/Frontend/webFiles" />-->
+		<!--<file src="D:\Projects\WebsiteTemplate\WebsiteTemplate\Scripts\*.min.js" target="content/Scripts" /> -->
+		<!-- Exclude these files -->
+		<!--<file src="tools\**\*.*" exclude="**\*.log" />-->
+		<!--<file src="d:\projects\websitetemplate\websitetemplate\frontend\css\*.css" exclude="*.*" />
+		<file src="d:\projects\websitetemplate\websitetemplate\frontend\scripts\*.js" exclude="*.*" />-->
+	</files>
+</package>

@@ -11,3 +11,5 @@ ImplementationTest/Index.html
 *scripts.min.js
 *styles.min.css
 hg/*
+WebsiteTemplateCore/FrontEnd/*
+WebsiteTemplateCore/Index.html

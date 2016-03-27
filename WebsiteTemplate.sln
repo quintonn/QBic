@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsiteTemplate", "WebsiteTemplate\WebsiteTemplate.csproj", "{1547BF19-E581-44E9-B509-8CEF08276652}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -13,6 +13,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImplementationTest", "ImplementationTest\ImplementationTest.csproj", "{DC4008D9-A48B-4A06-85DF-142634D4A4DD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildHelper", "BuildHelper\BuildHelper.csproj", "{569AD0E8-2A62-4534-984D-263437908696}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsiteTemplateCore", "WebsiteTemplateCore\WebsiteTemplateCore.csproj", "{342B90FD-09F9-4C4E-9944-C22405884DBB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +38,10 @@ Global
 		{569AD0E8-2A62-4534-984D-263437908696}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{569AD0E8-2A62-4534-984D-263437908696}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{569AD0E8-2A62-4534-984D-263437908696}.Release|Any CPU.Build.0 = Release|Any CPU
+		{342B90FD-09F9-4C4E-9944-C22405884DBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{342B90FD-09F9-4C4E-9944-C22405884DBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{342B90FD-09F9-4C4E-9944-C22405884DBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{342B90FD-09F9-4C4E-9944-C22405884DBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
