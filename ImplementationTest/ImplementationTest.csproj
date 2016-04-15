@@ -153,32 +153,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Frontend\Scripts\_references.js" />
     <Content Include="CustomMenuItems\Getting Started.txt" />
-    <Content Include="Frontend\css\busyIndicator.css" />
-    <Content Include="Frontend\css\inputDialog.css" />
-    <Content Include="Frontend\css\login.css" />
-    <Content Include="Frontend\css\main.css" />
-    <Content Include="Frontend\css\menu.css" />
-    <Content Include="Frontend\css\normalize.css" />
-    <Content Include="Frontend\css\siteSpecific.css" />
-    <Content Include="Frontend\css\spinner1.css" />
-    <Content Include="Frontend\css\views.css" />
     <Content Include="Frontend\Pages\Home.html" />
     <Content Include="Frontend\Pages\InputDialog.html" />
     <Content Include="Frontend\Pages\Login.html" />
     <Content Include="Frontend\Pages\Menu.html" />
     <Content Include="Frontend\Pages\MessageDialog.html" />
     <Content Include="Frontend\Pages\Views.html" />
-    <Content Include="Frontend\Scripts\auth.js" />
-    <Content Include="Frontend\Scripts\inputDialog.js" />
-    <Content Include="Frontend\Scripts\main.js" />
-    <Content Include="Frontend\Scripts\masked_input_1.4.js" />
-    <Content Include="Frontend\Scripts\menuBuilder.js" />
-    <Content Include="Frontend\Scripts\modernizr.js" />
-    <Content Include="Frontend\Scripts\navigation.js" />
-    <Content Include="Frontend\Scripts\siteMenu.js" />
-    <Content Include="Frontend\Scripts\views.js" />
     <Content Include="Frontend\webFiles\scripts.min.js" />
     <Content Include="Frontend\webFiles\styles.min.css" />
     <Content Include="Index.html" />
