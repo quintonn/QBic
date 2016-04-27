@@ -39,6 +39,19 @@ namespace WebsiteTemplate.Menus.InputItems
                         value = new DateTime(1900, 01, 01); ///TODO: What do i do with default dates etc.
                     }
                 }
+                else if (typeof(T) == typeof(int))
+                {
+                    var tempValue = InputData[propertyName];
+                    int intValue;
+                    if (int.TryParse(tempValue?.ToString(), out intValue))
+                    {
+                        value = intValue;
+                    }
+                    else
+                    {
+                        value = 0;
+                    }
+                }
                 else
                 {
                     value = (T)InputData[propertyName];

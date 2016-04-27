@@ -36,6 +36,8 @@ namespace WebsiteTemplate.Mappings
             var primitiveColumnsTo = properties.Where(p => IsPrimitive(p.PropertyType) == true).Select(p => p.Name).ToList();
             var nonPrimitiveColumns = properties.Where(p => IsPrimitive(p.PropertyType) == false).ToList();
 
+            //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
+
             foreach (var column in primitiveColumnsTo)
             {
                 if (column == "CanDelete" || column == "Id")
@@ -43,9 +45,14 @@ namespace WebsiteTemplate.Mappings
                     continue;
                 }
 
-                Map(FluentNHibernate.Reveal.Member<T>(column))
-                    //.Not.Nullable();
-                    .Nullable();
+                if (properties.Where(p => p.Name == column).Single().PropertyType == typeof(byte[]))
+                {
+                    Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomSqlType("varbinary(max)").Length(int.MaxValue);
+                }
+                else {
+
+                    Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable();
+                }
             }
 
             foreach (var column in nonPrimitiveColumns)
@@ -74,6 +81,7 @@ namespace WebsiteTemplate.Mappings
                 typeof(string),
                 typeof(char),
                 typeof(byte),
+                typeof(System.Byte[]),
                 typeof(sbyte),
                 typeof(ushort),
                 typeof(short),

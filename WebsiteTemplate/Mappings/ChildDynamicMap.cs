@@ -30,8 +30,14 @@ namespace WebsiteTemplate.Mappings
                     continue;
                 }
 
-                Map(FluentNHibernate.Reveal.Member<T>(column))
-                    .Not.Nullable();
+                if (properties.Where(p => p.Name == column).Single().PropertyType == typeof(byte[]))
+                {
+                    Map(FluentNHibernate.Reveal.Member<T>(column)).Not.Nullable().CustomSqlType("varbinary(max)").Length(int.MaxValue);
+                }
+                else
+                {
+                    Map(FluentNHibernate.Reveal.Member<T>(column)).Not.Nullable();
+                }
             }
 
             foreach (var column in nonPrimitiveColumns)

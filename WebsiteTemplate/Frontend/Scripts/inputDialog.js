@@ -44,7 +44,6 @@
             inputDialog.cancelMessage();  // TODO: cancel message and cancelInput should be the same code. this is too confusing
             return;
         }
-        
         dlgInput.parentNode.removeChild(dlgInput);
 
         if (inputDialog.inputCount == 1)
@@ -375,6 +374,7 @@
                     emptyTabNamesPresent = true;
                 }
             }
+
             if (nonEmptyTabNamesPresent && emptyTabNamesPresent)
             {
                 //alert('Error: If tab names are used, all input fields should have tab names');
@@ -895,6 +895,7 @@
                                 mainViewDiv.appendChild(lbl);
 
                                 row.appendChild(td);
+                                //console.log('executeUIaction ( ' + viewSettings.Id + ', ' + inputField.DefaultValue + ', ' + inputField);
                                 siteMenu.executeUIAction(viewSettings.Id, inputField.DefaultValue, inputField);//mainViewDiv.id); //// to get the data
 
                                 break;
@@ -1028,7 +1029,7 @@
                         var data = {};
                         var finalCallback = function (data)
                         {
-                            siteMenu.processEvent(settings.Id, data, id, args);
+                            siteMenu.processEvent(uiAction.Id, data, id, args);
                         };
                         inputDialog.getInputValues(data, id, uiAction, btnIndex, 0, finalCallback);
                     }
@@ -1109,7 +1110,7 @@
         }
 
         // Get the input value
-        inputDialog.getInputValue(inputField.InputName, inputField.InputType, uiAction, (function (indx)
+        inputDialog.getInputValue(inputField.InputName, inputField.InputType, uiAction, (function (indx, fcb)
         {
             return function (inputValue)
             {
@@ -1144,9 +1145,11 @@
                 }
 
                 data[inputField.InputName] = inputValue;
-                inputDialog.getInputValues(data, id, uiAction, btnIndex, indx + 1, finalCallback);
+                
+                indx = indx + 1;
+                inputDialog.getInputValues(data, id, uiAction, btnIndex, indx, fcb);
             }
-        })(j));
+        })(j, finalCallback));
     },
 
     getInputValue : function (inputName, inputType, settings, callback)
@@ -1229,18 +1232,16 @@
                     {
                         fileData = e.target.result;
                         fileData = window.btoa(fileData);  // base 64 encode
-                        
                         callback(fileData);
                     };
                 })(file);
 
                 reader.readAsBinaryString(file);
-                //reader.readAsDataURL(file);
                 return;
             }
             else
             {
-                callback(null);
+                inputValue = "";
             }
         }
         else

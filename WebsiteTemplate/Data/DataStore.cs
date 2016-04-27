@@ -42,9 +42,9 @@ namespace WebsiteTemplate.Data
         }
     }
 
-    public static class NothingJere
+    public static class DataStoreExtensionMethods
     {
-        public static FluentMappingsContainer AddFromAssemblyOf2<T>(this FluentMappingsContainer mappings)
+        public static FluentMappingsContainer CustomAddFromAssemblyOf<T>(this FluentMappingsContainer mappings)
         {
             var tempQ = new DynamicMap<DynamicClass>();
             
@@ -121,6 +121,7 @@ namespace WebsiteTemplate.Data
 
         private static ISessionFactory CreateSessionFactory()
         {
+            //if (Debugger.IsAttached == false) Debugger.Launch();
             var container = new FluentMappingsContainer();
             var mainConnectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
             if (String.IsNullOrWhiteSpace(mainConnectionString))
@@ -134,7 +135,7 @@ namespace WebsiteTemplate.Data
                 FluentNHibernate.Cfg.Db.MsSqlConfiguration.MsSql2012.ConnectionString(mainConnectionString)
               )
 
-              .Mappings(m => m.FluentMappings.AddFromAssemblyOf2<User>().Conventions.Add<JoinedSubclassIdConvention>());
+              .Mappings(m => m.FluentMappings.CustomAddFromAssemblyOf<User>().Conventions.Add<JoinedSubclassIdConvention>());
             
             config.ExposeConfiguration(x =>
             {
