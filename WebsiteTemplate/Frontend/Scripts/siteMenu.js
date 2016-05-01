@@ -96,7 +96,7 @@
     processUIActionResponse: function (responseItems, args) /// args is for data passed between calls
     {
         var response = responseItems[0]; // Get the first item
-
+        
         responseItems.splice(0, 1); // Remove the first item
 
 
@@ -225,6 +225,14 @@
                     combo.appendChild(option);
                 }
                 break;
+            case 11: /// ViewFile
+                {
+                    /// TODO: I think this should change to make use of API's, and dynamically created URL's.
+                    /// The link the user clicks on should be a link they can choose to 'save as', click on, or whatever
+                    window.open(settings.DataUrl, "_blank");
+                    var fileName = settings.FileName;
+                    break;
+                }
             default:
                 inputDialog.showMessage('unknown action type: ' + actionType, callback, null);
         }

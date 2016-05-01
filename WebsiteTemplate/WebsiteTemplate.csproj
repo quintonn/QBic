@@ -213,6 +213,7 @@
     <Compile Include="Menus\BasicCrudItems\BasicCrudView.cs" />
     <Compile Include="Menus\DoSomething.cs" />
     <Compile Include="Menus\ExecuteAction.cs" />
+    <Compile Include="Menus\FileType.cs" />
     <Compile Include="Menus\InputItems\BooleanInput.cs" />
     <Compile Include="Menus\InputItems\ComboBoxInput.cs" />
     <Compile Include="Menus\InputItems\DataSourceComboBoxInput.cs" />
@@ -231,6 +232,7 @@
     <Compile Include="Menus\InputItems\StringInput.cs" />
     <Compile Include="Menus\InputItems\ViewInput.cs" />
     <Compile Include="Menus\MenuItem.cs" />
+    <Compile Include="Menus\OpenFile.cs" />
     <Compile Include="Menus\PropertyChangedEvents\UpdateDataSourceComboBoxSource.cs" />
     <Compile Include="Menus\ShowMessage.cs" />
     <Compile Include="Menus\UserConfirmation.cs" />

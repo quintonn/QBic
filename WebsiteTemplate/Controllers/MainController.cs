@@ -27,6 +27,7 @@ using System.Transactions;
 using WebsiteTemplate.Menus.BasicCrudItems;
 using WebsiteTemplate.Backend.TestItem;
 using Newtonsoft.Json;
+using WebsiteTemplate.Backend.Users;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -482,7 +483,19 @@ namespace WebsiteTemplate.Controllers
                     if (processedFormData.ContainsKey("rowData"))
                     {
                         var rowData = processedFormData["rowData"].ToString();
+                        string rowId = "";
+                        if (processedFormData.ContainsKey("rowId"))
+                        {
+                            rowId = processedFormData["rowId"].ToString();
+                        }
                         processedFormData = JsonConvert.DeserializeObject<Dictionary<string, object>>(rowData);
+                        if (!String.IsNullOrWhiteSpace(rowId))
+                        {
+                            if (!processedFormData.ContainsKey("rowId"))
+                            {
+                                processedFormData.Add("rowId", rowId); /// This is a hack, fix this!
+                            }
+                        }
                     }
 
                     (eventItem as DoSomething).InputData = processedFormData;
@@ -508,6 +521,11 @@ namespace WebsiteTemplate.Controllers
                 else if (eventItem is CancelInputDialog)
                 {
                     return Ok();
+                }
+                else if (eventItem is OpenFile)
+                {
+                    (eventItem as OpenFile).SetData(data);
+                    result.Add(eventItem);
                 }
                 else
                 {

@@ -12,6 +12,7 @@
         InputDataView = 7,
         UpdateInputView = 8,
         DeleteInputViewItem = 9,
-        UpdateDataSourceComboBox = 10
+        UpdateDataSourceComboBox = 10,
+        ViewFile = 11
     }
 }
