@@ -1,12 +1,16 @@
 ﻿var views = {
 
-    getTable: function()
+    getTable: function ()
     {
         return document.getElementById('tblView');
     },
 
-    populateRow: function(row, settings, data, rowId, args)
+    populateRow: function (row, settings, data, rowId, args)
     {
+        if (data['rowId'] == null || data['rowId'].length == 0)
+        {
+            data['rowId'] = rowId;
+        }
         for (var j = 0; j < settings.Columns.length; j++)
         {
             var column = settings.Columns[j];
@@ -56,7 +60,7 @@
                     return function ()
                     {
                         var theColumn = settings.Columns[ind];
-                        
+
                         var id = data["Id"];
 
                         //var formData = data;//JSON.stringify(data);
@@ -67,7 +71,7 @@
 
                         formData['rowData'] = data;
                         var thisRowId = this.getAttribute('rowId');
-                        formData['rowId'] = thisRowId;
+                        formData['rowData']['rowId'] = thisRowId;
 
                         if (theColumn.Event.ActionType == 5)
                         {
@@ -77,7 +81,6 @@
                         {
                             var eventId = theColumn.Event.EventNumber;
                             var formData = data["Id"];
-                            
                             siteMenu.executeUIAction(eventId, formData);
                         }
                         else
@@ -112,12 +115,13 @@
                             {
                                 Id: data[col.KeyColumn],
                             };
-                        
+
                         if (settings.ActionType == 7) /// View for input
                         {
                             formData['rowData'] = data;
                             var thisRowId = this.getAttribute('rowId');
-                            formData['rowId'] = thisRowId;
+                            //formData['rowId'] = thisRowId;
+                            formData['rowData']['rowId'] = thisRowId;
                         };
 
                         var id = col.EventNumber;
@@ -127,21 +131,6 @@
                 a.setAttribute('rowId', rowId);
                 cell.appendChild(a);
             }
-            //else if (column.ColumnType == 4) /// Hidden Column
-            //{
-            //    /// Replace new line characters with HTML breaks
-            //    if (value == null)
-            //    {
-            //        value = "";
-            //    }
-
-            //    value = value.toString();
-            //    value = value.replace(/\r/g, ',');
-            //    value = value.replace(/\n/g, ',');
-
-            //    /// Don't do anything to the value
-            //    cell.innerHTML = value;
-            //}
             else
             {
                 /// Replace new line characters with HTML breaks
@@ -149,10 +138,23 @@
                 {
                     value = "";
                 }
-                
-                value = value.toString();
-                value = value.replace(/\r/g, ',');
-                value = value.replace(/\n/g, ',');
+
+                if (value == null)
+                {
+                    value = "";
+                }
+                var typ = typeof value;
+
+                if (typeof value === 'object')
+                {
+                    value = JSON.stringify(value);
+                }
+                else
+                {
+                    value = value.toString();
+                    value = value.replace(/\r/g, ',');
+                    value = value.replace(/\n/g, ',');
+                }
 
                 /// Don't do anything to the value
                 cell.innerHTML = value;
@@ -216,7 +218,7 @@
         }
     },
 
-    populateViewWithData: function(table, data, settings, args)
+    populateViewWithData: function (table, data, settings, args)
     {
         /// Add headings to table
         var headerRow = document.createElement("tr");
@@ -246,7 +248,7 @@
         }
     },
 
-    populateViewMenu: function(viewMenu, settings, args)
+    populateViewMenu: function (viewMenu, settings, args)
     {
         while (viewMenu.firstChild)
         {
@@ -280,7 +282,7 @@
             viewTitle.innerHTML = settings.Description;
 
             var table = views.getTable();
-            
+
             views.populateViewWithData(table, data, settings);
 
             var viewMenu = document.getElementById("viewsMenu");
@@ -305,24 +307,33 @@
         });
     },
 
-    deleteRowFromTable: function(table, rowId, isEdit)
+    deleteRowFromTable: function (table, rowId, isEdit)
     {
         var realRowIdDeleted = -1;
         var rowToDelete = -1;
+
         for (var i = 0; i < table.rows.length; i++)
         {
             var deleteRow = false;
             var row = table.rows[i];
-            
+
             var aList = row.getElementsByTagName('a');
             var buttons = row.getElementsByTagName('button');
-            
+
             for (var j = 0; j < aList.length; j++)
             {
                 var aItem = aList[j];
+
+                var rowIdAttribute = '-1';
                 if (aItem.hasAttribute('rowId'))
                 {
-                    var aRowId = parseInt(aItem.getAttribute('rowId'));
+                    rowIdAttribute = aItem.getAttribute('rowId');
+                }
+                rowIdAttribute = parseInt(rowIdAttribute);
+
+                if (rowIdAttribute > -1)
+                {
+                    var aRowId = rowIdAttribute;
 
                     if (rowId == aRowId)
                     {
@@ -340,44 +351,44 @@
                     }
                 }
             }
-            if (rowToDelete > -1)
+            
+            for (var j = 0; j < buttons.length; j++)
             {
-                table.deleteRow(rowToDelete);
-                return realRowIdDeleted;
-            }
-            else
-            {
-                for (var j = 0; j < buttons.length; j++)
+                var aItem = buttons[j];
+                var rowIdAttribute = '-1';
+                if (aItem.hasAttribute('rowId'))
                 {
-                    var aItem = buttons[j];
-                    if (aItem.hasAttribute('rowId'))
-                    {
-                        var aRowId = parseInt(aItem.getAttribute('rowId'));
+                    rowIdAttribute = aItem.getAttribute('rowId');
+                }
+                
+                rowIdAttribute = parseInt(rowIdAttribute);
 
-                        if (rowId == aRowId)
+                if (rowIdAttribute > -1)
+                {
+                    var aRowId = rowIdAttribute;
+
+                    if (rowId == aRowId)
+                    {
+                        if (deleteRow == false)
                         {
-                            if (deleteRow == false)
-                            {
-                                deleteRow = true;
-                                rowToDelete = i;
-                                realRowIdDeleted = aRowId;
-                            }
-                        }
-                        else if (aRowId > rowId && (isEdit == null || isEdit == false))
-                        {
-                            aRowId = aRowId - 1;
-                            aItem.setAttribute('rowId', aRowId);
+                            deleteRow = true;
+                            rowToDelete = i;
+                            realRowIdDeleted = aRowId;
                         }
                     }
-                }
-                if (rowToDelete > -1)
-                {
-                    table.deleteRow(rowToDelete);
-                    return realRowIdDeleted;
+                    else if (aRowId > rowId && (isEdit == null || isEdit == false))
+                    {
+                        aRowId = aRowId - 1;
+                        aItem.setAttribute('rowId', aRowId);
+                    }
                 }
             }
         }
-        
+        if (rowToDelete > -1)
+        {
+            table.deleteRow(rowToDelete);
+        }
+
         return realRowIdDeleted;
     },
 };

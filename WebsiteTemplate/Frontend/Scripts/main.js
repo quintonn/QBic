@@ -121,7 +121,7 @@
                     response = JSON.parse(response);
                 }
                 
-                callback(response, args);
+                callback(response, args, contentType);
                 break;
             case 400:
                 var contentType = req.getResponseHeader('content-type');

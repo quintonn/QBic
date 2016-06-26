@@ -107,7 +107,8 @@
         menuBuilder.clearNode('dlgMessage');
         
         settings = settings || "";
-        console.log('trying to show message??->' + settings);
+        console.log('trying to show message??->');
+        console.log(settings);
         var message = settings.ConfirmationMessage;
         
         if (message == null)
@@ -265,66 +266,95 @@
         var inputFieldToUpdate = "_" + inputField.InputName;
         var input = document.getElementById(inputFieldToUpdate);
 
-        var data =
-            {
-                Data: 
-                    {
-                        PropertyName: inputField.InputName,
-                        PropertyValue: input.value,
-                        EventId: eventId
-                    }                
-            };
-        data = JSON.stringify(data);
+        if (inputField.InputType != 9)
+        {
+            var data =
+                {
+                    Data:
+                        {
+                            PropertyName: inputField.InputName,
+                            PropertyValue: input.value,
+                            EventId: eventId
+                        }
+                };
+            data = JSON.stringify(data);
 
-        main.makeWebCall(main.webApiURL + "propertyChanged", "POST", siteMenu.processUIActionResponse, data);
+            main.makeWebCall(main.webApiURL + "propertyChanged", "POST", siteMenu.processUIActionResponse, data);
+        }
+        else
+        {
+            var callback = function (inpVal)
+            {
+                var data =
+                {
+                    Data:
+                        {
+                            PropertyName: inputField.InputName,
+                            PropertyValue: inpVal,
+                            EventId: eventId
+                        }
+                };
+                data = JSON.stringify(data);
+
+                main.makeWebCall(main.webApiURL + "propertyChanged", "POST", siteMenu.processUIActionResponse, data);
+            };
+            inputDialog.getFileInputValue("_" + inputField.InputName, callback);
+        }
     },
 
     inputOnChangeFunc : function (inputField, conditionList, eventId)
     {
-        return function()
+        return function ()
         {
-            var input = this;
-            
-            var value = input.value;
-            if (input.type == "checkbox")
+            try
             {
-                value = input.checked;
-            }
-            value = value + "";
+                var input = this;
 
-            var inputName = inputField.InputName;
-
-            if (inputField.RaisePropertyChangedEvent == true)
-            {
-                inputDialog.callPropertyChangedEvent(inputField, eventId);
-            }
-            
-            for (var i = 0; i < conditionList.length; i++)
-            {
-                var item = conditionList[i];
-                
-                if (item.TriggerInputName != inputName)
+                var value = input.value;
+                if (input.type == "checkbox")
                 {
-                    continue;
+                    value = input.checked;
                 }
-                
-                var inputFieldToUpdate = "_" + item.InputName;
-                
-                var showInput = siteMenu.conditionIsMet(item.Condition, value);
-                
-                var input = document.getElementById(inputFieldToUpdate);
+                value = value + "";
 
-                while (input.tagName != "TR")
+                var inputName = inputField.InputName;
+                if (inputField.RaisePropertyChangedEvent == true)
                 {
-                    input = input.parentNode;
+                    inputDialog.callPropertyChangedEvent(inputField, eventId);
                 }
 
-                input.style.display = (showInput ? "" : "none");
-
-                if (showInput == true)
+                for (var i = 0; i < conditionList.length; i++)
                 {
-                    break;
+                    var item = conditionList[i];
+
+                    if (item.TriggerInputName != inputName)
+                    {
+                        continue;
+                    }
+
+                    var inputFieldToUpdate = "_" + item.InputName;
+
+                    var showInput = siteMenu.conditionIsMet(item.Condition, value);
+
+                    var input = document.getElementById(inputFieldToUpdate);
+
+                    while (input.tagName != "TR")
+                    {
+                        input = input.parentNode;
+                    }
+
+                    input.style.display = (showInput ? "" : "none");
+
+                    if (showInput == true)
+                    {
+                        break;
+                    }
                 }
+            } catch (err)
+            {
+                console.log('error ocurred');
+                alert(err.message);
+                console.log(err);
             }
         }
     },
@@ -895,7 +925,6 @@
                                 mainViewDiv.appendChild(lbl);
 
                                 row.appendChild(td);
-                                //console.log('executeUIaction ( ' + viewSettings.Id + ', ' + inputField.DefaultValue + ', ' + inputField);
                                 siteMenu.executeUIAction(viewSettings.Id, inputField.DefaultValue, inputField);//mainViewDiv.id); //// to get the data
 
                                 break;
@@ -917,12 +946,6 @@
                                     inp.value = inputField.DefaultValue;
                                 }
 
-                                if (inputDialog.conditionListContains(conditionList, inputField.InputName))
-                                {
-                                    inp.oninput = (inputDialog.inputOnChangeFunc)(inputField, conditionList, settings.Id);
-                                    inp.onpropertychange = inp.oninput; // for IE8
-                                }
-
                                 var inputCell = document.createElement('td');
                                 inp.style.display = "none";
 
@@ -937,16 +960,18 @@
                                     }
                                 })(inputField.InputName);
 
-                                inp.onchange = (function (inputName)
+                                inp.onchange = (function (inputFld, conLst, id)
                                 {
                                     return function (e)
                                     {
                                         var fileName = this.files[0].name;
-                                        var lblName = '_txt' + inputName;
+                                        var lblName = '_txt' + inputFld.InputName;
                                         var lbl = document.getElementById(lblName);
                                         lbl.innerHTML = fileName;
+
+                                        inputDialog.inputOnChangeFunc(inputFld, conLst, id)();
                                     }
-                                })(inputField.InputName);
+                                })(inputField, conditionList, settings.Id);
 
                                 var fileNameLabel = document.createElement('label');
                                 fileNameLabel.innerHTML = "&#60;select file&#62;";
@@ -1059,7 +1084,7 @@
                         }
                         else
                         {
-                            console.log("Inputobject does not have a select method:");
+                            console.log("Input object does not have a select method:");
                             console.log(inputObject);
                         }
                     }, 10);
@@ -1217,32 +1242,12 @@
         }
         else if (inputType == 9) // File Input
         {
-            var files = document.getElementById("_" + inputName);
-            files = files.files;
-            if (files != null && files.length != null && files.length > 0)
+            var callback2 = function (inpVal)
             {
-                var file = files[0]; // For now just get the first file
-                var reader = new FileReader();
-
-                // Closure to capture the file information.
-                var fileData = null;
-                reader.onload = (function (theFile)
-                {
-                    return function (e)
-                    {
-                        fileData = e.target.result;
-                        fileData = window.btoa(fileData);  // base 64 encode
-                        callback(fileData);
-                    };
-                })(file);
-
-                reader.readAsBinaryString(file);
-                return;
-            }
-            else
-            {
-                inputValue = "";
-            }
+                callback(inpVal);
+            };
+            inputDialog.getFileInputValue("_" + inputName, callback2);
+            return;
         }
         else
         {
@@ -1260,5 +1265,48 @@
         }
         inputValue = inputValue || "";
         callback(inputValue);
+    },
+
+    getFileInputValue : function(fieldName, callback)
+    {
+        var files = document.getElementById(fieldName);
+        files = files.files;
+        if (files != null && files.length != null && files.length > 0)
+        {
+            var file = files[0]; // For now just get the first file
+            var reader = new FileReader();
+
+            // Closure to capture the file information.
+            var fileData = null;
+            reader.onload = (function (theFile)
+            {
+                return function (e)
+                {
+                    fileData = e.target.result;
+                    fileData = window.btoa(fileData);  // base 64 encode
+                    var filex =
+                        {
+                            Data: fileData,
+                            FileName: theFile.name,
+                            MimeType: theFile.type,
+                            Size: theFile.size
+                            //FileItem: 
+                            //    {
+                            //        name: theFile.name,
+                            //        type: theFile.type,
+                            //        size: theFile.size
+                            //    }
+                        };
+                    //filex = JSON.stringify(filex);
+                    callback(filex);
+                };
+            })(file);
+
+            reader.readAsBinaryString(file);
+        }
+        else
+        {
+            callback(null);
+        }
     },
 };

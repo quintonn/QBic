@@ -28,5 +28,8 @@
         public const int UpdateInputView = 1600;
         public const int DeleteInputViewItem = 1601;
         public const int UpdateDataSourceComboBox = 1602;
+        public const int UpdateInput = 1603;
+
+        internal const int Test = 654321;
     }
 }

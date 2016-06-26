@@ -9,15 +9,20 @@ namespace WebsiteTemplate.Menus.BaseItems
     {
         public UpdateInputView()
         {
-
+            RowId = -1;
         }
 
-        public UpdateInputView(string jsonDataToUpdate)
+        public UpdateInputView(InputViewUpdateType updateType)
+            : this()
         {
-            JsonDataToUpdate = jsonDataToUpdate;
+            UpdateType = updateType;
         }
 
-        public string JsonDataToUpdate { get; set; }
+        public InputViewUpdateType UpdateType { get; private set; }
+
+        public string JsonDataToUpdate { get; internal set; }
+
+        public int RowId { get; internal set; }
 
         public override EventType ActionType
         {

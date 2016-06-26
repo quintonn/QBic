@@ -1,33 +1,28 @@
-﻿using BasicAuthentication.Security;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Http;
-using WebsiteTemplate.Data;
-using BasicAuthentication.ControllerHelpers;
-using WebsiteTemplate.Models;
-using NHibernate.Criterion;
+﻿using BasicAuthentication.ControllerHelpers;
+using BasicAuthentication.Security;
 using BasicAuthentication.Users;
-using System.Diagnostics;
-using System.Threading.Tasks;
-
-using WebsiteTemplate.Menus.BaseItems;
-using WebsiteTemplate.Menus.ViewItems;
-using WebsiteTemplate.Menus;
-using WebsiteTemplate.Menus.InputItems;
-using Newtonsoft.Json.Linq;
-
-using NHibernate;
-using System.IO;
-using System.Reflection;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
-using WebsiteTemplate.SiteSpecific.Utilities;
-using System.Transactions;
-using WebsiteTemplate.Menus.BasicCrudItems;
-using WebsiteTemplate.Backend.TestItem;
 using Newtonsoft.Json;
-using WebsiteTemplate.Backend.Users;
+using Newtonsoft.Json.Linq;
+using NHibernate;
+using NHibernate.Criterion;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Web.Http;
+using WebsiteTemplate.Data;
+using WebsiteTemplate.Menus;
+using WebsiteTemplate.Menus.BaseItems;
+using WebsiteTemplate.Menus.BasicCrudItems;
+using WebsiteTemplate.Menus.InputItems;
+using WebsiteTemplate.Menus.ViewItems;
+using WebsiteTemplate.Models;
+using WebsiteTemplate.SiteSpecific.Utilities;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -402,7 +397,6 @@ namespace WebsiteTemplate.Controllers
                 IList<Event> result;
 
                 var jsonData = JObject.Parse(formData);
-                //var processedFormData = formData;
                 var processedFormData = new Dictionary<string, object>();
                 foreach (var inputField in eventItem.InputFields)
                 {
@@ -413,6 +407,8 @@ namespace WebsiteTemplate.Controllers
                 {
                     eventItem.InputData = processedFormData;
                     result = await eventItem.ProcessAction(actionId);
+                   
+                    HandleProcessActionResult(result, eventItem);
                     session.Flush();
                 }
                 return Json(result);
@@ -421,6 +417,60 @@ namespace WebsiteTemplate.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        private void HandleProcessActionResult(IList<Event> result, Event eventItem)
+        {
+            var jsonDataToUpdate = String.Empty;
+            foreach (var item in result)
+            {
+                if (item is UpdateInputView)
+                {
+                    Dictionary<string, object> inputData;
+                    if (eventItem is GetInput)
+                    {
+                        inputData = (eventItem as GetInput).InputData;
+                    }
+                    else if (eventItem is InputProcessingEvent)
+                    {
+                        inputData = (eventItem as InputProcessingEvent).InputData;
+                    }
+                    else
+                    {
+                        throw new Exception("Unknown eventItem for UpdateInputView result: " + eventItem.GetType().ToString());
+                    }
+                    if (inputData.ContainsKey("rowId"))
+                    {
+                        (item as UpdateInputView).RowId = Convert.ToInt32(inputData["rowId"]);
+                    }
+                    if (String.IsNullOrWhiteSpace(jsonDataToUpdate))
+                    {
+                        jsonDataToUpdate = JObject.FromObject(inputData).ToString();
+                    }
+                    (item as UpdateInputView).JsonDataToUpdate = jsonDataToUpdate;
+                }
+            }
+        }
+
+
+        [HttpPost]
+        [Route("GetFile/{*eventId}")]
+        [RequireHttps]
+        [Authorize]
+        public async Task<IHttpActionResult> GetFile(int eventId)
+        {
+            var data = await Request.Content.ReadAsStringAsync();
+
+            if (!EventList.ContainsKey(eventId))
+            {
+                return BadRequest("No action has been found for event number: " + eventId);
+            }
+
+            var eventItem = EventList[eventId] as OpenFile;
+
+            var fileInfo = eventItem.GetFileInfo(data);
+
+            return new FileActionResult(fileInfo);
         }
 
         [HttpPost]
@@ -483,23 +533,13 @@ namespace WebsiteTemplate.Controllers
                     if (processedFormData.ContainsKey("rowData"))
                     {
                         var rowData = processedFormData["rowData"].ToString();
-                        string rowId = "";
-                        if (processedFormData.ContainsKey("rowId"))
-                        {
-                            rowId = processedFormData["rowId"].ToString();
-                        }
+
                         processedFormData = JsonConvert.DeserializeObject<Dictionary<string, object>>(rowData);
-                        if (!String.IsNullOrWhiteSpace(rowId))
-                        {
-                            if (!processedFormData.ContainsKey("rowId"))
-                            {
-                                processedFormData.Add("rowId", rowId); /// This is a hack, fix this!
-                            }
-                        }
                     }
 
                     (eventItem as DoSomething).InputData = processedFormData;
                     var doResult = await (eventItem as DoSomething).ProcessAction();
+                    HandleProcessActionResult(doResult, eventItem);
                     result.AddRange(doResult);
                 }
                 else if (eventItem is GetInput)

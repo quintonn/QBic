@@ -24,11 +24,11 @@ namespace WebsiteTemplate.Menus.InputItems
         {
             if (jsonToken == null)
             {
-                return new byte[0];
+                return null;
             }
-            var fileData = jsonToken.ToString();
-            var binData = Convert.FromBase64String(fileData);
-            return binData;
+            
+            var result = new FileInfo(jsonToken);
+            return result;
         }
     }
 }

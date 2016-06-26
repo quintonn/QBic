@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text;
+using System.Web;
+using WebsiteTemplate.CustomMenuItems;
 using WebsiteTemplate.Menus.BaseItems;
+using WebsiteTemplate.Menus.InputItems;
 
 namespace WebsiteTemplate.Menus
 {
@@ -13,41 +17,23 @@ namespace WebsiteTemplate.Menus
             Data = data;
         }
 
-        private byte[] FileData
-        {
-            get
-            {
-                return GetFileData(Data);
-            }
-        }
-
-        private FileType FileType
-        {
-            get
-            {
-                return GetFileType(Data);
-            }
-        }
-
-        public string FileName
-        {
-            get
-            {
-                return GetFileName(Data);
-            }
-        }
-
-        public abstract string GetFileName(string data);
-        public abstract byte[] GetFileData(string data);
-        public abstract FileType GetFileType(string data);
-
         public string DataUrl
         {
             get
             {
-                return CreateDataURL();
+                return "/GetFile/" + GetEventId();
             }
         }
+
+        public string RequestData
+        {
+            get
+            {
+                return Data;
+            }
+        }
+
+        public abstract FileInfo GetFileInfo(string data);
 
         public override EventType ActionType
         {
@@ -55,21 +41,6 @@ namespace WebsiteTemplate.Menus
             {
                 return EventType.ViewFile;
             }
-        }
-
-        private string CreateDataURL()
-        {
-            var dataURL = String.Empty;
-            switch (FileType)
-            {
-                case FileType.Pdf:
-                    var bytes = Encoding.UTF8.GetString(FileData);
-                    dataURL = "data:application/pdf;base64," + bytes;
-                    break;
-                default:
-                    throw new NotImplementedException("Unkown file type: " + FileType);
-            }
-            return dataURL;
         }
     }
 }

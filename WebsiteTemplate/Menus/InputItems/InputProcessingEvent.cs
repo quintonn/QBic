@@ -14,11 +14,13 @@ namespace WebsiteTemplate.Menus.InputItems
         /// This method assumes you know the return type.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="propertyName"></param>
+        /// <param name="propertyName">The name of the input property to try and get.</param>
+        /// <param name="defaultValue">Optional default value to return if the property could not be found.</param>
         /// <returns></returns>
         public T GetValue<T>(string propertyName, T defaultValue = default(T))
         {
-            object value = default(T);
+            //object value = default(T);
+            object value = defaultValue;
 
             if (InputData.ContainsKey(propertyName))
             {

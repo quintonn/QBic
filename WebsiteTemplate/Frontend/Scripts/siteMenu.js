@@ -99,7 +99,6 @@
         
         responseItems.splice(0, 1); // Remove the first item
 
-
         var callback = function () { };
         if (responseItems.length > 0)
         {
@@ -168,46 +167,61 @@
                 callback();
                 break;
             case 8:   /// Update Input view
-                
                 var viewId = "_" + args.InputName;
-
-                var json = settings.JsonDataToUpdate;
-
                 var div = document.getElementById(viewId);
                 var table = div.getElementsByTagName('table')[0];
 
-                var data = JSON.parse(json);
-
-                var viewSettings = args.ViewForInput;
-                
-                var row;
-                var rowId = parseInt(data['rowId']);
-                
-                if (rowId == -1)  // new item
+                var rowId = settings.RowId;
+                if (rowId == null)
                 {
-                    row = table.insertRow(table.rows.length);
-                    rowId = table.rows.length - 2;
+                    rowId = data['rowId'];
+                }
+                
+                var updateType = settings.UpdateType;
+
+                if (updateType == 0) /// Add or modify
+                {
+                    var json = settings.JsonDataToUpdate;
+                    var data = JSON.parse(json);
+
+                    var viewSettings = args.ViewForInput;
+
+                    var row;
+                    
+                    if (rowId == -1)  /// New item
+                    {
+                        row = table.insertRow(table.rows.length);
+                        rowId = table.rows.length - 2;
+                    }
+                    else /// Update row
+                    {
+                        var tableRowId = views.deleteRowFromTable(table, rowId, true);
+                        rowId = Math.max(tableRowId, 0);
+                        row = table.insertRow(rowId + 1);
+                    }
+                    views.populateRow(row, viewSettings, data, rowId, args);
+
+                    callback();
+                }
+                else if (updateType == 1) /// Delete row
+                {
+                    views.deleteRowFromTable(table, rowId, false);
                 }
                 else
                 {
-                    var tableRowId = views.deleteRowFromTable(table, rowId, true);
-                    rowId = Math.max(tableRowId, 0);
-                    row = table.insertRow(rowId+1);
+                    inputDialog.showMessage('unknown update type: ' + updateType, callback, null);
                 }
-
-                views.populateRow(row, viewSettings, data, rowId, args);
-
-                callback();
                 break;
-            case 9:  /// Delete input view item
-                var viewId = "_" + args.InputName;
-                var rowId = settings.RowId;
-                var div = document.getElementById(viewId);
+            //case 9:  /// Delete input view item
+            //    var viewId = "_" + args.InputName;
+            //    var rowId = settings.RowId;
+            //    var div = document.getElementById(viewId);
                 
-                var table = div.getElementsByTagName('table')[0];
-                
-                views.deleteRowFromTable(table, rowId, false);
-                break;
+            //    var table = div.getElementsByTagName('table')[0];
+            //    console.log('deleting row ' + rowId + ' from table:');
+            //    console.log(table);
+            //    views.deleteRowFromTable(table, rowId, false);
+            //    break;
             case 10: /// Update Data Source Combo Box data source
                 var comboId = "_" + settings.InputName;
                 var combo = document.getElementById(comboId);
@@ -227,12 +241,21 @@
                 break;
             case 11: /// ViewFile
                 {
-                    /// TODO: I think this should change to make use of API's, and dynamically created URL's.
-                    /// The link the user clicks on should be a link they can choose to 'save as', click on, or whatever
-                    window.open(settings.DataUrl, "_blank");
-                    var fileName = settings.FileName;
+                    var callback = function (data, args, contentType)
+                    {
+                        var dataURL = "data:" + contentType + ";base64," + data;
+                        var url = dataURL;
+                        window.open(url, "_blank");
+                    };
+                    
+                    main.makeWebCall(main.webApiURL + settings.DataUrl, "POST", callback, settings.RequestData);
                     break;
                 }
+            case 12: /// UpdateInput
+                var inputId = "_" + settings.InputName;
+                var input = document.getElementById(inputId);
+                input.value = settings.InputValue;
+                break;
             default:
                 inputDialog.showMessage('unknown action type: ' + actionType, callback, null);
         }
