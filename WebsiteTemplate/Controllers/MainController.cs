@@ -398,6 +398,8 @@ namespace WebsiteTemplate.Controllers
 
                 var jsonData = JObject.Parse(formData);
                 var processedFormData = new Dictionary<string, object>();
+                
+                await eventItem.Initialize(formData);
                 foreach (var inputField in eventItem.InputFields)
                 {
                     var value = inputField.GetValue(jsonData.GetValue(inputField.InputName));

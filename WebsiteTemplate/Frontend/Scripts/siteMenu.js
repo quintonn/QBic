@@ -95,6 +95,12 @@
 
     processUIActionResponse: function (responseItems, args) /// args is for data passed between calls
     {
+        if (responseItems == null || responseItems.length == 0)
+        {
+            /// Eg, when OnRaisePropertyChanged returns nothing -- This shouldn't really happen though
+            return;
+        }
+
         var response = responseItems[0]; // Get the first item
         
         responseItems.splice(0, 1); // Remove the first item
@@ -187,8 +193,10 @@
                     var viewSettings = args.ViewForInput;
 
                     var row;
+
+                    var isNew = rowId == -1;
                     
-                    if (rowId == -1)  /// New item
+                    if (isNew)  /// New item
                     {
                         row = table.insertRow(table.rows.length);
                         rowId = table.rows.length - 2;
@@ -197,9 +205,10 @@
                     {
                         var tableRowId = views.deleteRowFromTable(table, rowId, true);
                         rowId = Math.max(tableRowId, 0);
-                        row = table.insertRow(rowId + 1);
+                        //row = table.insertRow(rowId + 1);
+                        row = table.rows[tableRowId];
                     }
-                    views.populateRow(row, viewSettings, data, rowId, args);
+                    views.populateRow(row, viewSettings, data, rowId, args, isNew);
 
                     callback();
                 }

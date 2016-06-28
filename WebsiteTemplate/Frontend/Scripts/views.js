@@ -5,7 +5,7 @@
         return document.getElementById('tblView');
     },
 
-    populateRow: function (row, settings, data, rowId, args)
+    populateRow: function (row, settings, data, rowId, args, isNew)
     {
         if (data['rowId'] == null || data['rowId'].length == 0)
         {
@@ -14,8 +14,16 @@
         for (var j = 0; j < settings.Columns.length; j++)
         {
             var column = settings.Columns[j];
-            var cell = document.createElement("td");
-
+            var cell;
+            if (isNew == true)
+            {
+                cell = document.createElement("td");
+            }
+            else
+            {
+                cell = row.cells[j];
+            }
+            
             var value = "";
 
             if (column.ColumnName != null && column.ColumnName.length > 0)
@@ -31,12 +39,19 @@
                         break;
                     }
                     value = value[partName];
+                    
                     colName = colName.substring(index + 1);
                 }
                 if (value != null)
                 {
                     value = value[colName];
                 }
+            }
+
+            if (value === undefined && column.ColumnName.length != 0 && isNew == false)
+            {
+                //console.log('value for column ' + column.ColumnName + ' is undefined inside populate view');
+                continue;
             }
 
             if (column.ColumnType == 1) /// Boolean
@@ -53,6 +68,10 @@
             }
             else if (column.ColumnType == 2) // Button
             {
+                if (isNew == false)
+                {
+                    continue;
+                }
                 var button = document.createElement('button');
 
                 button.onclick = (function (ind)
@@ -104,6 +123,10 @@
             }
             else if (column.ColumnType == 3) /// Link
             {
+                if (isNew == false)
+                {
+                    continue;
+                }
                 var a = document.createElement('a');
                 a.href = "#";
                 a.innerHTML = column.LinkLabel;
@@ -214,7 +237,10 @@
             {
                 cell.style.display = "none";
             }
-            row.appendChild(cell);
+            if (isNew)
+            {
+                row.appendChild(cell);
+            }
         }
     },
 
@@ -242,7 +268,7 @@
         {
             var row = document.createElement("tr");
 
-            views.populateRow(row, settings, data[i], i, args);
+            views.populateRow(row, settings, data[i], i, args, true);
 
             table.appendChild(row);
         }
@@ -384,11 +410,17 @@
                 }
             }
         }
-        if (rowToDelete > -1)
+        if (rowToDelete > -1)// && isEdit == false)
         {
-            table.deleteRow(rowToDelete);
+            if (isEdit == false)
+            {
+                table.deleteRow(rowToDelete);
+            }
+            else
+            {
+                return rowToDelete;
+            }
         }
-
         return realRowIdDeleted;
     },
 };
