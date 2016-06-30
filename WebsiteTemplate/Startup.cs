@@ -19,7 +19,8 @@ namespace WebsiteTemplate
             var options = new UserAuthenticationOptions()
             {
                 AccessControlAllowOrigin = "*",
-                AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30), //Refresh the token every 30 minutes
+                AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30), //Access token expires after 30min
+                RefreshTokenExpireTimeSpan = TimeSpan.FromMinutes(120), //Refresh token expires after 2 hours
                 AllowInsecureHttp = false,
                 TokenEndpointPath = new PathString("/api/v1/token"), //path is actually now /api/v1/token
                 UserContext = new UserContext()
