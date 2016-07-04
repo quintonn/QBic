@@ -34,6 +34,7 @@ namespace WebsiteTemplate.Backend.Users
             );
             
             columnConfig.AddLinkColumn("", "Edit", "Id", "Edit", EventNumber.EditUser);
+            columnConfig.AddLinkColumn("", "", "Id", "View", EventNumber.Test);
 
             //columnConfig.AddButtonColumn("Roles", "", ButtonTextSource.Fixed, "...",
             //    columnSetting: null,

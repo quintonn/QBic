@@ -29,6 +29,11 @@ namespace WebsiteTemplate.Backend.Users
             }
         }
 
+        public override Task<IList<Event>> OnPropertyChanged(string propertyName, object propertyValue)
+        {
+            return base.OnPropertyChanged(propertyName, propertyValue);
+        }
+
         public override IList<InputField> InputFields
         {
             get
@@ -39,6 +44,12 @@ namespace WebsiteTemplate.Backend.Users
                 list.Add(new StringInput("Email", "Email"));
                 list.Add(new PasswordInput("Password", "Password"));
                 list.Add(new PasswordInput("ConfirmPassword", "Confirm Password"));
+
+                //Editing a fileInput is breaking at the moment
+                list.Add(new FileInput("File", "File")
+                {
+                    RaisePropertyChangedEvent = true
+                });
 
                 using (var session = Store.OpenSession())
                 {

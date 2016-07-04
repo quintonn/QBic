@@ -11,6 +11,11 @@ namespace WebsiteTemplate.Backend.UserRoles
 {
     public class TestAddForView : GetInput
     {
+        public TestAddForView()
+        {
+            Console.WriteLine("xx");
+        }
+
         public override string Description
         {
             get
@@ -21,18 +26,19 @@ namespace WebsiteTemplate.Backend.UserRoles
 
         private JObject RowData { get; set; }
 
-        private int RowId { get; set; }
+        private int RowId { get; set; } = -1; //TODO: This should go on the base class or core code. not on every implementation of a GetInput used for InputView's input
 
         public override IList<InputField> InputFields
         {
             get
             {
-                return new List<InputField>()
+                var result = new List<InputField>()
                 {
                     new StringInput("name", "name", RowData?.GetValue("name").ToString(), "", true),
                     new StringInput("age", "age", RowData?.GetValue("age").ToString(), ""),
-                    new HiddenInput("rowId", RowId),
+                    new HiddenInput("rowId", RowId)
                 };
+                return result;
             }
         }
 
@@ -46,10 +52,15 @@ namespace WebsiteTemplate.Backend.UserRoles
             if (!String.IsNullOrWhiteSpace(data))
             {
                 var json = JObject.Parse(data);
-                var id = json.GetValue("Id").ToString();
-                var rowData = json.GetValue("rowData")?.ToString();
-                RowId = Convert.ToInt32(json.GetValue("rowId")?.ToString());
+                //var id = json.GetValue("Id").ToString();
+                var rowData = data;
+                if (json.GetValue("rowData") != null)
+                {
+                    rowData = json.GetValue("rowData")?.ToString();
+                }
+                
                 RowData = JObject.Parse(rowData);
+                RowId = Convert.ToInt32(RowData.GetValue("rowId")?.ToString());
             }
             else
             {
@@ -71,10 +82,9 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
             else if (actionNumber == 0)
             {
-                var jsonData = JObject.FromObject(InputData).ToString();
                 return new List<Event>()
                 {
-                    new UpdateInputView(jsonData),
+                    new UpdateInputView(InputViewUpdateType.AddOrUpdate),
                     new CancelInputDialog()
                 };
             }

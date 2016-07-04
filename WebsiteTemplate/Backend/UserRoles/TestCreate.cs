@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,31 +8,31 @@ using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Backend.UserRoles
 {
-    public class TestDeleteView : DoSomething
+    public class TestCreate : DoSomething
     {
         public override string Description
         {
             get
             {
-                return "Delete Test";
+                return "Create a new one test";
             }
         }
 
         public override int GetId()
         {
-            return 778;
+            return EventNumber.TestCreate;
         }
 
         public override async Task<IList<Event>> ProcessAction()
         {
-            int rowId = Convert.ToInt32(GetValue("rowId"));
+            InputData.Add("name", "Note1.txt");
+            InputData.Add("age", "10");
+
             return new List<Event>()
-            {
-                //new ExecuteAction(EventNumber.DeleteInputViewItem)
-                //new DeleteInputViewItem(rowId),
-                new UpdateInputView(InputViewUpdateType.Delete)
-                //new CancelInputDialog(),
-            };
+                {
+                    new UpdateInputView(InputViewUpdateType.AddOrUpdate),
+                    //new CancelInputDialog()
+                };
         }
     }
 }

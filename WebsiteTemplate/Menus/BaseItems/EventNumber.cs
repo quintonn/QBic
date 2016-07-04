@@ -31,5 +31,7 @@
         public const int UpdateInput = 1603;
 
         internal const int Test = 654321;
+        internal const int TestConfirmation = 654322;
+        internal const int TestCreate = 654323;
     }
 }

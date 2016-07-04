@@ -23,6 +23,7 @@ namespace WebsiteTemplate.Backend.UserRoles
         {
             columnConfig.AddStringColumn("Name", "name");
             columnConfig.AddStringColumn("Age", "age");
+            columnConfig.AddStringColumn("RowId", "rowId");
             columnConfig.AddLinkColumn("", "", "name", "edit", 777);
             //columnConfig.AddLinkColumn("", "", "name", "x", 778);
             columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X", null,
@@ -59,8 +60,9 @@ namespace WebsiteTemplate.Backend.UserRoles
         {
             return new List<MenuItem>()
             {
-                new MenuItem("Add",777)
-            };
+                new MenuItem("Add",777),
+                new MenuItem("Create", EventNumber.TestConfirmation)
+        };
         }
     }
 }

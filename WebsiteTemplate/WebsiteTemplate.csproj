@@ -135,10 +135,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.EnterpriseServices" />
-    <Reference Include="Yahoo.Yui.Compressor, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\YUICompressor.NET.2.7.0.0\lib\NET20\Yahoo.Yui.Compressor.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="CustomMenuItems\Getting Started.txt" />
@@ -192,6 +188,8 @@
     <Compile Include="Backend\UserRoles\TestDeleteView.cs" />
     <Compile Include="Backend\UserRoles\TestView.cs" />
     <Compile Include="Backend\UserRoles\ViewUserRoles.cs" />
+    <Compile Include="Backend\UserRoles\TestConfirmation.cs" />
+    <Compile Include="Backend\UserRoles\TestCreate.cs" />
     <Compile Include="Backend\Users\TestView.cs" />
     <Compile Include="Controllers\FileActionResult.cs" />
     <Compile Include="Controllers\MenuController.cs" />
