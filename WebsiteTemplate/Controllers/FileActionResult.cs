@@ -25,11 +25,14 @@ namespace WebsiteTemplate.Controllers
             {
                 throw new ArgumentNullException("MimeType", "FileInfo.MimeType cannot be empty. This is returned by types of OpenFile");
             }
+            var base64 = String.Empty;
             if (FileInfo.Data == null || FileInfo.Data.Length == 0)
             {
-                throw new ArgumentNullException("FileInfo.Data", "FileInfo.Data cannot be null or empty. This is returned by types of OpenFile");
+                //throw new ArgumentNullException("FileInfo.Data", "FileInfo.Data cannot be null or empty. This is returned by types of OpenFile");
             }
-            var base64 = Convert.ToBase64String(FileInfo.Data);
+            else {
+                base64 = Convert.ToBase64String(FileInfo.Data);
+            }
             var response = new HttpResponseMessage();
             response.Content = new StringContent(base64);
             

@@ -147,7 +147,7 @@
                 callback();
                 break;
             case 5: // Show Message
-                inputDialog.showMessage(data, callback, settings.Data);
+                inputDialog.showMessage(data, callback, settings.Data, args);
                 break;
             case 6: // Execute action
                 siteMenu.executeUIAction(settings.EventNumber, settings.ParametersToPass);

@@ -532,11 +532,15 @@ namespace WebsiteTemplate.Controllers
                 else if (eventItem is DoSomething)
                 {
                     var processedFormData = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
-                    if (processedFormData.ContainsKey("rowData"))
+                    if (processedFormData != null && processedFormData.ContainsKey("rowData"))
                     {
                         var rowData = processedFormData["rowData"].ToString();
 
                         processedFormData = JsonConvert.DeserializeObject<Dictionary<string, object>>(rowData);
+                    }
+                    else
+                    {
+                        processedFormData = new Dictionary<string, object>();
                     }
 
                     (eventItem as DoSomething).InputData = processedFormData;
@@ -567,6 +571,10 @@ namespace WebsiteTemplate.Controllers
                 else if (eventItem is OpenFile)
                 {
                     (eventItem as OpenFile).SetData(data);
+                    result.Add(eventItem);
+                }
+                else if (eventItem is UserConfirmation)
+                {
                     result.Add(eventItem);
                 }
                 else
