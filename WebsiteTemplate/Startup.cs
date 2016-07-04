@@ -7,11 +7,12 @@ using BasicAuthentication.Authentication;
 using System.Web.Http;
 using System.Net.Http.Formatting;
 using WebsiteTemplate.Data;
+using BasicAuthentication.Startup;
 
-[assembly: OwinStartup(typeof(WebsiteTemplate.Startup))]
+//[assembly: OwinStartup(typeof(WebsiteTemplate.Startup))]
 namespace WebsiteTemplate
 {
-    public class Startup
+    public class Startup : IStartup
     {
         public void Configuration(IAppBuilder app)
         {
