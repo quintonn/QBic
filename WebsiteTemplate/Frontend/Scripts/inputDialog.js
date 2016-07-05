@@ -925,7 +925,7 @@
                                 mainViewDiv.appendChild(lbl);
 
                                 row.appendChild(td);
-                                siteMenu.executeUIAction(viewSettings.Id, inputField.DefaultValue, inputField);//mainViewDiv.id); //// to get the data
+                                siteMenu.executeUIAction(viewSettings.Id, inputField.DefaultValue, inputField);
 
                                 break;
                             }

@@ -490,20 +490,30 @@ namespace WebsiteTemplate.Controllers
             {
                 var user = await this.GetLoggedInUserAsync();
                 var originalData = await Request.Content.ReadAsStringAsync();
+                
                 var json = JObject.Parse(originalData);
                 originalData = json.GetValue("Data").ToString();
 
                 var data = originalData;
                 if (!String.IsNullOrWhiteSpace(data))
                 {
-                    var tmp = JObject.Parse(data) as JObject;
-                    if (tmp != null)
+                    try
                     {
-                        var subData = tmp.GetValue("data");
-                        if (subData != null)
+                        var tmp = JObject.Parse(data) as JObject;
+                        if (tmp != null)
                         {
-                            data = subData.ToString();
+                            var subData = tmp.GetValue("data");
+                            if (subData != null)
+                            {
+                                data = subData.ToString();
+                            }
                         }
+                    }
+                    catch (Newtonsoft.Json.JsonReaderException ex)
+                    {
+                        //do nothing, data was not json data.
+                        Console.WriteLine(ex.Message);
+                        //data = "";
                     }
                 }
 
@@ -534,7 +544,7 @@ namespace WebsiteTemplate.Controllers
                         var totalLines = -1;
 
                         var dataJson = new JObject();
-                        if (!String.IsNullOrWhiteSpace(data))
+                        if (!String.IsNullOrWhiteSpace(data) && !(eventItem is ViewForInput))
                         {
                             dataJson = JObject.Parse(data);
                             var viewSettings = dataJson.GetValue("viewSettings") as JObject;
