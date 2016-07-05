@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace BuildHelper
 {
@@ -63,12 +64,17 @@ namespace BuildHelper
             var data = File.ReadAllText(indexPath);
             var regex = new Regex("<link href.*/>?");
             var matches = regex.Matches(data);
+
+            //TODO: Get version from assembly
+            var randomVersion = Guid.NewGuid().ToString();
+            randomVersion = HttpUtility.UrlEncode(randomVersion);
+
             for (var i = 0; i < matches.Count; i++)
             {
                 var match = matches[i];
                 if (i == 0)
                 {
-                    data = data.Replace(match.Value, "<link href='Frontend/styles.min.css' rel='stylesheet' />");
+                    data = data.Replace(match.Value, "<link href='Frontend/styles.min.css?v=" + randomVersion + "' rel='stylesheet' />");
                 }
                 else
                 {
@@ -83,7 +89,7 @@ namespace BuildHelper
                 var match = matches[i];
                 if (i == 0)
                 {
-                    data = data.Replace(match.Value, "<script src='Frontend/scripts.min.js'></script>");
+                    data = data.Replace(match.Value, "<script src='Frontend/scripts.min.js?v=" + randomVersion + "'></script>");
                 }
                 else
                 {

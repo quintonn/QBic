@@ -254,6 +254,7 @@
     <Compile Include="Menus\ViewItems\LinkColumn.cs" />
     <Compile Include="Menus\ViewItems\ShowHideColumnSetting.cs" />
     <Compile Include="Menus\ViewItems\ShowView.cs" />
+    <Compile Include="Menus\ViewItems\DateColumn.cs" />
     <Compile Include="Menus\ViewItems\ViewForInput.cs" />
     <Compile Include="Menus\ViewItems\StringColumn.cs" />
     <Compile Include="Menus\ViewItems\ViewColumn.cs" />

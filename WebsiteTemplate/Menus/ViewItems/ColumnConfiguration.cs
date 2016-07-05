@@ -30,6 +30,19 @@ namespace WebsiteTemplate.Menus.ViewItems
             });
         }
 
+        public void AddDateColumn(string columnLabel, string columnName, ColumnSetting columnSetting)
+        {
+            Columns.Add(new DateColumn(columnLabel, columnName)
+            {
+                ColumnSetting = columnSetting
+            });
+        }
+
+        public void AddDateColumn(string columnLabel, string columnName)
+        {
+            AddDateColumn(columnLabel, columnName, null);
+        }
+
         public void AddHiddenColumn(string columnName)
         {
             Columns.Add(new HiddenColumn("", columnName));

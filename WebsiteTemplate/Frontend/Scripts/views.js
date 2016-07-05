@@ -154,6 +154,20 @@
                 a.setAttribute('rowId', rowId);
                 cell.appendChild(a);
             }
+            else if (column.ColumnType == 5) /// Date
+            {
+                if (value != null && value.length > 0)
+                {
+                    value = new Date(value);
+                    var month = "0" + (value.getMonth() + 1);
+                    month = month.substring(month.length - 2);
+                    var day = "0" + value.getDate();
+                    day = day.substr(day.length - 2);
+                    value = value.getFullYear() + "-" + month  + "-" + day; // TODO: should be configurable in settings somewhere
+                }
+                cell.style.whiteSpace = "nowrap";
+                cell.innerHTML = value;
+            }
             else
             {
                 /// Replace new line characters with HTML breaks
