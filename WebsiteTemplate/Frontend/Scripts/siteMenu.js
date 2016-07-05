@@ -135,7 +135,7 @@
                 break;
             case 0: /// DataView
                 var viewData = response.ViewData;
-                views.populateView(viewData, settings, null, args);
+                views.populateView(viewData, settings, null, args, true);
                 callback();
                 break;
             case 1: /// User Input

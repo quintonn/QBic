@@ -79,16 +79,15 @@ namespace WebsiteTemplate.Backend.Menus
             );
         }
 
-        public override IEnumerable GetData(string data)
+        public override IEnumerable GetData(string data, int currentPage, int linesPerPage)
         {
             MenuId = data;
             using (var session = Store.OpenSession())
             {
-                var query = session.CreateCriteria<Menu>();
+                var query = session.QueryOver<Menu>();
                 if (!String.IsNullOrWhiteSpace(data))
                 {
-                    query = query.CreateAlias("ParentMenu", "parent")
-                                 .Add(Restrictions.Eq("parent.Id", data));
+                    query = query.Where(m => m.ParentMenu.Id == data);
 
                     var parentMenu = session.Get<Menu>(data);
                     ParentId = parentMenu.ParentMenu != null ? parentMenu.ParentMenu.Id : "";
@@ -97,9 +96,11 @@ namespace WebsiteTemplate.Backend.Menus
                 else
                 {
                     mDescription = "Menus";
-                    query = query.Add(Restrictions.IsNull("ParentMenu"));
+                    query = query.Where(m => m.ParentMenu == null);
                 }
                 var results = query
+                       .Skip((currentPage-1)*linesPerPage)
+                       .Take(linesPerPage)
                        .List<Menu>()
                        .ToList();
 
@@ -113,6 +114,30 @@ namespace WebsiteTemplate.Backend.Menus
                 }).ToList();
 
                 return newList;
+            }
+        }
+
+        public override int GetDataCount(string data)
+        {
+            MenuId = data;
+            using (var session = Store.OpenSession())
+            {
+                var query = session.QueryOver<Menu>();
+                if (!String.IsNullOrWhiteSpace(data))
+                {
+                    query = query.Where(m => m.ParentMenu.Id == data);
+
+                    var parentMenu = session.Get<Menu>(data);
+                    ParentId = parentMenu.ParentMenu != null ? parentMenu.ParentMenu.Id : "";
+                    mDescription = "Menus: " + parentMenu.Name;
+                }
+                else
+                {
+                    mDescription = "Menus";
+                    query = query.Where(m => m.ParentMenu == null);
+                }
+                var count = query.RowCount();
+                return count;
             }
         }
 

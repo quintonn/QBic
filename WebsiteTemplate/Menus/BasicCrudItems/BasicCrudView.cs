@@ -61,14 +61,26 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             );
         }
 
-        public override IEnumerable GetData(string data)
+        public override IEnumerable GetData(string data, int currentPage, int linesPerPage)
         {
             using (var session = Store.OpenSession())
             {
-                var result = session.CreateCriteria<T>().List<T>().ToList();
+                var result = session.QueryOver<T>()
+                                    .Skip((currentPage-1)*linesPerPage)
+                                    .Take(linesPerPage)
+                                    .List<T>().ToList();
                 return result;
             }
 
+        }
+
+        public override int GetDataCount(string data)
+        {
+            using (var session = Store.OpenSession())
+            {
+                var count = session.QueryOver<T>().RowCount();
+                return count;
+            }
         }
 
         public override int GetId()

@@ -9,7 +9,7 @@
     tokenName: "",
     userSettingSuffix: "UserSetting",
     userSettingName: "",
-    version: "0.0.3",
+    version: "0.0.4",
     scriptLoaded: false,
 
     bodyOnLoad: function ()

@@ -78,14 +78,29 @@ namespace WebsiteTemplate.Backend.Users
                    "ALSO: Will need to limit display to 100% of height and put table inside a scroller\n";
         }
 
-        public override IEnumerable GetData(string data)
+        public override IEnumerable GetData(string data, int currentPage, int linesPerPage)
         {
             using (var session = Store.OpenSession())
             {
-                var results = session.CreateCriteria<User>()
-                       //.Add(Restrictions.Eq("", ""))   //TODO: Can add filter/query items here
-                       .List<User>()
-                       .ToList();
+                var results = session.QueryOver<User>()
+                                     .Skip((currentPage - 1) * linesPerPage)
+                                     .Take(linesPerPage)
+                                     .List<User>()
+                                     .ToList();
+                //var results = session.CreateCriteria<User>()
+                //       //.Add(Restrictions.Eq("", ""))   //TODO: Can add filter/query items here
+                //       .List<User>()
+                //       .ToList();
+                return results;
+            }
+        }
+
+        public override int GetDataCount(string data)
+        {
+            using (var session = Store.OpenSession())
+            {
+                var results = session.QueryOver<User>()
+                                     .RowCount();
                 return results;
             }
         }

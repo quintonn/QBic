@@ -1224,7 +1224,7 @@
             }
 
             var data = [];
-            for (var i = 1; i < inputTable.rows.length; i++)
+            for (var i = 1; i < inputTable.rows.length-1; i++)
             {
                 var row = inputTable.rows[i];
                 var cols = row.getElementsByTagName('td');

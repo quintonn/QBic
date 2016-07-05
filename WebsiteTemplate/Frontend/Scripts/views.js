@@ -100,6 +100,20 @@
                         {
                             var eventId = theColumn.Event.EventNumber;
                             var formData = data["Id"];
+
+                            var viewSettings =
+                            {
+                                "currentPage": settings.CurrentPage,
+                                "linesPerPage": settings.LinesPerPage,
+                                "totalLines": settings.TotalLines
+                            };
+                            //formData["viewSettings"] = viewSettings;
+                            formData =
+                                {
+                                    data: formData,
+                                    viewSettings: ""
+                                };
+                            
                             siteMenu.executeUIAction(eventId, formData);
                         }
                         else
@@ -147,6 +161,14 @@
                             formData['rowData']['rowId'] = thisRowId;
                         };
 
+                        var viewSettings =
+                            {
+                                "currentPage": settings.CurrentPage,
+                                "linesPerPage": settings.LinesPerPage,
+                                "totalLines": settings.TotalLines
+                            };
+                        formData["viewSettings"] = "";
+                        
                         var id = col.EventNumber;
                         siteMenu.executeUIAction(id, formData, args);
                     }
@@ -258,7 +280,7 @@
         }
     },
 
-    populateViewWithData: function (table, data, settings, args)
+    populateViewWithData: function (table, data, settings, args, addFooter)
     {
         /// Add headings to table
         var headerRow = document.createElement("tr");
@@ -286,6 +308,172 @@
 
             table.appendChild(row);
         }
+
+        if (addFooter == true)
+        {
+            views.createFooterRow(table, settings);
+        }
+    },
+
+    createFooterRow: function(table, settings)
+    {
+        var footerRow = document.createElement('tr');
+        var footerCell = document.createElement('td');
+        footerCell.colSpan = 100;
+        footerCell.style.alignContent = "center";
+        footerCell.style.textAlign = "center";
+        footerCell.style.paddingBottom = "0";
+        var container = document.createElement('span');
+
+        var lastPage = Math.floor(settings.TotalLines / settings.LinesPerPage);
+        if ((settings.TotalLines % settings.LinesPerPage) > 0)
+        {
+            lastPage += 1;
+        }
+
+        var makeButton = function(html, func)
+        {
+            var button = document.createElement('button');
+            button.innerHTML = html;
+
+            switch (func)
+            {
+                case 0:
+                case 1:
+                    if (settings.CurrentPage <= 1)
+                    {
+                        button.disabled = "disabled";
+                    }
+                    break;
+                case 2:
+                case 3:
+                    if (settings.CurrentPage >= lastPage)
+                    {
+                        button.disabled = "disabled";
+                    }
+                    break;
+                default:
+                    dialog.showMessage("Unhandled case in footer button: " + func);
+                    break;
+            }
+
+            button.onclick = (function (sett)
+            {
+                return function()
+                {
+                    var data =
+                    {
+                        currentPage: sett.CurrentPage,
+                        linesPerPage: sett.LinesPerPage,
+                        totalLines: sett.TotalLines
+                    };
+                    switch( func)
+                    {
+                        case 0:
+                            data.currentPage = 1; 
+                            break;
+                        case 1:
+                            data.currentPage -= 1;
+                            break;
+                        case 2:
+                            data.currentPage += 1;
+                            break;
+                        case 3:
+                            data.currentPage = lastPage;
+                            break;
+                        default:
+                            dialog.showMessage("Unhandled case in footer button: " + func);
+                            break;
+                    }
+                    data =
+                        {
+                            viewSettings: data
+                        };
+                    siteMenu.executeUIAction(sett.Id, data);
+                }
+            })(settings);
+            return button;
+        }
+        var createOption = function (value)
+        {
+            var option = document.createElement('option');
+            option.innerHTML = value + "";
+            option.value = value;
+            return option;
+        };
+
+        var firstButton = makeButton("<<", 0);
+        var prevButton = makeButton("<", 1);
+        var rowCountSelect = document.createElement('select');
+        rowCountSelect.style.marginRight = "5px";
+        rowCountSelect.style.width = "75px";
+        
+        rowCountSelect.appendChild(createOption(10));
+        rowCountSelect.appendChild(createOption(25));
+        rowCountSelect.appendChild(createOption(50));
+        rowCountSelect.appendChild(createOption(100));
+        rowCountSelect.appendChild(createOption("All"));
+
+        var lpp = settings.LinesPerPage;
+        if (lpp > 100)
+        {
+            console.log(lpp);
+            lpp = "All";
+        }
+        rowCountSelect.value = lpp;
+
+        rowCountSelect.onchange = (function (sett)
+        {
+            return function()
+            {
+                var lines = this.options[this.selectedIndex].value;
+                
+                if (lines == "All")
+                {
+                    lines = 1000;
+                }
+                console.log(lines);
+                var data =
+                        {
+                            viewSettings: 
+                            {
+                                currentPage: sett.CurrentPage,
+                                linesPerPage: lines,
+                                totalLines: sett.TotalLines
+                            }
+                        };
+                siteMenu.executeUIAction(sett.Id, data);
+            }
+        })(settings);
+
+        var nextButton = makeButton(">", 2);
+        var lastButton = makeButton(">>", 3);
+
+        container.appendChild(firstButton);
+        container.appendChild(prevButton);
+        container.appendChild(rowCountSelect);
+        container.appendChild(nextButton);
+        container.appendChild(lastButton);
+
+        footerCell.appendChild(container);
+        footerRow.appendChild(footerCell);
+
+        var footerInfoRow = document.createElement('tr');
+        var footerInfoCell = document.createElement('td');
+        footerInfoCell.style.borderTop = "none";
+        footerInfoCell.style.paddingTop = "0";
+        footerInfoCell.style.alignContent = "center";
+        footerInfoCell.style.textAlign = "center";
+        footerInfoCell.colSpan = 100;
+        
+        var infoContainer = document.createElement("span");
+        infoContainer.innerHTML = "Showing page " + settings.CurrentPage + " of " + lastPage;
+
+        footerInfoCell.appendChild(infoContainer);
+        footerInfoRow.appendChild(footerInfoCell);
+
+        table.appendChild(footerRow);
+        table.appendChild(footerInfoRow);
     },
 
     populateViewMenu: function (viewMenu, settings, args)
@@ -306,7 +494,11 @@
                 return function ()
                 {
                     var vm = settings.ViewMenu[index];
-                    siteMenu.executeUIAction(id, vm.ParametersToPass, args);
+                    var data =
+                        {
+                            data: vm.ParametersToPass,                            
+                        }
+                    siteMenu.executeUIAction(id, data, args);
                 }
             })(menu.EventNumber, i);
 
@@ -314,7 +506,7 @@
         }
     },
 
-    populateView: function (data, settings, callback, args)
+    populateView: function (data, settings, callback, args, addFooter)
     {
         navigation.loadHtmlBody('mainContent', 'Views.html', function ()
         {
@@ -323,7 +515,7 @@
 
             var table = views.getTable();
 
-            views.populateViewWithData(table, data, settings);
+            views.populateViewWithData(table, data, settings, args, addFooter);
 
             var viewMenu = document.getElementById("viewsMenu");
             //menuBuilder.clearNode('viewsMenu');

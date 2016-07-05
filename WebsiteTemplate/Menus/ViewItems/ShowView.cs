@@ -7,14 +7,14 @@ namespace WebsiteTemplate.Menus.ViewItems
 {
     public abstract class ShowView : Event
     {
-        public Object ViewData { get; set; }
         /// <summary>
-        /// The columns to show in the view.
+        /// The data that will be displayed in the view. Don't modify this property.
+        /// It is public so that this class can be serialized to json.
         /// </summary>
-        //public abstract IList<ViewColumn> Columns{ get; }
+        public object ViewData { get; set; }
 
         /// <summary>
-        /// Add columns for the view.
+        /// Configure columns for the view.
         /// </summary>
         /// <param name="columnConfig"></param>
         public abstract void ConfigureColumns(ColumnConfiguration columnConfig);
@@ -26,6 +26,9 @@ namespace WebsiteTemplate.Menus.ViewItems
             return config.GetColumns();
         }
 
+        /// <summary>
+        /// The columns to show in the view.
+        /// </summary>
         public IList<ViewColumn> Columns { get { return DoConfigureColumns(); } }
 
         /// <summary>
@@ -42,8 +45,18 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// This method is called to obtain all the information
         /// </summary>
         /// <param name="data">This is data passed from the web request.</param>
+        /// <param name="currentPage">This is the current page to retrieve data for.</param>
+        /// <param name="linesPerPage">This is the number of lines per page to retrieve.</param>
         /// <returns></returns>
-        public abstract IEnumerable GetData(string data);
+        public abstract IEnumerable GetData(string data, int currentPage, int linesPerPage);
+
+        /// <summary>
+        /// Retrieves the total number of records in the data set.
+        /// This is used to calculate the number of pages that will be available in the view.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public abstract int GetDataCount(string data);
 
         /// <summary>
         /// This should contain stuff like:
@@ -92,5 +105,11 @@ namespace WebsiteTemplate.Menus.ViewItems
                 return result;
             }
         }
+
+        public int Pages { get; set; }
+
+        public int LinesPerPage { get; set; }
+        public int CurrentPage { get; set; }
+        public int TotalLines { get; set; }
     }
 }

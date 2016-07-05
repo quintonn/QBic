@@ -35,13 +35,25 @@ namespace WebsiteTemplate.Backend.UserRoles
             );
         }
 
-        public override IEnumerable GetData(string data)
+        public override IEnumerable GetData(string data, int currentPage, int linesPerPage)
         {
             using (var session = Store.OpenSession())
             {
-                var results = session.CreateCriteria<UserRole>()
+                var results = session.QueryOver<UserRole>()
+                                     .Skip((currentPage - 1) * linesPerPage)
+                                     .Take(linesPerPage)
                                      .List<UserRole>()
                                      .ToList();
+                return results;
+            }
+        }
+
+        public override int GetDataCount(string data)
+        {
+            using (var session = Store.OpenSession())
+            {
+                var results = session.QueryOver<UserRole>()
+                                     .RowCount();
                 return results;
             }
         }

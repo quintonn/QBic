@@ -34,7 +34,7 @@ namespace WebsiteTemplate.Backend.UserRoles
             );
         }
 
-        public override IEnumerable GetData(string data)
+        public override IEnumerable GetData(string data, int currentPage, int linesPerPage)
         {
             return new List<object>()
             {
@@ -49,6 +49,11 @@ namespace WebsiteTemplate.Backend.UserRoles
                     age = 20
                 }
             };
+        }
+
+        public override int GetDataCount(string data)
+        {
+            return 2;
         }
 
         public override int GetId()

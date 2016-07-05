@@ -509,22 +509,51 @@ namespace WebsiteTemplate.Controllers
                     {
                         var parentData = data;
 
-                        try
+                        var currentPage = 1;
+                        var linesPerPage = 10;
+                        var totalLines = -1;
+
+                        var dataJson = new JObject();
+                        if (!String.IsNullOrWhiteSpace(data))
                         {
-                            var list = action.GetData(parentData);
-                            action.ViewData = list;
+                            dataJson = JObject.Parse(data);
+                            var viewSettings = dataJson.GetValue("viewSettings") as JObject;
+                            if (viewSettings != null)
+                            {
+                                currentPage = Convert.ToInt32(viewSettings.GetValue("currentPage"));
+                                linesPerPage = Convert.ToInt32(viewSettings.GetValue("linesPerPage"));
+                                if (linesPerPage > 100)
+                                {
+                                    currentPage = 1; //just in case it's not
+                                    linesPerPage = int.MaxValue;
+                                }
+                                totalLines = Convert.ToInt32(viewSettings.GetValue("totalLines"));
+                            }
+                            parentData = dataJson.GetValue("data")?.ToString();
                         }
-                        catch (Exception e)
+                        else
                         {
-                            Console.WriteLine(e);
-                            throw;
+                            parentData = data;  // In case user modified parentData -> this smells??
                         }
+
+                        if (totalLines == -1)
+                        {
+                            totalLines = action.GetDataCount(parentData);
+                        }
+
+                        var list = action.GetData(parentData, currentPage, linesPerPage);
+                        action.ViewData = list;
+
                         var viewMenu = action.GetViewMenu();
 
                         var allowedEvents = GetAllowedEventsForUser(session, user.Id);
                         var allowedMenuItems = viewMenu.Where(m => allowedEvents.Contains(m.EventNumber)).ToList();
 
                         action.ViewMenu = allowedMenuItems; //TODO: this should work differently. because this can be changed in the view's code.
+
+                        action.CurrentPage = currentPage;
+                        action.LinesPerPage = linesPerPage;
+                        action.TotalLines = totalLines;
 
                         result.Add(action);
                     }
