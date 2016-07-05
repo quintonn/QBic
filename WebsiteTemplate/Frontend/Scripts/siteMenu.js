@@ -247,6 +247,7 @@
                     option.text = settings.ListItems[j].Value;
                     combo.appendChild(option);
                 }
+                callback();
                 break;
             case 11: /// ViewFile
                 {

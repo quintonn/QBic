@@ -211,8 +211,13 @@
                 else
                 {
                     value = value.toString();
-                    value = value.replace(/\r/g, ',');
+                    value = value.replace(/\r/g, ','); //TODO: not sure if this is the greatest idea
                     value = value.replace(/\n/g, ',');
+                    // OR
+                    //value = value.replace(/\r/g, ''); 
+                    //value = value.replace(/\n/g, '<br/>');
+                    // OR
+                    // Make this a setting
                 }
 
                 /// Don't do anything to the value
