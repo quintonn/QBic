@@ -489,9 +489,23 @@ namespace WebsiteTemplate.Controllers
             try
             {
                 var user = await this.GetLoggedInUserAsync();
-                var data = await Request.Content.ReadAsStringAsync();
-                var json = JObject.Parse(data);
-                data = json.GetValue("Data").ToString();
+                var originalData = await Request.Content.ReadAsStringAsync();
+                var json = JObject.Parse(originalData);
+                originalData = json.GetValue("Data").ToString();
+
+                var data = originalData;
+                if (!String.IsNullOrWhiteSpace(data))
+                {
+                    var tmp = JObject.Parse(data) as JObject;
+                    if (tmp != null)
+                    {
+                        var subData = tmp.GetValue("data");
+                        if (subData != null)
+                        {
+                            data = subData.ToString();
+                        }
+                    }
+                }
 
                 var id = eventId;
 
@@ -512,6 +526,7 @@ namespace WebsiteTemplate.Controllers
 
                     using (var session = Store.OpenSession())
                     {
+                        data = originalData;
                         var parentData = data;
 
                         var currentPage = 1;

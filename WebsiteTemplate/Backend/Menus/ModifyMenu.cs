@@ -72,7 +72,7 @@ namespace WebsiteTemplate.Backend.Menus
             if (jobject.TryGetValue("IsNew", out tmp))
             {
                 IsNew = Convert.ToBoolean(tmp);
-                var parentId = jobject.GetValue("ParentId").ToString();
+                var parentId = jobject.GetValue("ParentId")?.ToString();
                 ParentMenuId = parentId;
                 Menu = new Menu();
             }
