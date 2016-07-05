@@ -29,10 +29,7 @@ namespace WebsiteTemplate.Backend.UserRoles
             int rowId = Convert.ToInt32(GetValue("rowId"));
             return new List<Event>()
             {
-                //new ExecuteAction(EventNumber.DeleteInputViewItem)
-                //new DeleteInputViewItem(rowId),
                 new UpdateInputView(InputViewUpdateType.Delete)
-                //new CancelInputDialog(),
             };
         }
     }
