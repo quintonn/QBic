@@ -79,12 +79,13 @@ namespace WebsiteTemplate.Backend.Menus
             );
         }
 
-        public override IEnumerable GetData(string data, int currentPage, int linesPerPage)
+        public override IEnumerable GetData(string data, int currentPage, int linesPerPage, string filter)
         {
             MenuId = data;
             using (var session = Store.OpenSession())
             {
                 var query = session.QueryOver<Menu>();
+
                 if (!String.IsNullOrWhiteSpace(data))
                 {
                     query = query.Where(m => m.ParentMenu.Id == data);
@@ -98,7 +99,17 @@ namespace WebsiteTemplate.Backend.Menus
                     mDescription = "Menus";
                     query = query.Where(m => m.ParentMenu == null);
                 }
-                var results = query
+
+                if (!String.IsNullOrWhiteSpace(filter))
+                {
+                    query = query.WhereRestrictionOn(x => x.Name).IsLike(filter, MatchMode.Anywhere);
+                    //query = query
+                    //.And(Restrictions.Or(
+                    //                Restrictions.Eq("", ""), 
+                    //                Restrictions.Eq("", "")));
+                }
+
+                    var results = query
                        .Skip((currentPage-1)*linesPerPage)
                        .Take(linesPerPage)
                        .List<Menu>()
@@ -117,7 +128,7 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
-        public override int GetDataCount(string data)
+        public override int GetDataCount(string data, string filter)
         {
             MenuId = data;
             using (var session = Store.OpenSession())
@@ -136,6 +147,16 @@ namespace WebsiteTemplate.Backend.Menus
                     mDescription = "Menus";
                     query = query.Where(m => m.ParentMenu == null);
                 }
+
+                if (!String.IsNullOrWhiteSpace(filter))
+                {
+                    query = query.WhereRestrictionOn(x => x.Name).IsLike(filter, MatchMode.Anywhere);// .IsInsensitiveLike(filter);
+                    //query = query
+                    //.And(Restrictions.Or(
+                    //                Restrictions.Eq("", ""), 
+                    //                Restrictions.Eq("", "")));
+                }
+
                 var count = query.RowCount();
                 return count;
             }

@@ -34,7 +34,7 @@ namespace WebsiteTemplate.Backend.UserRoles
             );
         }
 
-        public override IEnumerable GetData(string data, int currentPage, int linesPerPage)
+        public override IEnumerable GetData(string data, int currentPage, int linesPerPage, string filter)
         {
             return new List<object>()
             {
@@ -51,7 +51,7 @@ namespace WebsiteTemplate.Backend.UserRoles
             };
         }
 
-        public override int GetDataCount(string data)
+        public override int GetDataCount(string data, string filter)
         {
             return 2;
         }

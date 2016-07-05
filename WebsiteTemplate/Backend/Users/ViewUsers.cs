@@ -78,7 +78,7 @@ namespace WebsiteTemplate.Backend.Users
                    "ALSO: Will need to limit display to 100% of height and put table inside a scroller\n";
         }
 
-        public override IEnumerable GetData(string data, int currentPage, int linesPerPage)
+        public override IEnumerable GetData(string data, int currentPage, int linesPerPage, string filter)
         {
             using (var session = Store.OpenSession())
             {
@@ -95,7 +95,7 @@ namespace WebsiteTemplate.Backend.Users
             }
         }
 
-        public override int GetDataCount(string data)
+        public override int GetDataCount(string data, string filter)
         {
             using (var session = Store.OpenSession())
             {

@@ -542,11 +542,15 @@ namespace WebsiteTemplate.Controllers
                         var currentPage = 1;
                         var linesPerPage = 10;
                         var totalLines = -1;
+                        var filter = String.Empty;
 
                         var dataJson = new JObject();
                         if (!String.IsNullOrWhiteSpace(data) && !(eventItem is ViewForInput))
                         {
                             dataJson = JObject.Parse(data);
+
+                            filter = dataJson.GetValue("filter")?.ToString();
+
                             var viewSettings = dataJson.GetValue("viewSettings") as JObject;
                             if (viewSettings != null)
                             {
@@ -566,12 +570,12 @@ namespace WebsiteTemplate.Controllers
                             parentData = data;  // In case user modified parentData -> this smells??
                         }
 
-                        if (totalLines == -1)
+                        if (totalLines == -1 || !String.IsNullOrWhiteSpace(filter))
                         {
-                            totalLines = action.GetDataCount(parentData);
+                            totalLines = action.GetDataCount(parentData, filter);
                         }
 
-                        var list = action.GetData(parentData, currentPage, linesPerPage);
+                        var list = action.GetData(parentData, currentPage, linesPerPage, filter);
                         action.ViewData = list;
 
                         var viewMenu = action.GetViewMenu();
@@ -584,6 +588,9 @@ namespace WebsiteTemplate.Controllers
                         action.CurrentPage = currentPage;
                         action.LinesPerPage = linesPerPage;
                         action.TotalLines = totalLines;
+                        action.Filter = filter;
+
+                        //clicking back in view many times breaks filter args- test with menus
 
                         result.Add(action);
                     }

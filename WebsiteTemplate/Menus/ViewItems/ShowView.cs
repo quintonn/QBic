@@ -48,7 +48,7 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// <param name="currentPage">This is the current page to retrieve data for.</param>
         /// <param name="linesPerPage">This is the number of lines per page to retrieve.</param>
         /// <returns></returns>
-        public abstract IEnumerable GetData(string data, int currentPage, int linesPerPage);
+        public abstract IEnumerable GetData(string data, int currentPage, int linesPerPage, string filter);
 
         /// <summary>
         /// Retrieves the total number of records in the data set.
@@ -56,7 +56,7 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public abstract int GetDataCount(string data);
+        public abstract int GetDataCount(string data, string filter);
 
         /// <summary>
         /// This should contain stuff like:
@@ -111,5 +111,6 @@ namespace WebsiteTemplate.Menus.ViewItems
         public int LinesPerPage { get; set; }
         public int CurrentPage { get; set; }
         public int TotalLines { get; set; }
+        public string Filter { get; set; }
     }
 }

@@ -53,7 +53,7 @@
 
     loadHtmlBody: function (nodeName, pageName, callback)
     {
-        var url = "/frontend/pages/" + pageName + '?v=' + main.version;
+        var url = "/frontend/pages/" + pageName + '?v=' + Math.random();// + main.version;
         var loadCompleted = function (resp, nodeName)
         {
             navigation.loadHtmlBodyResponse(resp, nodeName);

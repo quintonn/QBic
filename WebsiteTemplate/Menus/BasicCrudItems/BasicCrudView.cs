@@ -61,7 +61,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             );
         }
 
-        public override IEnumerable GetData(string data, int currentPage, int linesPerPage)
+        public override IEnumerable GetData(string data, int currentPage, int linesPerPage, string filter)
         {
             using (var session = Store.OpenSession())
             {
@@ -74,7 +74,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 
         }
 
-        public override int GetDataCount(string data)
+        public override int GetDataCount(string data, string filter)
         {
             using (var session = Store.OpenSession())
             {

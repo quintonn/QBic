@@ -82,7 +82,6 @@
 
                         var id = data["Id"];
 
-                        //var formData = data;//JSON.stringify(data);
                         var formData =
                             {
                                 Id: data[theColumn.KeyColumn],
@@ -107,14 +106,14 @@
                                 "linesPerPage": settings.LinesPerPage,
                                 "totalLines": settings.TotalLines
                             };
-                            //formData["viewSettings"] = viewSettings;
+
                             formData =
                                 {
                                     data: formData,
                                     viewSettings: ""
                                 };
                             
-                            siteMenu.executeUIAction(eventId, formData);
+                            siteMenu.executeUIAction(eventId, formData, data["Id"]);
                         }
                         else
                         {
@@ -285,7 +284,7 @@
         }
     },
 
-    populateViewWithData: function (table, data, settings, args, addFooter)
+    populateViewWithData: function (table, data, settings, args, isMainView)
     {
         /// Add headings to table
         var headerRow = document.createElement("tr");
@@ -314,7 +313,7 @@
             table.appendChild(row);
         }
 
-        if (addFooter == true)
+        if (isMainView == true)
         {
             views.createFooterRow(table, settings);
         }
@@ -511,7 +510,7 @@
         }
     },
 
-    populateView: function (data, settings, callback, args, addFooter)
+    populateView: function (data, settings, callback, args, isMainView)
     {
         navigation.loadHtmlBody('mainContent', 'Views.html', function ()
         {
@@ -520,10 +519,43 @@
 
             var table = views.getTable();
 
-            views.populateViewWithData(table, data, settings, args, addFooter);
+            views.populateViewWithData(table, data, settings, args, isMainView);
+
+            if (isMainView)
+            {
+                var searchDiv = document.getElementById('searchDiv');
+                searchDiv.style.display = "";
+
+                var searchButton = document.getElementById('btnSearch');
+                searchButton.onclick = (function (sett)
+                {
+                    return function()
+                    {
+                        var filter = document.getElementById('txtFilter').value;
+                        console.log('filter value = ' + filter);
+
+                        var data =
+                        {
+                            viewSettings:
+                            {
+                                currentPage: sett.CurrentPage,
+                                linesPerPage: sett.LinesPerPage,
+                                totalLines: sett.TotalLines
+                            },
+                            filter: filter,
+                            data: args
+                        };
+
+                        console.log('execute ui action with args: ' + args);
+                        siteMenu.executeUIAction(sett.Id, data, args);
+                    }
+                })(settings);
+
+                var filter = document.getElementById('txtFilter');
+                filter.value = settings.Filter;
+            }
 
             var viewMenu = document.getElementById("viewsMenu");
-            //menuBuilder.clearNode('viewsMenu');
 
             views.populateViewMenu(viewMenu, settings);
 
