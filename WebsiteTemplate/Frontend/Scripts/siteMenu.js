@@ -164,7 +164,7 @@
 
                 var data = settings.ViewData;
 
-                views.populateViewMenu(menuDiv, settings, args);
+                views.populateViewMenu(menuDiv, settings, args, true);
                 views.populateViewWithData(table, data, settings, args);
 
                 mainViewDiv.appendChild(menuDiv);
@@ -234,18 +234,27 @@
             case 10: /// Update Data Source Combo Box data source
                 var comboId = "_" + settings.InputName;
                 var combo = document.getElementById(comboId);
-
+                var selectedItem = combo.value;
+                
                 while (combo.options.length > 0)
                 {
                     combo.remove(0);
                 }
-                
+                var selectedIndex = -1;
                 for (var j = 0; j < settings.ListItems.length; j++)
                 {
                     var option = document.createElement("option");
                     option.value = settings.ListItems[j].Key;
                     option.text = settings.ListItems[j].Value;
+                    if (option.value == selectedItem)
+                    {
+                        selectedIndex = j;
+                    }
                     combo.appendChild(option);
+                    if (selectedIndex > -1)
+                    {
+                        combo.selectedIndex = selectedIndex;
+                    }
                 }
                 callback();
                 break;

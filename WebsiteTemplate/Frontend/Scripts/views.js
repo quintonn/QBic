@@ -478,7 +478,7 @@
         table.appendChild(footerInfoRow);
     },
 
-    populateViewMenu: function (viewMenu, settings, args)
+    populateViewMenu: function (viewMenu, settings, args, isInputView)
     {
         while (viewMenu.firstChild)
         {
@@ -500,7 +500,7 @@
                         {
                             data: vm.ParametersToPass,                            
                         }
-                    siteMenu.executeUIAction(id, data, vm.ParametersToPass);
+                    siteMenu.executeUIAction(id, data, isInputView == true ? args : vm.ParametersToPass);
                 }
             })(menu.EventNumber, i);
 

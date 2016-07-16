@@ -967,21 +967,21 @@
                                         var fileName = this.files[0].name;
                                         var lblName = '_txt' + inputFld.InputName;
                                         var lbl = document.getElementById(lblName);
-                                        lbl.innerHTML = fileName;
+                                        lbl.value = fileName;
 
                                         inputDialog.inputOnChangeFunc(inputFld, conLst, id)();
                                     }
                                 })(inputField, conditionList, settings.Id);
 
-                                var fileNameLabel = document.createElement('label');
-                                fileNameLabel.innerHTML = "&#60;select file&#62;";
-                                fileNameLabel.id = '_txt' + inputField.InputName;
+                                var fileNameInput = document.createElement('input');
+                                fileNameInput.innerHTML = "&#60;select file&#62;";
+                                fileNameInput.id = '_txt' + inputField.InputName;
 
                                 var div = document.createElement('div');
                                 div.className = 'fileInputDiv';
 
                                 div.appendChild(inp);
-                                div.appendChild(fileNameLabel);
+                                div.appendChild(fileNameInput);
                                 div.appendChild(button);
 
                                 inputCell.appendChild(div);
@@ -1224,7 +1224,7 @@
             }
 
             var data = [];
-            for (var i = 1; i < inputTable.rows.length-1; i++)
+            for (var i = 1; i < inputTable.rows.length; i++)
             {
                 var row = inputTable.rows[i];
                 var cols = row.getElementsByTagName('td');
@@ -1284,10 +1284,12 @@
                 {
                     fileData = e.target.result;
                     fileData = window.btoa(fileData);  // base 64 encode
+
                     var filex =
                         {
                             Data: fileData,
-                            FileName: theFile.name,
+                            //FileName: theFile.name,
+                            FileName: document.getElementById('_txt' + fieldName.substring(1)).value,
                             MimeType: theFile.type,
                             Size: theFile.size
                             //FileItem: 
