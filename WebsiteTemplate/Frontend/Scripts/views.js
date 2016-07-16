@@ -136,25 +136,30 @@
             }
             else if (column.ColumnType == 3) /// Link
             {
-                if (isNew == false)
+                var a;
+                if (isNew == true)
                 {
-                    continue;
+                    a = document.createElement('a');
+                    a.href = "#";
+                    a.innerHTML = column.LinkLabel;
                 }
-                var a = document.createElement('a');
-                a.href = "#";
-                a.innerHTML = column.LinkLabel;
-                a.onclick = (function (col)
+                else
+                {
+                    a = row.cells[j].firstChild;
+                }
+                
+                a.onclick = (function (col, xData)
                 {
                     return function ()
                     {
                         var formData =
                             {
-                                Id: data[col.KeyColumn],
+                                Id: xData[col.KeyColumn],
                             };
 
                         if (settings.ActionType == 7) /// View for input
                         {
-                            formData['rowData'] = data;
+                            formData['rowData'] = xData;
                             var thisRowId = this.getAttribute('rowId');
                             //formData['rowId'] = thisRowId;
                             formData['rowData']['rowId'] = thisRowId;
@@ -167,13 +172,15 @@
                                 "totalLines": settings.TotalLines
                             };
                         formData["viewSettings"] = "";
-                        
                         var id = col.EventNumber;
                         siteMenu.executeUIAction(id, formData, args);
                     }
-                })(column);
+                })(column, data);
                 a.setAttribute('rowId', rowId);
-                cell.appendChild(a);
+                if (isNew == true)
+                {
+                    cell.appendChild(a);
+                }
             }
             else if (column.ColumnType == 5) /// Date
             {

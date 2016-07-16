@@ -204,8 +204,9 @@
                     else /// Update row
                     {
                         var tableRowId = views.deleteRowFromTable(table, rowId, true);
-                        rowId = Math.max(tableRowId, 0);
+                        rowId = Math.max(tableRowId - 1, 0);
                         //row = table.insertRow(rowId + 1);
+                        
                         row = table.rows[tableRowId];
                     }
                     views.populateRow(row, viewSettings, data, rowId, args, isNew);
@@ -228,7 +229,8 @@
                 
             //    var table = div.getElementsByTagName('table')[0];
             //    console.log('deleting row ' + rowId + ' from table:');
-            //    console.log(table);
+                //    
+                (table);
             //    views.deleteRowFromTable(table, rowId, false);
             //    break;
             case 10: /// Update Data Source Combo Box data source
