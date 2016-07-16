@@ -421,7 +421,6 @@
         var lpp = settings.LinesPerPage;
         if (lpp > 100)
         {
-            console.log(lpp);
             lpp = "All";
         }
         rowCountSelect.value = lpp;
@@ -436,7 +435,6 @@
                 {
                     lines = 1000;
                 }
-                console.log(lines);
                 var data =
                         {
                             viewSettings: 
@@ -502,7 +500,7 @@
                         {
                             data: vm.ParametersToPass,                            
                         }
-                    siteMenu.executeUIAction(id, data, args);
+                    siteMenu.executeUIAction(id, data, vm.ParametersToPass);
                 }
             })(menu.EventNumber, i);
 
@@ -527,14 +525,13 @@
                 searchDiv.style.display = "";
 
                 var searchButton = document.getElementById('btnSearch');
-                searchButton.onclick = (function (sett)
+                searchButton.onclick = (function (sett, searchArgs)
                 {
                     return function()
                     {
                         var filter = document.getElementById('txtFilter').value;
-                        console.log('filter value = ' + filter);
-
-                        var data =
+                        
+                        var tmpData =
                         {
                             viewSettings:
                             {
@@ -543,13 +540,12 @@
                                 totalLines: sett.TotalLines
                             },
                             filter: filter,
-                            data: args
+                            data: searchArgs
                         };
 
-                        console.log('execute ui action with args: ' + args);
-                        siteMenu.executeUIAction(sett.Id, data, args);
+                        siteMenu.executeUIAction(sett.Id, tmpData, searchArgs);
                     }
-                })(settings);
+                })(settings, args);
 
                 var filter = document.getElementById('txtFilter');
                 filter.value = settings.Filter;
@@ -557,7 +553,7 @@
 
             var viewMenu = document.getElementById("viewsMenu");
 
-            views.populateViewMenu(viewMenu, settings);
+            views.populateViewMenu(viewMenu, settings, args);
 
             var viewFooter = document.getElementById('viewsFooter');
             if (settings.ViewMessage != null && settings.ViewMessage.length > 0)

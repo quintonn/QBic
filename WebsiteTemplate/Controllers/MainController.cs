@@ -547,23 +547,30 @@ namespace WebsiteTemplate.Controllers
                         var dataJson = new JObject();
                         if (!String.IsNullOrWhiteSpace(data) && !(eventItem is ViewForInput))
                         {
-                            dataJson = JObject.Parse(data);
-
-                            filter = dataJson.GetValue("filter")?.ToString();
-
-                            var viewSettings = dataJson.GetValue("viewSettings") as JObject;
-                            if (viewSettings != null)
+                            try
                             {
-                                currentPage = Convert.ToInt32(viewSettings.GetValue("currentPage"));
-                                linesPerPage = Convert.ToInt32(viewSettings.GetValue("linesPerPage"));
-                                if (linesPerPage > 100)
+                                dataJson = JObject.Parse(data);
+
+                                filter = dataJson.GetValue("filter")?.ToString();
+
+                                var viewSettings = dataJson.GetValue("viewSettings") as JObject;
+                                if (viewSettings != null)
                                 {
-                                    currentPage = 1; //just in case it's not
-                                    linesPerPage = int.MaxValue;
+                                    currentPage = Convert.ToInt32(viewSettings.GetValue("currentPage"));
+                                    linesPerPage = Convert.ToInt32(viewSettings.GetValue("linesPerPage"));
+                                    if (linesPerPage > 100)
+                                    {
+                                        currentPage = 1; //just in case it's not
+                                        linesPerPage = int.MaxValue;
+                                    }
+                                    totalLines = Convert.ToInt32(viewSettings.GetValue("totalLines"));
                                 }
-                                totalLines = Convert.ToInt32(viewSettings.GetValue("totalLines"));
+                                parentData = dataJson.GetValue("data")?.ToString();
                             }
-                            parentData = dataJson.GetValue("data")?.ToString();
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                            }
                         }
                         else
                         {
