@@ -475,10 +475,10 @@ namespace WebsiteTemplate.Controllers
             return new FileActionResult(fileInfo);
         }
 
-         When clicking a create button on an input view, i don't have access to any information on the screen
-            I might need this (eg, in the claims for creating note attachment. Because i want to check if there 
-            is already a note with the name note1.txt, and if there is, make it note2.txt, etc.
-            
+        /*      When clicking a create button on an input view, i don't have access to any information on the screen
+                I might need this (eg, in the claims for creating note attachment. Because i want to check if there 
+                is already a note with the name note1.txt, and if there is, make it note2.txt, etc.
+        */
 
         [HttpPost]
         [Route("executeUIAction/{*eventId}")]
