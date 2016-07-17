@@ -21,8 +21,6 @@
 
     auth.handleLoginSuccess = function(data)
     {
-        console.log('auth success');
-        console.log(data);
         _applicationModel.user().name(data.userName);
 
         auth.accessToken = data.access_token;
@@ -44,6 +42,40 @@
         return mainApp.startApplication();
     }
 
+    auth.performLogin = function (username, password)
+    {
+        var url = mainApp.apiURL + "token";
+        var data = "grant_type=password&username=" + username + "&password=" + password + "&client_id=" + _applicationModel.applicationName();
+
+        dialog.showBusyDialog("Logging in...");
+        return mainApp.makeWebCall(url, "POST", data)
+                      .then(auth.handleLoginSuccess)
+                      .then(dialog.closeBusyDialog)
+                      .then(dialog.closeModalDialog)
+                      .then(mainApp.startApplication);
+    }
+
+    auth.performTokenRefresh = function ()
+    {
+        //dialog.showBusyDialog("Refreshing token..."); // Todo: Maybe don't show this
+        var url = mainApp.apiURL + "token";
+
+        var data = "grant_type=refresh_token&refresh_token=" + auth.refreshToken + "&client_id=" + _applicationModel.applicationName();
+
+        return $.ajax(
+            {
+                url: url,
+                method: "POST",
+                headers: {
+                    "Authorization": auth.refreshToken
+                },
+                data: data
+            }).done(function (resp)
+            {
+                return auth.handleLoginSuccess(resp).then(dialog.closeBusyDialog);
+            });
+    };
+
 }(window.auth = window.auth || {}, jQuery));
 
 function loginModel(callback)
@@ -53,15 +85,6 @@ function loginModel(callback)
     self.password = ko.observable();
     self.loginClick = function ()
     {
-        //var url = main.webApiURL + "token";
-        var url = mainApp.apiURL + "token";
-        var data = "grant_type=password&username=" + self.userName() + "&password=" + self.password() + "&client_id=" + _applicationModel.applicationName;
-
-        dialog.showBusyDialog("Logging in...");
-        mainApp.makeWebCall(url, "POST", data)
-               .then(auth.handleLoginSuccess)
-               .then(dialog.closeBusyDialog)
-               .then(dialog.closeModalDialog)
-               .then(callback);
+        auth.performLogin(self.userName(), self.password());
     };
 }

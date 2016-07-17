@@ -37,7 +37,6 @@
         {
             return mainApp.makeWebCall("Frontend/Pages/Login.html?v=" + mainApp.version).then(function (data)
             {
-                console.log('showlogin call');
                 loginHtml = data;
                 return addLoginModel();
             });
@@ -60,7 +59,7 @@
         {
             console.log(err);
         }
-        console.log('addLoginModel done');
+        
         return Promise.resolve();
     }
 

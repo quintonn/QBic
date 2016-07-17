@@ -34,6 +34,8 @@
 
         ko.applyBindings(model.model, div);
     };
+
+    self.menuContainer = ko.observable(new menuContainer());
 }
 
 function busyDialogModel(text)

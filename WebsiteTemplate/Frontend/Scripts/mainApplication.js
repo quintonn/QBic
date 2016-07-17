@@ -5,7 +5,7 @@ $(document).ready(function ()
     _applicationModel = new applicationModel();
     ko.applyBindings(_applicationModel, $('body')[0]);
 
-    mainApp.initialize();
+    mainApp.initializeApplication();
 });
 
 (function (mainApp, $, undefined)
@@ -20,7 +20,7 @@ $(document).ready(function ()
 
     mainApp.version = "";
 
-    mainApp.initialize = function ()
+    mainApp.initializeApplication = function ()
     {
         dialog.showBusyDialog("Initializing...");
         return mainApp.makeWebCall(mainApp.apiURL + "\initializeSystem").then(function(data)
@@ -47,17 +47,21 @@ $(document).ready(function ()
 
     mainApp.startApplication = function ()
     {
-        return auth.initialize().then(function ()
+        return auth.initialize()
+                   .then(mainApp.initialize)
+                   .then(menus.loadMenu);
+    };
+
+    mainApp.initialize = function ()
+    {
+        return mainApp.makeWebCall(mainApp.apiURL + "\initialize").then(function (data)
         {
-            return mainApp.makeWebCall(mainApp.apiURL + "\initialize").then(function (data)
-            {
-                var userName = data['User'];
-                var role = data['Role'];
-                var id = data['Id'];
-                var user = new userModel(id, userName, role);
-                _applicationModel.user(user);
-                return Promise.resolve();
-            });
+            var userName = data['User'];
+            var role = data['Role'];
+            var id = data['Id'];
+            var user = new userModel(id, userName, role);
+            _applicationModel.user(user);
+            return Promise.resolve();
         });
     };
 
@@ -94,8 +98,24 @@ $(document).ready(function ()
                     
                     if (error.status == 401)  // not logged in
                     {
-                        // this is where i can try and refresh the access token
-                        dialog.showLoginDialog();
+                        if (auth.refreshToken != null && auth.refreshToken.length > 0) // Try refresh the token
+                        {
+                            return auth.performTokenRefresh().then(function ()
+                            {
+                                // If successfully refreshed the token, retry the web call we just tried
+                                return mainApp.makeWebCall(url, method, data);
+
+                            }).catch(function (err)
+                            {
+                                dialog.closeBusyDialog();
+                                dialog.showLoginDialog();
+                                mainApp.handleError(err);
+                            });
+                        }
+                        else
+                        {
+                            dialog.showLoginDialog();
+                        }
                     }
                     else if (error.status == 400 && error.responseText.indexOf('invalid_grant') > -1)
                     {
