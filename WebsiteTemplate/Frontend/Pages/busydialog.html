@@ -1,0 +1,12 @@
+﻿<div data-bind="foreach: mainApp.busyContainers">
+    <div id="BusyDiv" class="w3-modal w3-blue" >
+        <p>
+            <div class="w3-container" style="top:0; left:0; bottom:0; right:0; margin: auto; position:absolute; height:5%">
+                <div class="w3-center ">
+                    <i class="fa fa-hourglass-half w3-xxlarge w3-spin"></i>
+                    <p data-bind="text: busyText"></p>
+                </div>
+            </div>
+        </p>
+    </div>
+</div>

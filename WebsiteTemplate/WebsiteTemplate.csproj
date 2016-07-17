@@ -139,14 +139,29 @@
   <ItemGroup>
     <Content Include="CustomMenuItems\Getting Started.txt" />
     <Content Include="Frontend\css\busyIndicator.css" />
+    <Content Include="Frontend\css\font-awesome.min.css" />
     <Content Include="Frontend\css\inputView.css" />
     <Content Include="Frontend\css\spinner1.css" />
     <Content Include="Frontend\css\views.css" />
+    <Content Include="Frontend\css\w3.css" />
+    <Content Include="Frontend\fonts\fontawesome-webfont.svg" />
+    <Content Include="Frontend\Pages\busydialog.html" />
+    <Content Include="Frontend\Scripts\applicationModel.js" />
+    <Content Include="Frontend\Scripts\dialog.js" />
+    <Content Include="Frontend\Scripts\jquery-3.1.0.min.js" />
+    <Content Include="Frontend\Scripts\knockout-3.4.0.js" />
+    <Content Include="Frontend\Scripts\mainApplication.js" />
     <Content Include="Frontend\Scripts\masked_input_1.4.js" />
     <Content Include="Frontend\Scripts\modernizr.js" />
+    <Content Include="Frontend\Scripts\promise-7.0.4.min.js" />
+    <Content Include="Frontend\Scripts\promise-done-7.0.4.min.js" />
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Frontend\fonts\fontawesome-webfont.eot" />
+    <Content Include="Frontend\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Frontend\fonts\fontawesome-webfont.woff" />
+    <Content Include="Frontend\fonts\fontawesome-webfont.woff2" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

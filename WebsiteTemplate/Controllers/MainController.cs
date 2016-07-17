@@ -318,12 +318,16 @@ namespace WebsiteTemplate.Controllers
 
         [HttpGet]
         [Route("initializeSystem")]
+        [AllowAnonymous]
         [RequireHttps]
         public IHttpActionResult InitializeSystem()
         {
+            var version = typeof(ShowView).Assembly.GetName().Version.ToString();
+
             var json = new
             {
-                ApplicationName = ApplicationName
+                ApplicationName = ApplicationName,
+                Version = version
             };
             return Json(json);
         }
