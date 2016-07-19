@@ -2,9 +2,7 @@
 {
     menus.loadMenu = function ()
     {
-        console.log('loadMenu');
-        dialog.showBusyDialog("Loading menu");
-        return mainApp.makeWebCall(mainApp.apiURL + "\getUserMenu").then(function (data)
+        return mainApp.makeWebCall(mainApp.apiURL + "getUserMenu").then(function (data)
         {
             var menuItems = menus.getMenus(data, null);
             
@@ -25,7 +23,7 @@
 
             var model = new menuModel(id, name, eventId);
             model.parentMenu = parentMenu;
-            //var parentMenu = menu.ParentMenu;
+            
             var subMenus = menu.SubMenus;
             menuItems.push(model);
             if (subMenus != null)
@@ -66,7 +64,7 @@ function menuModel(id, name, eventId)
         else
         {
             console.log('clicked menu with eventId ' + self.eventId);
-            //TODO: 
+            mainApp.executeUIAction(self.eventId);
         }
         return Promise.resolve();
     };

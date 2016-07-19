@@ -172,6 +172,7 @@
     <Content Include="Frontend\old\Scripts\views.js" />
     <None Include="Frontend\old\Scripts\_references.js" />
     <Content Include="Frontend\Pages\busydialog.html" />
+    <Content Include="Frontend\Pages\dialog.html" />
     <Content Include="Frontend\Scripts\applicationModel.js" />
     <Content Include="Frontend\Scripts\dialog.js" />
     <Content Include="Frontend\Scripts\jquery-3.1.0.min.js" />
@@ -180,6 +181,7 @@
     <Content Include="Frontend\Scripts\masked_input_1.4.js" />
     <Content Include="Frontend\Scripts\menus.js" />
     <Content Include="Frontend\Scripts\modernizr.js" />
+    <Content Include="Frontend\Scripts\processing.js" />
     <Content Include="Frontend\Scripts\promise-7.0.4.min.js" />
     <Content Include="Frontend\Scripts\promise-done-7.0.4.min.js" />
     <Content Include="packages.config">

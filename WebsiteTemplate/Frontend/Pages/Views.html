@@ -1,17 +1,30 @@
-﻿<div id="viewsMenu">
-    <!--<button>Add</button>-->
-</div>
-<div id="viewsTitle" align="center">
-
-</div>
-<div id="tableContainer" align="center" >
-        <div id="searchDiv" style="display:none">
-            <label for="txtFilter" style="display:inline-block">Filter</label>
-            <input type="text" id="txtFilter"/>
-            <button id="btnSearch">Search</button>
+﻿<div class="w3-container w3-center">
+    <h1 data-bind="text: viewTitle"></h1>
+    <div class="w3-section" data-bind="foreach: viewMenus">
+        <button class="w3-btn w3-blue  w3-large" data-bind="text: name, click: menuClick"></button>
+    </div>
+    <div class="w3-container w3-center">
+        <div class="w3-row w3-center">
+            
+            <h4 class="w3-col l1" >Filter</h4>
+            <input class="w3-input w3-col l2 " type="text" data-bind="value: filterText" />
+            <button class="w3-btn w3-blue w3-col l1" data-bind="click: filterSearchClick" style="margin-left:5px">Search</button>
         </div>
-    <table id="tblView" class="viewTable" ></table>
 </div>
-<div id="viewsFooter" align="center">
-
+    <div class="w3-section">
+        <table class="w3-table w3-bordered w3-striped w3-border w3-hoverable w3-border-black">
+            <tr data-bind="foreach: columns">
+                <td data-bind="text: columnLabel, visible: showColumn"></td>
+            </tr>
+            <tr>
+                <td>xxx</td>
+            </tr>
+            <tbody data-bind="foreach: rows">
+                <tr data-bind="foreach: $parent.columns">
+                    <!--<td data-bind="text: $parent.data[$parentContext.$index()][$index()]"></td>-->
+                    <td>xx</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>

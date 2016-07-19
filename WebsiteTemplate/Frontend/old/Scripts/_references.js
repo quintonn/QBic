@@ -22,6 +22,7 @@
 /// <reference path="../../scripts/menus.js" />
 /// <reference path="../../Scripts/modernizr.js" />
 /// <reference path="../../Scripts/navigation.js" />
+/// <reference path="../../scripts/processing.js" />
 /// <reference path="../../Scripts/promise-7.0.4.min.js" />
 /// <reference path="../../Scripts/promise-done-7.0.4.min.js" />
 /// <reference path="../../Scripts/siteMenu.js" />

@@ -35,6 +35,19 @@
         ko.applyBindings(model.model, div);
     };
 
+    self.views = ko.observableArray([]);
+    self.addView = function (model)
+    {
+        self.views.push(model);
+
+        var div = document.getElementById('view_' + _applicationModel.views().length);
+        div = div.firstChild;
+
+        ko.cleanNode(div);
+
+        ko.applyBindings(model, div);
+    };
+
     self.menuContainer = ko.observable(new menuContainer());
 }
 
@@ -56,12 +69,4 @@ function userModel(id, name, role)
     self.id = id;
     self.name = ko.observable(name);
     self.role = role;
-}
-
-function modalDialogModel(html, model, id)
-{
-    var self = this;
-    self.html = ko.observable(html);
-    self.model = model;
-    self.myid = ko.observable(id);
 }

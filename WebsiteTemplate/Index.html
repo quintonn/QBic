@@ -28,8 +28,10 @@
     <script src="Frontend/Scripts/applicationModel.js"></script>
     <script src="Frontend/Scripts/dialog.js"></script>
     <script src="Frontend/Scripts/auth.js"></script>
-    <script src="Frontend/Scripts/menus.js"></script>
-    <script src="Frontend/Scripts/mainApplication.js"></script>
+    <script src="Frontend/Scripts/menus.js?v=10"></script>
+    <script src="Frontend/Scripts/processing.js"></script>
+    <script src="Frontend/Scripts/views.js"></script>
+    <script src="Frontend/Scripts/mainApplication.js?v=10"></script>
     <!--<script src="Frontend/Scripts/views.js"></script>-->
     <!--<script src="Frontend/Scripts/auth.js"></script>-->
     <!--<script src="Frontend/Scripts/inputDialog.js"></script>-->
@@ -78,10 +80,9 @@
         </div>
     </div>
 
-    <div id="mainContent">
-        <!--<h1 style="margin: 20px">Loading...</h1>-->
+    <!--<div id="mainContent">
         <h1>Hello</h1>
-    </div>
+    </div>-->
 
     <div data-bind="foreach: modalDialogs">
         <div class="w3-modal " style="display:block">
@@ -99,6 +100,12 @@
                     </div>
                 </div>
             </p>
+        </div>
+    </div>
+
+    <div data-bind="foreach: views">
+        <div class="w3-container" data-bind="html: html, attr: { id: 'view_' + myid() }">
+
         </div>
     </div>
 

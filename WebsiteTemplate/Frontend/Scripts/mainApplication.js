@@ -23,7 +23,7 @@ $(document).ready(function ()
     mainApp.initializeApplication = function ()
     {
         dialog.showBusyDialog("Initializing...");
-        return mainApp.makeWebCall(mainApp.apiURL + "\initializeSystem").then(function(data)
+        return mainApp.makeWebCall(mainApp.apiURL + "initializeSystem").then(function(data)
         {
             var appName = data['ApplicationName'];
             var version = data['Version'];
@@ -54,7 +54,7 @@ $(document).ready(function ()
 
     mainApp.initialize = function ()
     {
-        return mainApp.makeWebCall(mainApp.apiURL + "\initialize").then(function (data)
+        return mainApp.makeWebCall(mainApp.apiURL + "initialize").then(function (data)
         {
             var userName = data['User'];
             var role = data['Role'];
@@ -69,6 +69,29 @@ $(document).ready(function ()
     {
         console.log(err);
         return Promise.resolve();
+    };
+
+    mainApp.executeUIAction = function (eventId, params)
+    {
+        var data =
+            {
+                Data: params || ""
+            };
+
+        data = JSON.stringify(data);
+
+        var url = mainApp.apiURL + "executeUIAction/"+eventId;
+        return mainApp.makeWebCall(url, "POST", data).then(function (resp)
+        {
+            mainApp.processUIActionResult(resp, eventId);
+        });
+    };
+
+    mainApp.processUIActionResult = function (data)
+    {
+        console.log('process UI Action Result:');
+        console.log(data);
+        return processing.processUIActionResult(data);
     };
 
     mainApp.makeWebCall = function (url, method, data)
