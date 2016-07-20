@@ -127,7 +127,8 @@ $(document).ready(function ()
                             console.log('getting refresh token');
                             return auth.performTokenRefresh().then(function ()
                             {
-                                console.log('got refresh token, now retyring url');
+                                alert('token refresh! - debug');
+                                console.log('got refresh token, now retyring url: ' + url);
                                 // If successfully refreshed the token, retry the web call we just tried
                                 return mainApp.makeWebCall(url, method, data);
 

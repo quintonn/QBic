@@ -3,12 +3,11 @@
     views.showView = function (viewData)
     {
         dialog.showBusyDialog();
-        console.log('showing view:');
         console.log(viewData);
 
         return mainApp.makeWebCall("frontend/pages/Views.html?v=" + mainApp.version).then(function (data)
         {
-            var model = new viewModel('Test title', data, _applicationModel.views().length + 1);
+            var model = new viewModel(viewData.Description, data, _applicationModel.views().length + 1);
             _applicationModel.addView(model);
 
             var menuItems = viewData.ViewMenu;
@@ -18,13 +17,13 @@
                 var mModel = new viewMenuModel(menu.Label, menu.EventNumber, menu.ParametersToPass);
                 model.viewMenus.push(mModel);
             }
-            console.log(viewData);
+
             var columns = viewData.Columns;
 
             for (var i = 0; i < columns.length; i++)
             {
                 var col = columns[i];
-                var colModel = createColumn(col, i);
+                var colModel = new columnModel(i, col.ColumnLabel, col.ColumnType != 4);
                 model.columns.push(colModel);
             }
 
@@ -37,8 +36,9 @@
                 {
                     var col = columns[k];
                     var value = processing.getColumnValue(col, record);
+                    
                     //console.log('create a row_col item');
-                    var cellIsVisible = processing.cellIsVisible(col, record) && colModel.showColumn();
+                    var cellIsVisible = col.ColumnType != 4 && processing.cellIsVisible(col, record);
                     
                     var cell = new cellModel(value, cellIsVisible, col.ColumnType);
                     rowItem.cells.push(cell);
@@ -49,6 +49,14 @@
             return dialog.closeBusyDialog();
         });
     };
+
+    function columnModel(id, label, visible)
+    {
+        var self = this;
+        self.id = id;
+        self.label = ko.observable(label);
+        self.visible = ko.observable(visible);
+    }
 
     function viewMenuModel(label, eventId, params)
     {
@@ -70,7 +78,8 @@
 
         self.showCell = ko.observable(cellIsVisible);
 
-        self.columnType = ko.observable(cellIsVisible == false ? -1 : columnType);
+        //self.columnType = ko.observable(cellIsVisible == false ? -1 : columnType);
+        self.columnType = ko.observable(columnType);
 
         self.click = function (rowData, viewColumn, evt)
         {
@@ -106,48 +115,6 @@
         self.rows = ko.observableArray([]);
 
         self.html = ko.observable(html);
-    }
-
-    function createColumn(column, index)
-    {
-        switch (column.ColumnType)
-        {
-            case 2: /// Button
-                return new buttonColumn(column, index);
-            default:
-                return new viewColumnModel(column, index);
-        }
-    }
-
-    function viewColumnModel(column, index)
-    {
-        var self = this;
-        self.index = index;
-        
-        self.columnType = ko.observable(column.ColumnType);
-        self.showColumn = ko.computed(function ()
-        {
-            return self.columnType() != 4;
-        }, self);
-
-        self.columnLabel = ko.computed(function ()
-        {
-            return self.showColumn() == true ? column.ColumnLabel : "";
-        }, self);
-    }
-
-    function buttonColumn(column, index)
-    {
-        var self = new viewColumnModel(column, index);
-
-        var label = "????";
-        if (column.ButtonTextSource == 0)
-        {
-            label = column.ButtonText;
-        }
-        self.buttonText = ko.observable(label);
-
-        return self;
     }
 
 }(window.views = window.views || {}, jQuery));

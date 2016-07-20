@@ -14,35 +14,34 @@
             </table>
         </div>
 </div>
-    <div class="w3-section">
+    <div class="w3-section" style="overflow:scroll">
         <table class="w3-table w3-bordered w3-striped w3-border w3-hoverable w3-border-black" >
-            <tr data-bind="foreach: columns">
-                <th data-bind="text: columnLabel"></th>
-            </tr>
+            
+                <tr data-bind="foreach: columns">
+                    <th data-bind="text: label, visible: visible"></th>
+                </tr>
+            
            
-            <tbody data-bind="foreach: rows">
-                <tr data-bind="foreach: $parent.columns">
-                    <td >
-                        <!--  ko if:  $parent.cells()[$index()].columnType() == 0 -->
-                        <span data-bind="text: $parent.cells()[$index()].value"></span>
-                        <!-- /ko -->
+            <!-- ko foreach: rows -->
+            
+                <tr data-bind="foreach: cells">
+                    <td data-bind="visible: showCell() == true || columnType() == 2 || columnType() == 3">
+                            <!--  ko if:  columnType() == 0 ||  columnType() == 4 -->
+                            <span data-bind="text: value"></span>
+                            <!-- /ko -->
+                           
+                            <!--  ko if:  columnType() == 2 -->
+                            <!-- the visible binding is duplicated here because if it's not here it messes column ordering up -->
+                            <button class="w3-btn w3-blue w3-small" data-bind="visible: showCell, text: value, click:  function(data, event) { $parent.cells()[$index()].click($parent, data, event) }"></button>
+                            <!-- /ko -->
 
-                        <!--  ko if:  $parent.cells()[$index()].columnType() == -1 -->
-                        <!-- /ko -->
-
-                        <!--  ko if:  $parent.cells()[$index()].columnType() == 2 -->
-                            <button class="w3-btn w3-blue w3-small" data-bind="text: $parent.cells()[$index()].value, click:  function(data, event) { $parent.cells()[$index()].click($parent, data, event) }"></button>
-                        <!-- /ko -->
-
-                        <!--  ko if:  $parent.cells()[$index()].columnType() == 3 -->
-                        <a href="#" data-bind="text: $parent.cells()[$index()].value, click:  function(data, event) { $parent.cells()[$index()].click($parent, data, event) }"></a>
-                        <!-- /ko -->
+                            <!--  ko if:  $parent.cells()[$index()].columnType() == 3 -->
+                            <a href="#" data-bind="visible: showCell, text: value, click:  function(data, event) { $parent.cells()[$index()].click($parent, data, event) }"></a>
+                            <!-- /ko -->
                     </td>
-                    <!--<td data-bind="visible: $parent.cells()[$index()].showCell() == false">
-                        
-                    </td>-->
-                    </tr>
-            </tbody>
+                    
+               </tr>
+            <!-- /ko -->
         </table>
     </div>
 </div>
