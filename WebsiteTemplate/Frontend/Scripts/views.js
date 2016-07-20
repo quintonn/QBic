@@ -78,7 +78,6 @@
 
         self.showCell = ko.observable(cellIsVisible);
 
-        //self.columnType = ko.observable(cellIsVisible == false ? -1 : columnType);
         self.columnType = ko.observable(columnType);
 
         self.click = function (rowData, viewColumn, evt)
@@ -103,6 +102,10 @@
         var self = this;
 
         self.myid = ko.observable(id);
+
+        // I want to add all other view settings here too, eg, ActionType, CurrentPage, lines per page, etc.
+        // But how to get to this info when user clicks on a row item????
+        alert('xxxx  I AM HERE');
 
         self.viewTitle = ko.observable(title);
         self.viewMenus = ko.observableArray([]);
