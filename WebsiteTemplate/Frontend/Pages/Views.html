@@ -17,20 +17,31 @@
     <div class="w3-section">
         <table class="w3-table w3-bordered w3-striped w3-border w3-hoverable w3-border-black" >
             <tr data-bind="foreach: columns">
-                <th data-bind="text: columnLabel, visible: showColumn"></th>
+                <th data-bind="text: columnLabel"></th>
             </tr>
            
             <tbody data-bind="foreach: rows">
                 <tr data-bind="foreach: $parent.columns">
-                    <td data-bind="visible: showColumn() == true && $parent.records()[$index()].showCell() == true">
-                        <!-- ko if: columnType() == 2 -->
-                            <button class="w3-btn w3-blue" data-bind="text: buttonText">xx</button>
+                    <td >
+                        <!--  ko if:  $parent.cells()[$index()].columnType() == 0 -->
+                        <span data-bind="text: $parent.cells()[$index()].value"></span>
                         <!-- /ko -->
-                        <!-- ko if: columnType() != 2 -->
-                        <span data-bind="text: $parent.records()[$index()].value"></span>
+
+                        <!--  ko if:  $parent.cells()[$index()].columnType() == -1 -->
+                        <!-- /ko -->
+
+                        <!--  ko if:  $parent.cells()[$index()].columnType() == 2 -->
+                            <button class="w3-btn w3-blue w3-small" data-bind="text: $parent.cells()[$index()].value, click:  function(data, event) { $parent.cells()[$index()].click($parent, data, event) }"></button>
+                        <!-- /ko -->
+
+                        <!--  ko if:  $parent.cells()[$index()].columnType() == 3 -->
+                        <a href="#" data-bind="text: $parent.cells()[$index()].value, click:  function(data, event) { $parent.cells()[$index()].click($parent, data, event) }"></a>
                         <!-- /ko -->
                     </td>
-                </tr>
+                    <!--<td data-bind="visible: $parent.cells()[$index()].showCell() == false">
+                        
+                    </td>-->
+                    </tr>
             </tbody>
         </table>
     </div>

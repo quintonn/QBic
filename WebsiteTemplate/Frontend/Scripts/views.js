@@ -2,6 +2,7 @@
 {
     views.showView = function (viewData)
     {
+        dialog.showBusyDialog();
         console.log('showing view:');
         console.log(viewData);
 
@@ -17,7 +18,7 @@
                 var mModel = new viewMenuModel(menu.Label, menu.EventNumber, menu.ParametersToPass);
                 model.viewMenus.push(mModel);
             }
-
+            console.log(viewData);
             var columns = viewData.Columns;
 
             for (var i = 0; i < columns.length; i++)
@@ -37,13 +38,15 @@
                     var col = columns[k];
                     var value = processing.getColumnValue(col, record);
                     //console.log('create a row_col item');
-                    var cell = new cellModel(value);
-                    rowItem.records.push(cell);
+                    var cellIsVisible = processing.cellIsVisible(col, record) && colModel.showColumn();
+                    
+                    var cell = new cellModel(value, cellIsVisible, col.ColumnType);
+                    rowItem.cells.push(cell);
                 }
                 model.rows.push(rowItem);
             }
 
-            return Promise.resolve();
+            return dialog.closeBusyDialog();
         });
     };
 
@@ -60,12 +63,21 @@
         }
     }
 
-    function cellModel(value)
+    function cellModel(value, cellIsVisible, columnType)
     {
         var self = this;
         self.value = ko.observable(value);
 
-        self.showCell = ko.observable(true);
+        self.showCell = ko.observable(cellIsVisible);
+
+        self.columnType = ko.observable(cellIsVisible == false ? -1 : columnType);
+
+        self.click = function (rowData, viewColumn, evt)
+        {
+            console.log(rowData);
+            var colType = viewColumn.columnType(); /// Will use this to decide if button or link etc.
+            var data = rowData.data; /// Contains all info for the row
+        };
     }
 
     function rowModel(data)
@@ -74,7 +86,7 @@
 
         self.data = data;
 
-        self.records = ko.observableArray([]);
+        self.cells = ko.observableArray([]);
     }
 
     function viewModel(title, html, id)
@@ -111,11 +123,16 @@
     {
         var self = this;
         self.index = index;
-        self.columnLabel = ko.observable(column.ColumnLabel);
+        
         self.columnType = ko.observable(column.ColumnType);
         self.showColumn = ko.computed(function ()
         {
             return self.columnType() != 4;
+        }, self);
+
+        self.columnLabel = ko.computed(function ()
+        {
+            return self.showColumn() == true ? column.ColumnLabel : "";
         }, self);
     }
 

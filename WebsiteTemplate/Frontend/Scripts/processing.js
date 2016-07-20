@@ -18,16 +18,55 @@
         }
     };
 
-    processing.isCell
-
-    processing.getColumnValue = function(column, rowData)
+    processing.cellIsVisible = function (column, data)
     {
-        var columnName = column.ColumnName;
-        var columnType = column.ColumnType;
+        if (column.ColumnSetting != null)
+        {
+            if (column.ColumnSetting.ColumnSettingType == 0) /// Show/Hide column
+            {
+                var show = column.ColumnSetting.Display == 0;
+                var compareResult = true;
+
+                for (var p = 0; p < column.ColumnSetting.Conditions.length; p++)
+                {
+                    var condition = column.ColumnSetting.Conditions[p];
+                    var colName = condition.ColumnName;
+                    var comparison = condition.Comparison;
+                    var colVal = condition.ColumnValue;
+
+                    //var actualValue = data[colName] || "";
+                    //actualValue = actualValue.toString();
+                    var actualValue = processing.parseColumnName(colName, data)+"";
+
+                    if (comparison == 0)
+                    {
+                        compareResult = compareResult && actualValue == colVal;
+                    }
+                    else if (comparison == 1)
+                    {
+                        compareResult = compareResult && actualValue != colVal;
+                    }
+                    else
+                    {
+                        alert("Unknown comparison: " + comparison);
+                    }
+                }
+
+                if ((compareResult == false && show == true) || (compareResult == true && show == false))
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    };
+
+    processing.parseColumnName = function (columnName, data)
+    {
         var value = "";
         if (columnName != null && columnName.length > 0)
         {
-            value = rowData;//[i];
+            value = data;
             var colName = columnName;
             while (colName.indexOf('.') > -1)
             {
@@ -46,6 +85,14 @@
                 value = value[colName];
             }
         }
+        return value;
+    };
+
+    processing.getColumnValue = function(column, rowData)
+    {
+        var columnName = column.ColumnName;
+        var columnType = column.ColumnType;
+        var value = processing.parseColumnName(columnName, rowData);
 
         switch (columnType)
         {
@@ -59,7 +106,18 @@
                     value = column.FalseValueDisplay;
                 }
                 break;
-            case 2:
+            case 2: /// Button
+                if (column.ButtonTextSource == 0)
+                {
+                    value = column.ButtonText;
+                }
+                else
+                {
+                    value = "????";
+                }
+                break;
+            case 3: /// Link
+                value = column.LinkLabel;
                 break;
             default:
                 if (value == null)
