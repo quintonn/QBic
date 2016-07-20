@@ -14,8 +14,8 @@
             </table>
         </div>
 </div>
-    <div class="w3-section" style="overflow:scroll">
-        <table class="w3-table w3-bordered w3-striped w3-border w3-hoverable w3-border-black" >
+    <div class="w3-section" style="overflow-x:auto; overflow-y: auto">
+        <table class="w3-table w3-bordered w3-striped w3-border w3-hoverable " >
             
                 <tr data-bind="foreach: columns">
                     <th data-bind="text: label, visible: visible"></th>
@@ -25,9 +25,9 @@
             <!-- ko foreach: rows -->
             
                 <tr data-bind="foreach: cells">
-                    <td data-bind="visible: showCell() == true || columnType() == 2 || columnType() == 3">
+                    <td data-bind="visible: showCell() == true || columnType() != 4">
                             <!--  ko if:  columnType() == 0 ||  columnType() == 4 -->
-                            <span data-bind="text: value"></span>
+                            <span data-bind="visible: showCell, text: value"></span>
                             <!-- /ko -->
                            
                             <!--  ko if:  columnType() == 2 -->

@@ -105,7 +105,10 @@
 
         // I want to add all other view settings here too, eg, ActionType, CurrentPage, lines per page, etc.
         // But how to get to this info when user clicks on a row item????
-        alert('xxxx  I AM HERE');
+        alert('xxxx  I AM HERE'); // Maybe put click event on viewModel -> I.E. here. With row and col index in the click event
+        // Button and link has same click processing
+        // Change buttonColumn to also have a KeyColumn property -> or better make link and button column more similar
+        // ...also on click event i think i would want the original data. Maybe try without this for now
 
         self.viewTitle = ko.observable(title);
         self.viewMenus = ko.observableArray([]);
