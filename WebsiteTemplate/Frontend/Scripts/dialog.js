@@ -11,6 +11,7 @@
     dialog.closeBusyDialog = function ()
     {
         _applicationModel.busyContainers.pop();
+        return Promise.resolve();
     };
 
     dialog.closeModalDialog = function ()

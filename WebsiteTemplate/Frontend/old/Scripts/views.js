@@ -204,12 +204,6 @@
                     value = "";
                 }
 
-                if (value == null)
-                {
-                    value = "";
-                }
-                var typ = typeof value;
-
                 if (typeof value === 'object')
                 {
                     value = JSON.stringify(value);

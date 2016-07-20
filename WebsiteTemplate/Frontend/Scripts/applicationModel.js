@@ -38,9 +38,14 @@
     self.views = ko.observableArray([]);
     self.addView = function (model)
     {
+        while (self.views().length > 0)
+        {
+            self.views.pop();
+        }
+        var viewItems = self.views();
         self.views.push(model);
 
-        var div = document.getElementById('view_' + _applicationModel.views().length);
+        var div = document.getElementById('view_' + model.myid());
         div = div.firstChild;
 
         ko.cleanNode(div);

@@ -72,6 +72,8 @@
                 data: data
             }).done(function (resp)
             {
+                console.log('got refresh token');
+                console.log(resp);
                 return auth.handleLoginSuccess(resp).then(dialog.closeBusyDialog);
             });
     };

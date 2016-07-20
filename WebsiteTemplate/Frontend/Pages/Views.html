@@ -1,28 +1,35 @@
-﻿<div class="w3-container w3-center">
-    <h1 data-bind="text: viewTitle"></h1>
+﻿<div class="w3-container ">
+    <h1 class="w3-center" data-bind="text: viewTitle"></h1>
     <div class="w3-section" data-bind="foreach: viewMenus">
-        <button class="w3-btn w3-blue  w3-large" data-bind="text: name, click: menuClick"></button>
+        <button class="w3-btn w3-blue w3-large" data-bind="text: label, click: menuClick"></button>
     </div>
     <div class="w3-container w3-center">
-        <div class="w3-row w3-center">
-            
-            <h4 class="w3-col l1" >Filter</h4>
-            <input class="w3-input w3-col l2 " type="text" data-bind="value: filterText" />
-            <button class="w3-btn w3-blue w3-col l1" data-bind="click: filterSearchClick" style="margin-left:5px">Search</button>
+        <div class="w3-row w3-center w3-content">
+            <table class="w3-center">
+                <tr class="">
+                    <td><label class="w3-label" >Filter</label></td>
+                    <td><input class="w3-input w3-border w3-light-grey" type="text" data-bind="value: filterText" /></td>
+                    <td><button class="w3-btn w3-blue" data-bind="click: filterSearchClick" >Search</button></td>
+                </tr>
+            </table>
         </div>
 </div>
     <div class="w3-section">
-        <table class="w3-table w3-bordered w3-striped w3-border w3-hoverable w3-border-black">
+        <table class="w3-table w3-bordered w3-striped w3-border w3-hoverable w3-border-black" >
             <tr data-bind="foreach: columns">
-                <td data-bind="text: columnLabel, visible: showColumn"></td>
+                <th data-bind="text: columnLabel, visible: showColumn"></th>
             </tr>
-            <tr>
-                <td>xxx</td>
-            </tr>
+           
             <tbody data-bind="foreach: rows">
                 <tr data-bind="foreach: $parent.columns">
-                    <!--<td data-bind="text: $parent.data[$parentContext.$index()][$index()]"></td>-->
-                    <td>xx</td>
+                    <td data-bind="visible: showColumn() == true && $parent.records()[$index()].showCell() == true">
+                        <!-- ko if: columnType() == 2 -->
+                            <button class="w3-btn w3-blue" data-bind="text: buttonText">xx</button>
+                        <!-- /ko -->
+                        <!-- ko if: columnType() != 2 -->
+                        <span data-bind="text: $parent.records()[$index()].value"></span>
+                        <!-- /ko -->
+                    </td>
                 </tr>
             </tbody>
         </table>
