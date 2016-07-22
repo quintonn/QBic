@@ -76,10 +76,6 @@ namespace WebsiteTemplate.Backend.Menus
                        new Condition("CanDelete", Comparison.Equals, "true")
                    }
                 }
-                //eventItem: new UserConfirmation("Delete Menu Item?")
-                //{
-                //    OnConfirmationUIAction = EventNumber.DeleteMenu
-                //}
             );
         }
 
@@ -107,10 +103,6 @@ namespace WebsiteTemplate.Backend.Menus
                 if (!String.IsNullOrWhiteSpace(filter))
                 {
                     query = query.WhereRestrictionOn(x => x.Name).IsLike(filter, MatchMode.Anywhere);
-                    //query = query
-                    //.And(Restrictions.Or(
-                    //                Restrictions.Eq("", ""), 
-                    //                Restrictions.Eq("", "")));
                 }
 
                     var results = query
@@ -132,13 +124,16 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
-        public void ProcessData(string data)
+        //TODO: Possible (most likely) change this to have JSON object as input. So i have this try catch in only one place
+        //      Then i can set the incoming json object to either be null, or a blank json object.
+        //      --- Lets see what happens in ClaimManager - if it'll be usefull
+        public void ProcessData(string data) 
         {
             try
             {
                 var json = JObject.Parse(data);
-                var id = json.GetValue("Id"); // If 'sub-menus' column link is clicked
-                var dataItem = json.GetValue("data"); // If 'back' menu-button button is clicked
+                var id = json.GetValue("Id");                                  // If 'sub-menus' column link is clicked
+                var dataItem = json.GetValue("data");                          // If 'back' menu-button button is clicked
                 var eventParams = json.GetValue("eventParameters") as JObject; // This is when 'search' is clicked on the filter
 
                 if (id != null)
@@ -156,6 +151,8 @@ namespace WebsiteTemplate.Backend.Menus
             }
             catch (Exception e)
             {
+                // Comes here when the 'Menus' menu item is clicked (i.e. viewing all top level menus)
+                MenuId = "";
                 Console.WriteLine(e.Message);
             }
         }
@@ -182,11 +179,7 @@ namespace WebsiteTemplate.Backend.Menus
 
                 if (!String.IsNullOrWhiteSpace(filter))
                 {
-                    query = query.WhereRestrictionOn(x => x.Name).IsLike(filter, MatchMode.Anywhere);// .IsInsensitiveLike(filter);
-                    //query = query
-                    //.And(Restrictions.Or(
-                    //                Restrictions.Eq("", ""), 
-                    //                Restrictions.Eq("", "")));
+                    query = query.WhereRestrictionOn(x => x.Name).IsLike(filter, MatchMode.Anywhere);
                 }
 
                 var count = query.RowCount();

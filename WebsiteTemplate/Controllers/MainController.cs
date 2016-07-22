@@ -239,6 +239,7 @@ namespace WebsiteTemplate.Controllers
                     var menuList1 = session.CreateCriteria<Menu>()
                                            .Add(Restrictions.Eq("Event", EventNumber.ViewUsers))
                                            .List<Menu>();
+                   
                     if (menuList1.Count == 0)
                     {
                         var menu1 = new Menu()
@@ -253,6 +254,7 @@ namespace WebsiteTemplate.Controllers
                     var menuList2 = session.CreateCriteria<Menu>()
                                            .Add(Restrictions.Eq("Event", EventNumber.ViewMenus))
                                            .List<Menu>();
+
                     if (menuList2.Count == 0)
                     {
                         var menu2 = new Menu()
@@ -623,7 +625,7 @@ namespace WebsiteTemplate.Controllers
                     }
                     else
                     {
-                        processedFormData = new Dictionary<string, object>();
+                        //processedFormData = new Dictionary<string, object>();
                     }
 
                     (eventItem as DoSomething).InputData = processedFormData;

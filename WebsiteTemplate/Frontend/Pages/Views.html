@@ -24,7 +24,7 @@
             <!-- ko foreach: rows -->
             <tr data-bind="foreach: cells">
                 <td data-bind="visible: showCell() == true || columnType() != 4">
-                    <!--  ko if:  columnType() == 0 ||  columnType() == 4 -->
+                    <!--  ko if:  columnType() == 0 ||  columnType() == 4 || columnType() == 1 -->
                     <span data-bind="visible: showCell, text: value"></span>
                     <!-- /ko -->
                            

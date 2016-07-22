@@ -46,10 +46,7 @@ namespace WebsiteTemplate.Backend.Menus
         {
             var id = GetValue<string>("Id");
 
-            var confirmationString = String.Empty;
-            confirmationString = GetValue<string>("Confirmation");
-
-            var confirmed = !String.IsNullOrWhiteSpace(confirmationString);
+            var confirmed = GetValue<bool>("Confirmation");
 
             var parentId = String.Empty;
 
@@ -87,7 +84,13 @@ namespace WebsiteTemplate.Backend.Menus
                 session.Flush();
             }
 
-            return new List<Event>()
+            using (var session = Store.OpenSession())
+            {
+                var menu = session.Get<Menu>(id);
+                Console.WriteLine(menu == null);
+            }
+
+                return new List<Event>()
             {
                 new ShowMessage("Menu deleted successfully"),
                 new CancelInputDialog(),

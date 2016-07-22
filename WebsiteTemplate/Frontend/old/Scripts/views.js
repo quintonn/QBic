@@ -53,9 +53,11 @@
                 //console.log('value for column ' + column.ColumnName + ' is undefined inside populate view');
                 continue;
             }
-
+            console.log(value);
+            console.log(column.ColumnType);
             if (column.ColumnType == 1) /// Boolean
             {
+                console.log(value);
                 if (value == true)
                 {
                     value = column.TrueValueDisplay;

@@ -8,6 +8,21 @@
         return Promise.resolve();
     };
 
+    dialog.getUserConfirmation = function (settings, data)
+    {
+        var cancelText = settings.CancelButtonText;
+        var confirmText = settings.ConfirmationButtonText;
+        var message = settings.ConfirmationMessage;
+        var confirmEvent = settings.OnConfirmationUIAction;
+        var cancelEvent = settings.OnCancelUIAction;
+
+        return new Promise(function (resolve, reject)
+        {
+            var model = new confirmationModel(message, confirmText, confirmEvent, cancelText, cancelEvent, resolve, data);
+            return dialog.showDialogWithId('confirmation', model);
+        });
+    };
+
     dialog.closeBusyDialog = function ()
     {
         _applicationModel.busyContainers.pop();
@@ -17,6 +32,7 @@
     dialog.closeModalDialog = function ()
     {
         _applicationModel.modalDialogs.pop();
+        return Promise.resolve();
     };
 
     dialog.showDialogWithId = function (pageId, viewModel)
@@ -73,6 +89,41 @@
         }
         
         return Promise.resolve();
+    }
+
+    function confirmationModel(message, confirmButtonText, confirmEvent, cancelButtonText, cancelEvent, callback, data)
+    {
+        var self = this;
+        self.message = ko.observable(message);
+        self.confirmationText = ko.observable(confirmButtonText);
+        self.cancelText = ko.observable(cancelButtonText);
+
+        self.confirmClick = function ()
+        {
+            dialog.closeModalDialog();
+            if (confirmEvent > 0)
+            {
+                dialog.showBusyDialog("Processing...");
+                mainApp.executeUIAction(confirmEvent, data).then(dialog.closeBusyDialog).then(callback);
+            }
+            else
+            {
+                callback();
+            }
+        };
+        self.cancelClick = function ()
+        {
+            dialog.closeModalDialog();
+            if (cancelEvent > 0)
+            {
+                dialog.showBusyDialog("Processing...");
+                mainApp.executeUIAction(theColumn.Event.cancelEvent, data).then(dialog.closeBusyDialog).then(callback);
+            }
+            else
+            {
+                callback();
+            }
+        };
     }
 
     function dialogSetting(heading, message)

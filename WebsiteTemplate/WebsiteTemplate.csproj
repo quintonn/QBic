@@ -172,6 +172,7 @@
     <Content Include="Frontend\old\Scripts\views.js" />
     <None Include="Frontend\old\Scripts\_references.js" />
     <Content Include="Frontend\Pages\busydialog.html" />
+    <Content Include="Frontend\Pages\confirmation.html" />
     <Content Include="Frontend\Pages\dialog.html" />
     <Content Include="Frontend\Scripts\applicationModel.js" />
     <Content Include="Frontend\Scripts\dialog.js" />

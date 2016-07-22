@@ -68,6 +68,16 @@ $(document).ready(function ()
     mainApp.handleError = function (err)
     {
         console.log(err);
+        var errMsg = err;
+        if (err.responseText != null)
+        {
+            errMsg = err.responseText;
+        }
+        if (err.stack != null)
+        {
+            errMsg += ":\n" + err.stack;
+        }
+        dialog.showMessage("Error", errMsg);
         return Promise.resolve();
     };
 
@@ -87,11 +97,11 @@ $(document).ready(function ()
         });
     };
 
-    mainApp.processUIActionResult = function (data)
+    mainApp.processUIActionResult = function (data, eventId)
     {
         console.log('process UI Action Result:');
         console.log(data);
-        return processing.processUIActionResult(data);
+        return processing.processUIActionResult(data, eventId);
     };
 
     mainApp.makeWebCall = function (url, method, data)

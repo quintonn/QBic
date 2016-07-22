@@ -169,9 +169,11 @@
             else if (theColumn.Event.ActionType == 5) /// ShowMessage
             {
                 //dialog.showMessage(theColumn.Event, null, formData, args);
-                dialog.closeBusyDialog.then(function ()
+                dialog.closeBusyDialog().then(function ()
                 {
-                    return dialog.showMessage("Info", "TODO: view button on click action type = 5");
+                    console.log(theColumn);
+                    //return dialog.showMessage("Info", "TODO: view button on click action type = 5");
+                    return dialog.getUserConfirmation(theColumn.Event, formData);
                 });
                 // Need to be able to have a .then on showMessage. So i can have yes/no/cancel buttons and process their events
             }

@@ -2,20 +2,53 @@
 {
     processing.processUIActionResult = function (data, eventId)
     {
-        for (var i = 0; i < data.length; i++)
+        console.log(data);
+        return Promise.all(data.map(function (item)
         {
-            var item = data[i];
-
+            console.log('data map of:');
+            console.log(item);
             var actionType = item.ActionType;
 
             switch (actionType)
             {
-                case 0:
+                case 0: // Show a view
                     return views.showView(item);
+                case 4: // Close input dialog -- Not sure i need this anymore.
+                    return Promise.resolve();
+                case 5:
+                    console.log('action type 5:');
+                    console.log(item);
+                    return dialog.getUserConfirmation(item, item.Data);
+                case 6: // Execute UI action
+                    return mainApp.executeUIAction(item.EventNumber, item.ParametersToPass);
                 default:
                     return dialog.showMessage("Error", "Unknown action type: " + actionType + " for event " + eventId);
             }
-        }
+        })).then(function ()
+        {
+            console.log('data map completed');
+        }).catch(function (err)
+        {
+            return mainApp.handleError(err);
+        });
+        //for (var i = 0; i < data.length; i++)
+        //{
+        //    var item = data[i];
+
+        //    var actionType = item.ActionType;
+
+        //    switch (actionType)
+        //    {
+        //        case 0:
+        //            return views.showView(item);
+        //        case 5:
+        //            console.log('action type 5:');
+        //            console.log(item);
+        //            return dialog.getUserConfirmation(item, item.Data);
+        //        default:
+        //            return dialog.showMessage("Error", "Unknown action type: " + actionType + " for event " + eventId);
+        //    }
+        //}
     };
 
     processing.cellIsVisible = function (column, data)
@@ -97,6 +130,7 @@
         switch (columnType)
         {
             case 1: /// Boolean
+                console.log(value);
                 if (value == true)
                 {
                     value = column.TrueValueDisplay;
@@ -105,6 +139,7 @@
                 {
                     value = column.FalseValueDisplay;
                 }
+                console.log(value);
                 break;
             case 2: /// Button
             case 3: /// Link
