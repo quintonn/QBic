@@ -113,6 +113,7 @@
         self.filterText = ko.observable(settings.Filter);
         self.filterSearchClick = function ()
         {
+            dialog.showBusyDialog("Searching...");
             var tmpData =
                         {
                             viewSettings:
@@ -122,14 +123,11 @@
                                 totalLines: self.settings.TotalLines
                             },
                             filter: self.filterText(),
-                            //Id: self.settings.Id
                             parameters: self.settings.Parameters,
                             eventParameters: self.settings.EventParameters
-                            //data: searchArgs
                         };
 
-            //siteMenu.executeUIAction(sett.Id, tmpData, searchArgs);
-            mainApp.executeUIAction(self.settings.Id, tmpData);
+            mainApp.executeUIAction(self.settings.Id, tmpData).then(dialog.closeBusyDialog);
         };
         self.columns = ko.observableArray([]);
         self.rows = ko.observableArray([]);
@@ -138,6 +136,7 @@
 
         self.click = function (rowItem, colIndex, rowIndex, evt)
         {
+            dialog.showBusyDialog("Processing...");
             var cellItem = rowItem.cells()[colIndex];
             var data = self.settings.ViewData[rowIndex];
             var theColumn = self.settings.Columns[colIndex];
@@ -165,30 +164,24 @@
             {
                 var eventId = theColumn.Event == null ? theColumn.EventNumber : theColumn.Event.EventNumber;
 
-                //formData =
-                //    {
-                //        data: formData,
-                //        viewSettings: "" 
-                //    };
-                //if (theColumn.ParametersToPass != null && theColumn.ParametersToPass.length > 0)
-                //{
-                //    console.log(theColumn.ParametersToPass);
-                //    formData = theColumn.ParametersToPass;
-                //    alert(formData);
-                //}
-                mainApp.executeUIAction(eventId, formData);
+                mainApp.executeUIAction(eventId, formData).then(dialog.closeBusyDialog);
             }
-            else if(theColumn.Event.ActionType == 5) /// ShowMessage
+            else if (theColumn.Event.ActionType == 5) /// ShowMessage
             {
                 //dialog.showMessage(theColumn.Event, null, formData, args);
-                dialog.showMessage("Info", "TODO: view button on click action type = 5");
+                dialog.closeBusyDialog.then(function ()
+                {
+                    return dialog.showMessage("Info", "TODO: view button on click action type = 5");
+                });
                 // Need to be able to have a .then on showMessage. So i can have yes/no/cancel buttons and process their events
             }
             else
             {
-                inputDialog.showMessage("Unknown action type " + theColumn.Event.ActionType);
+                dialog.closeBusyDialog.then(function ()
+                {
+                    return inputDialog.showMessage("Unknown action type " + theColumn.Event.ActionType);
+                });
             }
-            
         };
     }
 
