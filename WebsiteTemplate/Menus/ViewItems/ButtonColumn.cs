@@ -2,32 +2,18 @@
 
 namespace WebsiteTemplate.Menus.ViewItems
 {
-    public class ButtonColumn : ViewColumn
+    public class ButtonColumn : ClickableColumn
     {
-        public ButtonColumn(string columnLabel, string dbColumnName, string columnName)
-            : base(columnLabel, columnName)
+        public ButtonColumn(string columnLabel, string keyColumn, string buttonText, int eventNumber, string parametersToPass = null)
+            : base(columnLabel, keyColumn, buttonText, eventNumber, ClickableType.Button, parametersToPass)
         {
+            
         }
 
-        public ButtonColumn(string columnLabel, string columnName, ButtonTextSource buttonTextSource, string buttonText)
-            : base(columnLabel, columnName)
+        public ButtonColumn(string columnLabel, string keyColumn, string linkText, Event eventItem, string parametersToPass = null)
+            : base(columnLabel, keyColumn, linkText, eventItem, ClickableType.Button, parametersToPass)
         {
-            ButtonTextSource = buttonTextSource;
-            ButtonText = buttonText;
+
         }
-
-        public override ColumnType ColumnType
-        {
-            get
-            {
-                return ViewItems.ColumnType.Button;
-            }
-        }
-
-        public string ButtonText { get; set; }
-
-        public ButtonTextSource ButtonTextSource { get; set; }
-
-        public Event Event { get; set; }
     }
 }

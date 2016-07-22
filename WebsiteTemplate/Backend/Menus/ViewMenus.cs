@@ -52,18 +52,22 @@ namespace WebsiteTemplate.Backend.Menus
 
             columnConfig.AddStringColumn("Event", "Event");
 
-            columnConfig.AddButtonColumn("Sub Menus", "", ButtonTextSource.Fixed, "...", new ShowHideColumnSetting()
+            columnConfig.AddButtonColumn("Sub Menus", "Id", "...", EventNumber.ViewMenus, new ShowHideColumnSetting()
             {
                 Display = ColumnDisplayType.Show,
                 Conditions = new List<Condition>()
                 {
                     new Condition("Event", Comparison.Equals, ""),
                 }
-            }, new ExecuteAction(EventNumber.ViewMenus, MenuId));
+            }, MenuId);
 
-            columnConfig.AddLinkColumn("", "", "Id", "Edit", EventNumber.ModifyMenu);
+            columnConfig.AddLinkColumn("", "Id", "Edit", EventNumber.ModifyMenu, null);
 
-            columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X",
+            columnConfig.AddButtonColumn("", "Id", "X",
+                new UserConfirmation("Delete Menu Item?")
+                {
+                    OnConfirmationUIAction = EventNumber.DeleteMenu
+                },
                 columnSetting: new ShowHideColumnSetting()
                 {
                     Display = ColumnDisplayType.Show,
@@ -71,26 +75,26 @@ namespace WebsiteTemplate.Backend.Menus
                    {
                        new Condition("CanDelete", Comparison.Equals, "true")
                    }
-                },
-                eventItem: new UserConfirmation("Delete Menu Item?")
-                {
-                    OnConfirmationUIAction = EventNumber.DeleteMenu
                 }
+                //eventItem: new UserConfirmation("Delete Menu Item?")
+                //{
+                //    OnConfirmationUIAction = EventNumber.DeleteMenu
+                //}
             );
         }
 
         public override IEnumerable GetData(string data, int currentPage, int linesPerPage, string filter)
         {
-            MenuId = data;
+            ProcessData(data);
             using (var session = Store.OpenSession())
             {
                 var query = session.QueryOver<Menu>();
 
-                if (!String.IsNullOrWhiteSpace(data))
+                if (!String.IsNullOrWhiteSpace(MenuId))
                 {
-                    query = query.Where(m => m.ParentMenu.Id == data);
+                    query = query.Where(m => m.ParentMenu.Id == MenuId);
 
-                    var parentMenu = session.Get<Menu>(data);
+                    var parentMenu = session.Get<Menu>(MenuId);
                     ParentId = parentMenu.ParentMenu != null ? parentMenu.ParentMenu.Id : "";
                     mDescription = "Menus: " + parentMenu.Name;
                 }
@@ -128,17 +132,45 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
+        public void ProcessData(string data)
+        {
+            try
+            {
+                var json = JObject.Parse(data);
+                var id = json.GetValue("Id"); // If 'sub-menus' column link is clicked
+                var dataItem = json.GetValue("data"); // If 'back' menu-button button is clicked
+                var eventParams = json.GetValue("eventParameters") as JObject; // This is when 'search' is clicked on the filter
+
+                if (id != null)
+                {
+                    MenuId = id.ToString();
+                }
+                else if (dataItem != null)
+                {
+                    MenuId = dataItem.ToString();
+                }
+                else if (eventParams != null)
+                {
+                    MenuId = eventParams.GetValue("MenuId")?.ToString();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
         public override int GetDataCount(string data, string filter)
         {
-            MenuId = data;
+            ProcessData(data);
             using (var session = Store.OpenSession())
             {
                 var query = session.QueryOver<Menu>();
-                if (!String.IsNullOrWhiteSpace(data))
+                if (!String.IsNullOrWhiteSpace(MenuId))
                 {
-                    query = query.Where(m => m.ParentMenu.Id == data);
+                    query = query.Where(m => m.ParentMenu.Id == MenuId);
 
-                    var parentMenu = session.Get<Menu>(data);
+                    var parentMenu = session.Get<Menu>(MenuId);
                     ParentId = parentMenu.ParentMenu != null ? parentMenu.ParentMenu.Id : "";
                     mDescription = "Menus: " + parentMenu.Name;
                 }
@@ -165,6 +197,17 @@ namespace WebsiteTemplate.Backend.Menus
         public override int GetId()
         {
             return EventNumber.ViewMenus;
+        }
+
+        public override Dictionary<string, object> GetEventParameters()
+        {
+            var result = new Dictionary<string, object>();
+
+            if (!String.IsNullOrWhiteSpace(MenuId))
+            {
+                result.Add("MenuId", MenuId);
+            }
+            return result;
         }
     }
 }

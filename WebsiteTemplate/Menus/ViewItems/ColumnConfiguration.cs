@@ -53,39 +53,36 @@ namespace WebsiteTemplate.Menus.ViewItems
             Columns.Add(new BooleanColumn(columnLabel, columnName, trueValue, falseValue));
         }
 
-        public void AddLinkColumn(string columnLabel, string columnName, string keyColumn, string linkLabel, int eventNumber)
+        public void AddLinkColumn(string columnLabel, string keyColumn, string linkLabel, int eventNumber, ColumnSetting columnSetting = null, string parametersToPass = null)
         {
-            AddLinkColumn(columnLabel, columnName, keyColumn, linkLabel, eventNumber, null);
-        }
-
-        public void AddLinkColumn(string columnLabel, string columnName, string keyColumn, string linkLabel, int eventNumber, ColumnSetting columnSetting)
-        {
-            Columns.Add(new LinkColumn(columnLabel, columnName, keyColumn, linkLabel, eventNumber)
+            Columns.Add(new LinkColumn(columnLabel, keyColumn, linkLabel, eventNumber, parametersToPass)
             {
                 ColumnSetting = columnSetting
             });
         }
 
-        public void AddButtonColumn(string columnLabel, string columnName, ButtonTextSource buttonTextSource, string buttonText)
+        public void AddLinkColumn(string columnLabel, string keyColumn, string linkLabel, Event eventItem, ColumnSetting columnSetting = null, string parametersToPass = null)
         {
-            Columns.Add(new ButtonColumn(columnLabel, columnName, buttonTextSource, buttonText));
-        }
-
-        public void AddButtonColumn(string columnLabel, string columnName, ButtonTextSource buttonTextSource, string buttonText, ColumnSetting columnSetting)
-        {
-            Columns.Add(new ButtonColumn(columnLabel, columnName, buttonTextSource, buttonText)
+            Columns.Add(new LinkColumn(columnLabel, keyColumn, linkLabel, eventItem, parametersToPass)
             {
                 ColumnSetting = columnSetting
             });
         }
 
-        public void AddButtonColumn(string columnLabel, string columnName, ButtonTextSource buttonTextSource, string buttonText, ColumnSetting columnSetting, Event eventItem)
+        public void AddButtonColumn(string columnLabel, string keyColumn, string buttonText, int eventNumber, ColumnSetting columnSetting = null, string parametersToPass = null)
         {
-            Columns.Add(new ButtonColumn(columnLabel, columnName, buttonTextSource, buttonText)
-                {
-                    ColumnSetting = columnSetting,
-                    Event = eventItem
-                });
+            Columns.Add(new ButtonColumn(columnLabel, keyColumn, buttonText, eventNumber, parametersToPass)
+            {
+                ColumnSetting = columnSetting
+            });
+        }
+
+        public void AddButtonColumn(string columnLabel, string keyColumn, string linkLabel, Event eventItem, ColumnSetting columnSetting = null, string parametersToPass = null)
+        {
+            Columns.Add(new ButtonColumn(columnLabel, keyColumn, linkLabel, eventItem, parametersToPass)
+            {
+                ColumnSetting = columnSetting
+            });
         }
     }
 }

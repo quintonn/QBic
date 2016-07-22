@@ -24,9 +24,9 @@ namespace WebsiteTemplate.Backend.UserRoles
             columnConfig.AddStringColumn("Name", "name");
             columnConfig.AddStringColumn("Age", "age");
             columnConfig.AddStringColumn("RowId", "rowId");
-            columnConfig.AddLinkColumn("", "", "name", "edit", 777);
+            columnConfig.AddLinkColumn("", "name", "edit", 777);
             //columnConfig.AddLinkColumn("", "", "name", "x", 778);
-            columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X", null,
+            columnConfig.AddButtonColumn("", "Id", "X",
                 new UserConfirmation("Delete?")
                 {
                     OnConfirmationUIAction = 778

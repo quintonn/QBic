@@ -67,7 +67,14 @@
 
         self.menuClick = function()
         {
-            dialog.showMessage("Info", self.eventId + " - " + self.params);
+            var data =
+                {
+                    data: params,
+                }
+            dialog.showBusyDialog("Processing...").then(function ()
+            {
+                return mainApp.executeUIAction(eventId, data);
+            }).then(dialog.closeBusyDialog);
         }
     }
 
@@ -106,7 +113,23 @@
         self.filterText = ko.observable(settings.Filter);
         self.filterSearchClick = function ()
         {
-            console.log('filter search clicked with value: ' + self.filterText());
+            var tmpData =
+                        {
+                            viewSettings:
+                            {
+                                currentPage: self.settings.CurrentPage,
+                                linesPerPage: self.settings.LinesPerPage,
+                                totalLines: self.settings.TotalLines
+                            },
+                            filter: self.filterText(),
+                            //Id: self.settings.Id
+                            parameters: self.settings.Parameters,
+                            eventParameters: self.settings.EventParameters
+                            //data: searchArgs
+                        };
+
+            //siteMenu.executeUIAction(sett.Id, tmpData, searchArgs);
+            mainApp.executeUIAction(self.settings.Id, tmpData);
         };
         self.columns = ko.observableArray([]);
         self.rows = ko.observableArray([]);
@@ -115,50 +138,51 @@
 
         self.click = function (rowItem, colIndex, rowIndex, evt)
         {
-            console.clear();
-            console.log(self.settings);
-            console.log('click event:');
-            console.log(rowItem);
-            
             var cellItem = rowItem.cells()[colIndex];
             var data = self.settings.ViewData[rowIndex];
             var theColumn = self.settings.Columns[colIndex];
 
-            var id = data["Id"];
+            var id = data[theColumn.KeyColumn];
 
-            var formData =
-                {
-                    Id: id//data[theColumn.KeyColumn],
-                };
-
-            formData['rowData'] = data;
-            //var thisRowId = this.getAttribute('rowId');
-            //formData['rowData']['rowId'] = thisRowId;
-
-            if (theColumn.Event.ActionType == 5) /// ShowMessage
-            {
-                //dialog.showMessage(theColumn.Event, null, formData, args);
-                dialog.showMessage("Info", "TODO: view button on click action type = 5");
-            }
-            else if (theColumn.Event.ActionType == 6) ///Execute Action
-            {
-                var eventId = theColumn.Event.EventNumber;
-                var formData = data["Id"];
-
-                var viewSettings =
+            var viewSettings =
                 {
                     "currentPage": self.settings.CurrentPage,
                     "linesPerPage": self.settings.LinesPerPage,
                     "totalLines": self.settings.TotalLines
                 };
 
-                formData =
-                    {
-                        data: formData,
-                        viewSettings: "" // Why is this not included in the call?
-                    };
+            var formData =
+                {
+                    Id: id, //data[theColumn.KeyColumn],
+                    data: data,
+                    viewSettings: "",  // Why is this not included in the call?
+                    parameters: theColumn.ParametersToPass,
+                    eventParameters: self.settings.EventParameters
+                };
+            console.log('Parameters to pass: ' + theColumn.ParametersToPass);
 
+            if (theColumn.Event == null || theColumn.Event.ActionType == 6)
+            {
+                var eventId = theColumn.Event == null ? theColumn.EventNumber : theColumn.Event.EventNumber;
+
+                //formData =
+                //    {
+                //        data: formData,
+                //        viewSettings: "" 
+                //    };
+                //if (theColumn.ParametersToPass != null && theColumn.ParametersToPass.length > 0)
+                //{
+                //    console.log(theColumn.ParametersToPass);
+                //    formData = theColumn.ParametersToPass;
+                //    alert(formData);
+                //}
                 mainApp.executeUIAction(eventId, formData);
+            }
+            else if(theColumn.Event.ActionType == 5) /// ShowMessage
+            {
+                //dialog.showMessage(theColumn.Event, null, formData, args);
+                dialog.showMessage("Info", "TODO: view button on click action type = 5");
+                // Need to be able to have a .then on showMessage. So i can have yes/no/cancel buttons and process their events
             }
             else
             {

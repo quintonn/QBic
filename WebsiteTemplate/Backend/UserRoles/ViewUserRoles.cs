@@ -25,9 +25,9 @@ namespace WebsiteTemplate.Backend.UserRoles
             columnConfig.AddStringColumn("Name", "Name");
             columnConfig.AddStringColumn("Description", "Description");
 
-            columnConfig.AddLinkColumn("", "Edit", "Id", "Edit", EventNumber.EditUserRole);
+            columnConfig.AddLinkColumn("", "Id", "Edit", EventNumber.EditUserRole);
 
-            columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X", null,
+            columnConfig.AddButtonColumn("", "Id", "X",
                 new UserConfirmation("Delete User Role?")
                 {
                     OnConfirmationUIAction = EventNumber.DeleteUserRole

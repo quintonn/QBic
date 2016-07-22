@@ -9,6 +9,7 @@ using WebsiteTemplate.Data;
 using WebsiteTemplate.SiteSpecific;
 using System.Linq;
 using System.Web.Script.Serialization;
+using System.Collections;
 
 namespace WebsiteTemplate.Menus.BaseItems
 {
@@ -40,6 +41,19 @@ namespace WebsiteTemplate.Menus.BaseItems
             return ((int)GetId()).ToString();
         }
 
+        public virtual Dictionary<string, object> GetEventParameters()
+        {
+            return null;
+        }
+
+        public Dictionary<string, object> EventParameters
+        {
+            get
+            {
+                return GetEventParameters();
+            }
+        }
+
         public int Id { get { return GetId(); } }
 
         public abstract string Description { get; }
@@ -50,5 +64,7 @@ namespace WebsiteTemplate.Menus.BaseItems
         //public abstract string MenuLabel { get; }
 
         public abstract EventType ActionType { get; }
+
+        public string Parameters { get; set; }
     }
 }

@@ -43,20 +43,20 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                 columnConfig.AddStringColumn(col.Value, col.Key);
             }
 
-            columnConfig.AddLinkColumn("", "", "Id", "Edit", Id + 1);
+            columnConfig.AddLinkColumn("", "Id", "Edit", Id + 1);
 
-            columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X",
-                columnSetting: new ShowHideColumnSetting()
+            columnConfig.AddButtonColumn("", "Id", "X",
+                new UserConfirmation("Delete " + ItemName + "?")
+                {
+                    OnConfirmationUIAction = Id + 2
+                },
+                new ShowHideColumnSetting()
                 {
                     Display = ColumnDisplayType.Show,
                     Conditions = new List<Condition>()
                    {
                        new Condition("CanDelete", Comparison.Equals, "true")
                    }
-                },
-                eventItem: new UserConfirmation("Delete " + ItemName + "?")
-                {
-                    OnConfirmationUIAction = Id + 2
                 }
             );
         }

@@ -107,15 +107,6 @@
                 }
                 break;
             case 2: /// Button
-                if (column.ButtonTextSource == 0)
-                {
-                    value = column.ButtonText;
-                }
-                else
-                {
-                    value = "????";
-                }
-                break;
             case 3: /// Link
                 value = column.LinkLabel;
                 break;

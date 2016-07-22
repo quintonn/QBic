@@ -22,7 +22,7 @@ namespace WebsiteTemplate.Backend.Users
             columnConfig.AddStringColumn("Name", "UserName");
             columnConfig.AddStringColumn("Email", "Email");
             columnConfig.AddBooleanColumn("Email Confirmed", "EmailConfirmed", "Yes", "No");
-            columnConfig.AddLinkColumn("", "Confirm Email", "Id", "Send Confirmation Email", EventNumber.SendConfirmationEmail,
+            columnConfig.AddLinkColumn("", "Id", "Send Confirmation Email", EventNumber.SendConfirmationEmail,
                 new ShowHideColumnSetting()
                 {
                     Display = ColumnDisplayType.Hide,
@@ -33,26 +33,26 @@ namespace WebsiteTemplate.Backend.Users
                 }
             );
             
-            columnConfig.AddLinkColumn("", "Edit", "Id", "Edit", EventNumber.EditUser);
-            columnConfig.AddLinkColumn("", "", "Id", "View", EventNumber.Test);
+            columnConfig.AddLinkColumn("", "Id", "Edit", EventNumber.EditUser);
+            columnConfig.AddLinkColumn("", "Id", "View", EventNumber.Test);
 
             //columnConfig.AddButtonColumn("Roles", "", ButtonTextSource.Fixed, "...",
             //    columnSetting: null,
             //    eventItem: new ExecuteAction(EventNumber.ViewUserRoleAssociations, String.Empty) /// The data is passed from the view automatically
             //);
 
-            columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X",
-                columnSetting: new ShowHideColumnSetting()
+            columnConfig.AddButtonColumn("", "Id", "X",
+                new UserConfirmation("Delete User?")
+                {
+                    OnConfirmationUIAction = EventNumber.DeleteUser
+                },
+                new ShowHideColumnSetting()
                 {
                     Display = ColumnDisplayType.Show,
                     Conditions = new List<Condition>()
                    {
                        new Condition("CanDelete", Comparison.Equals, "true")
                    }
-                },
-                eventItem: new UserConfirmation("Delete User?")
-                {
-                    OnConfirmationUIAction = EventNumber.DeleteUser
                 }
             );
         }

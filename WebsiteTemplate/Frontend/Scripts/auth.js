@@ -12,20 +12,25 @@
         {
             accessTokenName = _applicationModel.applicationName() + "_accessToken_v" + mainApp.version;
             refreshTokenName = _applicationModel.applicationName() + "refreshToken" + mainApp.version;
-
+            console.log('getting tokens from storage');
             auth.accessToken = localStorage.getItem(accessTokenName);
             auth.refreshToken = localStorage.getItem(refreshTokenName);
+            console.log(auth.accessToken);
+            console.log(auth.refreshToken);
             resolve();
         });
     }
 
     auth.handleLoginSuccess = function(data)
     {
+        console.log('handling login success');
         _applicationModel.user().name(data.userName);
 
         auth.accessToken = data.access_token;
         auth.refreshToken = data.refresh_token;
 
+        console.log('saving access tokens:');
+        console.log(data);
         localStorage.setItem(accessTokenName, auth.accessToken);
         localStorage.setItem(refreshTokenName, auth.refreshToken);
 

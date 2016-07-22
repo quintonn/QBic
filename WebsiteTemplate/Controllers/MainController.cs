@@ -547,6 +547,7 @@ namespace WebsiteTemplate.Controllers
                         var linesPerPage = 10;
                         var totalLines = -1;
                         var filter = String.Empty;
+                        var parameters = String.Empty;
 
                         var dataJson = new JObject();
                         if (!String.IsNullOrWhiteSpace(data) && !(eventItem is ViewForInput))
@@ -556,6 +557,7 @@ namespace WebsiteTemplate.Controllers
                                 dataJson = JObject.Parse(data);
 
                                 filter = dataJson.GetValue("filter")?.ToString();
+                                parameters = dataJson.GetValue("parameters")?.ToString();
 
                                 var viewSettings = dataJson.GetValue("viewSettings") as JObject;
                                 if (viewSettings != null)
@@ -569,7 +571,10 @@ namespace WebsiteTemplate.Controllers
                                     }
                                     totalLines = Convert.ToInt32(viewSettings.GetValue("totalLines"));
                                 }
-                                parentData = dataJson.GetValue("data")?.ToString();
+                                if (filter == "nonononono")
+                                {
+                                    parentData = dataJson.GetValue("data")?.ToString();
+                                }
                             }
                             catch (Exception e)
                             {
@@ -600,6 +605,7 @@ namespace WebsiteTemplate.Controllers
                         action.LinesPerPage = linesPerPage;
                         action.TotalLines = totalLines;
                         action.Filter = filter;
+                        action.Parameters = parameters;
 
                         //clicking back in view many times breaks filter args- test with menus
 
