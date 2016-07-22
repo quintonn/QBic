@@ -17,30 +17,27 @@
     <div class="w3-section" style="overflow-x:auto; overflow-y: auto">
         <table class="w3-table w3-bordered w3-striped w3-border w3-hoverable " >
             
-                <tr data-bind="foreach: columns">
-                    <th data-bind="text: label, visible: visible"></th>
-                </tr>
-            
+            <tr data-bind="foreach: columns">
+                <th data-bind="text: label, visible: visible"></th>
+            </tr>
            
             <!-- ko foreach: rows -->
-            
-                <tr data-bind="foreach: cells">
-                    <td data-bind="visible: showCell() == true || columnType() != 4">
-                            <!--  ko if:  columnType() == 0 ||  columnType() == 4 -->
-                            <span data-bind="visible: showCell, text: value"></span>
-                            <!-- /ko -->
+            <tr data-bind="foreach: cells">
+                <td data-bind="visible: showCell() == true || columnType() != 4">
+                    <!--  ko if:  columnType() == 0 ||  columnType() == 4 -->
+                    <span data-bind="visible: showCell, text: value"></span>
+                    <!-- /ko -->
                            
-                            <!--  ko if:  columnType() == 2 -->
-                            <!-- the visible binding is duplicated here because if it's not here it messes column ordering up -->
-                            <button class="w3-btn w3-blue w3-small" data-bind="visible: showCell, text: value, click:  function(data, event) { $parent.cells()[$index()].click($parent, data, event) }"></button>
-                            <!-- /ko -->
+                    <!--  ko if:  columnType() == 2 -->
+                    <!-- the visible binding is duplicated here because if it's not here it messes column ordering up -->
+                    <button class="w3-btn w3-blue w3-small" data-bind="visible: showCell, text: value, click:  function(data, event) { $root.click($parent, $index(), $parentContext.$index(), event) }"></button>
+                    <!-- /ko -->
 
-                            <!--  ko if:  $parent.cells()[$index()].columnType() == 3 -->
-                            <a href="#" data-bind="visible: showCell, text: value, click:  function(data, event) { $parent.cells()[$index()].click($parent, data, event) }"></a>
-                            <!-- /ko -->
-                    </td>
-                    
-               </tr>
+                    <!--  ko if:  $parent.cells()[$index()].columnType() == 3 -->
+                    <a href="#" data-bind="visible: showCell, text: value, click:  function(data, event) { $root.click($parent, $index(), $parentContext.$index(), event) }"></a>
+                    <!-- /ko -->
+                </td>
+            </tr>
             <!-- /ko -->
         </table>
     </div>

@@ -104,7 +104,7 @@
         </div>
     </div>
 
-    <div data-bind="foreach: views">
+    <div data-bind="with: currentView">  
         <div class="w3-container" data-bind="html: html, attr: { id: 'view_' + myid() }">
 
         </div>

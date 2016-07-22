@@ -36,16 +36,25 @@
     };
 
     self.views = ko.observableArray([]);
+    self.currentView = ko.observable();
     self.addView = function (model)
     {
+        model.myid(self.views().length + 1);
         while (self.views().length > 0)
         {
             self.views.pop();
         }
+        //TODO: take this away, and have code add view if it's not been added before or focus it if it has been added before etc.
+        ///     For this i will need to add the view's event id or something
+
         var viewItems = self.views();
         self.views.push(model);
+        self.currentView(model);
+        self.currentView.notifySubscribers();
 
-        var div = document.getElementById('view_' + model.myid());
+        var id = 'view_' + model.myid();
+        
+        var div = document.getElementById(id);
         div = div.firstChild;
 
         ko.cleanNode(div);
