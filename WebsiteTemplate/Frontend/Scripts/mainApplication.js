@@ -47,6 +47,10 @@ $(document).ready(function ()
 
     mainApp.startApplication = function ()
     {
+        _applicationModel.views([]);
+        _applicationModel.currentView([]);
+
+        console.log('start app');
         return auth.initialize()
                    .then(mainApp.initialize)
                    .then(menus.loadMenu);

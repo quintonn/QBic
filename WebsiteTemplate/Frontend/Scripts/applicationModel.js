@@ -49,8 +49,7 @@
 
         var viewItems = self.views();
         self.views.push(model);
-        self.currentView(model);
-        self.currentView.notifySubscribers();
+        self.currentView([model]);
 
         var id = 'view_' + model.myid();
         
