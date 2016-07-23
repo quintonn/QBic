@@ -10,6 +10,9 @@
             {
                 case 0: // Show a view
                     return views.showView(item);
+                case 1: // Get Input / User Input
+                    return inputDialog.buildInput(item);
+                    break;
                 case 4: // Close input dialog -- Not sure i need this anymore.
                     return Promise.resolve();
                 case 5:

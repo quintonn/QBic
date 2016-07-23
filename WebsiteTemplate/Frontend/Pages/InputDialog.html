@@ -1,4 +1,50 @@
-﻿<h1 id="pageTitle" name="pageTitle" align="center" style="margin:10px"></h1>
-<!--<table id="inputTable" class="inputTable">
+﻿<div class="w3-modal-content">
+    <header class="w3-container w3-blue w3-center">
+        <span class="w3-closebtn w3-padding-top" data-bind="click: closeClick">&times;</span>
+        <h2 data-bind="text: title"></h2>
+    </header>
 
-</table>-->
+    <div class="w3-container w3-section">
+        <!-- ko if: tabs().length > 0 -->
+        <ul class="w3-navbar w3-light-grey" data-bind="foreach: tabs">
+            <li style="min-width:100px"><b><a href="#" data-bind="text: tabName, click: setCurrentTab, css: colorClass"></a></b></li>
+        </ul>
+        <!-- /ko -->
+
+        <div class="w3-section" >
+            <table class="w3-table" >
+                <!-- ko if: currentTab() != null -->
+                <tbody data-bind="foreach: currentTab().inputs()">
+                    <tr>
+                        <td>
+                            <span data-bind="text: inputLabel"></span>
+                        </td>
+                        <td>
+                            <input type="text" data-bind="value: inputValue" />
+                        </td>
+                    </tr>
+                </tbody>
+                <!-- /ko -->
+
+                <!-- ko if: combinedTab() != null -->
+                <tfoot data-bind="foreach: combinedTab().inputs()">
+                    <tr>
+                        <td>
+                            <span data-bind="text: inputLabel"></span>
+                        </td>
+                        <td>
+                            <input type="text" data-bind="value: inputValue" />
+                        </td>
+                    </tr>
+                </tfoot>
+                <!-- /ko -->
+            </table>
+        </div>
+    </div>
+
+    <!-- ko if: buttons().length > 0 -->
+    <div class="w3-container w3-light-grey w3-padding w3-center" data-bind="foreach: buttons">
+        <button class="w3-btn w3-blue w3-border" data-bind="text: text, click: click"></button>
+    </div>
+    <!-- /ko -->
+</div>

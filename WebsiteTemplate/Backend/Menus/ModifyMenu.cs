@@ -37,7 +37,7 @@ namespace WebsiteTemplate.Backend.Menus
             {
                 var list = new List<InputField>();
 
-                list.Add(new StringInput("Name", "Menu Name", Menu.Name));
+                list.Add(new StringInput("Name", "Menu Name", Menu.Name, "ABC"));
                 list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", Menu.Event == null && IsNew == false));
 
                 var events = MainController.EventList.Where(m => !String.IsNullOrWhiteSpace(m.Value.Description))
@@ -55,7 +55,7 @@ namespace WebsiteTemplate.Backend.Menus
                     });
 
                 list.Add(new HiddenInput("ParentMenuId", ParentMenuId));
-                list.Add(new HiddenInput("IsNew", IsNew));
+                list.Add(new HiddenInput("IsNew", IsNew + "X", "XX"));
                 list.Add(new HiddenInput("Id", Menu?.Id));
 
 
