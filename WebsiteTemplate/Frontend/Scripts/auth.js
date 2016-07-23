@@ -12,25 +12,19 @@
         {
             accessTokenName = _applicationModel.applicationName() + "_accessToken_v" + mainApp.version;
             refreshTokenName = _applicationModel.applicationName() + "refreshToken" + mainApp.version;
-            console.log('getting tokens from storage');
             auth.accessToken = localStorage.getItem(accessTokenName);
             auth.refreshToken = localStorage.getItem(refreshTokenName);
-            console.log(auth.accessToken);
-            console.log(auth.refreshToken);
             resolve();
         });
     }
 
     auth.handleLoginSuccess = function(data)
     {
-        console.log('handling login success');
         _applicationModel.user().name(data.userName);
 
         auth.accessToken = data.access_token;
         auth.refreshToken = data.refresh_token;
 
-        console.log('saving access tokens:');
-        console.log(data);
         localStorage.setItem(accessTokenName, auth.accessToken);
         localStorage.setItem(refreshTokenName, auth.refreshToken);
 
@@ -55,9 +49,9 @@
         dialog.showBusyDialog("Logging in...");
         return mainApp.makeWebCall(url, "POST", data)
                       .then(auth.handleLoginSuccess)
+                      .then(mainApp.startApplication)
                       .then(dialog.closeBusyDialog)
-                      .then(dialog.closeModalDialog)
-                      .then(mainApp.startApplication);
+                      .then(dialog.closeModalDialog);
     }
 
     auth.performTokenRefresh = function ()
@@ -77,8 +71,6 @@
                 data: data
             }).done(function (resp)
             {
-                console.log('got refresh token');
-                console.log(resp);
                 return auth.handleLoginSuccess(resp).then(dialog.closeBusyDialog);
             });
     };

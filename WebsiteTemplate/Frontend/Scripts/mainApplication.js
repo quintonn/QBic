@@ -99,8 +99,6 @@ $(document).ready(function ()
 
     mainApp.processUIActionResult = function (data, eventId)
     {
-        console.log('process UI Action Result:');
-        console.log(data);
         return processing.processUIActionResult(data, eventId);
     };
 
@@ -131,14 +129,10 @@ $(document).ready(function ()
                     
                     if (error.status == 401)  // not logged in
                     {
-                        console.log(auth.refreshToken);
                         if (auth.refreshToken != null && auth.refreshToken.length > 0) // Try refresh the token
                         {
-                            console.log('getting refresh token');
                             return auth.performTokenRefresh().then(function ()
                             {
-                                alert('token refresh! - debug');
-                                console.log('got refresh token, now retyring url: ' + url);
                                 // If successfully refreshed the token, retry the web call we just tried
                                 return mainApp.makeWebCall(url, method, data);
 

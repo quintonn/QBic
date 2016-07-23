@@ -16,29 +16,50 @@
 </div>
     <div class="w3-section" style="overflow-x:auto; overflow-y: auto">
         <table class="w3-table w3-bordered w3-striped w3-border w3-hoverable " >
-            
-            <tr data-bind="foreach: columns">
-                <th data-bind="text: label, visible: visible"></th>
-            </tr>
-           
-            <!-- ko foreach: rows -->
-            <tr data-bind="foreach: cells">
-                <td data-bind="visible: showCell() == true || columnType() != 4">
-                    <!--  ko if:  columnType() == 0 ||  columnType() == 4 || columnType() == 1 -->
-                    <span data-bind="visible: showCell, text: value"></span>
-                    <!-- /ko -->
-                           
-                    <!--  ko if:  columnType() == 2 -->
-                    <!-- the visible binding is duplicated here because if it's not here it messes column ordering up -->
-                    <button class="w3-btn w3-blue w3-small" data-bind="visible: showCell, text: value, click:  function(data, event) { $root.click($parent, $index(), $parentContext.$index(), event) }"></button>
-                    <!-- /ko -->
+            <thead>
+                <tr data-bind="foreach: columns" class="w3-grey">
+                    <th data-bind="text: label, visible: visible"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- ko foreach: rows -->
+                <tr data-bind="foreach: cells">
+                    <td data-bind="visible: showCell() == true || columnType() != 4">
+                        <!--  ko if:  columnType() == 0 ||  columnType() == 4 || columnType() == 1 -->
+                        <span data-bind="visible: showCell, text: value"></span>
+                        <!-- /ko -->
+                        <!--  ko if:  columnType() == 2 -->
+                        <!-- the visible binding is duplicated here because if it's not here it messes column ordering up -->
+                        <button class="w3-btn w3-blue w3-small" data-bind="visible: showCell, text: value, click:  function(data, event) { $root.click($parent, $index(), $parentContext.$index(), event) }"></button>
+                        <!-- /ko -->
+                        <!--  ko if:  $parent.cells()[$index()].columnType() == 3 -->
+                        <a href="#" data-bind="visible: showCell, text: value, click:  function(data, event) { $root.click($parent, $index(), $parentContext.$index(), event) }"></a>
+                        <!-- /ko -->
+                    </td>
+                </tr>
+                <!-- /ko -->
+            </tbody>
 
-                    <!--  ko if:  $parent.cells()[$index()].columnType() == 3 -->
-                    <a href="#" data-bind="visible: showCell, text: value, click:  function(data, event) { $root.click($parent, $index(), $parentContext.$index(), event) }"></a>
-                    <!-- /ko -->
-                </td>
-            </tr>
-            <!-- /ko -->
+            <tfoot>
+                <tr class="">
+                    <td data-bind="attr: {colspan: visibleColumnLength}">
+                        <div class="w3-center w3-small">
+                            <button class="w3-btn w3-blue" data-bind="enable: currentPage() > 1, click: firstClick"><<</button>
+                            <button class="w3-btn w3-blue" data-bind="enable: currentPage() > 1, click: prevClick"><</button>
+                            <select style="min-width:75px" data-bind="value: linesPerPage, event:{ change: linesPerPageChange}">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                                <option value="-2">All</option>
+                            </select>
+                            <button class="w3-btn w3-blue" data-bind="enable: currentPage() < lastPage(), click: nextClick">></button>
+                            <button class="w3-btn w3-blue" data-bind="enable: currentPage() < lastPage(), click: lastClick">>></button>
+                            <p class="w3-small" data-bind="text: footerText"></p>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 </div>

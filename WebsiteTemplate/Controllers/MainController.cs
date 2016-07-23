@@ -566,7 +566,7 @@ namespace WebsiteTemplate.Controllers
                                 {
                                     currentPage = Convert.ToInt32(viewSettings.GetValue("currentPage"));
                                     linesPerPage = Convert.ToInt32(viewSettings.GetValue("linesPerPage"));
-                                    if (linesPerPage > 100)
+                                    if (linesPerPage == -2)
                                     {
                                         currentPage = 1; //just in case it's not
                                         linesPerPage = int.MaxValue;
@@ -596,6 +596,8 @@ namespace WebsiteTemplate.Controllers
                         var list = action.GetData(parentData, currentPage, linesPerPage, filter);
                         action.ViewData = list;
 
+                        totalLines = Math.Max(totalLines, list.Cast<object>().Count());
+
                         var viewMenu = action.GetViewMenu();
 
                         var allowedEvents = GetAllowedEventsForUser(session, user.Id);
@@ -604,7 +606,7 @@ namespace WebsiteTemplate.Controllers
                         action.ViewMenu = allowedMenuItems; //TODO: this should work differently. because this can be changed in the view's code.
 
                         action.CurrentPage = currentPage;
-                        action.LinesPerPage = linesPerPage;
+                        action.LinesPerPage = linesPerPage == int.MaxValue ? -2 : linesPerPage;
                         action.TotalLines = totalLines;
                         action.Filter = filter;
                         action.Parameters = parameters;

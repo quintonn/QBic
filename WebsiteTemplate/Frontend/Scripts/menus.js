@@ -7,7 +7,6 @@
             var menuItems = menus.getMenus(data, null);
             
             _applicationModel.menuContainer().allMenus(menuItems);
-            dialog.closeBusyDialog();
         });
     };
 
@@ -63,7 +62,6 @@ function menuModel(id, name, eventId)
         }
         else
         {
-            console.log('clicked menu with eventId ' + self.eventId);
             mainApp.executeUIAction(self.eventId);
         }
         return Promise.resolve();

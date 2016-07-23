@@ -3,7 +3,6 @@
     views.showView = function (viewData)
     {
         dialog.showBusyDialog();
-        console.log(viewData);
 
         return mainApp.makeWebCall("frontend/pages/Views.html?v=" + mainApp.version).then(function (data)
         {
@@ -37,7 +36,6 @@
                     var col = columns[k];
                     var value = processing.getColumnValue(col, record);
                     
-                    //console.log('create a row_col item');
                     var cellIsVisible = col.ColumnType != 4 && processing.cellIsVisible(col, record);
                     
                     var cell = new cellModel(value, cellIsVisible, col.ColumnType);
@@ -103,10 +101,18 @@
 
         self.myid = ko.observable(-1);
 
-        // Change buttonColumn to also have a KeyColumn property -> or better make link and button column more similar
-        // ...also on click event i think i would want the original data. Maybe try without this for now
-
         self.settings = settings;
+
+        var lastPage = Math.floor(settings.TotalLines / settings.LinesPerPage);
+        if ((settings.TotalLines % settings.LinesPerPage) > 0)
+        {
+            lastPage += 1;
+        }
+        self.lastPage = ko.observable(lastPage);
+        self.currentPage = ko.observable(settings.CurrentPage);
+        self.linesPerPage = ko.observable(settings.LinesPerPage);
+
+        self.footerText = ko.observable("Showing page " + settings.CurrentPage + " of " + lastPage);
 
         self.viewTitle = ko.observable(title);
         self.viewMenus = ko.observableArray([]);
@@ -152,15 +158,14 @@
 
             var formData =
                 {
-                    Id: id, //data[theColumn.KeyColumn],
+                    Id: id,
                     data: data,
                     viewSettings: "",  // Why is this not included in the call?
                     parameters: theColumn.ParametersToPass,
                     eventParameters: self.settings.EventParameters
                 };
-            console.log('Parameters to pass: ' + theColumn.ParametersToPass);
 
-            if (theColumn.Event == null || theColumn.Event.ActionType == 6)
+            if (theColumn.Event == null || theColumn.Event.ActionType == 6) // 6 = execute UI Action
             {
                 var eventId = theColumn.Event == null ? theColumn.EventNumber : theColumn.Event.EventNumber;
 
@@ -168,14 +173,10 @@
             }
             else if (theColumn.Event.ActionType == 5) /// ShowMessage
             {
-                //dialog.showMessage(theColumn.Event, null, formData, args);
                 dialog.closeBusyDialog().then(function ()
                 {
-                    console.log(theColumn);
-                    //return dialog.showMessage("Info", "TODO: view button on click action type = 5");
                     return dialog.getUserConfirmation(theColumn.Event, formData);
                 });
-                // Need to be able to have a .then on showMessage. So i can have yes/no/cancel buttons and process their events
             }
             else
             {
@@ -185,6 +186,57 @@
                 });
             }
         };
+
+        self.gotoPage = function (pageNum)
+        {
+            var data =
+                        {
+                            viewSettings:
+                            {
+                                currentPage: pageNum,
+                                linesPerPage: self.linesPerPage(),
+                                totalLines: self.settings.TotalLines
+                            },
+                            filter: self.filterText(),
+                            parameters: self.settings.Parameters,
+                            eventParameters: self.settings.EventParameters
+                        };
+            dialog.showBusyDialog("Processing...");
+            mainApp.executeUIAction(self.settings.Id, data).then(dialog.closeBusyDialog);
+        }
+
+        self.firstClick = function()
+        {
+            self.gotoPage(1);
+        }
+        self.prevClick = function()
+        {
+            self.gotoPage(self.currentPage() - 1);
+        }
+        self.nextClick = function()
+        {
+            self.gotoPage(self.currentPage() + 1);
+        }
+        self.lastClick = function ()
+        {
+            self.gotoPage(self.lastPage());
+        }
+        self.linesPerPageChange = function(obj, event)
+        {
+            if (event.originalEvent)
+            { //user changed
+                self.gotoPage(1);
+            }
+        }
+
+        self.visibleColumnLength = ko.computed(function ()
+        {
+            var cols = self.columns().filter(function (column)
+            {
+                return column.visible() == true;
+            });
+            return cols.length;
+        }, self);
     }
 
 }(window.views = window.views || {}, jQuery));
