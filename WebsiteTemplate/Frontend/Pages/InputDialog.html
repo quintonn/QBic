@@ -5,7 +5,7 @@
     </header>
 
     <div class="w3-container w3-section">
-        <!-- ko if: tabs().length > 0 -->
+        <!-- ko if: tabs().length > 1 -->
         <ul class="w3-navbar w3-light-grey" data-bind="foreach: tabs">
             <li style="min-width:100px"><b><a href="#" data-bind="text: tabName, click: setCurrentTab, css: colorClass"></a></b></li>
         </ul>
@@ -15,27 +15,15 @@
             <table class="w3-table" >
                 <!-- ko if: currentTab() != null -->
                 <tbody data-bind="foreach: currentTab().inputs()">
-                    <tr>
-                        <td>
-                            <span data-bind="text: inputLabel"></span>
-                        </td>
-                        <td>
-                            <input type="text" data-bind="value: inputValue" />
-                        </td>
-                    </tr>
+                    <!-- ko template: { name: 'inputRowTemplate' } -->
+                    <!-- /ko -->
                 </tbody>
                 <!-- /ko -->
 
                 <!-- ko if: combinedTab() != null -->
                 <tfoot data-bind="foreach: combinedTab().inputs()">
-                    <tr>
-                        <td>
-                            <span data-bind="text: inputLabel"></span>
-                        </td>
-                        <td>
-                            <input type="text" data-bind="value: inputValue" />
-                        </td>
-                    </tr>
+                    <!-- ko template: { name: 'inputRowTemplate' } -->
+                    <!-- /ko -->
                 </tfoot>
                 <!-- /ko -->
             </table>
@@ -44,7 +32,38 @@
 
     <!-- ko if: buttons().length > 0 -->
     <div class="w3-container w3-light-grey w3-padding w3-center" data-bind="foreach: buttons">
-        <button class="w3-btn w3-blue w3-border" data-bind="text: text, click: click"></button>
+        <button class="w3-btn w3-blue w3-border" data-bind="text: label, click: $root.buttonClick"></button>
     </div>
     <!-- /ko -->
 </div>
+
+<script type="text/html" id="inputRowTemplate">
+    <tr data-bind="visible: visible">
+        <td>
+            <span data-bind="text: inputLabel"></span>
+        </td>
+        <td>
+            <!-- ko if: inputType == 0 -->
+            <input class="w3-input" type="text" data-bind="value: inputValue" />
+            <!-- /ko -->
+            <!-- ko if: inputType == 1 -->
+            <input class="w3-input" type="password" data-bind="value: inputValue" />
+            <!-- /ko -->
+            <!-- ko if: inputType == 2 -->
+            <input class="w3-input" type="text" data-bind="value: inputValue" />
+            <!-- /ko -->
+            <!-- ko if: inputType == 3 -->
+            <select class="w3-select" data-bind="options: options, value: inputValue, optionsText: 'displayText', optionsCaption: 'Select a value... '"></select>
+            <!-- /ko -->
+            <!-- ko if: inputType == 4 -->
+            <input class="w3-input w3-check" type="checkbox" data-bind="checked: inputValue" />
+            <!-- /ko -->
+            <!-- ko if: inputType == 6 -->
+            <input class="w3-input " type="date" data-bind="value: inputValue" />
+            <!-- /ko -->
+            <!-- ko if: inputType == 9 -->
+            <input class="w3-input " type="file" data-bind="value: inputValue" />
+            <!-- /ko -->
+        </td>
+    </tr>
+</script>

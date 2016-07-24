@@ -94,7 +94,23 @@ $(document).ready(function ()
 
         data = JSON.stringify(data);
 
-        var url = mainApp.apiURL + "executeUIAction/"+eventId;
+        var url = mainApp.apiURL + "executeUIAction/" + eventId;
+        return mainApp.makeWebCall(url, "POST", data).then(function (resp)
+        {
+            mainApp.processUIActionResult(resp, eventId);
+        });
+    };
+
+    mainApp.processEvent = function (eventId, actionId, params)
+    {
+        var data =
+            {
+                Data: params || "",
+                ActionId: actionId,
+            };
+        data = JSON.stringify(data);
+
+        var url = mainApp.apiURL + "processEvent/" + eventId;
         return mainApp.makeWebCall(url, "POST", data).then(function (resp)
         {
             mainApp.processUIActionResult(resp, eventId);
