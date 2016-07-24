@@ -35,17 +35,16 @@
     <script src="Frontend/Scripts/mainApplication.js"></script>
 </head>
 <body>
-    <div class="w3-container w3-blue w3-center w3-hide-small w3-top">
+    <script type="text/html" id="headingTemplate">
         <h1 class="w3-xxxlarge" data-bind="text: applicationName"></h1>
-        
+
         <div class="w3-navbar">
-            <div class="w3-container w3-left" >
+            <div class="w3-container w3-left">
                 <button class="w3-btn w3-blue  w3-large" data-bind="text: menuContainer().home().name, click: menuContainer().home().menuClick"></button>
                 <button class="w3-btn w3-blue  w3-large" data-bind="text: menuContainer().back().name, click: menuContainer().back().menuClick, visible: menuContainer().currentParent() != null"></button>
                 <span data-bind="foreach: menuContainer().currentMenuList">
                     <button class="w3-btn w3-blue  w3-large" data-bind="text: name, click: menuClick"></button>
                 </span>
-                <!--<button class="w3-btn w3-blue  w3-large">Menus</button>-->
             </div>
             <div class="w3-container w3-right">
                 <span data-bind="visible: showUser">
@@ -54,22 +53,16 @@
                 </span>
             </div>
         </div>
+    </script>
+
+    <div class="w3-container w3-blue w3-center w3-hide-small w3-top" data-bind="template: { name: 'headingTemplate'}">
+
     </div>
 
-    <div class="w3-container w3-blue w3-center w3-hide-small">
-        <h1 class="w3-xxxlarge" data-bind="text: applicationName"></h1>
+    <div class="w3-container w3-blue w3-center w3-hide-small" data-bind="template: { name: 'headingTemplate'}">
 
-        <div class="w3-navbar">
-            <div class="w3-container w3-left">
-                <button class="w3-btn w3-blue  w3-large">Home</button>
-                <button class="w3-btn w3-blue  w3-large">Menus</button>
-            </div>
-            <div class="w3-container w3-right">
-                <button class="w3-btn w3-blue w3-large" data-bind="text: user().name"></button>
-                <button class="w3-btn w3-blue  w3-large">Logout</button>
-            </div>
-        </div>
     </div>
+
     <!-- TODO: Add nav bar for small screens, currently there is no heading on small screens -->
 
     <!--<div id="mainContent">
