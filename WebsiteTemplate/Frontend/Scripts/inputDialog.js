@@ -278,7 +278,7 @@
                 var inp = self.inputs()[i];
                 var value = inp.getInputValue();
                 
-                if (validateInput &&  (value == null || value.length == 0) && inp.mandatory == true)
+                if (validateInput &&  (value == null || value.length == 0) && inp.mandatory == true && inp.visible() == true)
                 {
                     return dialog.showMessage("Warning", inp.setting.InputName + ' is mandatory').then(function ()
                     {
