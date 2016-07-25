@@ -2,7 +2,7 @@
 {
     views.showView = function (viewData)
     {
-        dialog.showBusyDialog();
+        dialog.showBusyDialog('Loading data...');
 
         return mainApp.makeWebCall("frontend/pages/Views.html?v=" + mainApp.version).then(function (data)
         {

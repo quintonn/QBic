@@ -49,6 +49,7 @@ function menuModel(id, name, eventId)
     {
         if (self.eventId == "home")
         {
+            _applicationModel.menuContainer().currentParent(null);
             mainApp.startApplication();
         }
         else if (self.eventId == 'back')
