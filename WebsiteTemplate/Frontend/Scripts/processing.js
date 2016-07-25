@@ -15,7 +15,6 @@
                     break;
                 case 4: // Close input dialog -- Not sure i need this anymore.
                     return dialog.closeModalDialog();
-                    return Promise.resolve();
                 case 5:
                     return dialog.getUserConfirmation(item, item.Data);
                 case 6: // Execute UI action

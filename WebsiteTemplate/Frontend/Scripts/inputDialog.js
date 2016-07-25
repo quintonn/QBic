@@ -41,6 +41,7 @@
         var model = new inputDialogModel(title, settings.Id);
 
         var tabs = {};
+        var setDefaults = [];
         $.each(inputs, function (indx, inp)
         {
             var tabName = $.trim(inp.TabName || "");
@@ -91,7 +92,13 @@
             // This should happen after all inputs have been added to tabs and 
             // after all tabs have been added to the model - because the on propertychange / visibility check is 
             //  not working because not all items have been set.
-            inpModel.inputValue(inp.DefaultValue);
+            var action = function ()
+            {
+                console.log('default value for ' + inp.InputName + ' = ' + inp.DefaultValue);
+                //inpModel.inputValue(inp.DefaultValue);
+                inpModel.setInputValue(inp.DefaultValue);
+            };
+            setDefaults.push(action); // This is not a great solution - i don't  like it, smells bad
             
             tabs[tabName].inputs.push(inpModel);
         });
@@ -120,7 +127,14 @@
             model.buttons.push(bModel);
         });
         
-        dialog.showDialogWithId('InputDialog', model);
+        dialog.showDialogWithId('InputDialog', model).then(function()
+        {
+            for (var i = 0; i < setDefaults.length; i++)
+            {
+                var action = setDefaults[i];
+                action();
+            }
+        });
 
         return Promise.resolve();
     }
@@ -180,6 +194,7 @@
 
         self.buttonClick = function(btn, evt)
         {
+            dialog.showBusyDialog("Processing...");
             self.getInputs(btn.validateInput).then(function (inputs)
             {
                 var res = {};
@@ -188,7 +203,10 @@
                     $.extend(res, res, inp);
                 });
                 
-                return mainApp.processEvent(self.eventId, btn.actionNumber, res);
+                return mainApp.processEvent(self.eventId, btn.actionNumber, res).then(function ()
+                {
+                    return dialog.closeBusyDialog();
+                });
             })
             .catch(function (err)
             {
@@ -280,6 +298,7 @@
                 
                 if (validateInput &&  (value == null || value.length == 0) && inp.mandatory == true && inp.visible() == true)
                 {
+                    dialog.closeBusyDialog();
                     return dialog.showMessage("Warning", inp.setting.InputName + ' is mandatory').then(function ()
                     {
                         return Promise.reject('X');
@@ -327,6 +346,7 @@
                 return [];
             }
             var results = [];
+
             for (var i = 0; i < self.setting.ListItems.length; i++)
             {
                 var item = self.setting.ListItems[i];
@@ -335,6 +355,27 @@
             }
             return results;
         }, self);
+
+        self.setInputValue = function (value)
+        {
+            if (self.inputType == 3) // Combobox
+            {
+                //TODO: Don't like this either, using knockout there must be a better way
+                var opt = self.options();
+                for (var i = 0; i < opt.length; i++)
+                {
+                    if (opt[i].value == value)
+                    {
+                        self.inputValue(opt[i]);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                self.inputValue(value);
+            }
+        };
 
         self.getInputValue = function ()
         {

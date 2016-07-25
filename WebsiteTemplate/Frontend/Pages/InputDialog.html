@@ -58,9 +58,26 @@
             <!-- ko if: inputType == 4 -->
             <input class="w3-input w3-check" type="checkbox" data-bind="checked: inputValue, hasFocus: $index() == 0" />
             <!-- /ko -->
+            
+            <!-- ko if: inputType == 5 -->
+            <!-- List Selection Input -->
+            <span>??????</span>
+            <!-- /ko -->
+
             <!-- ko if: inputType == 6 -->
             <input class="w3-input " type="date" data-bind="value: inputValue, hasFocus: $index() == 0" />
             <!-- /ko -->
+            
+            <!-- ko if: inputType == 7 -->
+            <!-- MaskedInput ->> maybe use jquery UI -->
+            <span>??????</span>
+            <!-- /ko -->
+
+            <!-- ko if: inputType == 8 -->
+            <!-- View Input -->
+            <span>??????</span>
+            <!-- /ko -->
+
             <!-- ko if: inputType == 9 -->
             <input class="w3-input " type="file" data-bind="value: inputValue, hasFocus: $index() == 0" />
             <!-- /ko -->

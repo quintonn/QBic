@@ -32,6 +32,11 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public override object GetValue(JToken jsonToken)
         {
+            var jArray = jsonToken as JArray;
+            if (jArray == null)
+            {
+                return null;
+            }
             return (jsonToken as JArray).Select(x => x.ToString()).ToList();
         }
     }

@@ -61,7 +61,7 @@ namespace WebsiteTemplate.Backend.UserRoles
 
                 //list.Add(new FileInput("File", "File", null, "x"));
 
-                list.Add(new ViewInput("view", "View", new TestView(), null, "zadsf", false));
+                list.Add(new ViewInput("view", "View", new TestView(), null, null, false));
 
                 var items = MainController.EventList.ToDictionary(e => e.Key, e => e.Value.Description)
                                                    .OrderBy(e => e.Value)
