@@ -44,25 +44,25 @@
         </td>
         <td>
             <!-- ko if: inputType == 0 -->
-            <input class="w3-input" type="text" data-bind="value: inputValue" />
+            <input class="w3-input" type="text" data-bind="value: inputValue, hasFocus: $index() == 0" />
             <!-- /ko -->
             <!-- ko if: inputType == 1 -->
-            <input class="w3-input" type="password" data-bind="value: inputValue" />
+            <input class="w3-input" type="password" data-bind="value: inputValue, hasFocus: $index() == 0" />
             <!-- /ko -->
             <!-- ko if: inputType == 2 -->
-            <input class="w3-input" type="text" data-bind="value: inputValue" />
+            <input class="w3-input" type="text" data-bind="value: inputValue, hasFocus: $index() == 0" />
             <!-- /ko -->
             <!-- ko if: inputType == 3 -->
-            <select class="w3-select" data-bind="options: options, value: inputValue, optionsText: 'displayText', optionsCaption: 'Select a value... '"></select>
+            <select class="w3-select" data-bind="options: options, value: inputValue, optionsText: 'displayText', optionsCaption: 'Select a value... ', hasFocus: $index() == 0"></select>
             <!-- /ko -->
             <!-- ko if: inputType == 4 -->
-            <input class="w3-input w3-check" type="checkbox" data-bind="checked: inputValue" />
+            <input class="w3-input w3-check" type="checkbox" data-bind="checked: inputValue, hasFocus: $index() == 0" />
             <!-- /ko -->
             <!-- ko if: inputType == 6 -->
-            <input class="w3-input " type="date" data-bind="value: inputValue" />
+            <input class="w3-input " type="date" data-bind="value: inputValue, hasFocus: $index() == 0" />
             <!-- /ko -->
             <!-- ko if: inputType == 9 -->
-            <input class="w3-input " type="file" data-bind="value: inputValue" />
+            <input class="w3-input " type="file" data-bind="value: inputValue, hasFocus: $index() == 0" />
             <!-- /ko -->
         </td>
     </tr>

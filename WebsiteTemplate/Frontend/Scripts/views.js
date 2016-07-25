@@ -135,6 +135,14 @@
 
             mainApp.executeUIAction(self.settings.Id, tmpData).then(dialog.closeBusyDialog);
         };
+        self.filterKeyPressed = function (model, evt)
+        {
+            if (evt.keyCode == 13)
+            {
+                self.filterSearchClick();
+            }
+            return true;
+        };
         self.columns = ko.observableArray([]);
         self.rows = ko.observableArray([]);
 

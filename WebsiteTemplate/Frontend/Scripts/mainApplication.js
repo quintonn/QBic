@@ -151,6 +151,7 @@ $(document).ready(function ()
                     {
                         if (auth.refreshToken != null && auth.refreshToken.length > 0) // Try refresh the token
                         {
+                            console.log('auth no longer valid, trying to get a new access token');
                             return auth.performTokenRefresh().then(function ()
                             {
                                 // If successfully refreshed the token, retry the web call we just tried

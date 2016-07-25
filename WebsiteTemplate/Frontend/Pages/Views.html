@@ -8,7 +8,7 @@
             <table class="w3-center">
                 <tr class="">
                     <td><label class="w3-label" >Filter</label></td>
-                    <td><input class="w3-input w3-border w3-light-grey" type="text" data-bind="value: filterText" /></td>
+                    <td><input class="w3-input w3-border w3-light-grey" type="text" data-bind="value: filterText, valueUpdate: 'keypress', event: {keypress: filterKeyPressed}, hasFocus: true" /></td>
                     <td><button class="w3-btn w3-blue" data-bind="click: filterSearchClick" >Search</button></td>
                 </tr>
             </table>

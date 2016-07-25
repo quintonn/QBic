@@ -71,6 +71,8 @@
                 data: data
             }).done(function (resp)
             {
+                console.log('successfully got new refresh token');
+                console.log(resp);
                 return auth.handleLoginSuccess(resp).then(dialog.closeBusyDialog);
             });
     };
@@ -85,5 +87,13 @@ function loginModel(callback)
     self.loginClick = function ()
     {
         auth.performLogin(self.userName(), self.password());
+    };
+    self.passwordKeyPressed = function (model, evt)
+    {
+        if (evt.keyCode == 13)
+        {
+            self.loginClick();
+        }
+        return true;
     };
 }

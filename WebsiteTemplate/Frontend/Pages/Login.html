@@ -8,10 +8,10 @@
     <div class="w3-container w3-row">
         <div class="w3-section w3-container w3-half">
             <label>User Name</label>
-            <input class="w3-input w3-border w3-light-grey" type="text" placeholder="Enter username" data-bind="value: userName">
+            <input class="w3-input w3-border w3-light-grey" type="text" placeholder="Enter username" data-bind="value: userName, hasFocus: true">
 
             <label>Password</label>
-            <input class="w3-input w3-border w3-light-grey" type="password" placeholder="Enter password" data-bind="value: password">
+            <input class="w3-input w3-border w3-light-grey" type="password" placeholder="Enter password" data-bind="value: password, valueUpdate: 'keypress', event: {keypress: passwordKeyPressed}">
 
             <br />
             <div class="w3-section">
