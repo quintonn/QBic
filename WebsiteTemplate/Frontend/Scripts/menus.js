@@ -47,23 +47,26 @@ function menuModel(id, name, eventId)
 
     self.menuClick = function ()
     {
+        dialog.showBusyDialog("Processing...");
         if (self.eventId == "home")
         {
             _applicationModel.menuContainer().currentParent(null);
-            mainApp.startApplication();
+            mainApp.startApplication().then(dialog.closeBusyDialog);
         }
         else if (self.eventId == 'back')
         {
             var currentParent = _applicationModel.menuContainer().currentParent();
             _applicationModel.menuContainer().currentParent(currentParent.parentMenu);
+            dialog.closeBusyDialog();
         }
         else if (self.eventId == null)
         {
             _applicationModel.menuContainer().currentParent(self);
+            dialog.closeBusyDialog();
         }
         else
         {
-            mainApp.executeUIAction(self.eventId);
+            mainApp.executeUIAction(self.eventId).then(dialog.closeBusyDialog);
         }
         return Promise.resolve();
     };
