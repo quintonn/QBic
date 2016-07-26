@@ -45,8 +45,8 @@
                 <tr class="">
                     <td data-bind="attr: {colspan: visibleColumnLength}">
                         <div class="w3-center w3-small">
-                            <button class="w3-btn w3-blue" data-bind="enable: currentPage() > 1, click: firstClick"><<</button>
-                            <button class="w3-btn w3-blue" data-bind="enable: currentPage() > 1, click: prevClick"><</button>
+                            <button class="w3-btn w3-blue koHidden" data-bind="enable: currentPage() > 1, click: firstClick, css: { koHidden: false }"><<</button>
+                            <button class="w3-btn w3-blue koHidden" data-bind="enable: currentPage() > 1, click: prevClick, css: { koHidden: false }"><</button>
                             <select style="min-width:75px" data-bind="value: linesPerPage, event:{ change: linesPerPageChange}">
                                 <option value="10">10</option>
                                 <option value="25">25</option>
@@ -54,8 +54,8 @@
                                 <option value="100">100</option>
                                 <option value="-2">All</option>
                             </select>
-                            <button class="w3-btn w3-blue" data-bind="enable: currentPage() < lastPage(), click: nextClick">></button>
-                            <button class="w3-btn w3-blue" data-bind="enable: currentPage() < lastPage(), click: lastClick">>></button>
+                            <button class="w3-btn w3-blue koHidden" data-bind="enable: currentPage() < lastPage(), click: nextClick, css: { koHidden: false }">></button>
+                            <button class="w3-btn w3-blue koHidden" data-bind="enable: currentPage() < lastPage(), click: lastClick, css: { koHidden: false }">>></button>
                             <p class="w3-small" data-bind="text: footerText"></p>
                         </div>
                     </td>
