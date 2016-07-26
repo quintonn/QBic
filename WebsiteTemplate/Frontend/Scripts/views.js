@@ -1,50 +1,42 @@
 ﻿(function (views, $, undefined)
 {
+    views.getViewContent = function ()
+    {
+        return mainApp.makeWebCall("frontend/pages/Views.html?v=" + mainApp.version);
+    };
+
     views.showView = function (viewData)
     {
         dialog.showBusyDialog('Loading data...');
-
         return mainApp.makeWebCall("frontend/pages/Views.html?v=" + mainApp.version).then(function (data)
         {
             var model = new viewModel(viewData.Description, data, viewData);
-            _applicationModel.addView(model);
-
+            
             var menuItems = viewData.ViewMenu;
+            
             for (var i = 0; i < menuItems.length; i++)
             {
                 var menu = menuItems[i];
                 var mModel = new viewMenuModel(menu.Label, menu.EventNumber, menu.ParametersToPass);
                 model.viewMenus.push(mModel);
             }
-
+            
             var columns = viewData.Columns;
 
             for (var i = 0; i < columns.length; i++)
             {
                 var col = columns[i];
                 var colModel = new columnModel(i, col.ColumnLabel, col.ColumnType != 4);
+                
                 model.columns.push(colModel);
             }
 
-            var items = viewData.ViewData;
-            for (var j = 0; j < items.length; j++)
-            {
-                var record = items[j];
-                var rowItem = new rowModel(record);
-                for (var k = 0; k < columns.length; k++)
-                {
-                    var col = columns[k];
-                    var value = processing.getColumnValue(col, record);
-                    
-                    var cellIsVisible = col.ColumnType != 4 && processing.cellIsVisible(col, record);
-                    
-                    var cell = new cellModel(value, cellIsVisible, col.ColumnType);
-                    rowItem.cells.push(cell);
-                }
-                model.rows.push(rowItem);
-            }
+            model.addData(viewData.ViewData, columns);
 
-            return dialog.closeBusyDialog();
+            return dialog.closeBusyDialog().then(function ()
+            {
+                return Promise.resolve(model);
+            });
         });
     };
 
@@ -99,41 +91,47 @@
     {
         var self = this;
 
-        self.myid = ko.observable(-1);
+        self.id = settings.Id;
 
         self.settings = settings;
 
-        var lastPage = Math.floor(settings.TotalLines / settings.LinesPerPage);
-        if ((settings.TotalLines % settings.LinesPerPage) > 0)
-        {
-            lastPage += 1;
-        }
-        self.lastPage = ko.observable(lastPage);
-        self.currentPage = ko.observable(settings.CurrentPage);
         self.linesPerPage = ko.observable(settings.LinesPerPage);
 
-        self.footerText = ko.observable("Showing page " + settings.CurrentPage + " of " + lastPage);
+        self.lastPage = ko.computed(function()
+        {
+            var lastPage = Math.floor(self.settings.TotalLines / self.linesPerPage());
+            if ((self.settings.TotalLines % self.linesPerPage()) > 0)
+            {
+                lastPage += 1;
+            }
+            return lastPage
+        }, self);
+        self.currentPage = ko.observable(self.settings.CurrentPage);
+        
+        self.footerText = ko.computed(function ()
+        {
+            return "Showing page " + self.settings.CurrentPage + " of " + self.lastPage();
+        }, self);
 
         self.viewTitle = ko.observable(title);
         self.viewMenus = ko.observableArray([]);
         self.filterText = ko.observable(settings.Filter);
         self.filterSearchClick = function ()
         {
-            dialog.showBusyDialog("Searching...");
             var tmpData =
                         {
                             viewSettings:
                             {
                                 currentPage: self.settings.CurrentPage,
                                 linesPerPage: self.settings.LinesPerPage,
-                                totalLines: self.settings.TotalLines
+                                totalLines: -1//self.settings.TotalLines
                             },
                             filter: self.filterText(),
                             parameters: self.settings.Parameters,
                             eventParameters: self.settings.EventParameters
                         };
 
-            mainApp.executeUIAction(self.settings.Id, tmpData).then(dialog.closeBusyDialog);
+            self.updateViewData(self.settings.Id, tmpData);
         };
         self.filterKeyPressed = function (model, evt)
         {
@@ -209,8 +207,31 @@
                             parameters: self.settings.Parameters,
                             eventParameters: self.settings.EventParameters
                         };
-            dialog.showBusyDialog("Processing...");
-            mainApp.executeUIAction(self.settings.Id, data).then(dialog.closeBusyDialog);
+            self.updateViewData(self.settings.Id, data);
+        }
+
+        self.updateViewData = function (eventId, params)
+        {
+            return Promise.resolve();
+            dialog.showBusyDialog("Searching...");
+            processing.updateViewData(eventId, params).then(function (resp)
+            {
+                self.settings = resp;
+
+                self.currentPage(resp.CurrentPage);
+                self.filterText(resp.Filter);
+                self.linesPerPage(resp.LinesPerPage);
+                
+                self.addData(resp.ViewData, resp.Columns);
+
+                self.lastPage.notifySubscribers();
+
+                dialog.closeBusyDialog();
+            }).catch(function(err)
+            {
+                dialog.closeBusyDialog();
+                mainApp.handleError(err);
+            });
         }
 
         self.firstClick = function()
@@ -245,6 +266,28 @@
             });
             return cols.length;
         }, self);
+
+        self.addData = function (data, columns)
+        {
+            self.rows([]);
+            var items = data;
+            for (var j = 0; j < items.length; j++)
+            {
+                var record = items[j];
+                var rowItem = new rowModel(record);
+                for (var k = 0; k < columns.length; k++)
+                {
+                    var col = columns[k];
+                    var value = processing.getColumnValue(col, record);
+
+                    var cellIsVisible = col.ColumnType != 4 && processing.cellIsVisible(col, record);
+
+                    var cell = new cellModel(value, cellIsVisible, col.ColumnType);
+                    rowItem.cells.push(cell);
+                }
+                self.rows.push(rowItem);
+            }
+        };
     }
 
 }(window.views = window.views || {}, jQuery));

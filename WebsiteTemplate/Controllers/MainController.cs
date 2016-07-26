@@ -481,22 +481,17 @@ namespace WebsiteTemplate.Controllers
             return new FileActionResult(fileInfo);
         }
 
-        /*      When clicking a create button on an input view, i don't have access to any information on the screen
-                I might need this (eg, in the claims for creating note attachment. Because i want to check if there 
-                is already a note with the name note1.txt, and if there is, make it note2.txt, etc.
-        */
-
         [HttpPost]
-        [Route("executeUIAction/{*eventId}")]
+        [Route("updateViewData/{*eventId}")]
         [RequireHttps]
         [Authorize]
-        public async Task<IHttpActionResult> ExecuteUIAction(int eventId)
+        public async Task<IHttpActionResult> UpdateViewData(int eventId)
         {
             try
             {
                 var user = await this.GetLoggedInUserAsync();
                 var originalData = await Request.Content.ReadAsStringAsync();
-                
+
                 var json = JObject.Parse(originalData);
                 originalData = json.GetValue("Data").ToString();
 
@@ -530,7 +525,7 @@ namespace WebsiteTemplate.Controllers
                     return BadRequest("No action has been found for event number: " + id);
                 }
 
-                var result = new List<Event>();
+                Event result;
 
                 var eventItem = EventList[id];
 
@@ -609,6 +604,149 @@ namespace WebsiteTemplate.Controllers
                         action.LinesPerPage = linesPerPage == int.MaxValue ? -2 : linesPerPage;
                         action.TotalLines = totalLines;
                         action.Filter = filter;
+                        action.Parameters = parameters;
+
+                        result = action;
+                    }
+                }
+                else
+                {
+                    return BadRequest("ERROR: Invalid UIActionType: " + eventItem.GetType().ToString().Split(".".ToCharArray()).Last() + " with id " + id);
+                }
+
+                return Json(result);
+            }
+            catch (Exception error)
+            {
+                return BadRequest(error.Message);
+            }
+        }
+
+        /*      When clicking a create button on an input view, i don't have access to any information on the screen
+                I might need this (eg, in the claims for creating note attachment. Because i want to check if there 
+                is already a note with the name note1.txt, and if there is, make it note2.txt, etc.
+        */
+
+        [HttpPost]
+        [Route("executeUIAction/{*eventId}")]
+        [RequireHttps]
+        [Authorize]
+        public async Task<IHttpActionResult> ExecuteUIAction(int eventId)
+        {
+            try
+            {
+                var user = await this.GetLoggedInUserAsync();
+                var originalData = await Request.Content.ReadAsStringAsync();
+                
+                var json = JObject.Parse(originalData);
+                originalData = json.GetValue("Data").ToString();
+
+                var data = originalData;
+                if (!String.IsNullOrWhiteSpace(data))
+                {
+                    try
+                    {
+                        var tmp = JObject.Parse(data) as JObject;
+                        if (tmp != null)
+                        {
+                            var subData = tmp.GetValue("data");
+                            if (subData != null)
+                            {
+                                data = subData.ToString();
+                            }
+                        }
+                    }
+                    catch (Newtonsoft.Json.JsonReaderException ex)
+                    {
+                        //do nothing, data was not json data.
+                        Console.WriteLine(ex.Message);
+                        //data = "";
+                    }
+                }
+
+                var id = eventId;
+
+                if (!EventList.ContainsKey(id))
+                {
+                    return BadRequest("No action has been found for event number: " + id);
+                }
+
+                var result = new List<Event>();
+
+                var eventItem = EventList[id];
+
+                eventItem.Request = Request;
+
+                if (eventItem is ShowView)
+                {
+                    var action = eventItem as ShowView;
+
+                    using (var session = Store.OpenSession())
+                    {
+                        data = originalData;
+                        var parentData = data;
+
+                        //var currentPage = 1;
+                        //var linesPerPage = 10;
+                        //var totalLines = -1;
+                        //var filter = String.Empty;
+                        var parameters = String.Empty;
+
+                        var dataJson = new JObject();
+                        if (!String.IsNullOrWhiteSpace(data) && !(eventItem is ViewForInput))
+                        {
+                            try
+                            {
+                                dataJson = JObject.Parse(data);
+
+                               // filter = dataJson.GetValue("filter")?.ToString();
+                                parameters = dataJson.GetValue("parameters")?.ToString();
+
+                                //var viewSettings = dataJson.GetValue("viewSettings") as JObject;
+                                //if (viewSettings != null)
+                                //{
+                                //    currentPage = Convert.ToInt32(viewSettings.GetValue("currentPage"));
+                                //    linesPerPage = Convert.ToInt32(viewSettings.GetValue("linesPerPage"));
+                                //    if (linesPerPage == -2)
+                                //    {
+                                //        currentPage = 1; //just in case it's not
+                                //        linesPerPage = int.MaxValue;
+                                //    }
+                                //    totalLines = Convert.ToInt32(viewSettings.GetValue("totalLines"));
+                                //}
+                                //if (filter == "nonononono")
+                                //{
+                                //    parentData = dataJson.GetValue("data")?.ToString();
+                                //}
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                            }
+                        }
+                        else
+                        {
+                            parentData = data;  // In case user modified parentData -> this smells??
+                        }
+
+                        var totalLines = action.GetDataCount(parentData, String.Empty);
+
+                        var list = action.GetData(parentData, 1, 10, String.Empty);
+                        action.ViewData = list;
+
+                        totalLines = Math.Max(totalLines, list.Cast<object>().Count());
+
+                        var viewMenu = action.GetViewMenu();
+
+                        var allowedEvents = GetAllowedEventsForUser(session, user.Id);
+                        var allowedMenuItems = viewMenu.Where(m => allowedEvents.Contains(m.EventNumber)).ToList();
+
+                        action.ViewMenu = allowedMenuItems; //TODO: this should work differently. because this can be changed in the view's code.
+
+                        action.CurrentPage = 1;
+                        action.LinesPerPage = 10;
+                        action.TotalLines = totalLines;
+                        action.Filter = String.Empty;
                         action.Parameters = parameters;
 
                         //clicking back in view many times breaks filter args- test with menus

@@ -75,7 +75,9 @@
 
             <!-- ko if: inputType == 8 -->
             <!-- View Input -->
-            <span>??????</span>
+            <div class="w3-container" data-bind="html: html, attr: { id: 'view_' + id }">
+
+            </div>
             <!-- /ko -->
 
             <!-- ko if: inputType == 9 -->

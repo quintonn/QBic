@@ -31,8 +31,6 @@
 
     inputDialog.buildInput = function (settings)
     {
-        console.log(settings);
-
         var title = settings.Description;
         var buttons = settings.InputButtons;
         var data = settings.InputData; // Not sure what this is for - not suppose to be sent to client possibly.
@@ -81,7 +79,7 @@
                     // This might need revision - test with multiple conditions
                     var showInput = matchedConditions1.length == matchedConditions2.length;
                     
-                    console.log(showInput);
+                    //console.log(showInput);
                     
                     model.toggleInputVisibility(inp.InputName, showInput);
                 }
@@ -94,8 +92,6 @@
             //  not working because not all items have been set.
             var action = function ()
             {
-                console.log('default value for ' + inp.InputName + ' = ' + inp.DefaultValue);
-                //inpModel.inputValue(inp.DefaultValue);
                 inpModel.setInputValue(inp.DefaultValue);
             };
             setDefaults.push(action); // This is not a great solution - i don't  like it, smells bad
@@ -394,6 +390,14 @@
                 return value + "";
             }
             return value;
+        }
+
+        self.myid = ko.observable(inputSetting.InputName);
+        self.html = ko.observable();
+        if (inputSetting.InputType == 8) // Input view
+        {
+            console.log(inputSetting.ViewForInput);
+            //views.showView
         }
     }
 

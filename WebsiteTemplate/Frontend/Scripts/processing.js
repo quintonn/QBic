@@ -9,7 +9,28 @@
             switch (actionType)
             {
                 case 0: // Show a view
-                    return views.showView(item);
+                    
+                    var viewItems = _applicationModel.views();
+                    
+                    var existingModel = $.grep(viewItems, function (v, indx)
+                    {
+                        return v.id == item.Id;
+                    });
+                    if (existingModel.length == 0)
+                    {
+                        return views.showView(item).then(function (m)
+                        {
+                            _applicationModel.addView(m);
+                        });
+                    }
+                    else
+                    {
+                        _applicationModel.addView(existingModel[0]);
+                        
+                        existingModel[0].gotoPage(1);
+                        return Promise.resolve();
+                    }
+                    
                 case 1: // Get Input / User Input
                     return inputDialog.buildInput(item);
                     break;
@@ -26,6 +47,19 @@
         {
             return mainApp.handleError(err);
         });
+    };
+
+    processing.updateViewData = function (eventId, params)
+    {
+        var data =
+            {
+                Data: params || ""
+            };
+
+        data = JSON.stringify(data);
+
+        var url = mainApp.apiURL + "updateViewData/" + eventId;
+        return mainApp.makeWebCall(url, "POST", data);
     };
 
     processing.cellIsVisible = function (column, data)
