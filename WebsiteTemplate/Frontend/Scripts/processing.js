@@ -41,6 +41,7 @@
                 case 6: // Execute UI action
                     return mainApp.executeUIAction(item.EventNumber, item.ParametersToPass);
                 default:
+                    console.log(item);
                     return dialog.showMessage("Error", "Unknown action type: " + actionType + " for event " + eventId);
             }
         })).catch(function (err)

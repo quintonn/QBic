@@ -547,7 +547,7 @@ namespace WebsiteTemplate.Controllers
                         var parameters = String.Empty;
 
                         var dataJson = new JObject();
-                        if (!String.IsNullOrWhiteSpace(data) && !(eventItem is ViewForInput))
+                        if (!String.IsNullOrWhiteSpace(data))
                         {
                             try
                             {

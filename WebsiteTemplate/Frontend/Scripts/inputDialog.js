@@ -92,7 +92,8 @@
             //  not working because not all items have been set.
             var action = function ()
             {
-                inpModel.setInputValue(inp.DefaultValue);
+                //inpModel.setInputValue(inp.DefaultValue);
+                inpModel.initialize(inp.DefaultValue);
             };
             setDefaults.push(action); // This is not a great solution - i don't  like it, smells bad
             
@@ -312,13 +313,13 @@
         var self = this;
         self.setting = inputSetting;
         self.inputDialogModel = inpDlgModel;
-        
+
         self.inputLabel = ko.observable(inputSetting.InputLabel);
         self.inputValue = ko.observable();
         //self.inputValue.subscribe(function (val)
         //{
         //    var value = self.getInputValue();
-            
+
         //});
         self.inputType = inputSetting.InputType;
         self.mandatory = inputSetting.Mandatory;
@@ -326,7 +327,7 @@
         self.visible = ko.observable(inputSetting.InputType != 2); // 2 - hidden input
         //inputSetting.MandatoryConditions;
         //inputSetting.VisibilityConditions;
-        self.propertyChanged = function()
+        self.propertyChanged = function ()
         {
             if (self.raisePropertyChangeEvent == true)
             {
@@ -376,7 +377,7 @@
         self.getInputValue = function ()
         {
             var value = self.inputValue();
-            
+
             if (self.inputType == 3 && value != null) // Combobox
             {
                 value = value.value;
@@ -392,12 +393,34 @@
             return value;
         }
 
-        self.myid = ko.observable(inputSetting.InputName);
+        self.id = inputSetting.InputName;
         self.html = ko.observable();
-        if (inputSetting.InputType == 8) // Input view
+
+        self.initialize = function (defaultValue)
         {
-            console.log(inputSetting.ViewForInput);
-            //views.showView
+            self.setInputValue(defaultValue);
+            var inputSetting = self.setting;
+
+            if (self.inputType == 8) // Input view
+            {
+                // params ?? -> update the view when i return from web call
+                views.showView(inputSetting.ViewForInput, true).then(function (model)
+                {
+                    self.html(model.html());
+
+                    var id = 'view_' + inputSetting.InputName;
+                    console.log(id);
+                    var div = document.getElementById(id);
+                    console.log(div);
+                    div = div.firstChild;
+
+                    ko.cleanNode(div);
+
+                    ko.applyBindings(model, div);
+
+                    model.updateViewData(inputSetting.ViewForInput.Id);
+                });
+            }
         }
     }
 

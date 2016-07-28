@@ -171,7 +171,7 @@ $(document).ready(function ()
                     }
                     else if (error.status == 400 && error.responseText.indexOf('invalid_grant') > -1)
                     {
-                        alert('invalid login');
+                        dialog.showMessage("Error", "Username or password incorrect, try again.");
                     }
                     else
                     {

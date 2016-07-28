@@ -105,17 +105,17 @@ namespace WebsiteTemplate.Backend.Menus
                     query = query.WhereRestrictionOn(x => x.Name).IsLike(filter, MatchMode.Anywhere);
                 }
 
-                    var results = query
-                       .Skip((currentPage-1)*linesPerPage)
-                       .Take(linesPerPage)
-                       .List<Menu>()
-                       .ToList();
+                var results = query
+                    .Skip((currentPage - 1) * linesPerPage)
+                    .Take(linesPerPage)
+                    .List<Menu>()
+                    .ToList();
 
                 var newList = results.Select(r => new
                 {
                     Name = r.Name,
                     Id = r.Id,
-                    Event = r.Event == null ? "" : MainController.EventList[r.Event.Value].Description,
+                    Event = r.Event == null ? "" : MainController.EventList.ContainsKey(r.Event.Value) ? MainController.EventList[r.Event.Value].Description : "",
                     ParentMenu = r.ParentMenu,
                     CanDelete = r.CanDelete,
                 }).ToList();
@@ -127,7 +127,7 @@ namespace WebsiteTemplate.Backend.Menus
         //TODO: Possible (most likely) change this to have JSON object as input. So i have this try catch in only one place
         //      Then i can set the incoming json object to either be null, or a blank json object.
         //      --- Lets see what happens in ClaimManager - if it'll be usefull
-        public void ProcessData(string data) 
+        public void ProcessData(string data)
         {
             try
             {

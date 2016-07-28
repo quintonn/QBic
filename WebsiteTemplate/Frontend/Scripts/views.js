@@ -5,14 +5,14 @@
         return mainApp.makeWebCall("frontend/pages/Views.html?v=" + mainApp.version);
     };
 
-    views.showView = function (viewData)
+    views.showView = function (viewData, isEmbeddedView)
     {
         dialog.showBusyDialog('Loading data...');
         return mainApp.makeWebCall("frontend/pages/Views.html?v=" + mainApp.version).then(function (data)
         {
-            var model = new viewModel(viewData.Description, data, viewData);
+            var model = new viewModel(viewData.Description, data, viewData, isEmbeddedView || false);
             
-            var menuItems = viewData.ViewMenu;
+            var menuItems = viewData.ViewMenu || [];
             
             for (var i = 0; i < menuItems.length; i++)
             {
@@ -87,15 +87,17 @@
         self.cells = ko.observableArray([]);
     }
 
-    function viewModel(title, html, settings)
+    function viewModel(title, html, settings, isEmbeddedView)
     {
         var self = this;
 
-        self.id = settings.Id;
-
         self.settings = settings;
 
+        self.id = settings.Id;
+
         self.linesPerPage = ko.observable(settings.LinesPerPage);
+
+        self.isEmbeddedView = isEmbeddedView;
 
         self.lastPage = ko.computed(function()
         {
@@ -212,7 +214,7 @@
 
         self.updateViewData = function (eventId, params)
         {
-            return Promise.resolve();
+            //return Promise.resolve();
             dialog.showBusyDialog("Searching...");
             processing.updateViewData(eventId, params).then(function (resp)
             {
@@ -270,7 +272,7 @@
         self.addData = function (data, columns)
         {
             self.rows([]);
-            var items = data;
+            var items = data || [];
             for (var j = 0; j < items.length; j++)
             {
                 var record = items[j];

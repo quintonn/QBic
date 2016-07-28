@@ -1,9 +1,9 @@
 ﻿<div class="w3-container ">
-    <h1 class="w3-center" data-bind="text: viewTitle"></h1>
+    <h1 class="w3-center" data-bind="text: viewTitle, visible: isEmbeddedView == false"></h1>
     <div class="w3-section" data-bind="foreach: viewMenus">
         <button class="w3-btn w3-blue w3-large" data-bind="text: label, click: menuClick"></button>
     </div>
-    <div class="w3-container w3-center">
+    <div class="w3-container w3-center" data-bind="visible: isEmbeddedView == false">
         <div class="w3-row w3-center w3-content">
             <table class="w3-center">
                 <tr class="">
@@ -56,7 +56,7 @@
                             </select>
                             <button class="w3-btn w3-blue koHidden" data-bind="enable: currentPage() < lastPage(), click: nextClick, css: { koHidden: false }">></button>
                             <button class="w3-btn w3-blue koHidden" data-bind="enable: currentPage() < lastPage(), click: lastClick, css: { koHidden: false }">>></button>
-                            <p class="w3-small" data-bind="text: footerText"></p>
+                            <p class="w3-small" data-bind="text: footerText, visible: isEmbeddedView == false"></p>
                         </div>
                     </td>
                 </tr>

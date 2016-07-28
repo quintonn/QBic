@@ -48,7 +48,8 @@ namespace WebsiteTemplate.Backend.UserRoles
                     name = "Bob",
                     age = 20
                 }
-            };
+            }.Skip((currentPage - 1) * linesPerPage)
+             .Take(linesPerPage);
         }
 
         public override int GetDataCount(string data, string filter)
