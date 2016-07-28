@@ -36,7 +36,8 @@
         var data = settings.InputData; // Not sure what this is for - not suppose to be sent to client possibly.
         var inputs = settings.InputFields;
 
-        var model = new inputDialogModel(title, settings.Id);
+        console.log(settings.Parameters);
+        var model = new inputDialogModel(title, settings.Id, settings.Parameters);
 
         var tabs = {};
         var setDefaults = [];
@@ -136,7 +137,7 @@
         return Promise.resolve();
     }
 
-    function inputDialogModel(title, eventId)
+    function inputDialogModel(title, eventId, params)
     {
         var self = this;
         self.eventId = eventId;
@@ -148,6 +149,8 @@
         self.combinedTab = ko.observable();
 
         self.buttons = ko.observableArray([]);
+
+        self.params = params;
 
         self.closeClick = function ()
         {
@@ -199,6 +202,7 @@
                 {
                     $.extend(res, res, inp);
                 });
+                res["parameters"] = self.params;
                 
                 return mainApp.processEvent(self.eventId, btn.actionNumber, res).then(function ()
                 {
@@ -404,19 +408,11 @@
             if (self.inputType == 8) // Input view
             {
                 // params ?? -> update the view when i return from web call
-                views.showView(inputSetting.ViewForInput, true).then(function (model)
+                views.showView(inputSetting.ViewForInput, true, inputSetting.ViewForInput.Id).then(function (model)
                 {
                     self.html(model.html());
 
-                    var id = 'view_' + inputSetting.InputName;
-                    console.log(id);
-                    var div = document.getElementById(id);
-                    console.log(div);
-                    div = div.firstChild;
-
-                    ko.cleanNode(div);
-
-                    ko.applyBindings(model, div);
+                    model.applyKoBindings();
 
                     model.updateViewData(inputSetting.ViewForInput.Id);
                 });

@@ -5,12 +5,14 @@
         return mainApp.makeWebCall("frontend/pages/Views.html?v=" + mainApp.version);
     };
 
-    views.showView = function (viewData, isEmbeddedView)
+    views.showView = function (viewData, isEmbeddedView, id)
     {
         dialog.showBusyDialog('Loading data...');
         return mainApp.makeWebCall("frontend/pages/Views.html?v=" + mainApp.version).then(function (data)
         {
-            var model = new viewModel(viewData.Description, data, viewData, isEmbeddedView || false);
+            data = data.replace("##view_id##", "view_" + id);
+
+            var model = new viewModel(viewData.Description, data, viewData, isEmbeddedView || false, id);
             
             var menuItems = viewData.ViewMenu || [];
             
@@ -31,7 +33,7 @@
                 model.columns.push(colModel);
             }
 
-            model.addData(viewData.ViewData, columns);
+            model.addData(viewData.ViewData);
 
             return dialog.closeBusyDialog().then(function ()
             {
@@ -78,22 +80,22 @@
         self.columnType = ko.observable(columnType);
     }
 
-    function rowModel(data)
+    function rowModel(data, id)
     {
         var self = this;
 
+        self.id = id;
         self.data = data;
-
         self.cells = ko.observableArray([]);
     }
 
-    function viewModel(title, html, settings, isEmbeddedView)
+    function viewModel(title, html, settings, isEmbeddedView, id)
     {
         var self = this;
 
         self.settings = settings;
 
-        self.id = settings.Id;
+        self.id = id;
 
         self.linesPerPage = ko.observable(settings.LinesPerPage);
 
@@ -164,12 +166,18 @@
                     "totalLines": self.settings.TotalLines
                 };
 
+            var params = theColumn.ParametersToPass || {};
+            
+            params["ViewId"] = self.id;
+            params["RowId"] = rowItem.id;
+
             var formData =
                 {
                     Id: id,
                     data: data,
                     viewSettings: "",  // Why is this not included in the call?
-                    parameters: theColumn.ParametersToPass,
+                    //parameters: theColumn.ParametersToPass,
+                    parameters: params,
                     eventParameters: self.settings.EventParameters
                 };
 
@@ -269,26 +277,93 @@
             return cols.length;
         }, self);
 
-        self.addData = function (data, columns)
+        self.addData = function (data)
         {
             self.rows([]);
             var items = data || [];
             for (var j = 0; j < items.length; j++)
             {
                 var record = items[j];
-                var rowItem = new rowModel(record);
+                self.addRow(record, j);
+            }
+        };
+
+        self.addRow = function (data, rowId)
+        {
+            var rowItem = new rowModel(data, rowId);
+            var columns = self.settings.Columns;
+
+            for (var k = 0; k < columns.length; k++)
+            {
+                var col = columns[k];
+                var value = processing.getColumnValue(col, data);
+
+                var cellIsVisible = col.ColumnType != 4 && processing.cellIsVisible(col, data);
+
+                var cell = new cellModel(value, cellIsVisible, col.ColumnType);
+                rowItem.cells.push(cell);
+            }
+            self.rows.push(rowItem);
+        };
+
+        self.deleteRow = function (rowId)
+        {
+            return new Promise(function (resolve, reject)
+            {
+                console.log('removing: ' + rowId);
+
+                self.rows.remove(function (row)
+                {
+                    return row.id == rowId;
+                });
+
+                //var rows = self.rows();
+
+                //var rowModel = $.grep(rows, function (r, indx)
+                //{
+                //    return r.id == rowId;
+                //})[0];
+
+                //self.rows().remove(rowModel);
+                resolve();
+            });
+        };
+
+        self.updateRow = function (rowId, data)
+        {
+            return new Promise(function (resolve, reject)
+            {
+                var rows = self.rows();
+
+                var rowModel = $.grep(rows, function (r, indx)
+                {
+                    return r.id == rowId;
+                })[0];
+
+                var columns = self.settings.Columns;
+                console.log(data);
                 for (var k = 0; k < columns.length; k++)
                 {
                     var col = columns[k];
-                    var value = processing.getColumnValue(col, record);
+                    var value = processing.getColumnValue(col, data);
 
-                    var cellIsVisible = col.ColumnType != 4 && processing.cellIsVisible(col, record);
+                    var cellIsVisible = col.ColumnType != 4 && processing.cellIsVisible(col, data);
 
-                    var cell = new cellModel(value, cellIsVisible, col.ColumnType);
-                    rowItem.cells.push(cell);
+                    var cell = rowModel.cells()[k];
+                    cell.showCell(cellIsVisible);
+                    cell.value(value);
                 }
-                self.rows.push(rowItem);
-            }
+
+                self.settings.ViewData[rowModel.id] = data;
+                resolve();
+            });
+        };
+
+        self.applyKoBindings = function ()
+        {
+            var div = document.getElementById("view_" + self.id);
+            ko.cleanNode(div);
+            ko.applyBindings(self, div);
         };
     }
 

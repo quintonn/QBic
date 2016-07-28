@@ -399,6 +399,17 @@ namespace WebsiteTemplate.Controllers
                     });
                 };
 
+                var callParameters = String.Empty;
+                try
+                {
+                    var tmpJson = JObject.Parse(formData);
+                    callParameters = tmpJson.GetValue("parameters")?.ToString();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+
                 eventItem.Request = Request;
                 IList<Event> result;
 
@@ -418,6 +429,10 @@ namespace WebsiteTemplate.Controllers
                    
                     HandleProcessActionResult(result, eventItem);
                     session.Flush();
+                }
+                foreach (var item in result)
+                {
+                    item.Parameters = callParameters;
                 }
                 return Json(result);
             }
@@ -622,6 +637,33 @@ namespace WebsiteTemplate.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("getViewMenu/{*eventId}")]
+        [RequireHttps]
+        [Authorize]
+        public async Task<IHttpActionResult> GetViewMenu(int eventId)
+        {
+            if (!EventList.ContainsKey(eventId))
+            {
+                return BadRequest("No action has been found for event number: " + eventId);
+            }
+
+            var eventItem = EventList[eventId] as ShowView;
+
+            var viewMenu = eventItem.GetViewMenu();
+
+            var user = await this.GetLoggedInUserAsync();
+            List<MenuItem> allowedMenuItems;
+            using (var session = Store.OpenSession())
+            {
+
+                var allowedEvents = GetAllowedEventsForUser(session, user.Id);
+                allowedMenuItems = viewMenu.Where(m => allowedEvents.Contains(m.EventNumber)).ToList();
+            }
+            
+            return Json(allowedMenuItems);
+        }
+
         /*      When clicking a create button on an input view, i don't have access to any information on the screen
                 I might need this (eg, in the claims for creating note attachment. Because i want to check if there 
                 is already a note with the name note1.txt, and if there is, make it note2.txt, etc.
@@ -663,6 +705,16 @@ namespace WebsiteTemplate.Controllers
                         //data = "";
                     }
                 }
+                var parameters = String.Empty;
+                try
+                {
+                    var tmpJson = JObject.Parse(originalData);
+                    parameters = tmpJson.GetValue("parameters")?.ToString();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
 
                 var id = eventId;
 
@@ -690,7 +742,7 @@ namespace WebsiteTemplate.Controllers
                         //var linesPerPage = 10;
                         //var totalLines = -1;
                         //var filter = String.Empty;
-                        var parameters = String.Empty;
+                        //var parameters = String.Empty;
 
                         var dataJson = new JObject();
                         if (!String.IsNullOrWhiteSpace(data) && !(eventItem is ViewForInput))
@@ -747,7 +799,7 @@ namespace WebsiteTemplate.Controllers
                         action.LinesPerPage = 10;
                         action.TotalLines = totalLines;
                         action.Filter = String.Empty;
-                        action.Parameters = parameters;
+                        //action.Parameters = parameters;
 
                         //clicking back in view many times breaks filter args- test with menus
 
@@ -805,6 +857,11 @@ namespace WebsiteTemplate.Controllers
                 else
                 {
                     return BadRequest("ERROR: Unknown UIActionType: " + eventItem.GetType().ToString().Split(".".ToCharArray()).Last() + " with id " + id);
+                }
+
+                foreach (var item in result)
+                {
+                    item.Parameters = parameters;
                 }
 
                 return Json(result);

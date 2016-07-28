@@ -62,15 +62,7 @@
         }
 
         self.currentView([existingModel]);
-
-        var id = 'view_' + existingModel.id;
-
-        var div = document.getElementById(id);
-        div = div.firstChild;
-
-        ko.cleanNode(div);
-
-        ko.applyBindings(existingModel, div);
+        existingModel.applyKoBindings();
     };
 
     self.menuContainer = ko.observable(new menuContainer());

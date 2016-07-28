@@ -81,6 +81,7 @@ $(document).ready(function ()
         {
             errMsg += ":\n" + err.stack;
         }
+        dialog.closeBusyDialog();
         dialog.showMessage("Error", errMsg);
         return Promise.resolve();
     };

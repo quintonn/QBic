@@ -4,6 +4,7 @@
     {
         return Promise.all(data.map(function (item)
         {
+            console.log(item);
             var actionType = item.ActionType;
 
             switch (actionType)
@@ -18,7 +19,7 @@
                     });
                     if (existingModel.length == 0)
                     {
-                        return views.showView(item).then(function (m)
+                        return views.showView(item, false, item.Id).then(function (m)
                         {
                             _applicationModel.addView(m);
                         });
@@ -33,13 +34,45 @@
                     
                 case 1: // Get Input / User Input
                     return inputDialog.buildInput(item);
-                    break;
                 case 4: // Close input dialog -- Not sure i need this anymore.
                     return dialog.closeModalDialog();
                 case 5:
                     return dialog.getUserConfirmation(item, item.Data);
                 case 6: // Execute UI action
                     return mainApp.executeUIAction(item.EventNumber, item.ParametersToPass);
+                case 8: // Update input view (view in input screen)
+                    var params = item.Parameters;
+                    if (params != null && params.length > 0)
+                    {
+                        params = JSON.parse(params);
+                    }
+                    var viewId = params.ViewId;
+                    
+                    var rowId = params.RowId;
+
+                    if (rowId == null)
+                    {
+                        rowId = -1;
+                    }
+                    
+                    var updateType = item.UpdateType; // 0 - add / 1 - delete
+
+                    var dataToUpdate = item.JsonDataToUpdate;
+                    dataToUpdate = JSON.parse(dataToUpdate);
+
+                    var view = document.getElementById('view_' + viewId);
+                    var model = ko.contextFor(view).$rawData;
+                    if (updateType == 0)
+                    {
+                        return model.updateRow(rowId, dataToUpdate);
+                    }
+                    else
+                    {
+                        return model.deleteRow(rowId);
+                    }
+                    //return dialog.showMessage("Error", "Unknown action type: " + actionType + " for event " + eventId);
+
+                    break;
                 default:
                     console.log(item);
                     return dialog.showMessage("Error", "Unknown action type: " + actionType + " for event " + eventId);
