@@ -60,21 +60,26 @@
         var url = mainApp.apiURL + "token";
 
         var data = "grant_type=refresh_token&refresh_token=" + auth.refreshToken + "&client_id=" + _applicationModel.applicationName();
-
-        return $.ajax(
-            {
-                url: url,
-                method: "POST",
-                headers: {
-                    "Authorization": auth.refreshToken
-                },
-                data: data
-            }).done(function (resp)
-            {
-                console.log('successfully got new refresh token');
-                console.log(resp);
-                return auth.handleLoginSuccess(resp).then(dialog.closeBusyDialog);
-            });
+        return new Promise(function (resolve, reject)
+        {
+            $.ajax(
+                {
+                    url: url,
+                    method: "POST",
+                    headers: {
+                        "Authorization": auth.refreshToken
+                    },
+                    data: data
+                }).done(function (resp)
+                {
+                    console.log('successfully got new refresh token');
+                    console.log(resp);
+                    auth.handleLoginSuccess(resp).then(dialog.closeBusyDialog).then(resolve);
+                }).fail(function(error)
+                {
+                    reject(error);
+                });
+        });
     };
 
 }(window.auth = window.auth || {}, jQuery));

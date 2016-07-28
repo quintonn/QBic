@@ -817,7 +817,8 @@ namespace WebsiteTemplate.Controllers
                     }
                     else
                     {
-                        //processedFormData = new Dictionary<string, object>();
+                        Console.WriteLine("");
+                        processedFormData = new Dictionary<string, object>(); // Cannot/should not be null
                     }
 
                     (eventItem as DoSomething).InputData = processedFormData;

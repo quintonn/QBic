@@ -8,7 +8,7 @@
         return Promise.resolve();
     };
 
-    dialog.getUserConfirmation = function (settings, data)
+    dialog.getUserConfirmation = function (settings, data, params)
     {
         var cancelText = settings.CancelButtonText;
         var confirmText = settings.ConfirmationButtonText;
@@ -18,6 +18,8 @@
 
         return new Promise(function (resolve, reject)
         {
+            data = data || {};
+            data["parameters"] = params;
             var model = new confirmationModel(message, confirmText, confirmEvent, cancelText, cancelEvent, resolve, data);
             return dialog.showDialogWithId('confirmation', model);
         });

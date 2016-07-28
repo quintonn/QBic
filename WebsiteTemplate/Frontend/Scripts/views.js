@@ -14,14 +14,15 @@
 
             var model = new viewModel(viewData.Description, data, viewData, isEmbeddedView || false, id);
             
-            var menuItems = viewData.ViewMenu || [];
+            //var menuItems = viewData.ViewMenu || [];
             
-            for (var i = 0; i < menuItems.length; i++)
-            {
-                var menu = menuItems[i];
-                var mModel = new viewMenuModel(menu.Label, menu.EventNumber, menu.ParametersToPass);
-                model.viewMenus.push(mModel);
-            }
+            //for (var i = 0; i < menuItems.length; i++)
+            //{
+            //    var menu = menuItems[i];
+            //    var mModel = new viewMenuModel(menu.Label, menu.EventNumber, menu.ParametersToPass);
+            //    model.viewMenus.push(mModel);
+            //}
+            processing.loadViewMenu(id, model);
             
             var columns = viewData.Columns;
 
@@ -50,18 +51,20 @@
         self.visible = ko.observable(visible);
     }
 
-    function viewMenuModel(label, eventId, params)
+    views.viewMenuModel = function(label, eventId, menuParams, viewParams)
     {
         var self = this;
         self.label = ko.observable(label);
         self.eventId = eventId;
-        self.params = params;
+        self.menuParams = menuParams;
+        self.viewParams = viewParams;
 
         self.menuClick = function()
         {
             var data =
                 {
-                    data: params,
+                    data: self.menuParams,
+                    parameters: self.viewParams
                 }
             dialog.showBusyDialog("Processing...").then(function ()
             {
@@ -154,7 +157,8 @@
         {
             dialog.showBusyDialog("Processing...");
             var cellItem = rowItem.cells()[colIndex];
-            var data = self.settings.ViewData[rowIndex];
+            //var data = self.settings.ViewData[rowIndex];
+            var data = rowItem.data;
             var theColumn = self.settings.Columns[colIndex];
 
             var id = data[theColumn.KeyColumn];
@@ -310,21 +314,10 @@
         {
             return new Promise(function (resolve, reject)
             {
-                console.log('removing: ' + rowId);
-
                 self.rows.remove(function (row)
                 {
                     return row.id == rowId;
                 });
-
-                //var rows = self.rows();
-
-                //var rowModel = $.grep(rows, function (r, indx)
-                //{
-                //    return r.id == rowId;
-                //})[0];
-
-                //self.rows().remove(rowModel);
                 resolve();
             });
         };
@@ -333,28 +326,41 @@
         {
             return new Promise(function (resolve, reject)
             {
-                var rows = self.rows();
-
-                var rowModel = $.grep(rows, function (r, indx)
+                if (rowId > -1)
                 {
-                    return r.id == rowId;
-                })[0];
+                    var rows = self.rows();
 
-                var columns = self.settings.Columns;
-                console.log(data);
-                for (var k = 0; k < columns.length; k++)
-                {
-                    var col = columns[k];
-                    var value = processing.getColumnValue(col, data);
+                    var rowModel = $.grep(rows, function (r, indx)
+                    {
+                        return r.id == rowId;
+                    })[0];
 
-                    var cellIsVisible = col.ColumnType != 4 && processing.cellIsVisible(col, data);
+                    rowModel.data = data;
 
-                    var cell = rowModel.cells()[k];
-                    cell.showCell(cellIsVisible);
-                    cell.value(value);
+                    var columns = self.settings.Columns;
+
+                    for (var k = 0; k < columns.length; k++)
+                    {
+                        var col = columns[k];
+                        var value = processing.getColumnValue(col, data);
+
+                        var cellIsVisible = col.ColumnType != 4 && processing.cellIsVisible(col, data);
+
+                        var cell = rowModel.cells()[k];
+                        cell.showCell(cellIsVisible);
+                        cell.value(value);
+                    }
                 }
+                else
+                {
+                    $.each(self.rows(), function (indx, row)
+                    {
+                        rowId = Math.max(rowId, row.id);
+                    });
+                    rowId += 1;
 
-                self.settings.ViewData[rowModel.id] = data;
+                    self.addRow(data, rowId);
+                }
                 resolve();
             });
         };

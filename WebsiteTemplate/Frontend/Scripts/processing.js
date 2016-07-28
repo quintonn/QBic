@@ -4,8 +4,17 @@
     {
         return Promise.all(data.map(function (item)
         {
-            console.log(item);
             var actionType = item.ActionType;
+
+            var params = item.Parameters;
+            if (params != null && params.length > 0)
+            {
+                params = JSON.parse(params);
+            }
+            else
+            {
+                params = {};
+            }
 
             switch (actionType)
             {
@@ -37,15 +46,10 @@
                 case 4: // Close input dialog -- Not sure i need this anymore.
                     return dialog.closeModalDialog();
                 case 5:
-                    return dialog.getUserConfirmation(item, item.Data);
+                    return dialog.getUserConfirmation(item, item.Data, params);
                 case 6: // Execute UI action
                     return mainApp.executeUIAction(item.EventNumber, item.ParametersToPass);
                 case 8: // Update input view (view in input screen)
-                    var params = item.Parameters;
-                    if (params != null && params.length > 0)
-                    {
-                        params = JSON.parse(params);
-                    }
                     var viewId = params.ViewId;
                     
                     var rowId = params.RowId;
@@ -59,7 +63,6 @@
 
                     var dataToUpdate = item.JsonDataToUpdate;
                     dataToUpdate = JSON.parse(dataToUpdate);
-
                     var view = document.getElementById('view_' + viewId);
                     var model = ko.contextFor(view).$rawData;
                     if (updateType == 0)
@@ -94,6 +97,27 @@
 
         var url = mainApp.apiURL + "updateViewData/" + eventId;
         return mainApp.makeWebCall(url, "POST", data);
+    };
+
+    processing.loadViewMenu = function (eventId, model)
+    {
+        dialog.showBusyDialog("Loading view menu...");
+        var url = mainApp.apiURL + "getViewMenu/" + eventId;
+        return mainApp.makeWebCall(url, "GET").then(function (data)
+        {
+            var menuItems = data || [];
+
+            var params = {};
+            params["ViewId"] = model.id;
+
+            for (var i = 0; i < menuItems.length; i++)
+            {
+                var menu = menuItems[i];
+                var mModel = new views.viewMenuModel(menu.Label, menu.EventNumber, menu.ParametersToPass, params);
+                model.viewMenus.push(mModel);
+            }
+            dialog.closeBusyDialog();
+        });
     };
 
     processing.cellIsVisible = function (column, data)
