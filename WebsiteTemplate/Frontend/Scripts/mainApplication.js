@@ -171,8 +171,8 @@ $(document).ready(function ()
                             }).catch(function (err)
                             {
                                 dialog.closeBusyDialog();
-                                dialog.showLoginDialog();
                                 mainApp.handleError(err);
+                                dialog.showLoginDialog();
                             });
                         }
                         else
