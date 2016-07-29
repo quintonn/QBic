@@ -43,8 +43,8 @@ namespace WebsiteTemplate.Backend.UserRoles
             {
                 var list = new List<InputField>();
 
-                list.Add(new StringInput("Name", "Name", mandatory:true));
-                list.Add(new StringInput("Description", "Description"));
+                list.Add(new StringInput("Name", "Name", mandatory: true));
+                list.Add(new StringInput("Description", "Description", mandatory: true));
 
                 //list.Add(new StringInput("xxx", "xxx", "", "", true));
                 //list.Add(new StringInput("xxx2", "xxx2", "", "x", false)

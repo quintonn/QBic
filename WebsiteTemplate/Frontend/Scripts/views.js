@@ -200,7 +200,7 @@
                     data: data,
                     viewSettings: "",  // Why is this not included in the call?
                     //parameters: theColumn.ParametersToPass,
-                    //parameters: params,
+                    parameters: params,
                     eventParameters: self.settings.EventParameters
                 };
 

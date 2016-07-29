@@ -295,17 +295,12 @@
 
         self.inputLabel = ko.observable(inputSetting.InputLabel);
         self.inputValue = ko.observable();
-        //self.inputValue.subscribe(function (val)
-        //{
-        //    var value = self.getInputValue();
 
-        //});
         self.inputType = inputSetting.InputType;
         self.mandatory = inputSetting.Mandatory;
         self.raisePropertyChangeEvent = inputSetting.RaisePropertyChangedEvent;
         self.visible = ko.observable(inputSetting.InputType != 2); // 2 - hidden input
-        //inputSetting.MandatoryConditions;
-        //inputSetting.VisibilityConditions;
+
         self.propertyChanged = function ()
         {
             if (self.raisePropertyChangeEvent == true)
@@ -334,22 +329,27 @@
 
         self.setInputValue = function (value)
         {
-            if (self.inputType == 3) // Combobox
+            switch (self.inputType)
             {
-                //TODO: Don't like this either, using knockout there must be a better way
-                var opt = self.options();
-                for (var i = 0; i < opt.length; i++)
-                {
-                    if (opt[i].value == value)
+                case 3: // Combobox
+                    //TODO: Don't like this either, using knockout there must be a better way
+                    var opt = self.options();
+                    for (var i = 0; i < opt.length; i++)
                     {
-                        self.inputValue(opt[i]);
-                        break;
+                        if (opt[i].value == value)
+                        {
+                            self.inputValue(opt[i]);
+                            break;
+                        }
                     }
-                }
-            }
-            else
-            {
-                self.inputValue(value);
+                    break;
+                case 5: // List selection / list source
+                    console.log(self.listSource());
+                    console.log(value);
+                    break;
+                default:
+                    self.inputValue(value);
+                    break;
             }
         };
 
@@ -357,42 +357,115 @@
         {
             var value = self.inputValue();
 
-            if (self.inputType == 3 && value != null) // Combobox
+            switch (self.inputType)
             {
-                value = value.value;
+                case 3:  // combo box
+                    if (value != null)
+                    {
+                        value = value.value;
+                    }
+                    break;
+                case 4: // Boolean
+                    if (value == null)
+                    {
+                        value = false + "";
+                    }
+                    value = value + "";
+                case 5: // List selection / list source
+                    var listSource = self.listSource();
+                    //Get only selected items
+                    listSource = $.grep(listSource, function (item, index)
+                    {
+                        return item.selected() == true;
+                    });
+                    // obtain the values of selected items
+                    var values = $.map(listSource, function (item)
+                    {
+                        return item.value;
+                    });
+                    console.log('list source data:');
+                    console.log(values);
+                    value = values;
+                    break;
+                default:
+                    break;
             }
-            else if (self.inputType == 4)
-            {
-                if (value == null)
-                {
-                    return false + "";
-                }
-                return value + "";
-            }
+            
             return value;
         }
 
         self.id = inputSetting.InputName;
         self.html = ko.observable();
 
+        self.listSource = ko.observableArray([]);
+
+        self.selectAll = ko.observable(false);
+        self.selectAllClicked = function ()
+        {
+            console.log(self.selectAll());
+            var list = self.listSource();
+            $.each(list, function (indx, item)
+            {
+                item.selected(self.selectAll());
+            });
+            return true;
+        };
+        self.listSourceSelect = function (item, evt)
+        {
+            self.selectAll(self.isAllListSelected());
+            return true;
+        };
+        self.isAllListSelected = function()
+        {
+            var list = self.listSource();
+            var newList = $.grep(list, function (item, indx)
+            {
+                return item.selected() == true;
+            });
+            return list.length == newList.length;
+        }
+
         self.initialize = function (defaultValue)
         {
-            self.setInputValue(defaultValue);
             var inputSetting = self.setting;
 
-            if (self.inputType == 8) // Input view
+            switch (self.inputType)
             {
-                // params ?? -> update the view when i return from web call
-                views.showView(inputSetting.ViewForInput, true, inputSetting.ViewForInput.Id).then(function (model)
-                {
-                    self.html(model.html());
+                case 5: // List Source
+                    var defaultList = defaultValue || [];
+                    var listSource = inputSetting.ListSource; // (Key, Value)
+                    listSource = $.map(listSource, function (item)
+                    {
+                        var selected = defaultList.indexOf(item.Key) > -1;
+                        return new listSourceItemModel(selected, item.Value, item.Key);
+                    });
+                    self.listSource(listSource);
 
-                    model.applyKoBindings();
+                    self.selectAll(self.isAllListSelected());
+                    break;
+                case 8: // View
+                    views.showView(inputSetting.ViewForInput, true, inputSetting.ViewForInput.Id).then(function (model)
+                    {
+                        self.html(model.html());
 
-                    model.updateViewData(inputSetting.ViewForInput.Id);
-                });
+                        model.applyKoBindings();
+
+                        model.updateViewData(inputSetting.ViewForInput.Id);
+                    });
+                    break;
+                default:
+                    self.setInputValue(defaultValue);
+                    break;
             }
         }
+    }
+
+    function listSourceItemModel(isSelected, displayValue, itemValue)
+    {
+        var self = this;
+        self.selected = ko.observable(isSelected);
+        self.label = ko.observable(displayValue);
+        self.value = itemValue;
     }
 
     function optionModel(displayText, value)

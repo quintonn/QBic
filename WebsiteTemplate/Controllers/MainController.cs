@@ -820,10 +820,13 @@ namespace WebsiteTemplate.Controllers
 
                         processedFormData = JsonConvert.DeserializeObject<Dictionary<string, object>>(rowData);
                     }
+                    else if (processedFormData == null)
+                    {
+                        processedFormData = new Dictionary<string, object>(); // Cannot/should not be null
+                    }
                     else
                     {
                         Console.WriteLine("");
-                        processedFormData = new Dictionary<string, object>(); // Cannot/should not be null
                     }
 
                     if (!String.IsNullOrWhiteSpace(data))

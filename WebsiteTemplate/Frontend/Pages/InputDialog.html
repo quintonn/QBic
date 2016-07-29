@@ -39,12 +39,12 @@
 
 <script type="text/html" id="inputRowTemplate">
     <tr data-bind="visible: visible">
-        <!-- ko if: inputType != 8 -->
+        <!-- ko if: inputType != 8 && inputType != 5 -->
         <td>
             <span data-bind="text: inputLabel"></span>
         </td>
         <!-- /ko -->
-        <td data-bind="attr: { colspan: inputType != 8 ? 1 : 99 }">
+        <td data-bind="attr: { colspan: inputType != 8 && inputType != 5 ? 1 : 99 }">
             <!-- ko if: inputType == 0 -->
             <input class="w3-input" type="text" data-bind="value: inputValue, hasFocus: $index() == 0" />
             <!-- /ko -->
@@ -64,7 +64,29 @@
             
             <!-- ko if: inputType == 5 -->
             <!-- List Selection Input -->
-            <span>??????</span>
+            <label><b data-bind="text: inputLabel"></b></label>
+            <div style="overflow-x:auto; overflow-y: auto; max-height:250px">
+                <table class="w3-table w3-bordered w3-striped w3-border w3-hoverable " >
+                    <tr>
+                        <th >
+                            <input class="w3-check" type="checkbox" data-bind="checked: selectAll, click: selectAllClicked" />
+                        </th>
+                        <th>
+                            <label>Select All</label>
+                        </th>
+                    </tr>
+                    <tbody data-bind="foreach: listSource">
+                        <tr>
+                            <td>
+                                <input class="w3-check" type="checkbox" data-bind="checked: selected, click: $parent.listSourceSelect" />
+                            </td>
+                            <td>
+                                <span data-bind="text: label"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <!-- /ko -->
 
             <!-- ko if: inputType == 6 -->

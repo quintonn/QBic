@@ -15,7 +15,7 @@
         </div>
     </div>
     
-    <div class="w3-section" style="overflow-x:auto; overflow-y: auto">
+    <div class="w3-section" style="overflow-x:auto; overflow-y: auto; ">
         <table class="w3-table w3-bordered w3-striped w3-border w3-hoverable ">
             <thead>
                 <tr data-bind="foreach: columns" class="w3-grey">
@@ -29,12 +29,18 @@
                         <!--  ko if:  columnType() == 0 ||  columnType() == 4 || columnType() == 1 -->
                         <span data-bind="visible: showCell, text: value"></span>
                         <!-- /ko -->
-                        <!--  ko if:  columnType() == 2 -->
+
+                        <!--  ko if:  columnType() == 2 -->  <!-- Button -->
                         <!-- the visible binding is duplicated here because if it's not here it messes column ordering up -->
                         <button class="w3-btn w3-blue w3-small" data-bind="visible: showCell, text: value, click:  function(data, event) { $root.click($parent, $index(), $parentContext.$index(), event) }"></button>
                         <!-- /ko -->
-                        <!--  ko if:  $parent.cells()[$index()].columnType() == 3 -->
+
+                        <!--  ko if: columnType() == 3 -->  <!-- Link -->
                         <a href="#" data-bind="visible: showCell, text: value, click:  function(data, event) { $root.click($parent, $index(), $parentContext.$index(), event) }"></a>
+                        <!-- /ko -->
+
+                        <!-- ko if: columnType() == 6 -->  <!-- CheckBox -->
+                        <input class="w3-check" data-bind="checked: value, visible: showCell" type="checkbox" />
                         <!-- /ko -->
                     </td>
                 </tr>
