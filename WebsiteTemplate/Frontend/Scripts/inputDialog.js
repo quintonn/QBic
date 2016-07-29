@@ -344,8 +344,7 @@
                     }
                     break;
                 case 5: // List selection / list source
-                    console.log(self.listSource());
-                    console.log(value);
+                    console.log('should do nothing here');
                     break;
                 default:
                     self.inputValue(value);
@@ -383,8 +382,7 @@
                     {
                         return item.value;
                     });
-                    console.log('list source data:');
-                    console.log(values);
+                    
                     value = values;
                     break;
                 default:
@@ -402,7 +400,6 @@
         self.selectAll = ko.observable(false);
         self.selectAllClicked = function ()
         {
-            console.log(self.selectAll());
             var list = self.listSource();
             $.each(list, function (indx, item)
             {
