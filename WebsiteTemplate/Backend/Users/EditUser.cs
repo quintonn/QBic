@@ -40,11 +40,21 @@ namespace WebsiteTemplate.Backend.Users
                 {
                     var id = GetValue<string>("Id");
                     var userName = GetValue<string>("UserName");
+                    var email = GetValue<string>("Email");
+
+                    if (String.IsNullOrWhiteSpace(email))
+                    {
+                        return new List<Event>()
+                        {
+                            new ShowMessage("Unable to modify user. Email is mandatory.")
+                        };
+                    }
 
                     var existingUser = session.CreateCriteria<User>()
                                               .Add(Restrictions.Eq("UserName", userName))
                                               .Add(Restrictions.Not(Restrictions.Eq("Id", id)))
                                               .UniqueResult<User>();
+                    
                     if (existingUser != null)
                     {
                         return new List<Event>()
@@ -55,7 +65,9 @@ namespace WebsiteTemplate.Backend.Users
 
                     var dbUser = session.Get<User>(id);
                     dbUser.UserName = userName;
-                    dbUser.Email = GetValue<string>("Email");
+
+                    dbUser.EmailConfirmed = dbUser.Email == email;
+                    dbUser.Email = email;
                     session.Update(dbUser);
 
                     var existingUserRoles = session.CreateCriteria<UserRoleAssociation>()

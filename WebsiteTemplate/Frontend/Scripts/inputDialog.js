@@ -53,34 +53,36 @@
             inpModel.inputValue.subscribe(function ()
             {
                 var inModel = inpModel;
-                var value = inModel.getInputValue();
-
-                var inputsToHide = $.grep(inputs, function (inp, indx)
+                inModel.getInputValue().then(function (value)
                 {
-                    var conditionList = $.grep(inp.VisibilityConditions, function (condition, indx2)
+                    var inputsToHide = $.grep(inputs, function (inp, indx)
                     {
-                        return condition.ColumnName == inModel.setting.InputName;
+                        var conditionList = $.grep(inp.VisibilityConditions, function (condition, indx2)
+                        {
+                            return condition.ColumnName == inModel.setting.InputName;
+                        });
+                        return conditionList.length > 0;
                     });
-                    return conditionList.length > 0;
+                    for (var i = 0; i < inputsToHide.length; i++)
+                    {
+                        var inp = inputsToHide[i];
+
+                        var matchedConditions1 = $.grep(inp.VisibilityConditions, function (condition, indx2)
+                        {
+                            return condition.ColumnName == inModel.setting.InputName;
+                        });
+                        var matchedConditions2 = $.grep(inp.VisibilityConditions, function (condition, indx2)
+                        {
+                            //return condition.ColumnName == inModel.setting.InputName && inputDialog.conditionIsMet(condition, inModel.getInputValue());
+                            return condition.ColumnName == inModel.setting.InputName && inputDialog.conditionIsMet(condition, value);
+                        });
+
+                        // This might need revision - test with multiple conditions
+                        var showInput = matchedConditions1.length == matchedConditions2.length;
+
+                        model.toggleInputVisibility(inp.InputName, showInput);
+                    }
                 });
-                for (var i = 0; i < inputsToHide.length; i++)
-                {
-                    var inp = inputsToHide[i];
-
-                    var matchedConditions1 = $.grep(inp.VisibilityConditions, function (condition, indx2)
-                    {
-                        return condition.ColumnName == inModel.setting.InputName;
-                    });
-                    var matchedConditions2 = $.grep(inp.VisibilityConditions, function (condition, indx2)
-                    {
-                        return condition.ColumnName == inModel.setting.InputName && inputDialog.conditionIsMet(condition, inModel.getInputValue());
-                    });
-                    
-                    // This might need revision - test with multiple conditions
-                    var showInput = matchedConditions1.length == matchedConditions2.length;
-                    
-                    model.toggleInputVisibility(inp.InputName, showInput);
-                }
             });
 
             // All of this is very inefficient, including the method inside tabs to toggle visibility
@@ -266,24 +268,34 @@
         self.getInputs = function(validateInput)
         {
             var results = {};
-            
-            for (var i = 0; i < self.inputs().length; i++)
+
+            var getInputFunction = function (inp)
             {
-                var inp = self.inputs()[i];
-                var value = inp.getInputValue();
-                
-                if (validateInput &&  (value == null || value.length == 0) && inp.mandatory == true && inp.visible() == true)
+                return new Promise(function (resolve, reject)
                 {
-                    dialog.closeBusyDialog();
-                    return dialog.showMessage("Warning", inp.setting.InputName + ' is mandatory').then(function ()
+                    return inp.getInputValue().then(function (value)
                     {
-                        return Promise.reject('X');
+                        if (validateInput && (value == null || value.length == 0) && inp.mandatory == true && inp.visible() == true)
+                        {
+                            dialog.closeBusyDialog();
+                            return dialog.showMessage("Warning", inp.setting.InputName + ' is mandatory').then(function ()
+                            {
+                                reject('X');
+                            });
+                        }
+                        results[inp.setting.InputName] = value;
+                        resolve();
                     });
-                }
-                results[inp.setting.InputName] = value;
-            }
+                });
+            };
             
-            return Promise.resolve(results);
+            var actions = $.map(self.inputs(), getInputFunction);
+
+
+            return Promise.all(actions).then(function (xData)
+            {
+                return Promise.resolve(results);
+            });
         }
     }
 
@@ -346,6 +358,9 @@
                 case 5: // List selection / list source
                     console.log('should do nothing here');
                     break;
+                case 9: // File input
+                    self.inputValue(value);
+                    break;
                 default:
                     self.inputValue(value);
                     break;
@@ -363,13 +378,14 @@
                     {
                         value = value.value;
                     }
-                    break;
+                    return Promise.resolve(value);
                 case 4: // Boolean
                     if (value == null)
                     {
                         value = false + "";
                     }
                     value = value + "";
+                    return Promise.resolve(value);
                 case 5: // List selection / list source
                     var listSource = self.listSource();
                     //Get only selected items
@@ -384,13 +400,55 @@
                     });
                     
                     value = values;
+                    return Promise.resolve(value);
+                case 9: // File Input
+                    var file = self.inputValue();
+                    //console.log(file);
+                    if (file != null)
+                    {
+                        return new Promise(function (resolve, reject)
+                        {
+                            var reader = new FileReader();
+
+                            var fileData = null;
+                            reader.onload = (function (theFile)
+                            {
+                                return function (e)
+                                {
+                                    fileData = e.target.result;
+                                    fileData = window.btoa(fileData);  // base 64 encode
+
+                                    var filex =
+                                        {
+                                            Data: fileData,
+                                            FileName: theFile.name,
+                                            MimeType: theFile.type,
+                                            Size: theFile.size
+                                        };
+                                    resolve(filex);
+                                };
+                            })(file);
+                            reader.readAsBinaryString(file);
+                        }).catch(function (err)
+                        {
+                            console.log(err);
+                            mainApp.handleError(err);
+                        });
+                    }
+                    else
+                    {
+                        return Promise.resolve(null);
+                    }
                     break;
                 default:
-                    break;
+                    return Promise.resolve(value);
             }
-            
-            return value;
         }
+
+        self.fileSelected = function (file)
+        {
+            self.setInputValue(file);
+        };
 
         self.id = inputSetting.InputName;
         self.html = ko.observable();

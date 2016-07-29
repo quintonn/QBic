@@ -107,7 +107,7 @@
             <!-- /ko -->
 
             <!-- ko if: inputType == 9 -->
-            <input class="w3-input " type="file" data-bind="value: inputValue, hasFocus: $index() == 0" />
+            <input class="w3-input " type="file" data-bind="hasFocus: $index() == 0, event: { change: function() { fileSelected($element.files[0]) } }" />
             <!-- /ko -->
         </td>
     </tr>

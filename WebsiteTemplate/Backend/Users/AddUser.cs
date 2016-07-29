@@ -40,16 +40,16 @@ namespace WebsiteTemplate.Backend.Users
             {
                 var list = new List<InputField>();
 
-                list.Add(new StringInput("UserName", "User Name"));
+                list.Add(new StringInput("UserName", "User Name", mandatory: true));
                 list.Add(new StringInput("Email", "Email"));
                 list.Add(new PasswordInput("Password", "Password"));
                 list.Add(new PasswordInput("ConfirmPassword", "Confirm Password"));
 
                 //Editing a fileInput is breaking at the moment
-                list.Add(new FileInput("File", "File")
-                {
-                    RaisePropertyChangedEvent = true
-                });
+                //list.Add(new FileInput("File", "File")
+                //{
+                //    RaisePropertyChangedEvent = true
+                //});
 
                 using (var session = Store.OpenSession())
                 {
@@ -108,6 +108,8 @@ namespace WebsiteTemplate.Backend.Users
                 };
                 var password = GetValue<string>("Password");
                 var confirmPassword = GetValue<string>("ConfirmPassword");
+
+                //var testFile = GetValue<FileInfo>("File");
 
                 if (password != confirmPassword)
                 {
