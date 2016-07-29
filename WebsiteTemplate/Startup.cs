@@ -9,7 +9,6 @@ using System.Net.Http.Formatting;
 using WebsiteTemplate.Data;
 using BasicAuthentication.Startup;
 
-//[assembly: OwinStartup(typeof(WebsiteTemplate.Startup))]
 namespace WebsiteTemplate
 {
     public class Startup : IStartup

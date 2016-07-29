@@ -122,6 +122,13 @@ namespace WebsiteTemplate.Backend.UserRoles
                         new ShowMessage("Description is mandatory and must be provided.")
                     };
                 }
+                if (events == null)
+                {
+                    return new List<Event>()
+                    {
+                        new ShowMessage("Events is not present and is mandatory.")
+                    };
+                }
 
                 using (var session = Store.OpenSession())
                 {

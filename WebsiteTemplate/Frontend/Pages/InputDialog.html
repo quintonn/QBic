@@ -39,13 +39,16 @@
 
 <script type="text/html" id="inputRowTemplate">
     <tr data-bind="visible: visible">
+        <!-- ko if: inputType != 8 -->
         <td>
             <span data-bind="text: inputLabel"></span>
         </td>
-        <td>
+        <!-- /ko -->
+        <td data-bind="attr: { colspan: inputType != 8 ? 1 : 99 }">
             <!-- ko if: inputType == 0 -->
             <input class="w3-input" type="text" data-bind="value: inputValue, hasFocus: $index() == 0" />
             <!-- /ko -->
+
             <!-- ko if: inputType == 1 -->
             <input class="w3-input" type="password" data-bind="value: inputValue, hasFocus: $index() == 0" />
             <!-- /ko -->
@@ -75,7 +78,8 @@
 
             <!-- ko if: inputType == 8 -->
             <!-- View Input -->
-            <div class="w3-container" data-bind="html: html">
+            <label><b data-bind="text: inputLabel"></b></label>
+            <div data-bind="html: html">
 
             </div>
             <!-- /ko -->
