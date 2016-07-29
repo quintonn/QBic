@@ -36,7 +36,6 @@
         var data = settings.InputData; // Not sure what this is for - not suppose to be sent to client possibly.
         var inputs = settings.InputFields;
 
-        console.log(settings.Parameters);
         var model = new inputDialogModel(title, settings.Id, settings.Parameters);
 
         var tabs = {};
@@ -79,8 +78,6 @@
                     
                     // This might need revision - test with multiple conditions
                     var showInput = matchedConditions1.length == matchedConditions2.length;
-                    
-                    //console.log(showInput);
                     
                     model.toggleInputVisibility(inp.InputName, showInput);
                 }
@@ -156,28 +153,6 @@
         {
             dialog.closeModalDialog();
         };
-
-        self.getInput = function (inputName)
-        {
-            alert('?????');
-            //var result = null;
-            //var tabs = self.tabs();
-            //$.each(tabs, function (indx, tab)
-            //{
-            //    var inputs = tab.inputs();
-            //    $.each(inputs, function (idx, inp)
-            //    {
-            //        if (inp.setting.InputName == inputName)
-            //        {
-            //            result = inp;
-            //            return false;
-            //        }
-            //    });
-            //});
-            //console.log('result');
-            //console.log(result);
-            //return result;
-        }
 
         self.getInputs = function (validateInput)
         {

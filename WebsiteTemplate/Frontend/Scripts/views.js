@@ -14,14 +14,6 @@
 
             var model = new viewModel(viewData.Description, data, viewData, isEmbeddedView || false, id);
             
-            //var menuItems = viewData.ViewMenu || [];
-            
-            //for (var i = 0; i < menuItems.length; i++)
-            //{
-            //    var menu = menuItems[i];
-            //    var mModel = new viewMenuModel(menu.Label, menu.EventNumber, menu.ParametersToPass);
-            //    model.viewMenus.push(mModel);
-            //}
             processing.loadViewMenu(id, model);
             
             var columns = viewData.Columns;
@@ -58,19 +50,6 @@
         self.eventId = eventId;
         self.menuParams = menuParams;
         self.viewParams = viewParams;
-
-        self.menuClick = function()
-        {
-            var data =
-                {
-                    data: self.menuParams,
-                    parameters: self.viewParams
-                }
-            dialog.showBusyDialog("Processing...").then(function ()
-            {
-                return mainApp.executeUIAction(eventId, data);
-            }).then(dialog.closeBusyDialog);
-        }
     }
 
     function cellModel(value, cellIsVisible, columnType)
@@ -121,7 +100,47 @@
         }, self);
 
         self.viewTitle = ko.observable(title);
+
         self.viewMenus = ko.observableArray([]);
+        self.menuClick = function (menu, index, evt)
+        {
+            var data =
+                {
+                    data: menu.menuParams,
+                    parameters: menu.viewParams
+                }
+
+            if (self.settings.ActionType == 7) // View Input
+            {
+                self.addViewDataToParams(data);
+            }
+
+            dialog.showBusyDialog("Processing...").then(function ()
+            {
+                return mainApp.executeUIAction(menu.eventId, data);
+            }).then(dialog.closeBusyDialog);
+        };
+
+        self.addViewDataToParams = function (params)
+        {
+            var rows = self.rows();
+            var rowsData = $.map(rows, function (r)
+            {
+                return r.data;
+            });
+
+            var mainData = params['data'];
+            if (mainData == null || mainData.length == 0)
+            {
+                mainData = {};
+            }
+            mainData = JSON.parse(JSON.stringify(mainData)); // without this a circular reference is created by the next line
+            mainData["ViewData"] = rowsData;
+
+            params['data'] = mainData;
+            //params['ViewData'] = rowsData;
+        };
+
         self.filterText = ko.observable(settings.Filter);
         self.filterSearchClick = function ()
         {
@@ -181,9 +200,14 @@
                     data: data,
                     viewSettings: "",  // Why is this not included in the call?
                     //parameters: theColumn.ParametersToPass,
-                    parameters: params,
+                    //parameters: params,
                     eventParameters: self.settings.EventParameters
                 };
+
+            if (self.settings.ActionType == 7) // View Input
+            {
+                self.addViewDataToParams(formData);
+            }
 
             if (theColumn.Event == null || theColumn.Event.ActionType == 6) // 6 = execute UI Action
             {
@@ -195,7 +219,7 @@
             {
                 dialog.closeBusyDialog().then(function ()
                 {
-                    return dialog.getUserConfirmation(theColumn.Event, formData);
+                    return dialog.getUserConfirmation(theColumn.Event, formData, params);
                 });
             }
             else

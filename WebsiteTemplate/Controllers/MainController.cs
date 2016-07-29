@@ -468,6 +468,10 @@ namespace WebsiteTemplate.Controllers
                     }
                     if (String.IsNullOrWhiteSpace(jsonDataToUpdate))
                     {
+                        if (inputData.ContainsKey("ViewData"))
+                        {
+                            inputData.Remove("ViewData");
+                        }
                         jsonDataToUpdate = JObject.FromObject(inputData).ToString();
                     }
                     (item as UpdateInputView).JsonDataToUpdate = jsonDataToUpdate;
@@ -692,6 +696,7 @@ namespace WebsiteTemplate.Controllers
                         if (tmp != null)
                         {
                             var subData = tmp.GetValue("data");
+                            
                             if (subData != null)
                             {
                                 data = subData.ToString();
@@ -821,6 +826,22 @@ namespace WebsiteTemplate.Controllers
                         processedFormData = new Dictionary<string, object>(); // Cannot/should not be null
                     }
 
+                    if (!String.IsNullOrWhiteSpace(data))
+                    {
+                        var viewData = String.Empty;
+                        try
+                        {
+                            var tmpData = JObject.Parse(data);
+                            var xtmp = tmpData.GetValue("ViewData");
+                            viewData = tmpData.GetValue("ViewData")?.ToString();
+                            processedFormData.Add("ViewData", viewData);
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+
                     (eventItem as DoSomething).InputData = processedFormData;
                     var doResult = await (eventItem as DoSomething).ProcessAction();
                     HandleProcessActionResult(doResult, eventItem);
@@ -853,6 +874,7 @@ namespace WebsiteTemplate.Controllers
                 }
                 else if (eventItem is UserConfirmation)
                 {
+                    (eventItem as UserConfirmation).Data = originalData;
                     result.Add(eventItem);
                 }
                 else

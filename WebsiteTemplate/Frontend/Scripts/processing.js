@@ -2,6 +2,7 @@
 {
     processing.processUIActionResult = function (data, eventId)
     {
+        data = data || [];
         return Promise.all(data.map(function (item)
         {
             var actionType = item.ActionType;
@@ -51,6 +52,8 @@
                     return mainApp.executeUIAction(item.EventNumber, item.ParametersToPass);
                 case 8: // Update input view (view in input screen)
                     var viewId = params.ViewId;
+                    console.log(params);
+                    console.log(item);
                     
                     var rowId = params.RowId;
 
@@ -64,6 +67,8 @@
                     var dataToUpdate = item.JsonDataToUpdate;
                     dataToUpdate = JSON.parse(dataToUpdate);
                     var view = document.getElementById('view_' + viewId);
+                    console.log('view_' + viewId);
+                    console.log(view);
                     var model = ko.contextFor(view).$rawData;
                     if (updateType == 0)
                     {

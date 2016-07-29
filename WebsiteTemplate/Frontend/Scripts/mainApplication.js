@@ -88,17 +88,23 @@ $(document).ready(function ()
 
     mainApp.executeUIAction = function (eventId, params)
     {
-        var data =
-            {
-                Data: params || ""
-            };
-
-        data = JSON.stringify(data);
-
-        var url = mainApp.apiURL + "executeUIAction/" + eventId;
-        return mainApp.makeWebCall(url, "POST", data).then(function (resp)
+        return new Promise(function (resolve, reject)
         {
-            mainApp.processUIActionResult(resp, eventId);
+            var data =
+                {
+                    Data: params || ""
+                };
+            
+            data = JSON.stringify(data);
+
+            var url = mainApp.apiURL + "executeUIAction/" + eventId;
+            return mainApp.makeWebCall(url, "POST", data).then(function (resp)
+            {
+                return mainApp.processUIActionResult(resp, eventId);
+            }).then(resolve);
+        }).catch(function (err)
+        {
+            mainApp.handleError(err);
         });
     };
 
@@ -130,7 +136,7 @@ $(document).ready(function ()
             $.ajax(
                 {
                     //contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                    url: mainApp.baseURL +"/"+ url + "?v="+mainApp.version,
+                    url: mainApp.baseURL + url + "?v="+mainApp.version,
                     data: data,
                     method: method || "GET",
                     cache: false,

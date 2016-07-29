@@ -67,7 +67,7 @@ namespace WebsiteTemplate.Backend.UserRoles
             return new List<MenuItem>()
             {
                 new MenuItem("Add",777),
-                new MenuItem("Create", EventNumber.TestConfirmation) Need a flag whether or not to pass all the data that is in the view
+                new MenuItem("Create", EventNumber.TestConfirmation)
         };
         }
     }

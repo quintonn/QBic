@@ -10,6 +10,7 @@
 
     dialog.getUserConfirmation = function (settings, data, params)
     {
+        dialog.closeBusyDialog(); /// This is because the busy dialog covers the confirmation dialog. TODO: need to fix this
         var cancelText = settings.CancelButtonText;
         var confirmText = settings.ConfirmationButtonText;
         var message = settings.ConfirmationMessage;
@@ -20,6 +21,7 @@
         {
             data = data || {};
             data["parameters"] = params;
+            
             var model = new confirmationModel(message, confirmText, confirmEvent, cancelText, cancelEvent, resolve, data);
             return dialog.showDialogWithId('confirmation', model);
         });
@@ -119,7 +121,7 @@
             if (cancelEvent > 0)
             {
                 dialog.showBusyDialog("Processing...");
-                mainApp.executeUIAction(theColumn.Event.cancelEvent, data).then(dialog.closeBusyDialog).then(callback);
+                mainApp.executeUIAction(cancelEvent, data).then(dialog.closeBusyDialog).then(callback);
             }
             else
             {

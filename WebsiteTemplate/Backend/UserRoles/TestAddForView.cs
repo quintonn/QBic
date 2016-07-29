@@ -34,8 +34,8 @@ namespace WebsiteTemplate.Backend.UserRoles
             {
                 var result = new List<InputField>()
                 {
-                    new StringInput("name", "name", RowData?.GetValue("name").ToString(), "", true),
-                    new StringInput("age", "age", RowData?.GetValue("age").ToString(), ""),
+                    new StringInput("name", "name", RowData?.GetValue("name")?.ToString(), "", true),
+                    new StringInput("age", "age", RowData?.GetValue("age")?.ToString(), ""),
                     new HiddenInput("rowId", RowId)
                 };
                 return result;
