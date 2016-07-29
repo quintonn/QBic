@@ -163,7 +163,10 @@ $(document).ready(function ()
                             {
                                 console.log('refresh token updated successfully');
                                 // If successfully refreshed the token, retry the web call we just tried
-                                return mainApp.makeWebCall(url, method, data);
+                                return mainApp.makeWebCall(url, method, data).then(function (retryData)
+                                {
+                                    resolve(retryData);
+                                });
 
                             }).catch(function (err)
                             {

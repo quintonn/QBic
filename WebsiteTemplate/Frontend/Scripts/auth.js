@@ -59,7 +59,15 @@
         //dialog.showBusyDialog("Refreshing token..."); // Todo: Maybe don't show this
         var url = mainApp.apiURL + "token";
 
-        var data = "grant_type=refresh_token&refresh_token=" + auth.refreshToken + "&client_id=" + _applicationModel.applicationName();
+        //var data = "grant_type=refresh_token&refresh_token=" + auth.refreshToken + "&client_id=" + _applicationModel.applicationName();
+
+        var data =
+       {
+           "grant_type": "refresh_token",
+           "refresh_token": auth.refreshToken,
+           "client_id": _applicationModel.applicationName()
+       };
+
         return new Promise(function (resolve, reject)
         {
             $.ajax(
