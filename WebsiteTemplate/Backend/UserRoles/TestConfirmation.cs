@@ -16,6 +16,14 @@ namespace WebsiteTemplate.Backend.UserRoles
             OnCancelUIAction = WebsiteTemplate.Menus.BaseItems.EventNumber.CancelInputDialog;
         }
 
+        public override string Description
+        {
+            get
+            {
+                return "Test Confirmation";
+            }
+        }
+
         public override int GetId()
         {
             return EventNumber.TestConfirmation;

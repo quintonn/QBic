@@ -16,7 +16,7 @@ namespace WebsiteTemplate.Backend.UserRoles
         {
             get
             {
-                return "User Roles";
+                return "View User Roles";
             }
         }
 

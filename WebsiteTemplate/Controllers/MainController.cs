@@ -681,6 +681,9 @@ namespace WebsiteTemplate.Controllers
         {
             try
             {
+                // TODO: Need a way to confirm if user is allowed to execute this event
+                //       Make re-usable so it can be put into views and input screens for buttons and links
+
                 var user = await this.GetLoggedInUserAsync();
                 var originalData = await Request.Content.ReadAsStringAsync();
                 

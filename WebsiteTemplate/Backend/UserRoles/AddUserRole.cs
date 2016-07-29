@@ -63,9 +63,24 @@ namespace WebsiteTemplate.Backend.UserRoles
 
                 list.Add(new ViewInput("view", "View", new TestView(), null, null, false));
 
-                var items = MainController.EventList.ToDictionary(e => e.Key, e => e.Value.Description)
-                                                   .OrderBy(e => e.Value)
-                                                   .ToDictionary(e => e.Key.ToString(), e => (object)e.Value);
+                var eventTypesEveryoneCanDo = new List<int>()
+                {
+                    (int)EventNumber.CancelInputDialog,
+                    (int)EventNumber.DeleteInputViewItem,
+                    (int)EventNumber.ExecuteAction,
+                    (int)EventNumber.Nothing,
+                    (int)EventNumber.ShowMessage,
+                    (int)EventNumber.UpdateDataSourceComboBox,
+                    (int)EventNumber.UpdateInput,
+                    (int)EventNumber.UpdateInputView,
+                    (int)EventNumber.UserConfirmation,
+                };
+                
+                
+                var items = MainController.EventList.Where(e => e.Key != null && !eventTypesEveryoneCanDo.Contains(e.Key))
+                                                    .ToDictionary(e => e.Key, e => e.Value.Description)
+                                                    .OrderBy(e => e.Value)
+                                                    .ToDictionary(e => e.Key.ToString(), e => (object)e.Value);
 
 
                 var listSelection = new ListSelectionInput("Events", "Allowed Events")

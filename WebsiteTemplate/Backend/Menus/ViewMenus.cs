@@ -15,7 +15,7 @@ namespace WebsiteTemplate.Backend.Menus
 {
     public class ViewMenus : ShowView
     {
-        private string mDescription = "Menus";
+        private string mDescription = "View Menus";
         public override string Description
         {
             get

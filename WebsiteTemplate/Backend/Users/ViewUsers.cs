@@ -68,7 +68,7 @@ namespace WebsiteTemplate.Backend.Users
         {
             get
             {
-                return "Users";
+                return "View Users";
             }
         }
 
