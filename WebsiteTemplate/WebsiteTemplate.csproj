@@ -240,6 +240,7 @@
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\RoleAuthorization.cs" />
     <Compile Include="Controllers\RoleBlockedAttribute.cs" />
+    <Compile Include="Controllers\AcmeController.cs" />
     <Compile Include="CustomMenuItems\XXXUtils.cs" />
     <Compile Include="Data\DataStore.cs" />
     <Compile Include="Mappings\BaseClassMap.cs" />
@@ -328,7 +329,9 @@
     <Compile Include="SiteSpecific\Utilities\WebsiteTemplateConstants.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
