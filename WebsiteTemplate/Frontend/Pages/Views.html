@@ -27,19 +27,28 @@
                 <tr data-bind="foreach: cells">
                     <td data-bind="visible: showCell() == true || columnType() != 4">
                         <!--  ko if:  columnType() == 0 ||  columnType() == 4 || columnType() == 1 -->
+                        <!--  String || Hidden || Boolean  -->
                         <span data-bind="visible: showCell, text: value"></span>
                         <!-- /ko -->
 
-                        <!--  ko if:  columnType() == 2 -->  <!-- Button -->
+                        <!--  ko if:  columnType() == 2 -->  
+                        <!--  Button  -->
                         <!-- the visible binding is duplicated here because if it's not here it messes column ordering up -->
                         <button class="w3-btn w3-blue w3-small" data-bind="visible: showCell, text: value, click:  function(data, event) { $root.click($parent, $index(), $parentContext.$index(), event) }"></button>
                         <!-- /ko -->
 
-                        <!--  ko if: columnType() == 3 -->  <!-- Link -->
+                        <!--  ko if: columnType() == 3 -->
+                        <!--  Link -->
                         <a href="#" data-bind="visible: showCell, text: value, click:  function(data, event) { $root.click($parent, $index(), $parentContext.$index(), event) }"></a>
                         <!-- /ko -->
 
-                        <!-- ko if: columnType() == 6 -->  <!-- CheckBox -->
+                        <!--  ko if:  columnType() == 5  -->
+                        <!--  Date  -->
+                        <span data-bind="visible: showCell, text: value"></span>
+                        <!-- /ko -->
+
+                        <!-- ko if: columnType() == 6 --> 
+                        <!--  Checkbox -->
                         <input class="w3-check" data-bind="checked: value, visible: showCell" type="checkbox" />
                         <!-- /ko -->
                     </td>

@@ -136,6 +136,24 @@
         return Promise.resolve();
     }
 
+    inputDialog.updateInput = function (inputName, inputValue)
+    {
+        var modals = _applicationModel.modalDialogs();
+        var dialogModel = modals[modals.length - 1];
+        
+        var inputDlgModel = dialogModel.model;
+
+        var inputFldModel = inputDlgModel.findInputModelWithName(inputName);
+        if (inputFldModel == null)
+        {
+            return dialog.showMessage("Error", "Unexpected error, no input found with name " + inputName);
+        }
+
+        inputFldModel.setInputValue(inputValue);
+
+        return Promise.resolve();
+    }
+
     function inputDialogModel(title, eventId, params)
     {
         var self = this;
@@ -239,6 +257,30 @@
                 result.visible(showInput);
             }
         }
+
+        self.findInputModelWithName = function (inputName)
+        {
+            var tabs = self.tabs() || [];
+            tabs.push(self.combinedTab());
+            
+            var models = $.grep(tabs, function (tab)
+            {
+                var models = tab.findInputModelWithName(inputName);
+                return models.length > 0;
+            });
+
+            if (models.length == 0)
+            {
+                //dialog.showMessage("Error", "Unexpected error, no inputs found with name: " + inputName);
+                return null;
+            }
+            var inputs = models[0].findInputModelWithName(inputName);
+            if (inputs.length == 0)
+            {
+                return null;
+            }
+            return inputs[0];
+        }
     }
 
     function tabModel(tabName, inpDlgModel)
@@ -264,6 +306,16 @@
         }, self);
 
         self.inputs = ko.observableArray([]);
+
+        self.findInputModelWithName = function(inputName)
+        {
+            var models = $.grep(self.inputs(), function (inp)
+            {
+                return (inp.setting.InputName == inputName);
+            });
+
+            return models;
+        }
 
         self.getInputs = function(validateInput)
         {
@@ -291,7 +343,6 @@
             
             var actions = $.map(self.inputs(), getInputFunction);
 
-
             return Promise.all(actions).then(function (xData)
             {
                 return Promise.resolve(results);
@@ -317,9 +368,27 @@
         {
             if (self.raisePropertyChangeEvent == true)
             {
-                // Need to call raise property changed event
+                dialog.showBusyDialog("Processing input...");
+                self.getInputValue().then(function (value)
+                {
+                    var data =
+                    {
+                        Data:
+                            {
+                                PropertyName: self.setting.InputName,
+                                PropertyValue: value,
+                                EventId: self.inputDialogModel.eventId
+                            }
+                    };
+                    return Promise.resolve(data);
+                }).then(function (data)
+                {
+                    return mainApp.raisePropertyChanged(data, self.inputDialogModel.eventId);
+                }).then(function ()
+                {
+                    dialog.closeBusyDialog();
+                }).catch(mainApp.handleError);
             }
-
             // need to check if other inputs need to become visible or not - VisibilityConditions
         }
         self.options = ko.computed(function ()
@@ -403,7 +472,7 @@
                     return Promise.resolve(value);
                 case 9: // File Input
                     var file = self.inputValue();
-                    //console.log(file);
+                    
                     if (file != null)
                     {
                         return new Promise(function (resolve, reject)
@@ -448,6 +517,7 @@
         self.fileSelected = function (file)
         {
             self.setInputValue(file);
+            self.propertyChanged();
         };
 
         self.id = inputSetting.InputName;

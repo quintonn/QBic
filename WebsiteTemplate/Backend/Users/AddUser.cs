@@ -11,6 +11,7 @@ using WebsiteTemplate.SiteSpecific;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using NHibernate.Criterion;
+using WebsiteTemplate.Menus.PropertyChangedEvents;
 
 namespace WebsiteTemplate.Backend.Users
 {
@@ -29,9 +30,16 @@ namespace WebsiteTemplate.Backend.Users
             }
         }
 
-        public override Task<IList<Event>> OnPropertyChanged(string propertyName, object propertyValue)
+        public async override Task<IList<Event>> OnPropertyChanged(string propertyName, object propertyValue)
         {
-            return base.OnPropertyChanged(propertyName, propertyValue);
+            //if (propertyName == "UserName" && propertyValue.ToString() == "test")
+            //{
+            //    return new List<Event>()
+            //    {
+            //        new UpdateInput("Email", "test@gmail.com")
+            //    };
+            //}
+            return await base.OnPropertyChanged(propertyName, propertyValue);
         }
 
         public override IList<InputField> InputFields
@@ -40,7 +48,10 @@ namespace WebsiteTemplate.Backend.Users
             {
                 var list = new List<InputField>();
 
-                list.Add(new StringInput("UserName", "User Name", mandatory: true));
+                list.Add(new StringInput("UserName", "User Name", mandatory: true)
+                {
+                    //RaisePropertyChangedEvent = true
+                });
                 list.Add(new StringInput("Email", "Email"));
                 list.Add(new PasswordInput("Password", "Password"));
                 list.Add(new PasswordInput("ConfirmPassword", "Confirm Password"));

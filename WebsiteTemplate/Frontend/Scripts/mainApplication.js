@@ -124,6 +124,16 @@ $(document).ready(function ()
         });
     };
 
+    mainApp.raisePropertyChanged = function (params, eventId)
+    {
+        params = JSON.stringify(params);
+        var url = mainApp.apiURL + "propertyChanged";
+        return mainApp.makeWebCall(url, "POST", params).then(function (resp)
+        {
+            mainApp.processUIActionResult(resp, eventId);
+        });
+    };
+
     mainApp.processUIActionResult = function (data, eventId)
     {
         return processing.processUIActionResult(data, eventId);

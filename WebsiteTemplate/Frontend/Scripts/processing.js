@@ -41,16 +41,21 @@
                         existingModel[0].gotoPage(1);
                         return Promise.resolve();
                     }
-                    
                 case 1: // Get Input / User Input
                     return inputDialog.buildInput(item);
+                //case 2: // Submenu
+                    
+                    //case 3: // DoSomething
+
                 case 4: // Close input dialog -- Not sure i need this anymore.
                     return dialog.closeModalDialog();
                 case 5:
                     return dialog.getUserConfirmation(item, item.Data, params);
                 case 6: // Execute UI action
                     return mainApp.executeUIAction(item.EventNumber, item.ParametersToPass);
+                //case 7:  Input Data View
                 case 8: // Update input view (view in input screen)
+                case 9: // DeleteInputViewItem
                     var viewId = params.ViewId;
                     
                     var rowId = params.RowId;
@@ -67,7 +72,7 @@
                     var view = document.getElementById('view_' + viewId);
                     
                     var model = ko.contextFor(view).$rawData;
-                    if (updateType == 0)
+                    if (updateType == 0 && actionType == 8)
                     {
                         return model.updateRow(rowId, dataToUpdate);
                     }
@@ -77,6 +82,15 @@
                     }
                     //return dialog.showMessage("Error", "Unknown action type: " + actionType + " for event " + eventId);
 
+                    break;
+                    //case 9:  DeleteInputViewItem
+
+                    // case 10: UpdateDataSourceComboBox
+                    // case 11: View File
+                case 12: //UpdateInput
+                    var inputName = item.InputName;
+                    var value = item.InputValue;
+                    return inputDialog.updateInput(inputName, value);
                     break;
                 default:
                     console.log(item);
