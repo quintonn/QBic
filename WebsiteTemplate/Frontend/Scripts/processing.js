@@ -156,17 +156,25 @@
                     //actualValue = actualValue.toString();
                     var actualValue = processing.parseColumnName(colName, data)+"";
 
-                    if (comparison == 0)
+                    switch (comparison)
                     {
-                        compareResult = compareResult && actualValue == colVal;
-                    }
-                    else if (comparison == 1)
-                    {
-                        compareResult = compareResult && actualValue != colVal;
-                    }
-                    else
-                    {
-                        alert("Unknown comparison: " + comparison);
+                        case 0: // Equals
+                            compareResult = compareResult && actualValue == colVal;
+                            break;
+                        case 1: // Not Equals
+                            compareResult = compareResult && actualValue != colVal;
+                            break;
+                        case 2: // Contains
+                            break;
+                        case 3: // IsNotNull
+                            compareResult = compareResult && actualValue != null && actualValue.length > 0;
+                            break;
+                        case 4: // IsNull
+                            compareResult = compareResult && (actualValue == null || actualValue.length == 0);
+                            break;
+                        default:
+                            dialog.showMessage("Error", "Unknown condition comparison type: " + comparison);
+                            break;
                     }
                 }
 
