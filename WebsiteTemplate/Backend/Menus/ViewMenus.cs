@@ -57,7 +57,7 @@ namespace WebsiteTemplate.Backend.Menus
                 Display = ColumnDisplayType.Show,
                 Conditions = new List<Condition>()
                 {
-                    new Condition("Event", Comparison.Equals, ""),
+                    new Condition("Event", Comparison.IsNull)
                 }
             }, MenuId);
 
