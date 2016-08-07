@@ -330,7 +330,7 @@
                         if (validateInput && (value == null || value.length == 0) && inp.mandatory == true && inp.visible() == true)
                         {
                             dialog.closeBusyDialog();
-                            return dialog.showMessage("Warning", inp.setting.InputName + ' is mandatory').then(function ()
+                            return dialog.showMessage("Warning", inp.setting.InputLabel + ' is mandatory').then(function ()
                             {
                                 reject('X');
                             });
@@ -391,6 +391,8 @@
             }
             // need to check if other inputs need to become visible or not - VisibilityConditions
         }
+
+        self.listItems = ko.observableArray(inputSetting.ListItems != null ? inputSetting.ListItems : []);
         self.options = ko.computed(function ()
         {
             if (self.inputType != 3)
@@ -398,10 +400,10 @@
                 return [];
             }
             var results = [];
-
-            for (var i = 0; i < self.setting.ListItems.length; i++)
+            var listItems = self.listItems();
+            for (var i = 0; i < listItems.length; i++)
             {
-                var item = self.setting.ListItems[i];
+                var item = listItems[i];
                 var model = new optionModel(item.Value, item.Key);
                 results.push(model);
             }

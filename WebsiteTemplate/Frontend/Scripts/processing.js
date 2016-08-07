@@ -85,7 +85,12 @@
                     break;
                     //case 9:  DeleteInputViewItem
 
-                    // case 10: UpdateDataSourceComboBox
+                case 10: // UpdateDataSourceComboBox
+                    var dlgs = _applicationModel.modalDialogs();
+                    var inputDlg = dlgs[dlgs.length - 1].model;
+                    var inp = inputDlg.findInputModelWithName(item.InputName);
+                    inp.listItems(item.ListItems);
+                    break;
                     // case 11: View File
                 case 12: //UpdateInput
                     var inputName = item.InputName;
