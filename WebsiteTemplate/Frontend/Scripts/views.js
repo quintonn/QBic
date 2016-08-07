@@ -60,6 +60,27 @@
         self.showCell = ko.observable(cellIsVisible);
 
         self.columnType = ko.observable(columnType);
+
+        self.dateValue = ko.computed(function ()
+        {
+            if (self.columnType() == 5)
+            {
+                var date = formatDate(value);
+                return date;
+            }
+            return "";
+        }, self);
+    }
+
+    function formatDate(dateString)
+    {
+        var date = new Date(dateString);
+        var month = "0" + (date.getMonth() + 1);
+        month = month.substring(month.length - 2);
+        var day = "0" + date.getDate();
+        day = day.substr(day.length - 2);
+        date = date.getFullYear() + "-" + month + "-" + day;  // Todo: would be better to have a date format setting
+        return date;
     }
 
     function rowModel(data, id)
