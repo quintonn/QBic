@@ -56,6 +56,8 @@ namespace WebsiteTemplate.Backend.Users
                 list.Add(new PasswordInput("Password", "Password"));
                 list.Add(new PasswordInput("ConfirmPassword", "Confirm Password"));
 
+                //list.Add(new DateInput("Date", "Date", DateTime.Today));
+
                 //Editing a fileInput is breaking at the moment
                 //list.Add(new FileInput("File", "File")
                 //{
@@ -119,6 +121,9 @@ namespace WebsiteTemplate.Backend.Users
                 };
                 var password = GetValue<string>("Password");
                 var confirmPassword = GetValue<string>("ConfirmPassword");
+
+                //var date = GetValue<string>("Date");
+                //var date = GetValue<DateTime>("Date");
 
                 //var testFile = GetValue<FileInfo>("File");
 

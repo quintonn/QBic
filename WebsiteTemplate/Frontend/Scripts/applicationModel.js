@@ -30,6 +30,8 @@
         var div = document.getElementById('modalDlg_' + _applicationModel.modalDialogs().length);
         div = div.firstChild;
 
+        div.focus();
+        
         ko.cleanNode(div);
 
         ko.applyBindings(model.model, div);

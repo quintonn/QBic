@@ -198,7 +198,7 @@
                     $.extend(res, res, inp);
                 });
                 res["parameters"] = self.params;
-                
+
                 return mainApp.processEvent(self.eventId, btn.actionNumber, res).then(function ()
                 {
                     return dialog.closeBusyDialog();
@@ -427,6 +427,10 @@
                 case 5: // List selection / list source
                     console.log('should do nothing here');
                     break;
+                case 6:
+                    var date = new Date(value);
+                    self.inputValue(date);
+                    break;
                 case 9: // File input
                     self.inputValue(value);
                     break;
@@ -470,6 +474,9 @@
                     
                     value = values;
                     return Promise.resolve(value);
+                case 6: // Date Input
+                    var date = new Date(value).toUTCString();
+                    return Promise.resolve(date);
                 case 9: // File Input
                     var file = self.inputValue();
                     

@@ -99,7 +99,7 @@
 
             <!-- ko if: inputType == 6 -->
             <!--  Date  -->
-            <input class="w3-input " type="date" data-bind="value: inputValue, hasFocus: $index() == 0, event: { change: propertyChanged}" />
+            <input type="text" class="w3-input" data-bind="datepicker: { value: inputValue, changeMonth: true, changeYear: true }, hasFocus: $index() == 0, event: { change: propertyChanged}" placeholder="Select date..." />
             <!-- /ko -->
             
             <!-- ko if: inputType == 7 -->

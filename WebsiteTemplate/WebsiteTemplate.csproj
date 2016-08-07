@@ -141,6 +141,7 @@
     <Content Include="Frontend\css\busyIndicator.css" />
     <Content Include="Frontend\css\font-awesome.min.css" />
     <Content Include="Frontend\css\inputView.css" />
+    <Content Include="Frontend\css\jquery-ui.min.css" />
     <Content Include="Frontend\css\spinner1.css" />
     <Content Include="Frontend\css\views.css" />
     <Content Include="Frontend\css\w3.css" />
@@ -176,7 +177,9 @@
     <Content Include="Frontend\Scripts\applicationModel.js" />
     <Content Include="Frontend\Scripts\dialog.js" />
     <Content Include="Frontend\Scripts\jquery-3.1.0.min.js" />
+    <Content Include="Frontend\Scripts\jquery-ui.min.js" />
     <Content Include="Frontend\Scripts\knockout-3.4.0.js" />
+    <Content Include="Frontend\Scripts\knockout-jqueryui.min.js" />
     <Content Include="Frontend\Scripts\mainApplication.js" />
     <Content Include="Frontend\Scripts\masked_input_1.4.js" />
     <Content Include="Frontend\Scripts\menus.js" />
