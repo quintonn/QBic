@@ -260,7 +260,7 @@
 
         self.findInputModelWithName = function (inputName)
         {
-            var tabs = self.tabs() || [];
+            var tabs = self.tabs().slice(0) || [];
             tabs.push(self.combinedTab());
             
             var models = $.grep(tabs, function (tab)
@@ -321,18 +321,52 @@
         {
             var results = {};
 
+            var mandatoryConditionFunction = function (condition)
+            {
+                return new Promise(function (resolve, reject)
+                {
+                    var inpName = condition.ColumnName;
+                    var inpModel = self.inputDialogModel.findInputModelWithName(inpName);
+
+                    inpModel.getInputValue().then(function (actualValue)
+                    {
+                        var conditionMet = processing.isConditionMet(condition, actualValue);
+                        
+                        resolve(conditionMet);
+                    });
+                });
+            };
+
             var getInputFunction = function (inp)
             {
+                var doValidation = validateInput;
                 return new Promise(function (resolve, reject)
                 {
                     return inp.getInputValue().then(function (value)
                     {
-                        if (validateInput && (value == null || value.length == 0) && inp.mandatory == true && inp.visible() == true)
+                        if (doValidation && (value == null || value.length == 0) && inp.mandatory == true && inp.visible() == true)
                         {
                             dialog.closeBusyDialog();
+                            
                             return dialog.showMessage("Warning", inp.setting.InputLabel + ' is mandatory').then(function ()
                             {
                                 reject('X');
+                            });
+                        }
+                        else if (doValidation && (value == null || value.length == 0) && inp.setting.MandatoryConditions != null && inp.setting.MandatoryConditions.length > 0 && inp.visible() == true)
+                        {
+                            var acts = $.map(inp.setting.MandatoryConditions, mandatoryConditionFunction);
+                            Promise.all(acts).then(function (actData)
+                            {
+                                if (actData.indexOf(false) == -1) // i.e. all mandatory conditions have been met
+                                {
+                                    dialog.closeBusyDialog();
+
+                                    return dialog.showMessage("Warning", inp.setting.InputLabel + ' is mandatory').then(function ()
+                                    {
+                                        reject('X');
+                                    });
+                                }
                             });
                         }
                         results[inp.setting.InputName] = value;
@@ -341,7 +375,9 @@
                 });
             };
             
-            var actions = $.map(self.inputs(), getInputFunction);
+            var inputItems = self.inputs();
+            
+            var actions = $.map(inputItems, getInputFunction);
 
             return Promise.all(actions).then(function (xData)
             {

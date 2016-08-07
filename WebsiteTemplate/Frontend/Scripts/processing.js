@@ -154,33 +154,10 @@
                 {
                     var condition = column.ColumnSetting.Conditions[p];
                     var colName = condition.ColumnName;
-                    var comparison = condition.Comparison;
-                    var colVal = condition.ColumnValue;
 
-                    //var actualValue = data[colName] || "";
-                    //actualValue = actualValue.toString();
                     var actualValue = processing.parseColumnName(colName, data)+"";
 
-                    switch (comparison)
-                    {
-                        case 0: // Equals
-                            compareResult = compareResult && actualValue == colVal;
-                            break;
-                        case 1: // Not Equals
-                            compareResult = compareResult && actualValue != colVal;
-                            break;
-                        case 2: // Contains
-                            break;
-                        case 3: // IsNotNull
-                            compareResult = compareResult && actualValue != null && actualValue.length > 0;
-                            break;
-                        case 4: // IsNull
-                            compareResult = compareResult && (actualValue == null || actualValue.length == 0);
-                            break;
-                        default:
-                            dialog.showMessage("Error", "Unknown condition comparison type: " + comparison);
-                            break;
-                    }
+                    compareResult = compareResult && processing.isConditionMet(condition, actualValue);
                 }
 
                 if ((compareResult == false && show == true) || (compareResult == true && show == false))
@@ -190,6 +167,33 @@
             }
         }
         return true;
+    };
+
+    processing.isConditionMet = function (condition, actualValue)
+    {
+        var colName = condition.ColumnName;
+        var comparison = condition.Comparison;
+        var colVal = condition.ColumnValue;
+
+        var compareResult = true;
+
+        switch (comparison)
+        {
+            case 0: // Equals
+                return actualValue == colVal;
+            case 1: // Not Equals
+                return actualValue != colVal;
+            case 2: // Contains
+                return (actualValue.toLowerCase()).indexOf(colValue.toLowerCase()) > -1;
+            case 3: // IsNotNull
+                return actualValue != null && actualValue.length > 0;
+            case 4: // IsNull
+                return (actualValue == null || actualValue.length == 0);
+            default:
+                dialog.showMessage("Error", "Unknown condition comparison type: " + comparison);
+                break;
+        }
+        return compareResult;
     };
 
     processing.parseColumnName = function (columnName, data)
