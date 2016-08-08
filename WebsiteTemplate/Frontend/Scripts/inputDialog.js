@@ -356,7 +356,7 @@
                         else if (doValidation && (value == null || value.length == 0) && inp.setting.MandatoryConditions != null && inp.setting.MandatoryConditions.length > 0 && inp.visible() == true)
                         {
                             var acts = $.map(inp.setting.MandatoryConditions, mandatoryConditionFunction);
-                            Promise.all(acts).then(function (actData)
+                            return Promise.all(acts).then(function (actData)
                             {
                                 if (actData.indexOf(false) == -1) // i.e. all mandatory conditions have been met
                                 {
