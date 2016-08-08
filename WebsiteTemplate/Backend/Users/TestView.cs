@@ -30,8 +30,8 @@ namespace WebsiteTemplate.Backend.Users
             var id = json.GetValue("Id").ToString(); 
             var result = new WebsiteTemplate.Menus.InputItems.FileInfo();
             //result.Data = File.ReadAllBytes(@"D:\Quintonn\Documents\Unisa Degree.pdf");
-            result.Data = File.ReadAllBytes(@"D:\Quintonn\Documents\Rothmann CV.docx");
-            result.FileName = "Unisa Degree.pdf";
+            result.Data = File.ReadAllBytes(@"D:\Quintonn\Documents\quintonn-rothmann-cv-1st-revision.docx");
+            result.FileName = "CV.docx";
             //result.MimeType = "application/pdf";
             result.MimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 

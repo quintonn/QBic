@@ -139,7 +139,7 @@ $(document).ready(function ()
         return processing.processUIActionResult(data, eventId);
     };
 
-    mainApp.makeWebCall = function (url, method, data)
+    mainApp.makeWebCall = function (url, method, data, headersToInclude)
     {
         return new Promise(function (resolve, reject)
         {
@@ -155,9 +155,23 @@ $(document).ready(function ()
                         xhr.setRequestHeader("Authorization", "Bearer " + auth.accessToken);
                     }
                 })
-                .done(function (data)
+                .done(function (data, textStatus, request)
                 {
-                    resolve(data);
+                    if (headersToInclude == null || headersToInclude.length == 0)
+                    {
+                        resolve(data);
+                    }
+                    else
+                    {
+                        var resp = {};
+                        resp['data'] = data;
+                        for (var i = 0; i < headersToInclude.length; i++)
+                        {
+                            var head = headersToInclude[i];
+                            resp[head] = request.getResponseHeader(head);
+                        }
+                        resolve(resp);
+                    }
                 })
                 .fail(function (error, err, errorText)
                 {

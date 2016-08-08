@@ -37,8 +37,10 @@ namespace WebsiteTemplate.Controllers
             response.Content = new StringContent(base64);
             
             response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("inline");   /// Tells the browser to try and display the file instead of downloading it.
-            
+
             response.Content.Headers.ContentType = new MediaTypeHeaderValue(FileInfo.MimeType);
+
+            response.Headers.Add("FileName", FileInfo.FileName);
 
             return Task.FromResult(response);
         }

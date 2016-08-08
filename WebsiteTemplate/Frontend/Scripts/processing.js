@@ -1,4 +1,6 @@
-﻿(function (processing, $, undefined)
+﻿/// <reference path="mainApplication.js" />
+
+(function (processing, $, undefined)
 {
     processing.processUIActionResult = function (data, eventId)
     {
@@ -91,6 +93,10 @@
                     var inp = inputDlg.findInputModelWithName(item.InputName);
                     inp.listItems(item.ListItems);
                     break;
+                case 11:
+                    processing.showOrDownloadFile(item);
+                    //main.makeWebCall(main.webApiURL + settings.DataUrl, "POST", callback, settings.RequestData);
+                    break;
                     // case 11: View File
                 case 12: //UpdateInput
                     var inputName = item.InputName;
@@ -105,6 +111,122 @@
         {
             return mainApp.handleError(err);
         });
+    };
+
+    processing.showOrDownloadFile = function (item)
+    {
+        dialog.showBusyDialog();
+        var url = mainApp.apiURL + item.DataUrl;
+        url = url.replace("//", "/");
+        mainApp.makeWebCall(url, "POST", item.RequestData, ["content-type", "FileName"]).then(function (resp)
+        {
+            dialog.closeBusyDialog();
+            var dataUrl = "data:" + resp['content-type'] + ";base64," + resp.data;
+            var filename = resp['FileName'];
+            
+            if (processing.supportsBlob() == true)
+            {
+                var blobData = processing.base64ToBlob(resp.data, resp['content-type']);
+
+                if (window.navigator.msSaveOrOpenBlob)
+                {
+                    window.navigator.msSaveOrOpenBlob(blobData, filename);
+                }
+                else
+                {
+                    var blobUrl = (window.webkitURL || window.URL).createObjectURL(blobData);
+
+                    var a = document.createElement('a');
+                    a.style = "display: none";
+                    
+                    a.href = blobUrl;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(function ()
+                    {
+                        document.body.removeChild(a);
+                        (window.webkitURL || window.URL).revokeObjectURL(blobUrl);
+                    }, 100);
+                }
+            }
+            else
+            {
+                // Try using data url
+                var newWin = window.open(dataUrl, "_blank");
+                if (!newWin || newWin.closed || typeof newWin.closed == 'undefined')
+                {
+                    dialog.showMessage("Info", "The content was blocked by your browser. Look in the top-right corner to allow popups on this site or to view the file this time only.");
+                }
+            }
+        });
+    };
+
+    processing.supportsBlob = function ()
+    {
+        try
+        {
+            var svg = new Blob(["<svg xmlns='http://www.w3.org/2000/svg'></svg>"], { type: "image/svg+xml;charset=utf-8" });
+
+            // Safari 6 uses "webkitURL".
+            var url = window.webkitURL || window.URL;
+            var objectUrl = url.createObjectURL(svg);
+            
+            if (/^blob:/.exec(objectUrl) === null)
+            {
+                // `URL.createObjectURL` created a URL that started with something other
+                // than "blob:", which means it has been polyfilled and is not supported by
+                // this browser.
+                return false;
+            } else
+            {
+                return true;
+            }
+        } catch (err)
+        {
+            console.log(err);
+            return false;
+        }
+    };
+
+    processing.base64ToBlob = function (b64Data, contentType, sliceSize)
+    {
+        contentType = contentType || '';
+        sliceSize = sliceSize || 512;
+
+        var byteCharacters = atob(b64Data);
+        var byteArrays = [];
+
+        for (var offset = 0; offset < byteCharacters.length; offset += sliceSize)
+        {
+            var slice = byteCharacters.slice(offset, offset + sliceSize);
+
+            var byteNumbers = new Array(slice.length);
+            for (var i = 0; i < slice.length; i++)
+            {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+
+            var byteArray = new Uint8Array(byteNumbers);
+
+            byteArrays.push(byteArray);
+        }
+
+        try
+        {
+            var blob = new Blob(byteArrays, { type: contentType });
+            return blob;
+        } catch (e)
+        {
+            // The BlobBuilder API has been deprecated in favour of Blob, but older
+            // browsers don't know about the Blob constructor
+            // IE10 also supports BlobBuilder, but since the `Blob` constructor
+            //  also works, there's no need to add `MSBlobBuilder`.
+            var bb = new (window.WebKitBlobBuilder || window.MozBlobBuilder);
+            bb.append(arraybuffer);
+            var blob = bb.getBlob(contentType); // <-- Here's the Blob
+            return blob;
+        }
     };
 
     processing.updateViewData = function (eventId, params)
