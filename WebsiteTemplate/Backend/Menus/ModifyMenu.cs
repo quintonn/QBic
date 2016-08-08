@@ -8,6 +8,7 @@ using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
+using WebsiteTemplate.Menus.PropertyChangedEvents;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.SiteSpecific;
@@ -54,6 +55,18 @@ namespace WebsiteTemplate.Backend.Menus
                         }
                     });
 
+                //list.Add(new DataSourceComboBoxInput<User>("User", "User", x => x.Id, x => x.UserName, null, null, null, null, true, true)
+                //{
+                //    MandatoryConditions = new List<Condition>()
+                //    {
+                //        new Condition("Name", Comparison.Equals, "test")
+                //    },
+                //    VisibilityConditions = new List<Condition>()
+                //    {
+                //        new Condition("Name", Comparison.Equals, "test")
+                //    }
+                //});
+
                 list.Add(new HiddenInput("ParentMenuId", ParentMenuId));
                 list.Add(new HiddenInput("IsNew", IsNew));
                 list.Add(new HiddenInput("Id", Menu?.Id));
@@ -62,6 +75,25 @@ namespace WebsiteTemplate.Backend.Menus
                 return list;
             }
         }
+
+        //public override Task<IList<Event>> OnPropertyChanged(string propertyName, object propertyValue)
+        //{
+        //    var result = new List<Event>();
+
+        //    if (propertyName == "Name" && propertyValue.ToString() == "test")
+        //    {
+        //        var TmpInputs = InputFields;
+
+        //        var combo = TmpInputs.Where(i => i.InputName == "User").Single() as DataSourceComboBoxInput<User>;
+
+        //        combo.UpdateList(x => x.UserName == "Steve", null, true, true);
+
+        //        var list = combo.ListItems;
+        //        result.Add(new UpdateDataSourceComboBoxSource("User", list));
+        //    }
+
+        //    return Task.FromResult<IList<Event>>(result);
+        //}
 
         private string ParentMenuId { get; set; }
 
@@ -125,7 +157,7 @@ namespace WebsiteTemplate.Backend.Menus
                     {
                         return new List<Event>()
                         {
-                            new ShowMessage("Event is mandatory when 'Has Sub Menus' is unchecked.")
+                            new ShowMessage("Menu action is mandatory when 'Has Sub Menus' is unchecked.")
                         };
                     }
 
