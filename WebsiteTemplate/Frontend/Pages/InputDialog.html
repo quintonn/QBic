@@ -45,9 +45,13 @@
         </td>
         <!-- /ko -->
         <td data-bind="attr: { colspan: inputType != 8 && inputType != 5 ? 1 : 99 }">
-            <!-- ko if: inputType == 0 -->
+            <!-- ko if: inputType == 0 && multiLine == false -->
             <!--  Text  -->
             <input class="w3-input" type="text" data-bind="value: inputValue, hasFocus: $index() == 0, event: { change: propertyChanged}" />
+            <!-- /ko -->
+            <!-- ko if: inputType == 0 && multiLine == true -->
+            <!--  Text  -->
+            <textarea class="w3-input" data-bind="value: inputValue, hasFocus: $index() == 0, event: { change: propertyChanged}" ></textarea>
             <!-- /ko -->
 
             <!-- ko if: inputType == 1 -->

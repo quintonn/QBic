@@ -395,6 +395,8 @@
         self.inputLabel = ko.observable(inputSetting.InputLabel);
         self.inputValue = ko.observable();
 
+        self.multiLine = inputSetting.MultiLineText;
+
         self.inputType = inputSetting.InputType;
         self.mandatory = inputSetting.Mandatory;
         self.raisePropertyChangeEvent = inputSetting.RaisePropertyChangedEvent;
