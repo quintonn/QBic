@@ -238,16 +238,14 @@
             }
             else if (theColumn.Event.ActionType == 5) /// ShowMessage
             {
-                dialog.closeBusyDialog().then(function ()
-                {
-                    return dialog.getUserConfirmation(theColumn.Event, formData, params);
-                });
+                dialog.closeBusyDialog();
+                dialog.getUserConfirmation(theColumn.Event, formData, params);
             }
             else
             {
                 dialog.closeBusyDialog.then(function ()
                 {
-                    return inputDialog.showMessage("Unknown action type " + theColumn.Event.ActionType);
+                    dialog.showMessage("Error", "Unknown action type " + theColumn.Event.ActionType);
                 });
             }
         };
@@ -413,8 +411,16 @@
         self.applyKoBindings = function ()
         {
             var div = document.getElementById("view_" + self.id);
-            ko.cleanNode(div);
-            ko.applyBindings(self, div);
+            try
+            {
+                ko.cleanNode(div);
+                ko.applyBindings(self, div);
+            }
+            catch (err)
+            {
+                console.log('error cleaning node:');
+                console.log(err);
+            }
         };
     }
 

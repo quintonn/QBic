@@ -23,10 +23,9 @@ namespace BuildHelper
             var webPath = currentDir + @"WebsiteTemplateCore\FrontEnd\";
             //D:\Projects\WebsiteTemplate\WebsiteTemplate\Frontend
 
-            //Debug.Assert(false);
-            SquishIt.Framework.CSS.CSSBundle x = new SquishIt.Framework.CSS.CSSBundle();
-            x.AddDirectory(currentDir + "\\WebsiteTemplate\\FrontEnd", true);
+            //if (Debugger.IsAttached == false) Debugger.Launch();
 
+            /// Delete existing files
             var cssFileName = webPath + "styles.min.css";
             if (File.Exists(cssFileName))
             {
@@ -38,12 +37,23 @@ namespace BuildHelper
                 File.Delete(jsFileName);
             }
 
-            var result = x.Render(cssFileName);
+            /// Create minified style sheet
+            var cssBundle = new SquishIt.Framework.CSS.CSSBundle();
+            cssBundle.AddDirectory(currentDir + "\\WebsiteTemplate\\FrontEnd\\css", true);
+            
+            var result = cssBundle.Render(cssFileName);
+            var cssFile = File.ReadAllText(cssFileName);
+            cssFile = cssFile.Replace("/WebsiteTemplate", "");
+            File.WriteAllText(cssFileName, cssFile);
             Console.WriteLine(result);
 
-            SquishIt.Framework.JavaScript.JavaScriptBundle j = new SquishIt.Framework.JavaScript.JavaScriptBundle();
-            j.AddDirectory(currentDir + "\\WebsiteTemplate\\FrontEnd", true);
-            result = j.Render(jsFileName);
+            /// Create minified javascript
+            var jsBundle = new SquishIt.Framework.JavaScript.JavaScriptBundle();
+            
+            jsBundle.AddMinified(currentDir + "\\WebsiteTemplate\\FrontEnd\\Scripts\\jquery-3.1.0.min.js");
+            jsBundle.AddDirectory(currentDir + "\\WebsiteTemplate\\FrontEnd\\Scripts", true);
+            
+            result = jsBundle.Render(jsFileName);
 
             /// Copy html pages in Pages folder
             var pages = Directory.GetFiles(currentDir + "WebsiteTemplate\\FrontEnd\\Pages").ToList();
@@ -57,9 +67,23 @@ namespace BuildHelper
                 File.Copy(p, newFile, true);
             });
 
+            /// Copy font files
+            var fonts = Directory.GetFiles(currentDir + "WebsiteTemplate\\FrontEnd\\fonts").ToList();
+            if (!Directory.Exists(currentDir + "WebsiteTemplateCore\\FrontEnd\\fonts"))
+            {
+                Directory.CreateDirectory(currentDir + "WebsiteTemplateCore\\FrontEnd\\fonts");
+            }
+            fonts.ForEach(f =>
+            {
+                var newFile = currentDir + "WebsiteTemplateCore\\FrontEnd\\fonts\\" + f.Split("\\".ToCharArray()).Last();
+                File.Copy(f, newFile, true);
+            });
+
+
             /// Copy and Edit Index.html page
             var indexPath = currentDir + "WebsiteTemplateCore\\Index.html";
-            //File.Copy(currentDir + "WebsiteTemplate\\Index.html", indexPath, true);
+            
+            File.Copy(currentDir + "WebsiteTemplate\\Index.html", indexPath, true);
 
             var data = File.ReadAllText(indexPath);
             var regex = new Regex("<link href.*/>?");

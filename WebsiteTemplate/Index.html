@@ -6,17 +6,6 @@
 
     <title></title>
 
-    <!--<link href="Frontend/css/busyIndicator.css" rel="stylesheet" />
-    <link href="Frontend/css/inputDialog.css" rel="stylesheet" />
-    <link href="Frontend/css/inputView.css" rel="stylesheet" />
-    <link href="Frontend/css/login.css" rel="stylesheet" />
-    
-    <link href="Frontend/css/menu.css" rel="stylesheet" />
-    <link href="Frontend/css/siteSpecific.css" rel="stylesheet" />
-    <link href="Frontend/css/spinner1.css" rel="stylesheet" />
-    <link href="Frontend/css/views.css" rel="stylesheet" />
-    <link href="Frontend/css/normalize.css" rel="stylesheet" />-->
-
     <link href="Frontend/css/main.css" rel="stylesheet" />
 
     <link href="Frontend/css/w3.css" rel="stylesheet" />
@@ -44,7 +33,7 @@
         <h1 class="w3-xxxlarge" data-bind="text: applicationName"></h1>
 
         <div class="w3-navbar">
-            <div class="w3-container w3-left">
+            <div class="w3-container w3-left" style="text-align:left">
                 <button class="w3-btn w3-blue  w3-large" data-bind="text: menuContainer().home().name, click: menuContainer().home().menuClick"></button>
                 <button class="w3-btn w3-blue  w3-large" data-bind="text: menuContainer().back().name, click: menuContainer().back().menuClick, visible: menuContainer().currentParent() != null"></button>
                 <span data-bind="foreach: menuContainer().currentMenuList">

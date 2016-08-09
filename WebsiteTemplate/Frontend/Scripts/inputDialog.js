@@ -131,6 +131,11 @@
                 var action = setDefaults[i];
                 action();
             }
+
+            if (model.tabs().length > 0)
+            {
+                model.currentTab();
+            }
         });
 
         return Promise.resolve();
@@ -297,7 +302,24 @@
 
         self.setCurrentTab = function ()
         {
-            self.inputDialogModel.currentTab(self);
+            if (self.inputDialogModel.currentTab() != self)
+            {
+                self.inputDialogModel.currentTab(self);
+
+                var inputs = self.inputs();
+                $.each(inputs, function (indx, inp)
+                {
+                    if (inp.viewModel != null)
+                    {
+                        inp.viewModel.applyKoBindings();
+                    }
+                });
+            }
+            else
+            {
+                console.log('xx');
+                self.inputDialogModel.currentTab(self);
+            }
         };
 
         self.colorClass = ko.computed(function ()
@@ -597,6 +619,9 @@
             return list.length == newList.length;
         }
 
+        self.initialized = false;
+        self.viewModel = null;
+
         self.initialize = function (defaultValue)
         {
             var inputSetting = self.setting;
@@ -618,11 +643,15 @@
                 case 8: // View
                     views.showView(inputSetting.ViewForInput, true, inputSetting.ViewForInput.Id).then(function (model)
                     {
+                        self.viewModel = model;
                         self.html(model.html());
 
                         model.applyKoBindings();
 
                         model.updateViewData(inputSetting.ViewForInput.Id);
+                    }).catch(function (err)
+                    {
+                        mainApp.handleError(err);
                     });
                     break;
                 default:
