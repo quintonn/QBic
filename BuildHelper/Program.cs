@@ -127,6 +127,26 @@ namespace BuildHelper
 
             File.WriteAllText(indexPath, data);
 
+            // Copy css images
+            var imagePath = currentDir + "\\WebsiteTemplate\\FrontEnd\\css\\images";
+            var coreImagePath = webPath + "css\\images";
+
+            if (!Directory.Exists(coreImagePath))
+            {
+                Directory.CreateDirectory(coreImagePath);
+            }
+            var images = Directory.GetFiles(imagePath).ToList();
+            images.ForEach(i =>
+            {
+                var imageName = Path.GetFileName(i);
+                var newPath = coreImagePath + "\\" + imageName;
+                if (!File.Exists(newPath))
+                {
+                    File.Copy(i, newPath);
+                }
+            });
+
+
             Console.WriteLine(result);
         }
     }
