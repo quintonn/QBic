@@ -13,14 +13,14 @@
         
         <div class="w3-section" >
             <!-- ko if: currentTab() != null -->
-                <div class="w3-row w3-border w3-container" data-bind="foreach: currentTab().inputs()">
+                <div class="w3-border w3-container" data-bind="foreach: currentTab().inputs()">
                     <!-- ko template: { name: 'inputRowTemplate' } -->
                     <!-- /ko -->
                 </div>
             <!-- /ko -->
                
              <!-- ko if: combinedTab() != null -->
-                <div class="w3-row w3-border w3-container" data-bind="foreach: combinedTab().inputs()">
+                <div class="w3-border w3-container" data-bind="foreach: combinedTab().inputs()">
                     <!-- ko template: { name: 'inputRowTemplate' } -->
                     <!-- /ko -->
                 </div>
@@ -36,7 +36,7 @@
 </div>
 
 <script type="text/html" id="inputRowTemplate">
-    <div data-bind="visible: visible">
+    <div data-bind="visible: visible" class="w3-row">
         <!-- ko if: inputType != 8 && inputType != 5 -->
         <div class="w3-col " style="width:200px"><p><b class="w3-label" data-bind="text:inputLabel"></b></p></div>
         <!-- /ko -->
