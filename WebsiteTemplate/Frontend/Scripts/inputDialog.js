@@ -317,7 +317,6 @@
             }
             else
             {
-                console.log('xx');
                 self.inputDialogModel.currentTab(self);
             }
         };
@@ -487,7 +486,6 @@
                     }
                     break;
                 case 5: // List selection / list source
-                    console.log('should do nothing here');
                     break;
                 case 6:
                     var date = new Date(value);
@@ -537,8 +535,12 @@
                     value = values;
                     return Promise.resolve(value);
                 case 6: // Date Input
-                    var date = new Date(value).toUTCString();
-                    return Promise.resolve(date);
+                    if (value != null && value.length > 0)
+                    {
+                        var date = new Date(value).toUTCString();
+                        return Promise.resolve(date);
+                    }
+                    return Promise.resolve(value);
                 case 9: // File Input
                     var file = self.inputValue();
                     
@@ -653,6 +655,8 @@
                     {
                         mainApp.handleError(err);
                     });
+                    break;
+                case 6: // Date
                     break;
                 default:
                     self.setInputValue(defaultValue);

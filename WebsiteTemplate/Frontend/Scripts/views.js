@@ -125,19 +125,19 @@
         self.viewMenus = ko.observableArray([]);
         self.menuClick = function (menu, index, evt)
         {
-            var data =
-                {
-                    data: menu.menuParams,
-                    parameters: menu.viewParams
-                }
-
-            if (self.settings.ActionType == 7) // View Input
-            {
-                self.addViewDataToParams(data);
-            }
-
             dialog.showBusyDialog("Processing...").then(function ()
             {
+                var data =
+                    {
+                        data: menu.menuParams,
+                        parameters: menu.viewParams
+                    }
+
+                if (self.settings.ActionType == 7) // View Input
+                {
+                    self.addViewDataToParams(data);
+                }
+
                 return mainApp.executeUIAction(menu.eventId, data);
             }).then(dialog.closeBusyDialog);
         };
