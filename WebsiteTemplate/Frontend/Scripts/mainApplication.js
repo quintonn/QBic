@@ -136,7 +136,10 @@ $(document).ready(function ()
 
     mainApp.processUIActionResult = function (data, eventId)
     {
-        return processing.processUIActionResult(data, eventId);
+        return processing.processUIActionResult(data, eventId).catch(function (err)
+        {
+            mainApp.handleError(err);
+        });;
     };
 
     mainApp.makeWebCall = function (url, method, data, headersToInclude)

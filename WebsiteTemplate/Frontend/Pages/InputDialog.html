@@ -7,20 +7,20 @@
     <div class="w3-container w3-section">
         <!-- ko if: tabs().length > 1 -->
         <ul class="w3-navbar w3-light-grey" data-bind="foreach: tabs">
-            <li style="min-width:100px"><b><a href="#" data-bind="text: tabName, click: setCurrentTab, css: colorClass"></a></b></li>
+            <li class="w3-small" style="min-width:100px"><b><a href="#" data-bind="text: tabName, click: setCurrentTab, css: colorClass"></a></b></li>
         </ul>
         <!-- /ko -->
         
         <div class="w3-section" >
             <!-- ko if: currentTab() != null -->
-                <div class="w3-border w3-container" data-bind="foreach: currentTab().inputs()">
+                <div class="w3-container" data-bind="foreach: currentTab().inputs()">
                     <!-- ko template: { name: 'inputRowTemplate' } -->
                     <!-- /ko -->
                 </div>
             <!-- /ko -->
                
              <!-- ko if: combinedTab() != null -->
-                <div class="w3-border w3-container" data-bind="foreach: combinedTab().inputs()">
+                <div class="w3-container" data-bind="foreach: combinedTab().inputs()">
                     <!-- ko template: { name: 'inputRowTemplate' } -->
                     <!-- /ko -->
                 </div>
@@ -29,7 +29,7 @@
     </div>
 
     <!-- ko if: buttons().length > 0 -->
-    <div class="w3-container w3-light-grey w3-padding w3-center" data-bind="foreach: buttons">
+    <div class="w3-container w3-padding w3-center" data-bind="foreach: buttons">
         <button class="w3-btn w3-blue w3-border" data-bind="text: label, click: $root.buttonClick"></button>
     </div>
     <!-- /ko -->
@@ -38,11 +38,11 @@
 <script type="text/html" id="inputRowTemplate">
     <div data-bind="visible: visible" class="w3-row">
         <!-- ko if: inputType != 8 && inputType != 5 -->
-        <div class="w3-col " style="width:200px"><p><b class="w3-label" data-bind="text:inputLabel"></b></p></div>
+        <div class="w3-col " style="width:200px"><b class="w3-label w3-small" data-bind="text:inputLabel"></b></div>
         <!-- /ko -->
 
         <div class="w3-rest ">
-            <p>
+            
                 <!-- ko if: inputType == 0 && multiLine == false -->
                 <!--  Text  -->
                 <input class="w3-input" type="text" data-bind="value: inputValue, hasFocus: $index() == 0, event: { change: propertyChanged}" />
@@ -66,11 +66,12 @@
                 <!-- ko if: inputType == 4 -->
                 <!--  Boolean  -->
                 <input class="w3-input w3-check" type="checkbox" data-bind="checked: inputValue, hasFocus: $index() == 0, event: { change: propertyChanged}" />
+                <br />
                 <!-- /ko -->
 
                 <div data-bind="if: inputType == 5">
                     <!-- List Selection Input -->
-                    <label class="w3-label"><b data-bind="text: inputLabel"></b></label>
+                    <label class="w3-label w3-small"><b data-bind="text: inputLabel"></b></label>
                     <div style="overflow-x:auto; overflow-y: auto; max-height:250px; min-width:310px">
                         <table class="w3-table-all w3-hoverable ">
                             <tr>
@@ -78,16 +79,16 @@
                                     <input class="w3-check" type="checkbox" data-bind="checked: selectAll, click: selectAllClicked" />
                                 </th>
                                 <th>
-                                    <label>Select All</label>
+                                    <label class="w3-small">Select All</label>
                                 </th>
                             </tr>
                             <tbody data-bind="foreach: listSource">
                                 <tr>
                                     <td>
-                                        <input class="w3-check" type="checkbox" data-bind="checked: selected, click: $parent.listSourceSelect" />
+                                        <input class="w3-check w3-small" type="checkbox" data-bind="checked: selected, click: $parent.listSourceSelect" />
                                     </td>
                                     <td>
-                                        <span data-bind="text: label"></span>
+                                        <span class="w3-small" data-bind="text: label"></span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -96,7 +97,7 @@
                 </div>
                 <!-- ko if: inputType == 6 -->
                 <!--  Date  -->
-                <input type="text" class="w3-input" data-bind="datepicker: { value: inputValue, changeMonth: true, changeYear: true }, hasFocus: $index() == 0, event: { change: propertyChanged}" placeholder="Select date..." />
+                <input type="text" class="w3-input" data-bind="datepicker: { value: inputValue, changeMonth: true, changeYear: true, onSelect: propertyChanged}, hasFocus: $index() == 0, event: { change: propertyChanged}" placeholder="Select date..." />
                 <!-- /ko -->
                 <!-- ko if: inputType == 7 -->
                 <!-- MaskedInput ->> maybe use jquery UI -->
@@ -104,7 +105,7 @@
                 <!-- /ko -->
                 <!-- ko if: inputType == 8 -->
                 <!-- View Input -->
-                <label class="w3-label"><b data-bind="text: inputLabel"></b></label>
+                <label class="w3-label w3-small"><b data-bind="text: inputLabel"></b></label>
                 <div data-bind="html: html">
                 </div>
                 <!-- /ko -->
@@ -112,7 +113,7 @@
                 <!--  File Input -->
                 <input class="w3-input " type="file" data-bind="hasFocus: $index() == 0, event: { change: function() { fileSelected($element.files[0]) } }" />
                 <!-- /ko -->
-            </p>
+            
         </div>
     </div>    
 </script>

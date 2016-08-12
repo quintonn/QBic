@@ -55,16 +55,28 @@ namespace WebsiteTemplate.Backend.Menus
                         }
                     });
 
-                //list.Add(new DataSourceComboBoxInput<User>("User", "User", x => x.Id, x => x.UserName, null, null, null, null, true, true)
+                User xxx;
+                using (var session = Store.OpenSession())
+                {
+                    xxx = session.QueryOver<User>().Take(1).List<User>().First();
+                }
+
+                //list.Add(new DataSourceComboBoxInput<User>("User", "User", x => x.Id, x => x.UserName, xxx.Id, null, null, null, true, true)
                 //{
-                //    MandatoryConditions = new List<Condition>()
-                //    {
-                //        new Condition("Name", Comparison.Equals, "test")
-                //    },
-                //    VisibilityConditions = new List<Condition>()
-                //    {
-                //        new Condition("Name", Comparison.Equals, "test")
-                //    }
+                    //    MandatoryConditions = new List<Condition>()
+                    //    {
+                    //        new Condition("Name", Comparison.Equals, "test")
+                    //    },
+                    //    VisibilityConditions = new List<Condition>()
+                    //    {
+                    //        new Condition("Name", Comparison.Equals, "test")
+                    //    }
+                //    RaisePropertyChangedEvent = true
+                //});
+
+                //list.Add(new DataSourceComboBoxInput<User>("User2", "User2", x => x.Id, x => x.UserName, xxx.Id, null, null, null, true, true)
+                //{
+                    
                 //});
 
                 list.Add(new HiddenInput("ParentMenuId", ParentMenuId));
@@ -75,6 +87,25 @@ namespace WebsiteTemplate.Backend.Menus
                 return list;
             }
         }
+
+        //public async override Task<IList<Event>> OnPropertyChanged(string propertyName, object propertyValue)
+        //{
+        //    if (propertyName == "User")
+        //    {
+        //        var combo = InputFields.Where(i => i.InputName == "User2").Single() as DataSourceComboBoxInput<User>;
+
+        //        combo.UpdateList(x => x.Id == propertyValue.ToString(), null, true, true);
+
+        //        var list = combo.ListItems;
+        //        return new List<Event>()
+        //        {
+        //            new UpdateDataSourceComboBoxSource("User2", list)
+        //        };
+        //    }
+        //    return await base.OnPropertyChanged(propertyName, propertyValue);
+        //}
+
+
 
         //public override Task<IList<Event>> OnPropertyChanged(string propertyName, object propertyValue)
         //{

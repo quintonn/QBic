@@ -14,7 +14,7 @@
 
             var model = new viewModel(viewData.Description, data, viewData, isEmbeddedView || false, id);
             
-            processing.loadViewMenu(id, model);
+            processing.loadViewMenu(id, model, viewData.DataForGettingMenu);
             
             var columns = viewData.Columns;
 
@@ -137,7 +137,6 @@
                 {
                     self.addViewDataToParams(data);
                 }
-
                 return mainApp.executeUIAction(menu.eventId, data);
             }).then(dialog.closeBusyDialog);
         };

@@ -612,13 +612,6 @@ namespace WebsiteTemplate.Controllers
 
                         totalLines = Math.Max(totalLines, list.Cast<object>().Count());
 
-                        var viewMenu = action.GetViewMenu();
-
-                        var allowedEvents = GetAllowedEventsForUser(session, user.Id);
-                        var allowedMenuItems = viewMenu.Where(m => allowedEvents.Contains(m.EventNumber)).ToList();
-
-                        action.ViewMenu = allowedMenuItems; //TODO: this should work differently. because this can be changed in the view's code.
-
                         action.CurrentPage = currentPage;
                         action.LinesPerPage = linesPerPage == int.MaxValue ? -2 : linesPerPage;
                         action.TotalLines = totalLines;
@@ -641,12 +634,20 @@ namespace WebsiteTemplate.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("getViewMenu/{*eventId}")]
         [RequireHttps]
         [Authorize]
         public async Task<IHttpActionResult> GetViewMenu(int eventId)
         {
+            var postData = await Request.Content.ReadAsStringAsync();
+            var data = String.Empty;
+            if (!String.IsNullOrWhiteSpace(postData))
+            {
+                var json = JObject.Parse(postData);
+                data = json.GetValue("data")?.ToString();
+            }
+
             if (!EventList.ContainsKey(eventId))
             {
                 return BadRequest("No action has been found for event number: " + eventId);
@@ -654,7 +655,13 @@ namespace WebsiteTemplate.Controllers
 
             var eventItem = EventList[eventId] as ShowView;
 
-            var viewMenu = eventItem.GetViewMenu();
+            var dataForMenu = new Dictionary<string, string>();
+            if (!String.IsNullOrWhiteSpace(data))
+            {
+                dataForMenu = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
+            }
+
+            var viewMenu = eventItem.GetViewMenu(dataForMenu);
 
             var user = await this.GetLoggedInUserAsync();
             List<MenuItem> allowedMenuItems;
@@ -796,19 +803,11 @@ namespace WebsiteTemplate.Controllers
 
                         totalLines = Math.Max(totalLines, list.Cast<object>().Count());
 
-                        var viewMenu = action.GetViewMenu();
-
-                        var allowedEvents = GetAllowedEventsForUser(session, user.Id);
-                        var allowedMenuItems = viewMenu.Where(m => allowedEvents.Contains(m.EventNumber)).ToList();
-
-                        action.ViewMenu = allowedMenuItems; //TODO: this should work differently. because this can be changed in the view's code.
-
                         action.CurrentPage = 1;
                         action.LinesPerPage = 10;
                         action.TotalLines = totalLines;
                         action.Filter = String.Empty;
-                        //action.Parameters = parameters;
-
+                      
                         //clicking back in view many times breaks filter args- test with menus
 
                         result.Add(action);

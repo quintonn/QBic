@@ -1,8 +1,10 @@
 ﻿<div id="##view_id##">
-    <h1 class="w3-center" data-bind="text: viewTitle, visible: isEmbeddedView == false"></h1>
-    <div class="w3-section" data-bind="foreach: viewMenus">
-        <button class="w3-btn w3-blue w3-large" data-bind="text: label, click: function(data, event) { $root.menuClick($data, $index(), event) }"></button>
+    <h2 class="w3-center" data-bind="text: viewTitle, visible: isEmbeddedView == false" style="margin:0"></h2>
+    
+    <div class="" data-bind="foreach: viewMenus">
+        <button class="w3-btn w3-blue " data-bind="text: label, click: function(data, event) { $root.menuClick($data, $index(), event) }"></button>
     </div>
+
     <div class="w3-container w3-center" data-bind="visible: isEmbeddedView == false">
         <div class="w3-row w3-center w3-content">
             <table class="w3-center">
@@ -25,7 +27,7 @@
             <tbody>
                 <!-- ko foreach: rows -->
                 <tr data-bind="foreach: cells">
-                    <td data-bind="visible: showCell() == true || columnType() != 4">
+                    <td data-bind="visible: showCell() == true || columnType() != 4" style="padding-bottom:2px">
                         <!--  ko if:  columnType() == 0 ||  columnType() == 4 || columnType() == 1 -->
                         <!--  String || Hidden || Boolean  -->
                         <span data-bind="visible: showCell, text: value"></span>
@@ -34,7 +36,7 @@
                         <!--  ko if:  columnType() == 2 -->  
                         <!--  Button  -->
                         <!-- the visible binding is duplicated here because if it's not here it messes column ordering up -->
-                        <button class="w3-btn w3-blue w3-small" data-bind="visible: showCell, text: value, click:  function(data, event) { $root.click($parent, $index(), $parentContext.$index(), event) }"></button>
+                        <button class="" data-bind="visible: showCell, text: value, click:  function(data, event) { $root.click($parent, $index(), $parentContext.$index(), event) }"></button>
                         <!-- /ko -->
 
                         <!--  ko if: columnType() == 3 -->

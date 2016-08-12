@@ -62,7 +62,7 @@ namespace WebsiteTemplate.Backend.UserRoles
             return 9854;
         }
 
-        public override IList<MenuItem> GetViewMenu()
+        public override IList<MenuItem> GetViewMenu(Dictionary<string, string> dataForMenu)
         {
             return new List<MenuItem>()
             {

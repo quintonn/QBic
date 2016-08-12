@@ -93,9 +93,13 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public T GetDataSourceValue<T>(string propertyName)
         {
+            var id = GetValue(propertyName);
+            if (String.IsNullOrWhiteSpace(id))
+            {
+                return default(T);
+            }
             using (var session = Store.OpenSession())
             {
-                var id = GetValue(propertyName);
                 var result = session.Get<T>(id);
                 return result;
             }

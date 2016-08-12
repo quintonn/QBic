@@ -92,7 +92,6 @@
             //  not working because not all items have been set.
             var action = function ()
             {
-                //inpModel.setInputValue(inp.DefaultValue);
                 inpModel.initialize(inp.DefaultValue);
             };
             setDefaults.push(action); // This is not a great solution - i don't  like it, smells bad
@@ -348,19 +347,29 @@
                 {
                     var inpName = condition.ColumnName;
                     var inpModel = self.inputDialogModel.findInputModelWithName(inpName);
-
-                    inpModel.getInputValue().then(function (actualValue)
+                    if (inpModel == null)
                     {
-                        var conditionMet = processing.isConditionMet(condition, actualValue);
-                        
-                        resolve(conditionMet);
-                    });
+                        console.error('inpModel is null');
+                        resolve(false);
+                    }
+                    else
+                    {
+                        inpModel.getInputValue().then(function (actualValue)
+                        {
+                            var conditionMet = processing.isConditionMet(condition, actualValue);
+
+                            resolve(conditionMet);
+                        }).catch(reject);
+                    }
                 });
             };
 
             var getInputFunction = function (inp)
             {
                 var doValidation = validateInput;
+
+                var tmpProm = null;
+
                 return new Promise(function (resolve, reject)
                 {
                     return inp.getInputValue().then(function (value)
@@ -368,30 +377,48 @@
                         if (doValidation && (value == null || value.length == 0) && inp.mandatory == true && inp.visible() == true)
                         {
                             dialog.closeBusyDialog();
-                            
+
                             return dialog.showMessage("Warning", inp.setting.InputLabel + ' is mandatory').then(function ()
                             {
+                                console.error("reject " + inp.setting.InputName);
                                 reject('X');
                             });
                         }
                         else if (doValidation && (value == null || value.length == 0) && inp.setting.MandatoryConditions != null && inp.setting.MandatoryConditions.length > 0 && inp.visible() == true)
                         {
                             var acts = $.map(inp.setting.MandatoryConditions, mandatoryConditionFunction);
-                            return Promise.all(acts).then(function (actData)
+                            tmpProm = function()
                             {
-                                if (actData.indexOf(false) == -1) // i.e. all mandatory conditions have been met
+                                return Promise.all(acts).then(function (actData)
                                 {
-                                    dialog.closeBusyDialog();
-
-                                    return dialog.showMessage("Warning", inp.setting.InputLabel + ' is mandatory').then(function ()
+                                    if (actData.indexOf(false) == -1) // i.e. all mandatory conditions have been met
                                     {
-                                        reject('X');
-                                    });
-                                }
-                            });
+                                        dialog.closeBusyDialog();
+
+                                        return dialog.showMessage("Warning", inp.setting.InputLabel + ' is mandatory').then(function ()
+                                        {
+                                            console.error("reject " + inp.setting.InputName);
+                                            reject('X');
+                                        });
+                                    }
+                                });
+                            };
                         }
+
                         results[inp.setting.InputName] = value;
-                        resolve();
+
+                        if (tmpProm != null)
+                        {
+                            tmpProm().then(resolve);
+                        }
+                        else
+                        {
+                            resolve();
+                        }
+                    }).catch(function (err)
+                    {
+                        console.error(err);
+                        reject(err);
                     });
                 });
             };
@@ -423,8 +450,13 @@
         self.raisePropertyChangeEvent = inputSetting.RaisePropertyChangedEvent;
         self.visible = ko.observable(inputSetting.InputType != 2); // 2 - hidden input
 
-        self.propertyChanged = function ()
+        self.propertyChanged = function (stringValue, actualValue)
         {
+            if (self.inputType == 6)  // Date
+            {
+                self.inputValue(stringValue);
+            }
+            
             if (self.raisePropertyChangeEvent == true)
             {
                 dialog.showBusyDialog("Processing input...");
@@ -540,7 +572,7 @@
                         var date = new Date(value).toUTCString();
                         return Promise.resolve(date);
                     }
-                    return Promise.resolve(value);
+                    return Promise.resolve(null);
                 case 9: // File Input
                     var file = self.inputValue();
                     
@@ -657,11 +689,15 @@
                     });
                     break;
                 case 6: // Date
+                    var date = new Date(defaultValue);
+                    self.setInputValue(date);
                     break;
                 default:
                     self.setInputValue(defaultValue);
                     break;
             }
+
+            self.propertyChanged(defaultValue);
         }
     }
 

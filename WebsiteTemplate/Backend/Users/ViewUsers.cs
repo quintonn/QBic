@@ -57,7 +57,7 @@ namespace WebsiteTemplate.Backend.Users
             );
         }
 
-        public override IList<MenuItem> GetViewMenu()
+        public override IList<MenuItem> GetViewMenu(Dictionary<string, string> dataForMenu)
         {
             var results = new List<MenuItem>();
             results.Add(new MenuItem("Add", EventNumber.AddUser));

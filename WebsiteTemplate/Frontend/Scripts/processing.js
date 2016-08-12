@@ -7,105 +7,119 @@
         data = data || [];
         return Promise.all(data.map(function (item)
         {
-            var actionType = item.ActionType;
+            try
+            {
+                var actionType = item.ActionType;
 
-            var params = item.Parameters;
-            if (params != null && params.length > 0)
-            {
-                params = JSON.parse(params);
-            }
-            else
-            {
-                params = {};
-            }
+                var params = item.Parameters;
+                
+                if (params != null && params.length > 0)
+                {
+                    //params = JSON.parse(params);
+                }
+                else
+                {
+                    params = {};
+                }
 
-            switch (actionType)
-            {
-                case 0: // Show a view
-                    
-                    var viewItems = _applicationModel.views();
-                    
-                    var existingModel = $.grep(viewItems, function (v, indx)
-                    {
-                        return v.id == item.Id;
-                    });
-                    if (existingModel.length == 0)
-                    {
-                        return views.showView(item, false, item.Id).then(function (m)
+                switch (actionType)
+                {
+                    case 0: // Show a view
+
+                        var viewItems = _applicationModel.views();
+
+                        var existingModel = $.grep(viewItems, function (v, indx)
                         {
-                            _applicationModel.addView(m);
+                            return v.id == item.Id;
                         });
-                    }
-                    else
-                    {
-                        _applicationModel.addView(existingModel[0]);
-                        
-                        existingModel[0].gotoPage(1);
-                        return Promise.resolve();
-                    }
-                case 1: // Get Input / User Input
-                    return inputDialog.buildInput(item);
-                //case 2: // Submenu
-                    
-                    //case 3: // DoSomething
+                        if (existingModel.length == 0)
+                        {
+                            return views.showView(item, false, item.Id).then(function (m)
+                            {
+                                _applicationModel.addView(m);
+                            });
+                        }
+                        else
+                        {
+                            _applicationModel.addView(existingModel[0]);
 
-                case 4: // Close input dialog -- Not sure i need this anymore.
-                    return dialog.closeModalDialog();
-                case 5:
-                    return dialog.getUserConfirmation(item, item.Data, params);
-                case 6: // Execute UI action
-                    return mainApp.executeUIAction(item.EventNumber, item.ParametersToPass);
-                //case 7:  Input Data View
-                case 8: // Update input view (view in input screen)
-                case 9: // DeleteInputViewItem
-                    var viewId = params.ViewId;
-                    
-                    var rowId = params.RowId;
+                            existingModel[0].gotoPage(1);
+                            return Promise.resolve();
+                        }
+                    case 1: // Get Input / User Input
+                        return inputDialog.buildInput(item);
+                        //case 2: // Submenu
 
-                    if (rowId == null)
-                    {
-                        rowId = -1;
-                    }
-                    
-                    var updateType = item.UpdateType; // 0 - add / 1 - delete
+                        //case 3: // DoSomething
 
-                    var dataToUpdate = item.JsonDataToUpdate;
-                    dataToUpdate = JSON.parse(dataToUpdate);
-                    var view = document.getElementById('view_' + viewId);
-                    
-                    var model = ko.contextFor(view).$rawData;
-                    if (updateType == 0 && actionType == 8)
-                    {
-                        return model.updateRow(rowId, dataToUpdate);
-                    }
-                    else
-                    {
-                        return model.deleteRow(rowId);
-                    }
-                    //return dialog.showMessage("Error", "Unknown action type: " + actionType + " for event " + eventId);
+                    case 4: // Close input dialog -- Not sure i need this anymore.
+                        return dialog.closeModalDialog();
+                    case 5:
+                        return dialog.getUserConfirmation(item, item.Data, params);
+                    case 6: // Execute UI action
+                        return mainApp.executeUIAction(item.EventNumber, item.ParametersToPass);
+                        //case 7:  Input Data View
+                    case 8: // Update input view (view in input screen)
+                    case 9: // DeleteInputViewItem
+                        params = JSON.parse(params);
 
-                    break;
-                    //case 9:  DeleteInputViewItem
+                        var viewId = params.ViewId;
 
-                case 10: // UpdateDataSourceComboBox
-                    var dlgs = _applicationModel.modalDialogs();
-                    var inputDlg = dlgs[dlgs.length - 1].model;
-                    var inp = inputDlg.findInputModelWithName(item.InputName);
-                    inp.listItems(item.ListItems);
-                    break;
-                case 11:
-                    processing.showOrDownloadFile(item);
-                    //main.makeWebCall(main.webApiURL + settings.DataUrl, "POST", callback, settings.RequestData);
-                    break;
-                    // case 11: View File
-                case 12: //UpdateInput
-                    var inputName = item.InputName;
-                    var value = item.InputValue;
-                    return inputDialog.updateInput(inputName, value);
-                    break;
-                default:
-                    console.log(item);
-                    return dialog.showMessage("Error", "Unknown action type: " + actionType + " for event " + eventId);
+                        var rowId = params.RowId;
+
+                        if (rowId == null)
+                        {
+                            rowId = -1;
+                        }
+
+                        var updateType = item.UpdateType; // 0 - add / 1 - delete
+
+                        var dataToUpdate = item.JsonDataToUpdate;
+                        dataToUpdate = JSON.parse(dataToUpdate);
+                        var view = document.getElementById('view_' + viewId);
+
+                        var model = ko.contextFor(view).$rawData;
+                        if (updateType == 0 && actionType == 8)
+                        {
+                            return model.updateRow(rowId, dataToUpdate);
+                        }
+                        else
+                        {
+                            return model.deleteRow(rowId);
+                        }
+                        //return dialog.showMessage("Error", "Unknown action type: " + actionType + " for event " + eventId);
+
+                        break;
+                        //case 9:  DeleteInputViewItem
+
+                    case 10: // UpdateDataSourceComboBox
+                        var dlgs = _applicationModel.modalDialogs();
+                        var inputDlg = dlgs[dlgs.length - 1].model;
+                        var inp = inputDlg.findInputModelWithName(item.InputName);
+                        return inp.getInputValue().then(function (inpValue)
+                        {
+                            inp.listItems(item.ListItems);
+                            inp.setInputValue(inpValue);
+                        });
+                        break;
+                    case 11:
+                        processing.showOrDownloadFile(item);
+                        //main.makeWebCall(main.webApiURL + settings.DataUrl, "POST", callback, settings.RequestData);
+                        break;
+                        // case 11: View File
+                    case 12: //UpdateInput
+                        var inputName = item.InputName;
+                        var value = item.InputValue;
+                        return inputDialog.updateInput(inputName, value);
+                        break;
+                    default:
+                        console.log(item);
+                        return dialog.showMessage("Error", "Unknown action type: " + actionType + " for event " + eventId);
+                }
+            }
+            catch (error)
+            {
+                return Promise.reject(error);
             }
         })).catch(function (err)
         {
@@ -242,11 +256,16 @@
         return mainApp.makeWebCall(url, "POST", data);
     };
 
-    processing.loadViewMenu = function (eventId, model)
+    processing.loadViewMenu = function (eventId, model, dataForGettingMenu)
     {
         dialog.showBusyDialog("Loading view menu...");
         var url = mainApp.apiURL + "getViewMenu/" + eventId;
-        return mainApp.makeWebCall(url, "GET").then(function (data)
+        var data = 
+            {
+                data: dataForGettingMenu
+            };
+        data = JSON.stringify(data);
+        return mainApp.makeWebCall(url, "POST", data).then(function (data)
         {
             var menuItems = data || [];
 

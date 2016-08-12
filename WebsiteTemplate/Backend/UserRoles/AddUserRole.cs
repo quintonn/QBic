@@ -46,7 +46,9 @@ namespace WebsiteTemplate.Backend.UserRoles
                 list.Add(new StringInput("Name", "Name", mandatory: true));
                 list.Add(new StringInput("Description", "Description", mandatory: true));
 
-                list.Add(new FileInput("File", "File"));
+                //list.Add(new FileInput("File", "File"));
+
+                //list.Add(new DateInput("Date", "Date", DateTime.Today));
 
                 //list.Add(new StringInput("xxx", "xxx", "", "", true));
                 //list.Add(new StringInput("xxx2", "xxx2", "", "x", false)
@@ -124,6 +126,8 @@ namespace WebsiteTemplate.Backend.UserRoles
                 var name = GetValue("Name");
                 var description = GetValue("Description");
                 var events = GetValue<List<string>>("Events");
+
+                var date = GetValue<DateTime?>("Date");
 
                 if (String.IsNullOrWhiteSpace(name))
                 {

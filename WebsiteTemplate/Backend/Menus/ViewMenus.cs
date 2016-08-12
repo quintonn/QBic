@@ -24,22 +24,44 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
-        public override IList<MenuItem> GetViewMenu()
+        public override IList<MenuItem> GetViewMenu(Dictionary<string, string> dataForMenu)
         {
             var results = new List<MenuItem>();
-
-            if (!String.IsNullOrWhiteSpace(MenuId))
+            var menuId = String.Empty;
+            var parentId = String.Empty;
+            if (dataForMenu.ContainsKey("MenuId"))
             {
-                results.Add(new MenuItem("Back", EventNumber.ViewMenus, ParentId));
+                menuId = dataForMenu["MenuId"];
+            }
+            if (dataForMenu.ContainsKey("ParentId"))
+            {
+                parentId = dataForMenu["ParentId"];
+            }
+
+            if (!String.IsNullOrWhiteSpace(menuId))
+            {
+                results.Add(new MenuItem("Back", EventNumber.ViewMenus, parentId));
             }
 
             var jsonObject = new JObject();
             jsonObject.Add("IsNew", true);
-            jsonObject.Add("ParentId", MenuId);
+            jsonObject.Add("ParentId", menuId);
             var json = jsonObject.ToString();
             results.Add(new MenuItem("Add", EventNumber.ModifyMenu, json));
 
             return results;
+        }
+
+        public override Dictionary<string, string> DataForGettingMenu
+        {
+            get
+            {
+                return new Dictionary<string, string>()
+                {
+                    { "MenuId" , MenuId },
+                    { "ParentId", ParentId }
+                };
+            }
         }
 
         private string MenuId { get; set; }

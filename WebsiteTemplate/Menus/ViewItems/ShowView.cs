@@ -74,9 +74,17 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// </summary>
         //public abstract IList<object> OtherSettings { get; }
 
-        public abstract IList<MenuItem> GetViewMenu();
+        public abstract IList<MenuItem> GetViewMenu(Dictionary<string, string> dataForMenu);
 
         public IList<MenuItem> ViewMenu { get; set; }
+
+        public virtual Dictionary<string, string> DataForGettingMenu
+        {
+            get
+            {
+                return new Dictionary<string, string>();
+            }
+        }
 
         public override EventType ActionType
         {

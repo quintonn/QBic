@@ -34,16 +34,16 @@
 
         <div class="w3-navbar">
             <div class="w3-container w3-left" style="text-align:left">
-                <button class="w3-btn w3-blue  w3-large" data-bind="text: menuContainer().home().name, click: menuContainer().home().menuClick"></button>
-                <button class="w3-btn w3-blue  w3-large" data-bind="text: menuContainer().back().name, click: menuContainer().back().menuClick, visible: menuContainer().currentParent() != null"></button>
+                <button class="w3-btn w3-blue" data-bind="text: menuContainer().home().name, click: menuContainer().home().menuClick"></button>
+                <button class="w3-btn w3-blue" data-bind="text: menuContainer().back().name, click: menuContainer().back().menuClick, visible: menuContainer().currentParent() != null"></button>
                 <span data-bind="foreach: menuContainer().currentMenuList">
-                    <button class="w3-btn w3-blue  w3-large" data-bind="text: name, click: menuClick"></button>
+                    <button class="w3-btn w3-blue " data-bind="text: name, click: menuClick"></button>
                 </span>
             </div>
             <div class="w3-container w3-right">
                 <span data-bind="visible: showUser">
-                    <button class="w3-btn w3-blue w3-large" data-bind="text: user().name"></button>
-                    <button class="w3-btn w3-blue w3-large" data-bind="click: logoutClick">Logout</button>
+                    <button class="w3-btn w3-blue " data-bind="text: user().name"></button>
+                    <button class="w3-btn w3-blue " data-bind="click: logoutClick">Logout</button>
                 </span>
             </div>
         </div>
