@@ -40,7 +40,7 @@ namespace WebsiteTemplate.Controllers
 
             response.Content.Headers.ContentType = new MediaTypeHeaderValue(FileInfo.MimeType);
 
-            response.Headers.Add("FileName", FileInfo.FileName);
+            response.Headers.Add("FileName", FileInfo.FileName + "." + (FileInfo.FileExtension ?? "txt"));
 
             return Task.FromResult(response);
         }

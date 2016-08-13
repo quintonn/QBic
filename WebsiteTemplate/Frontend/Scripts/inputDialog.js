@@ -582,7 +582,6 @@
                                 {
                                     fileData = e.target.result;
                                     fileData = window.btoa(fileData);  // base 64 encode
-
                                     var filex =
                                         {
                                             Data: fileData,

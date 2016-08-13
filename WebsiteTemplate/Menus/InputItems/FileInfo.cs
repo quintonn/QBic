@@ -12,18 +12,8 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public string FileName { get; set; }
 
-        public string FileExtension
-        {
-            get
-            {
-                if (!String.IsNullOrWhiteSpace(FileName) && FileName.Contains("."))
-                {
-                    return FileName.Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Last();
-                }
-                return String.Empty;
-            }
-        }
-
+        public string FileExtension { get; set; }
+       
         public string MimeType { get; set; }
 
         public int Size
@@ -49,9 +39,11 @@ namespace WebsiteTemplate.Menus.InputItems
             var json = JObject.Parse(jsonString);
             var data = json.GetValue("Data").ToString();
             Data = Convert.FromBase64String(data);
-            //var fileItem = json.GetValue("FileItem") as JObject;
             FileName = json.GetValue("FileName").ToString();
             MimeType = json.GetValue("MimeType").ToString();
+            var index = FileName.IndexOf(".");
+            FileExtension = FileName.Substring(index + 1);
+            FileName = FileName.Substring(0, index);
         }
     }
 }
