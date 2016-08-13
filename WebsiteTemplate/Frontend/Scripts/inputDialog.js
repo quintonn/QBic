@@ -520,6 +520,8 @@
                 case 6:
                     self.inputValue(value);
                     break;
+                case 8: // Input view
+                    break;
                 case 9: // File input
                     self.inputValue(value);
                     break;
@@ -566,6 +568,18 @@
                 case 6: // Date Input
                     value = value || "";
                     return Promise.resolve(value);
+                case 8: // Input view
+                    var model = self.viewModel;
+                    if (model != null)
+                    {
+                        var params = {};
+                        model.addViewDataToParams(params);
+                        return Promise.resolve(params);
+                    }
+                    else
+                    {
+                        return Promise.resolve(null);
+                    }
                 case 9: // File Input
                     var file = self.inputValue();
                     

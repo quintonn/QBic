@@ -48,10 +48,10 @@ namespace WebsiteTemplate.Backend.UserRoles
 
                 //list.Add(new FileInput("File", "File"));
 
-                list.Add(new DateInput("Date", "Date", DateTime.Now)
-                {
-                    Mandatory = false
-                });
+                //list.Add(new DateInput("Date", "Date", DateTime.Now)
+                //{
+                //    Mandatory = false
+                //});
 
                 //list.Add(new StringInput("xxx", "xxx", "", "", true));
                 //list.Add(new StringInput("xxx2", "xxx2", "", "x", false)
@@ -68,7 +68,7 @@ namespace WebsiteTemplate.Backend.UserRoles
 
                 //list.Add(new FileInput("File", "File", null, "x"));
 
-                list.Add(new ViewInput("view", "View", new TestView(), "abc", null, false));
+                //list.Add(new ViewInput("view", "View", new TestView(), "abc", null, false));
 
                 var eventTypesEveryoneCanDo = new List<int>()
                 {
@@ -130,8 +130,11 @@ namespace WebsiteTemplate.Backend.UserRoles
                 var description = GetValue("Description");
                 var events = GetValue<List<string>>("Events");
 
-                var date = GetValue<DateTime?>("Date");
+                //var date = GetValue<DateTime?>("Date");
+                //var view = GetValue<List<JToken>>("view");
                 //var localTime = ((DateTime)date).ToLocalTime();
+
+                //var file = GetValue<WebsiteTemplate.Menus.InputItems.FileInfo>("File");
 
                 if (String.IsNullOrWhiteSpace(name) || true)
                 {
