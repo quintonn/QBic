@@ -54,6 +54,32 @@ namespace WebsiteTemplate.Menus.InputItems
                         value = 0;
                     }
                 }
+                else if (typeof(T) == typeof(decimal))
+                {
+                    var tempValue = InputData[propertyName];
+                    decimal decimalValue;
+                    if (decimal.TryParse(tempValue?.ToString(), out decimalValue))
+                    {
+                        value = decimalValue;
+                    }
+                    else
+                    {
+                        value = 0m;
+                    }
+                }
+                else if (typeof(T) == typeof(float))
+                {
+                    var tempValue = InputData[propertyName];
+                    float floatValue;
+                    if (float.TryParse(tempValue?.ToString(), out floatValue))
+                    {
+                        value = floatValue;
+                    }
+                    else
+                    {
+                        value = 0f;
+                    }
+                }
                 else
                 {
                     value = (T)InputData[propertyName];
