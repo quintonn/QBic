@@ -74,13 +74,7 @@
 
     function formatDate(dateString)
     {
-        var date = new Date(dateString);
-        var month = "0" + (date.getMonth() + 1);
-        month = month.substring(month.length - 2);
-        var day = "0" + date.getDate();
-        day = day.substr(day.length - 2);
-        date = date.getFullYear() + "-" + month + "-" + day;  // Todo: would be better to have a date format setting
-        return date;
+        return dateString;
     }
 
     function rowModel(data, id)

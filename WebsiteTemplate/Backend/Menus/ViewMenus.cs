@@ -74,6 +74,8 @@ namespace WebsiteTemplate.Backend.Menus
 
             columnConfig.AddStringColumn("Event", "Event");
 
+            //columnConfig.AddDateColumn("Date", "Date");
+
             columnConfig.AddButtonColumn("Sub Menus", "Id", "...", EventNumber.ViewMenus, new ShowHideColumnSetting()
             {
                 Display = ColumnDisplayType.Show,
@@ -140,6 +142,7 @@ namespace WebsiteTemplate.Backend.Menus
                     Event = r.Event == null ? "" : MainController.EventList.ContainsKey(r.Event.Value) ? MainController.EventList[r.Event.Value].Description : "",
                     ParentMenu = r.ParentMenu,
                     CanDelete = r.CanDelete,
+                    //Date = DateTime.Now.Date
                 }).ToList();
 
                 return newList;

@@ -17,7 +17,7 @@ namespace WebsiteTemplate.Menus.InputItems
         }
 
         public DateInput(string name, string label, object defaultValue = null, string tabName = null, bool mandatory = false)
-            : base(name, label, defaultValue == null || String.IsNullOrWhiteSpace(defaultValue.ToString()) ? "" : (DateTime.Parse(defaultValue.ToString())).ToString("yyyy-MM-dd"), tabName, mandatory)
+            : base(name, label, defaultValue, tabName, mandatory)
         {
         }
 

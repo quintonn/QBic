@@ -48,7 +48,10 @@ namespace WebsiteTemplate.Backend.UserRoles
 
                 //list.Add(new FileInput("File", "File"));
 
-                //list.Add(new DateInput("Date", "Date", DateTime.Today));
+                list.Add(new DateInput("Date", "Date", DateTime.Now)
+                {
+                    Mandatory = false
+                });
 
                 //list.Add(new StringInput("xxx", "xxx", "", "", true));
                 //list.Add(new StringInput("xxx2", "xxx2", "", "x", false)
@@ -65,7 +68,7 @@ namespace WebsiteTemplate.Backend.UserRoles
 
                 //list.Add(new FileInput("File", "File", null, "x"));
 
-                //list.Add(new ViewInput("view", "View", new TestView(), null, null, false));
+                list.Add(new ViewInput("view", "View", new TestView(), "abc", null, false));
 
                 var eventTypesEveryoneCanDo = new List<int>()
                 {
@@ -128,12 +131,13 @@ namespace WebsiteTemplate.Backend.UserRoles
                 var events = GetValue<List<string>>("Events");
 
                 var date = GetValue<DateTime?>("Date");
+                //var localTime = ((DateTime)date).ToLocalTime();
 
-                if (String.IsNullOrWhiteSpace(name))
+                if (String.IsNullOrWhiteSpace(name) || true)
                 {
                     return new List<Event>()
                     {
-                        new ShowMessage("Name is mandatory and must be provided.")
+                        new ShowMessage("Name is mandatory and must be provided. " + date?.ToString())
                     };
                 }
                 if (String.IsNullOrWhiteSpace(description))

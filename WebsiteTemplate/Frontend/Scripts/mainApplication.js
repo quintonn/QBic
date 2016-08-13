@@ -197,8 +197,9 @@ $(document).ready(function ()
 
                             }).catch(function (err)
                             {
+                                console.log(err);
                                 dialog.closeBusyDialog();
-                                mainApp.handleError(err);
+                                //mainApp.handleError(err);
                                 dialog.showLoginDialog();
                             });
                         }

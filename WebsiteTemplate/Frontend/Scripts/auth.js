@@ -10,8 +10,8 @@
     {
         return new Promise(function (resolve, reject)
         {
-            accessTokenName = _applicationModel.applicationName() + "_accessToken_v" + mainApp.version;
-            refreshTokenName = _applicationModel.applicationName() + "refreshToken" + mainApp.version;
+            accessTokenName = _applicationModel.applicationName() + "_accessToken";
+            refreshTokenName = _applicationModel.applicationName() + "_refreshToken";
             auth.accessToken = localStorage.getItem(accessTokenName);
             auth.refreshToken = localStorage.getItem(refreshTokenName);
             resolve();

@@ -181,6 +181,7 @@
     <Content Include="Frontend\Pages\confirmation.html" />
     <Content Include="Frontend\Pages\dialog.html" />
     <Content Include="Frontend\Scripts\applicationModel.js" />
+    <Content Include="Frontend\Scripts\date.js" />
     <Content Include="Frontend\Scripts\dialog.js" />
     <Content Include="Frontend\Scripts\jquery-3.1.0.min.js" />
     <Content Include="Frontend\Scripts\jquery-ui.min.js" />

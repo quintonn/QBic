@@ -891,8 +891,8 @@ namespace WebsiteTemplate.Controllers
                 {
                     item.Parameters = parameters;
                 }
-
-                return Json(result);
+                var jsonSettings = new JsonSerializerSettings { DateFormatString = "dd-MM-yyyy" };
+                return Json(result, jsonSettings);
             }
             catch (Exception error)
             {

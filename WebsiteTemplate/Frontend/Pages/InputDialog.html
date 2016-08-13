@@ -97,7 +97,7 @@
                 </div>
                 <!-- ko if: inputType == 6 -->
                 <!--  Date  -->
-                <input type="text" class="w3-input" data-bind="datepicker: { value: inputValue, changeMonth: true, changeYear: true, onSelect: propertyChanged}, hasFocus: $index() == 0, event: { change: propertyChanged}" placeholder="Select date..." />
+                <input type="text" class="w3-input" data-bind="datepicker: { changeMonth: true, changeYear: true, dateFormat: dateFormat}, value: inputValue, hasFocus: $index() == 0, event: { change: propertyChanged}" placeholder="Select date..." />
                 <!-- /ko -->
                 <!-- ko if: inputType == 7 -->
                 <!-- MaskedInput ->> maybe use jquery UI -->

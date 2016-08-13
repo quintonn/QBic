@@ -380,6 +380,7 @@
 
                             return dialog.showMessage("Warning", inp.setting.InputLabel + ' is mandatory').then(function ()
                             {
+                                console.log(value);
                                 console.error("reject " + inp.setting.InputName);
                                 reject('X');
                             });
@@ -443,6 +444,8 @@
         self.inputLabel = ko.observable(inputSetting.InputLabel);
         self.inputValue = ko.observable();
 
+        self.dateFormat = 'dd-mm-yy';
+
         self.multiLine = inputSetting.MultiLineText;
 
         self.inputType = inputSetting.InputType;
@@ -452,11 +455,6 @@
 
         self.propertyChanged = function (stringValue, actualValue)
         {
-            if (self.inputType == 6)  // Date
-            {
-                self.inputValue(stringValue);
-            }
-            
             if (self.raisePropertyChangeEvent == true)
             {
                 dialog.showBusyDialog("Processing input...");
@@ -520,8 +518,7 @@
                 case 5: // List selection / list source
                     break;
                 case 6:
-                    var date = new Date(value);
-                    self.inputValue(date);
+                    self.inputValue(value);
                     break;
                 case 9: // File input
                     self.inputValue(value);
@@ -567,12 +564,8 @@
                     value = values;
                     return Promise.resolve(value);
                 case 6: // Date Input
-                    if (value != null && value.length > 0)
-                    {
-                        var date = new Date(value).toUTCString();
-                        return Promise.resolve(date);
-                    }
-                    return Promise.resolve(null);
+                    value = value || "";
+                    return Promise.resolve(value);
                 case 9: // File Input
                     var file = self.inputValue();
                     
@@ -682,15 +675,17 @@
 
                         model.applyKoBindings();
 
-                        model.updateViewData(inputSetting.ViewForInput.Id);
+                        model.updateViewData(inputSetting.ViewForInput.Id, defaultValue);
                     }).catch(function (err)
                     {
                         mainApp.handleError(err);
                     });
                     break;
                 case 6: // Date
-                    var date = new Date(defaultValue);
-                    self.setInputValue(date);
+                    if (defaultValue != null && defaultValue.length > 0)
+                    {
+                        self.setInputValue(defaultValue);
+                    }
                     break;
                 default:
                     self.setInputValue(defaultValue);

@@ -46,7 +46,7 @@
 
                         <!--  ko if:  columnType() == 5  -->
                         <!--  Date  -->
-                        <span data-bind="visible: showCell, text: dateValue"></span>
+                        <span data-bind="visible: showCell"><nobr data-bind="html: dateValue"></nobr></span>
                         <!-- /ko -->
 
                         <!-- ko if: columnType() == 6 --> 
