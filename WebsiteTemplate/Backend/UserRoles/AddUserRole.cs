@@ -140,7 +140,7 @@ namespace WebsiteTemplate.Backend.UserRoles
                 {
                     return new List<Event>()
                     {
-                        new ShowMessage("Name is mandatory and must be provided. " + date?.ToString())
+                        new ShowMessage("Name is mandatory and must be provided. ")
                     };
                 }
                 if (String.IsNullOrWhiteSpace(description))
