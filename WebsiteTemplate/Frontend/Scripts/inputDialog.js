@@ -706,17 +706,7 @@
                     }
                     break;
                 case 10: // Numeric
-                    //console.log(defaultValue);
-                    //if (defaultValue != null && (defaultValue+"").length > 0)
-                    //{
-                    //    var floatVal = parseFloat(defaultValue);
-                    //    console.log(floatVal);
-                    //    console.log(self.Step);
-                    //    var decimals = ((1 / self.Step) + "").length;
-                    //    var newVal = floatVal.toFixed(decimals);
-                        self.setInputValue(21.210);
-                    //    console.log(newVal);
-                    //}
+                    self.setInputValue(defaultValue);
                     break;
                 default:
                     self.setInputValue(defaultValue);
