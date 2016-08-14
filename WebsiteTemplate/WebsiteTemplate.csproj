@@ -256,6 +256,7 @@
     <Compile Include="Mappings\ChildDynamicMap.cs" />
     <Compile Include="Mappings\DynamicMap.cs" />
     <Compile Include="Mappings\MenuMap.cs" />
+    <Compile Include="Mappings\RefreshTokenMap.cs" />
     <Compile Include="Mappings\UserRoleAssociationMap.cs" />
     <Compile Include="Mappings\UserMap.cs" />
     <Compile Include="Menus\BaseItems\DeleteInputViewItem.cs" />

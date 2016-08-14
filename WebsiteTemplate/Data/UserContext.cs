@@ -47,17 +47,19 @@ namespace WebsiteTemplate.Data
             return Task.FromResult(0);
         }
 
-        private List<RefreshToken> Tokens = new List<RefreshToken>();
-
         public override System.Threading.Tasks.Task AddRefreshToken(BasicAuthentication.Security.RefreshToken token)
         {
-            Tokens.Add(token);
+            using (var session = Store.OpenSession())
+            {
+                session.SaveOrUpdate(token);
+                session.Flush();
+            }
             return Task.FromResult(0);
         }
 
         public override System.Threading.Tasks.Task CreateUserAsync(User user)
         {
-            Store.Save<User>(user);
+            Store.Save(user);
             return Task.FromResult(0);
         }
 
@@ -69,8 +71,12 @@ namespace WebsiteTemplate.Data
 
         public override System.Threading.Tasks.Task<BasicAuthentication.Security.RefreshToken> FindRefreshToken(string hashedTokenId)
         {
-            var token = Tokens.Where(t => t.Id == hashedTokenId).SingleOrDefault();
-            return Task.FromResult<RefreshToken>(token);
+            RefreshToken token;
+            using (var session = Store.OpenSession())
+            {
+                token = session.QueryOver<RefreshToken>().Where(r => r.Id == hashedTokenId).SingleOrDefault();
+            }
+               return Task.FromResult<RefreshToken>(token);
         }
 
         public override System.Threading.Tasks.Task<User> FindUserByEmailAsync(string email)
@@ -164,10 +170,11 @@ namespace WebsiteTemplate.Data
 
         public override System.Threading.Tasks.Task RemoveRefreshToken(string hashedTokenId)
         {
-            var token = Tokens.Where(t => t.Id == hashedTokenId).SingleOrDefault();
-            if (token != null)
+            using (var session = Store.OpenSession())
             {
-                Tokens.Remove(token);
+                var token = session.QueryOver<RefreshToken>().Where(r => r.Id == hashedTokenId).SingleOrDefault();
+                session.Delete(token);
+                session.Flush();
             }
             return Task.FromResult<RefreshToken>(null);
         }
