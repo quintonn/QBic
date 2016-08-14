@@ -188,59 +188,67 @@
 
         self.click = function (rowItem, colIndex, rowIndex, evt)
         {
-            dialog.showBusyDialog("Processing...");
-            var cellItem = rowItem.cells()[colIndex];
-            //var data = self.settings.ViewData[rowIndex];
-            var data = rowItem.data;
-            var theColumn = self.settings.Columns[colIndex];
+            dialog.showBusyDialog("Processing...").then(function ()
+            {
+                var cellItem = rowItem.cells()[colIndex];
+                //var data = self.settings.ViewData[rowIndex];
+                var data = rowItem.data;
+                var theColumn = self.settings.Columns[colIndex];
 
-            var id = data[theColumn.KeyColumn];
+                var id = data[theColumn.KeyColumn];
 
-            var viewSettings =
+                var viewSettings =
+                    {
+                        "currentPage": self.settings.CurrentPage,
+                        "linesPerPage": self.settings.LinesPerPage,
+                        "totalLines": self.settings.TotalLines
+                    };
+
+                var params = theColumn.ParametersToPass || {};
+
+                params["ViewId"] = self.id;
+                params["RowId"] = rowItem.id;
+
+                var formData =
+                    {
+                        Id: id,
+                        data: data,
+                        viewSettings: "",  // Why is this not included in the call?
+                        //parameters: theColumn.ParametersToPass,
+                        parameters: params,
+                        eventParameters: self.settings.EventParameters
+                    };
+
+                if (self.settings.ActionType == 7) // View Input
                 {
-                    "currentPage": self.settings.CurrentPage,
-                    "linesPerPage": self.settings.LinesPerPage,
-                    "totalLines": self.settings.TotalLines
-                };
+                    self.addViewDataToParams(formData);
+                }
 
-            var params = theColumn.ParametersToPass || {};
-            
-            params["ViewId"] = self.id;
-            params["RowId"] = rowItem.id;
-
-            var formData =
+                if (theColumn.Event == null || theColumn.Event.ActionType == 6) // 6 = execute UI Action
                 {
-                    Id: id,
-                    data: data,
-                    viewSettings: "",  // Why is this not included in the call?
-                    //parameters: theColumn.ParametersToPass,
-                    parameters: params,
-                    eventParameters: self.settings.EventParameters
-                };
+                    var eventId = theColumn.Event == null ? theColumn.EventNumber : theColumn.Event.EventNumber;
 
-            if (self.settings.ActionType == 7) // View Input
-            {
-                self.addViewDataToParams(formData);
-            }
+                    return mainApp.executeUIAction(eventId, formData);
+                }
+                else if (theColumn.Event.ActionType == 5) /// ShowMessage
+                {
+                    dialog.closeBusyDialog();
+                    dialog.getUserConfirmation(theColumn.Event, formData, params);
+                }
+                else
+                {
+                    dialog.closeBusyDialog.then(function ()
+                    {
+                        dialog.showMessage("Error", "Unknown action type " + theColumn.Event.ActionType);
+                    });
+                }
 
-            if (theColumn.Event == null || theColumn.Event.ActionType == 6) // 6 = execute UI Action
+                return Promise.resolve();
+            }).then(function ()
             {
-                var eventId = theColumn.Event == null ? theColumn.EventNumber : theColumn.Event.EventNumber;
-
-                mainApp.executeUIAction(eventId, formData).then(dialog.closeBusyDialog);
-            }
-            else if (theColumn.Event.ActionType == 5) /// ShowMessage
-            {
+                console.log('views ->self click. done');
                 dialog.closeBusyDialog();
-                dialog.getUserConfirmation(theColumn.Event, formData, params);
-            }
-            else
-            {
-                dialog.closeBusyDialog.then(function ()
-                {
-                    dialog.showMessage("Error", "Unknown action type " + theColumn.Event.ActionType);
-                });
-            }
+            });
         };
 
         self.gotoPage = function (pageNum)

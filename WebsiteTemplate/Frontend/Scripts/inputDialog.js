@@ -92,7 +92,7 @@
             //  not working because not all items have been set.
             var action = function ()
             {
-                inpModel.initialize(inp.DefaultValue);
+                return inpModel.initialize(inp.DefaultValue);
             };
             setDefaults.push(action); // This is not a great solution - i don't  like it, smells bad
             
@@ -123,21 +123,22 @@
             model.buttons.push(bModel);
         });
         
-        dialog.showDialogWithId('InputDialog', model).then(function()
+        return dialog.showDialogWithId('InputDialog', model).then(function()
         {
-            for (var i = 0; i < setDefaults.length; i++)
+            var act = function (action)
             {
-                var action = setDefaults[i];
-                action();
-            }
-
-            if (model.tabs().length > 0)
+                return action();
+            };
+            
+            return Promise.all($.map(setDefaults, act)).then(function ()
             {
-                model.currentTab();
-            }
+                if (model.tabs().length > 0)
+                {
+                    model.currentTab();
+                }
+                return Promise.resolve();
+            });
         });
-
-        return Promise.resolve();
     }
 
     inputDialog.updateInput = function (inputName, inputValue)
@@ -193,31 +194,35 @@
 
         self.buttonClick = function(btn, evt)
         {
-            dialog.showBusyDialog("Processing...");
-            self.getInputs(btn.validateInput).then(function (inputs)
+            dialog.showBusyDialog("Processing...").then(function ()
             {
-                var res = {};
-                $.each(inputs, function (indx, inp)
+                return self.getInputs(btn.validateInput).then(function (inputs)
                 {
-                    $.extend(res, res, inp);
-                });
-                res["parameters"] = self.params;
+                    var res = {};
+                    $.each(inputs, function (indx, inp)
+                    {
+                        $.extend(res, res, inp);
+                    });
+                    res["parameters"] = self.params;
 
-                return mainApp.processEvent(self.eventId, btn.actionNumber, res).then(function ()
+                    return mainApp.processEvent(self.eventId, btn.actionNumber, res);
+                })
+                .catch(function (err)
                 {
-                    return dialog.closeBusyDialog();
+                    if (err == "X")
+                    {
+                        // This is fine, it means there was a mandatory input and a dialog is shown to the user.
+                    }
+                    else
+                    {
+                        mainApp.handleError(err);
+                    }
                 });
-            })
-            .catch(function (err)
+            }).then(dialog.closeBusyDialog)
+            .catch(function(err)
             {
-                if (err == "X")
-                {
-                    // This is fine, it means there was a mandatory input and a dialog is shown to the user.
-                }
-                else
-                {
-                    mainApp.handleError(err);
-                }
+                console.error(err);
+                mainApp.handleError(err);
             });
         }
 
@@ -380,8 +385,6 @@
 
                             return dialog.showMessage("Warning", inp.setting.InputLabel + ' is mandatory').then(function ()
                             {
-                                console.log(value);
-                                console.error("reject " + inp.setting.InputName);
                                 reject('X');
                             });
                         }
@@ -615,7 +618,7 @@
                             reader.readAsBinaryString(file);
                         }).catch(function (err)
                         {
-                            console.log(err);
+                            console.error(err);
                             mainApp.handleError(err);
                         });
                     }
@@ -670,50 +673,60 @@
 
         self.initialize = function (defaultValue)
         {
-            var inputSetting = self.setting;
-            switch (self.inputType)
+            return dialog.showBusyDialog("Initializing...").then(function ()
             {
-                case 5: // List Source
-                    var defaultList = defaultValue || [];
-                    var listSource = inputSetting.ListSource; // (Key, Value)
-                    listSource = $.map(listSource, function (item)
-                    {
-                        var selected = defaultList.indexOf(item.Key) > -1;
-                        return new listSourceItemModel(selected, item.Value, item.Key);
-                    });
-                    self.listSource(listSource);
+                var inputSetting = self.setting;
+                switch (self.inputType)
+                {
+                    case 5: // List Source
+                        var defaultList = defaultValue || [];
+                        var listSource = inputSetting.ListSource; // (Key, Value)
+                        listSource = $.map(listSource, function (item)
+                        {
+                            var selected = defaultList.indexOf(item.Key) > -1;
+                            return new listSourceItemModel(selected, item.Value, item.Key);
+                        });
+                        self.listSource(listSource);
 
-                    self.selectAll(self.isAllListSelected());
-                    break;
-                case 8: // View
-                    views.showView(inputSetting.ViewForInput, true, inputSetting.ViewForInput.Id).then(function (model)
-                    {
-                        self.viewModel = model;
-                        self.html(model.html());
+                        self.selectAll(self.isAllListSelected());
+                        break;
+                    case 8: // View
+                        views.showView(inputSetting.ViewForInput, true, inputSetting.ViewForInput.Id).then(function (model)
+                        {
+                            self.viewModel = model;
+                            self.html(model.html());
 
-                        model.applyKoBindings();
+                            model.applyKoBindings();
 
-                        model.updateViewData(inputSetting.ViewForInput.Id, defaultValue);
-                    }).catch(function (err)
-                    {
-                        mainApp.handleError(err);
-                    });
-                    break;
-                case 6: // Date
-                    if (defaultValue != null && defaultValue.length > 0)
-                    {
+                            model.updateViewData(inputSetting.ViewForInput.Id, defaultValue);
+                        }).catch(function (err)
+                        {
+                            mainApp.handleError(err);
+                        });
+                        break;
+                    case 6: // Date
+                        if (defaultValue != null && defaultValue.length > 0)
+                        {
+                            self.setInputValue(defaultValue);
+                        }
+                        break;
+                    case 10: // Numeric
                         self.setInputValue(defaultValue);
-                    }
-                    break;
-                case 10: // Numeric
-                    self.setInputValue(defaultValue);
-                    break;
-                default:
-                    self.setInputValue(defaultValue);
-                    break;
-            }
+                        break;
+                    default:
+                        self.setInputValue(defaultValue);
+                        break;
+                }
 
-            self.propertyChanged(defaultValue);
+                self.propertyChanged(defaultValue);
+
+                return dialog.closeBusyDialog();
+            }).catch(function (err)
+            {
+                console.error(err);
+                mainApp.handleError(err);
+            });
+            
         }
     }
 

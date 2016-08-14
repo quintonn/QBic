@@ -10,8 +10,6 @@ $(document).ready(function ()
 
 (function (mainApp, $, undefined)
 {
-    //Private Property
-    //var isHot = true;
     var apiVersion = "v1";
     
     mainApp.baseURL = "https://" + window.location.host + window.location.pathname;
@@ -34,22 +32,14 @@ $(document).ready(function ()
             
             return mainApp.startApplication();
 
-        }).catch(function ()
-        {
-            //dialog.closeBusyDialog();
-        }).then(function(data)
-        {
-            dialog.closeBusyDialog();
-        });
-        
-        //main.makeWebCall(main.webApiURL + "initializeSystem", "GET", main.processInitSystemResponse);
+        }).then(dialog.closeBusyDialog);
     };
 
     mainApp.startApplication = function ()
     {
         _applicationModel.views([]);
         _applicationModel.currentView([]);
-
+        console.clear();
         console.log('start app');
         return auth.initialize()
                    .then(mainApp.initialize)
@@ -71,7 +61,8 @@ $(document).ready(function ()
 
     mainApp.handleError = function (err)
     {
-        console.log(err);
+        console.trace();
+        console.error(err);
         var errMsg = err;
         if (err.responseText != null)
         {
@@ -120,7 +111,7 @@ $(document).ready(function ()
         var url = mainApp.apiURL + "processEvent/" + eventId;
         return mainApp.makeWebCall(url, "POST", data).then(function (resp)
         {
-            mainApp.processUIActionResult(resp, eventId);
+            return mainApp.processUIActionResult(resp, eventId);
         });
     };
 
@@ -130,7 +121,7 @@ $(document).ready(function ()
         var url = mainApp.apiURL + "propertyChanged";
         return mainApp.makeWebCall(url, "POST", params).then(function (resp)
         {
-            mainApp.processUIActionResult(resp, eventId);
+            return mainApp.processUIActionResult(resp, eventId);
         });
     };
 
@@ -178,17 +169,17 @@ $(document).ready(function ()
                 })
                 .fail(function (error, err, errorText)
                 {
-                    console.log("Error while trying to call /" + url);
-                    console.log(error.status + ': ' + error.statusText);
+                    console.error("Error while trying to call /" + url);
+                    console.error(error.status + ': ' + error.statusText);
                     
                     if (error.status == 401)  // not logged in
                     {
                         if (auth.refreshToken != null && auth.refreshToken.length > 0) // Try refresh the token
                         {
-                            console.log('auth no longer valid, trying to get a new access token');
+                            console.warn('auth no longer valid, trying to get a new access token');
                             return auth.performTokenRefresh().then(function ()
                             {
-                                console.log('refresh token updated successfully');
+                                console.warn('refresh token updated successfully');
                                 // If successfully refreshed the token, retry the web call we just tried
                                 return mainApp.makeWebCall(url, method, data).then(function (retryData)
                                 {
@@ -197,7 +188,7 @@ $(document).ready(function ()
 
                             }).catch(function (err)
                             {
-                                console.log(err);
+                                console.err(err);
                                 dialog.closeBusyDialog();
                                 //mainApp.handleError(err);
                                 dialog.showLoginDialog();

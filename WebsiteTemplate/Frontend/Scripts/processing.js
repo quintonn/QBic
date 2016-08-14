@@ -113,7 +113,7 @@
                         return inputDialog.updateInput(inputName, value);
                         break;
                     default:
-                        console.log(item);
+                        console.warn(item);
                         return dialog.showMessage("Error", "Unknown action type: " + actionType + " for event " + eventId);
                 }
             }
@@ -198,7 +198,7 @@
             }
         } catch (err)
         {
-            console.log(err);
+            console.error(err);
             return false;
         }
     };

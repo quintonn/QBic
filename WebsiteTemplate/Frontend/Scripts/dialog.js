@@ -5,6 +5,7 @@
     dialog.showBusyDialog = function (text)
     {
         _applicationModel.addProgressIndicator(text);
+
         return Promise.resolve();
     };
 
@@ -29,8 +30,14 @@
 
     dialog.closeBusyDialog = function ()
     {
+        var model = _applicationModel.busyContainers()[_applicationModel.busyContainers().length - 1];
+        if (model == null)
+        {
+            console.warn('closing busy dialog called, but model is null');
+        }
         _applicationModel.busyContainers.pop();
-        return Promise.resolve();
+
+       return Promise.resolve();
     };
 
     dialog.closeModalDialog = function ()
@@ -89,7 +96,7 @@
             _applicationModel.addModalDialog(model);
         } catch (err)
         {
-            console.log(err);
+            console.error(err);
         }
         
         return Promise.resolve();
