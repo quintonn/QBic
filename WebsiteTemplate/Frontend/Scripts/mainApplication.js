@@ -27,7 +27,7 @@ $(document).ready(function ()
             var version = data['Version'];
             mainApp.version = version;
             _applicationModel.applicationName(appName);
-
+            
             document.title = appName + " " + version;
             
             return mainApp.startApplication();
