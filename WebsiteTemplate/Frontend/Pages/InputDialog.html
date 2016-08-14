@@ -113,6 +113,12 @@
                 <!--  File Input -->
                 <input class="w3-input " type="file" data-bind="hasFocus: $index() == 0, event: { change: function() { fileSelected($element.files[0]) } }" />
                 <!-- /ko -->
+
+                <!-- ko if: inputType == 10 -->
+                <!--  numeric  -->
+                <input id="spinner1" type="text" class="w3-input" data-bind="spinner: { value: inputValue, step: Step }, hasFocus: $index() == 0, event: { change: propertyChanged}" placeholder="Enter numeric value..." style="margin:0" />
+                <label class="w3-label w3-padding-small" data-bind="text: inputValue() == null ? 'Invalid number entered' : '', css : inputValue() == null ? 'w3-red' : '' "></label>
+                <!-- /ko -->
             
         </div>
     </div>    

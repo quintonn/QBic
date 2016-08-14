@@ -12,6 +12,6 @@
         MaskedInput = 7,
         View = 8,
         File = 9,
-        //Numeric = 10 //https://github.com/SamWM/jQuery-Plugins/tree/master/numeric/
+        Numeric = 10,
     }
 }

@@ -445,6 +445,12 @@
         self.inputValue = ko.observable();
 
         self.dateFormat = 'dd-mm-yy';
+        
+        if (inputSetting.InputType == 10) // Numeric
+        {
+            self.Step = inputSetting.Step;
+            //var decimalPlaces = inputSetting.DecimalPlaces;
+        }
 
         self.multiLine = inputSetting.MultiLineText;
 
@@ -665,7 +671,6 @@
         self.initialize = function (defaultValue)
         {
             var inputSetting = self.setting;
-
             switch (self.inputType)
             {
                 case 5: // List Source
@@ -699,6 +704,19 @@
                     {
                         self.setInputValue(defaultValue);
                     }
+                    break;
+                case 10: // Numeric
+                    //console.log(defaultValue);
+                    //if (defaultValue != null && (defaultValue+"").length > 0)
+                    //{
+                    //    var floatVal = parseFloat(defaultValue);
+                    //    console.log(floatVal);
+                    //    console.log(self.Step);
+                    //    var decimals = ((1 / self.Step) + "").length;
+                    //    var newVal = floatVal.toFixed(decimals);
+                        self.setInputValue(21.210);
+                    //    console.log(newVal);
+                    //}
                     break;
                 default:
                     self.setInputValue(defaultValue);

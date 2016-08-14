@@ -284,6 +284,7 @@
     <Compile Include="Menus\InputItems\InputType.cs" />
     <Compile Include="Menus\InputItems\ListSelectionInput.cs" />
     <Compile Include="Menus\InputItems\MaskedInput.cs" />
+    <Compile Include="Menus\InputItems\NumericInput.cs" />
     <Compile Include="Menus\InputItems\PasswordInput.cs" />
     <Compile Include="Menus\InputItems\StringInput.cs" />
     <Compile Include="Menus\InputItems\ViewInput.cs" />
