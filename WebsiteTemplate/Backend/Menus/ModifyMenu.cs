@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using WebsiteTemplate.Controllers;
+using WebsiteTemplate.CustomMenuItems;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
@@ -130,11 +131,10 @@ namespace WebsiteTemplate.Backend.Menus
 
         public override async Task<InitializeResult> Initialize(string data)
         {
-            var jobject = JObject.Parse(data);
-            JToken tmp;
-            if (jobject.TryGetValue("IsNew", out tmp))
+            var jobject = JsonHelper.Parse(data);
+            if (!String.IsNullOrWhiteSpace(jobject.GetValue("IsNew")))
             {
-                IsNew = Convert.ToBoolean(tmp);
+                IsNew = jobject.GetValue<bool>("IsNew");
                 var parentId = jobject.GetValue("ParentId")?.ToString();
                 ParentMenuId = parentId;
                 Menu = new Menu();
@@ -142,7 +142,7 @@ namespace WebsiteTemplate.Backend.Menus
             else
             {
                 IsNew = false;
-                var id = jobject.GetValue("Id").ToString();
+                var id = jobject.GetValue("Id");
                 using (var session = Store.OpenSession())
                 {
                     Menu = session.Get<Menu>(id);

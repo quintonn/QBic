@@ -51,6 +51,10 @@
     <Reference Include="Iesi.Collections">
       <HintPath>..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
     </Reference>
+    <Reference Include="Ionic.ZLib, Version=2.0.0.14, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MarkerMetro.Unity.Ionic.Zlib.2.0.0.14\lib\net35\Ionic.ZLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
@@ -244,12 +248,15 @@
     <Compile Include="Backend\UserRoles\TestConfirmation.cs" />
     <Compile Include="Backend\UserRoles\TestCreate.cs" />
     <Compile Include="Backend\Users\TestView.cs" />
+    <Compile Include="Controllers\CompressionHelper.cs" />
+    <Compile Include="Controllers\DeflateCompressionAttribute.cs" />
     <Compile Include="Controllers\FileActionResult.cs" />
     <Compile Include="Controllers\MenuController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\RoleAuthorization.cs" />
     <Compile Include="Controllers\RoleBlockedAttribute.cs" />
     <Compile Include="Controllers\AcmeController.cs" />
+    <Compile Include="CustomMenuItems\JsonHelper.cs" />
     <Compile Include="CustomMenuItems\XXXUtils.cs" />
     <Compile Include="Data\DataStore.cs" />
     <Compile Include="Mappings\BaseClassMap.cs" />

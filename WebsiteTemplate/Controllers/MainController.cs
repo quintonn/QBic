@@ -15,6 +15,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.Http;
+using WebsiteTemplate.CustomMenuItems;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
@@ -322,6 +323,7 @@ namespace WebsiteTemplate.Controllers
         [Route("initializeSystem")]
         [AllowAnonymous]
         [RequireHttps]
+        [DeflateCompression]
         public IHttpActionResult InitializeSystem()
         {
             var version = typeof(ShowView).Assembly.GetName().Version.ToString();
@@ -338,6 +340,7 @@ namespace WebsiteTemplate.Controllers
         [Route("initialize")]
         [RequireHttps]
         [Authorize]
+        [DeflateCompression]
         public IHttpActionResult Initialize()
         {
             var user = this.GetLoggedInUser() as User;
@@ -354,6 +357,7 @@ namespace WebsiteTemplate.Controllers
         [Route("propertyChanged")]
         [RequireHttps]
         [Authorize]
+        [DeflateCompression]
         public async Task<IHttpActionResult> OnPropertyChanged()
         {
             var data = await Request.Content.ReadAsStringAsync();
@@ -376,6 +380,7 @@ namespace WebsiteTemplate.Controllers
         [Route("processEvent/{*eventId}")]
         [RequireHttps]
         [Authorize]
+        [DeflateCompression]
         public async Task<IHttpActionResult> ProcessEvent(int eventId)
         {
             try
@@ -484,6 +489,7 @@ namespace WebsiteTemplate.Controllers
         [Route("GetFile/{*eventId}")]
         [RequireHttps]
         [Authorize]
+        [DeflateCompression]
         public async Task<IHttpActionResult> GetFile(int eventId)
         {
             var data = await Request.Content.ReadAsStringAsync();
@@ -504,6 +510,7 @@ namespace WebsiteTemplate.Controllers
         [Route("updateViewData/{*eventId}")]
         [RequireHttps]
         [Authorize]
+        [DeflateCompression]
         public async Task<IHttpActionResult> UpdateViewData(int eventId)
         {
             try
@@ -638,6 +645,7 @@ namespace WebsiteTemplate.Controllers
         [Route("getViewMenu/{*eventId}")]
         [RequireHttps]
         [Authorize]
+        [DeflateCompression]
         public async Task<IHttpActionResult> GetViewMenu(int eventId)
         {
             var postData = await Request.Content.ReadAsStringAsync();
@@ -658,7 +666,7 @@ namespace WebsiteTemplate.Controllers
             var dataForMenu = new Dictionary<string, string>();
             if (!String.IsNullOrWhiteSpace(data))
             {
-                dataForMenu = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
+                dataForMenu = JsonHelper.DeserializeObject<Dictionary<string, string>>(data);
             }
 
             var viewMenu = eventItem.GetViewMenu(dataForMenu);
@@ -684,6 +692,7 @@ namespace WebsiteTemplate.Controllers
         [Route("executeUIAction/{*eventId}")]
         [RequireHttps]
         [Authorize]
+        [DeflateCompression]
         public async Task<IHttpActionResult> ExecuteUIAction(int eventId)
         {
             try
@@ -815,12 +824,12 @@ namespace WebsiteTemplate.Controllers
                 }
                 else if (eventItem is DoSomething)
                 {
-                    var processedFormData = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
+                    var processedFormData = JsonHelper.DeserializeObject<Dictionary<string, object>>(data);
                     if (processedFormData != null && processedFormData.ContainsKey("rowData"))
                     {
                         var rowData = processedFormData["rowData"].ToString();
 
-                        processedFormData = JsonConvert.DeserializeObject<Dictionary<string, object>>(rowData);
+                        processedFormData = JsonHelper.DeserializeObject<Dictionary<string, object>>(rowData);
                     }
                     else if (processedFormData == null)
                     {
@@ -937,6 +946,7 @@ namespace WebsiteTemplate.Controllers
         [Route("getUserMenu")]
         [RequireHttps]
         [Authorize]
+        [DeflateCompression]
         public async Task<IHttpActionResult> GetUserMenu()
         {
             var user = await this.GetLoggedInUserAsync();
