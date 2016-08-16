@@ -139,7 +139,7 @@ namespace WebsiteTemplate.Data
             
             config.ExposeConfiguration(x =>
             {
-                x.SetInterceptor(new SqlStatementInterceptor());
+                //x.SetInterceptor(new SqlStatementInterceptor());
                 x.Properties.Add("use_proxy_validator", "false");
             });
             Configuration = config.BuildConfiguration();
