@@ -57,7 +57,8 @@
                     case 5:
                         return dialog.getUserConfirmation(item, item.Data, params);
                     case 6: // Execute UI action
-                        return mainApp.executeUIAction(item.EventNumber, item.ParametersToPass);
+                        dialog.showBusyDialog();
+                        return mainApp.executeUIAction(item.EventNumber, item.ParametersToPass).then(dialog.closeBusyDialog);
                         //case 7:  Input Data View
                     case 8: // Update input view (view in input screen)
                     case 9: // DeleteInputViewItem
