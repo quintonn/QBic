@@ -34,6 +34,7 @@
         if (model == null)
         {
             console.warn('closing busy dialog called, but model is null');
+            console.log('this is because of the code inside getUserConfirmation');
         }
         _applicationModel.busyContainers.pop();
 
@@ -81,9 +82,7 @@
     dialog.showMessage = function (type, message)
     {
         var dlgSetting = new dialogSetting(type, message);
-        //dialog.showDialog(data, dlgSetting);
         return dialog.showDialogWithId('dialog', dlgSetting);
-
     };
 
     function addLoginModel()

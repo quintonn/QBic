@@ -31,19 +31,37 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public FileInfo(JToken jtoken)
         {
-            var jsonString = jtoken.ToString();
-            if (String.IsNullOrWhiteSpace(jsonString))
+            var json = jtoken as JObject;
+            if (json == null)
             {
                 return;
             }
-            var json = JObject.Parse(jsonString);
             var data = json.GetValue("Data").ToString();
             Data = Convert.FromBase64String(data);
             FileName = json.GetValue("FileName").ToString();
             MimeType = json.GetValue("MimeType").ToString();
             var index = FileName.IndexOf(".");
-            FileExtension = FileName.Substring(index + 1);
-            FileName = FileName.Substring(0, index);
+            FileExtension = json.GetValue("FileExtension")?.ToString();
+            
+            if (index > -1)
+            {
+                FileName = FileName.Substring(0, index);
+            }
+        }
+
+        public string GetFullFileName()
+        {
+            var fileName = FileName;
+            if (!String.IsNullOrWhiteSpace(FileExtension))
+            {
+                if (!FileExtension.Contains("."))
+                {
+                    fileName += ".";
+                }
+                fileName += FileExtension;
+            }
+
+            return fileName;
         }
     }
 }

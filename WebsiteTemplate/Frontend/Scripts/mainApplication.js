@@ -188,7 +188,7 @@ $(document).ready(function ()
 
                             }).catch(function (err)
                             {
-                                console.err(err);
+                                console.error(err);
                                 dialog.closeBusyDialog();
                                 //mainApp.handleError(err);
                                 dialog.showLoginDialog();

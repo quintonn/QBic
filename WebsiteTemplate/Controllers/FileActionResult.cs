@@ -30,7 +30,8 @@ namespace WebsiteTemplate.Controllers
             {
                 //throw new ArgumentNullException("FileInfo.Data", "FileInfo.Data cannot be null or empty. This is returned by types of OpenFile");
             }
-            else {
+            else
+            {
                 base64 = Convert.ToBase64String(FileInfo.Data);
             }
             var response = new HttpResponseMessage();
@@ -40,7 +41,7 @@ namespace WebsiteTemplate.Controllers
 
             response.Content.Headers.ContentType = new MediaTypeHeaderValue(FileInfo.MimeType);
 
-            response.Headers.Add("FileName", FileInfo.FileName + "." + (FileInfo.FileExtension ?? "txt"));
+            response.Headers.Add("FileName", FileInfo.GetFullFileName());
 
             return Task.FromResult(response);
         }
