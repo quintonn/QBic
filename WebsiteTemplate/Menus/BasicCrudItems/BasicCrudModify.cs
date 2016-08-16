@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using WebsiteTemplate.CustomMenuItems;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
@@ -87,17 +88,17 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 
         public override async Task<InitializeResult> Initialize(string data)
         {
-            var jobject = JObject.Parse(data);
-            JToken tmp;
-            if (jobject.TryGetValue("IsNew", out tmp))
+            var json = JsonHelper.Parse(data);
+            
+            if (!String.IsNullOrWhiteSpace(json.GetValue("IsNew")))
             {
-                IsNew = Convert.ToBoolean(tmp);
+                IsNew = json.GetValue<bool>("IsNew");
                 Item = Activator.CreateInstance<T>();
             }
             else
             {
                 IsNew = false;
-                var id = jobject.GetValue("Id").ToString();
+                var id = json.GetValue("Id");
                 using (var session = Store.OpenSession())
                 {
                     Item = session.Get<T>(id);

@@ -89,44 +89,6 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
-        //public async override Task<IList<Event>> OnPropertyChanged(string propertyName, object propertyValue)
-        //{
-        //    if (propertyName == "User")
-        //    {
-        //        var combo = InputFields.Where(i => i.InputName == "User2").Single() as DataSourceComboBoxInput<User>;
-
-        //        combo.UpdateList(x => x.Id == propertyValue.ToString(), null, true, true);
-
-        //        var list = combo.ListItems;
-        //        return new List<Event>()
-        //        {
-        //            new UpdateDataSourceComboBoxSource("User2", list)
-        //        };
-        //    }
-        //    return await base.OnPropertyChanged(propertyName, propertyValue);
-        //}
-
-
-
-        //public override Task<IList<Event>> OnPropertyChanged(string propertyName, object propertyValue)
-        //{
-        //    var result = new List<Event>();
-
-        //    if (propertyName == "Name" && propertyValue.ToString() == "test")
-        //    {
-        //        var TmpInputs = InputFields;
-
-        //        var combo = TmpInputs.Where(i => i.InputName == "User").Single() as DataSourceComboBoxInput<User>;
-
-        //        combo.UpdateList(x => x.UserName == "Steve", null, true, true);
-
-        //        var list = combo.ListItems;
-        //        result.Add(new UpdateDataSourceComboBoxSource("User", list));
-        //    }
-
-        //    return Task.FromResult<IList<Event>>(result);
-        //}
-
         private string ParentMenuId { get; set; }
 
         public override async Task<InitializeResult> Initialize(string data)
@@ -135,7 +97,7 @@ namespace WebsiteTemplate.Backend.Menus
             if (!String.IsNullOrWhiteSpace(jobject.GetValue("IsNew")))
             {
                 IsNew = jobject.GetValue<bool>("IsNew");
-                var parentId = jobject.GetValue("ParentId")?.ToString();
+                var parentId = jobject.GetValue("ParentId");
                 ParentMenuId = parentId;
                 Menu = new Menu();
             }
@@ -224,9 +186,9 @@ namespace WebsiteTemplate.Backend.Menus
 
                 return new List<Event>()
                 {
-                    new ShowMessage("Menu {0} successfully.", isNew ? "created" : "modified"),
                     new CancelInputDialog(),
-                    new ExecuteAction(EventNumber.ViewMenus, ParentMenuId)
+                    new ExecuteAction(EventNumber.ViewMenus, ParentMenuId),
+                    new ShowMessage("Menu {0} successfully.", isNew ? "created" : "modified"),
                 };
             }
             return null;

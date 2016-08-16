@@ -361,14 +361,14 @@ namespace WebsiteTemplate.Controllers
         public async Task<IHttpActionResult> OnPropertyChanged()
         {
             var data = await Request.Content.ReadAsStringAsync();
-            var json = JObject.Parse(data);
-            data = json.GetValue("Data").ToString();
+            var json = JsonHelper.Parse(data);
+            data = json.GetValue("Data");
 
-            json = JObject.Parse(data);
+            json = JsonHelper.Parse(data);
 
-            var eventId = Convert.ToInt32(json.GetValue("EventId"));
-            var propertyName = json.GetValue("PropertyName").ToString();
-            var propertyValue = json.GetValue("PropertyValue") as object;
+            var eventId = json.GetValue<int>("EventId");
+            var propertyName = json.GetValue("PropertyName");
+            var propertyValue = json.GetValue<object>("PropertyValue");
             var eventItem = EventList[eventId] as GetInput;
 
             var result = await eventItem.OnPropertyChanged(propertyName, propertyValue);
@@ -386,11 +386,11 @@ namespace WebsiteTemplate.Controllers
             try
             {
                 var data = await Request.Content.ReadAsStringAsync();
-                var json = JObject.Parse(data);
+                var json = JsonHelper.Parse(data);
 
-                var parameters = json.ToObject<Dictionary<string, object>>();
-                var formData = parameters["Data"].ToString();
-                var actionId = Convert.ToInt32(parameters["ActionId"]);
+                //var parameters = json.ToObject<Dictionary<string, object>>();
+                var formData = json.GetValue("Data");
+                var actionId = json.GetValue<int>("ActionId");
 
                 var id = eventId;
                 var eventItem = EventList[id] as GetInput;
@@ -405,26 +405,19 @@ namespace WebsiteTemplate.Controllers
                 };
 
                 var callParameters = String.Empty;
-                try
-                {
-                    var tmpJson = JObject.Parse(formData);
-                    callParameters = tmpJson.GetValue("parameters")?.ToString();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+
+                var jsonData = JsonHelper.Parse(formData);
+                callParameters = jsonData.GetValue("parameters");
 
                 eventItem.Request = Request;
                 IList<Event> result;
 
-                var jsonData = JObject.Parse(formData);
                 var processedFormData = new Dictionary<string, object>();
                 
                 await eventItem.Initialize(formData);
                 foreach (var inputField in eventItem.InputFields)
                 {
-                    var value = inputField.GetValue(jsonData.GetValue(inputField.InputName));
+                    var value = inputField.GetValue(jsonData.GetValue<JToken>(inputField.InputName));
                     processedFormData.Add(inputField.InputName, value);
                 }
                 using (var session = Store.OpenSession())
@@ -477,7 +470,7 @@ namespace WebsiteTemplate.Controllers
                         {
                             inputData.Remove("ViewData");
                         }
-                        jsonDataToUpdate = JObject.FromObject(inputData).ToString();
+                        jsonDataToUpdate = JsonHelper.FromObject(inputData).ToString();
                     }
                     (item as UpdateInputView).JsonDataToUpdate = jsonDataToUpdate;
                 }
@@ -518,15 +511,15 @@ namespace WebsiteTemplate.Controllers
                 var user = await this.GetLoggedInUserAsync();
                 var originalData = await Request.Content.ReadAsStringAsync();
 
-                var json = JObject.Parse(originalData);
-                originalData = json.GetValue("Data").ToString();
+                var json = JsonHelper.Parse(originalData);
+                originalData = json.GetValue("Data");
 
                 var data = originalData;
                 if (!String.IsNullOrWhiteSpace(data))
                 {
                     try
                     {
-                        var tmp = JObject.Parse(data) as JObject;
+                        var tmp = JsonHelper.Parse(data);
                         if (tmp != null)
                         {
                             var subData = tmp.GetValue("data");
@@ -572,31 +565,27 @@ namespace WebsiteTemplate.Controllers
                         var filter = String.Empty;
                         var parameters = String.Empty;
 
-                        var dataJson = new JObject();
+                        var dataJson = new JsonHelper();
                         if (!String.IsNullOrWhiteSpace(data))
                         {
                             try
                             {
-                                dataJson = JObject.Parse(data);
+                                dataJson = JsonHelper.Parse(data);
 
-                                filter = dataJson.GetValue("filter")?.ToString();
-                                parameters = dataJson.GetValue("parameters")?.ToString();
+                                filter = dataJson.GetValue("filter");
+                                parameters = dataJson.GetValue("parameters");
 
-                                var viewSettings = dataJson.GetValue("viewSettings") as JObject;
+                                var viewSettings = dataJson.GetValue<JsonHelper>("viewSettings");
                                 if (viewSettings != null)
                                 {
-                                    currentPage = Convert.ToInt32(viewSettings.GetValue("currentPage"));
-                                    linesPerPage = Convert.ToInt32(viewSettings.GetValue("linesPerPage"));
+                                    currentPage = viewSettings.GetValue<int>("currentPage");
+                                    linesPerPage = viewSettings.GetValue<int>("linesPerPage");
                                     if (linesPerPage == -2)
                                     {
                                         currentPage = 1; //just in case it's not
                                         linesPerPage = int.MaxValue;
                                     }
-                                    totalLines = Convert.ToInt32(viewSettings.GetValue("totalLines"));
-                                }
-                                if (filter == "nonononono")
-                                {
-                                    parentData = dataJson.GetValue("data")?.ToString();
+                                    totalLines = viewSettings.GetValue<int>("totalLines");
                                 }
                             }
                             catch (Exception e)
@@ -652,8 +641,8 @@ namespace WebsiteTemplate.Controllers
             var data = String.Empty;
             if (!String.IsNullOrWhiteSpace(postData))
             {
-                var json = JObject.Parse(postData);
-                data = json.GetValue("data")?.ToString();
+                var json = JsonHelper.Parse(postData);
+                data = json.GetValue("data");
             }
 
             if (!EventList.ContainsKey(eventId))
@@ -668,19 +657,25 @@ namespace WebsiteTemplate.Controllers
             {
                 dataForMenu = JsonHelper.DeserializeObject<Dictionary<string, string>>(data);
             }
-
-            var viewMenu = eventItem.GetViewMenu(dataForMenu);
-
-            var user = await this.GetLoggedInUserAsync();
-            List<MenuItem> allowedMenuItems;
-            using (var session = Store.OpenSession())
+            try
             {
+                var viewMenu = eventItem.GetViewMenu(dataForMenu);
 
-                var allowedEvents = GetAllowedEventsForUser(session, user.Id);
-                allowedMenuItems = viewMenu.Where(m => allowedEvents.Contains(m.EventNumber)).ToList();
+                var user = await this.GetLoggedInUserAsync();
+                List<MenuItem> allowedMenuItems;
+                using (var session = Store.OpenSession())
+                {
+
+                    var allowedEvents = GetAllowedEventsForUser(session, user.Id);
+                    allowedMenuItems = viewMenu.Where(m => allowedEvents.Contains(m.EventNumber)).ToList();
+                }
+
+                return Json(allowedMenuItems);
             }
-            
-            return Json(allowedMenuItems);
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         /*      When clicking a create button on an input view, i don't have access to any information on the screen
@@ -703,22 +698,22 @@ namespace WebsiteTemplate.Controllers
                 var user = await this.GetLoggedInUserAsync();
                 var originalData = await Request.Content.ReadAsStringAsync();
                 
-                var json = JObject.Parse(originalData);
-                originalData = json.GetValue("Data").ToString();
+                var json = JsonHelper.Parse(originalData);
+                originalData = json.GetValue("Data");
 
                 var data = originalData;
                 if (!String.IsNullOrWhiteSpace(data))
                 {
                     try
                     {
-                        var tmp = JObject.Parse(data) as JObject;
+                        var tmp = JsonHelper.Parse(data);
                         if (tmp != null)
                         {
                             var subData = tmp.GetValue("data");
                             
-                            if (subData != null)
+                            if (!String.IsNullOrWhiteSpace(subData))
                             {
-                                data = subData.ToString();
+                                data = subData;
                             }
                         }
                     }
@@ -729,16 +724,9 @@ namespace WebsiteTemplate.Controllers
                         //data = "";
                     }
                 }
-                var parameters = String.Empty;
-                try
-                {
-                    var tmpJson = JObject.Parse(originalData);
-                    parameters = tmpJson.GetValue("parameters")?.ToString();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+
+                var tmpJson = JsonHelper.Parse(originalData);
+                var parameters = tmpJson.GetValue("parameters");
 
                 var id = eventId;
 
@@ -762,43 +750,11 @@ namespace WebsiteTemplate.Controllers
                         data = originalData;
                         var parentData = data;
 
-                        //var currentPage = 1;
-                        //var linesPerPage = 10;
-                        //var totalLines = -1;
-                        //var filter = String.Empty;
-                        //var parameters = String.Empty;
-
-                        var dataJson = new JObject();
+                        var dataJson = new JsonHelper();
                         if (!String.IsNullOrWhiteSpace(data) && !(eventItem is ViewForInput))
                         {
-                            try
-                            {
-                                dataJson = JObject.Parse(data);
-
-                               // filter = dataJson.GetValue("filter")?.ToString();
-                                parameters = dataJson.GetValue("parameters")?.ToString();
-
-                                //var viewSettings = dataJson.GetValue("viewSettings") as JObject;
-                                //if (viewSettings != null)
-                                //{
-                                //    currentPage = Convert.ToInt32(viewSettings.GetValue("currentPage"));
-                                //    linesPerPage = Convert.ToInt32(viewSettings.GetValue("linesPerPage"));
-                                //    if (linesPerPage == -2)
-                                //    {
-                                //        currentPage = 1; //just in case it's not
-                                //        linesPerPage = int.MaxValue;
-                                //    }
-                                //    totalLines = Convert.ToInt32(viewSettings.GetValue("totalLines"));
-                                //}
-                                //if (filter == "nonononono")
-                                //{
-                                //    parentData = dataJson.GetValue("data")?.ToString();
-                                //}
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine(e.Message);
-                            }
+                            dataJson = JsonHelper.Parse(data);
+                            parameters = dataJson.GetValue("parameters");
                         }
                         else
                         {
@@ -840,20 +796,12 @@ namespace WebsiteTemplate.Controllers
                         Console.WriteLine("");
                     }
 
-                    if (!String.IsNullOrWhiteSpace(data))
+                    if (!processedFormData.ContainsKey("ViewData") && !String.IsNullOrWhiteSpace(data))
                     {
                         var viewData = String.Empty;
-                        try
-                        {
-                            var tmpData = JObject.Parse(data);
-                            var xtmp = tmpData.GetValue("ViewData");
-                            viewData = tmpData.GetValue("ViewData")?.ToString();
-                            processedFormData.Add("ViewData", viewData);
-                        }
-                        catch (Exception e)
-                        {
-
-                        }
+                        var tmpData = JsonHelper.Parse(data);
+                        viewData = tmpData.GetValue("ViewData");
+                        processedFormData.Add("ViewData", viewData);
                     }
 
                     (eventItem as DoSomething).InputData = processedFormData;

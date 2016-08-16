@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using WebsiteTemplate.CustomMenuItems;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 
@@ -24,7 +25,7 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
         }
 
-        private JObject RowData { get; set; }
+        private JsonHelper RowData { get; set; }
 
         private int RowId { get; set; } = -1; //TODO: This should go on the base class or core code. not on every implementation of a GetInput used for InputView's input
 
@@ -34,8 +35,8 @@ namespace WebsiteTemplate.Backend.UserRoles
             {
                 var result = new List<InputField>()
                 {
-                    new StringInput("name", "name", RowData?.GetValue("name")?.ToString(), "", true),
-                    new StringInput("age", "age", RowData?.GetValue("age")?.ToString(), ""),
+                    new StringInput("name", "name", RowData.GetValue("name"), "", true),
+                    new StringInput("age", "age", RowData.GetValue("age"), ""),
                     new HiddenInput("rowId", RowId)
                 };
                 return result;
@@ -51,7 +52,7 @@ namespace WebsiteTemplate.Backend.UserRoles
         {
             if (!String.IsNullOrWhiteSpace(data))
             {
-                var json = JObject.Parse(data);
+                var json = JsonHelper.Parse(data);
                 //var id = json.GetValue("Id").ToString();
                 var rowData = data;
                 if (json.GetValue("rowData") != null)
@@ -59,8 +60,8 @@ namespace WebsiteTemplate.Backend.UserRoles
                     rowData = json.GetValue("rowData")?.ToString();
                 }
                 
-                RowData = JObject.Parse(rowData);
-                RowId = Convert.ToInt32(RowData.GetValue("rowId")?.ToString());
+                RowData = JsonHelper.Parse(rowData);
+                RowId = RowData.GetValue<int>("rowId");
             }
             else
             {

@@ -13,12 +13,26 @@ namespace WebsiteTemplate.CustomMenuItems
 
         public JsonHelper()
         {
-
+            Data = new JObject();
         }
 
         private JsonHelper(JObject data)
         {
             Data = data;
+        }
+
+        public override string ToString()
+        {
+            if (Data.ToString() == "{}")
+            {
+                return String.Empty;
+            }
+            return Data.ToString();
+        }
+
+        public void Add(string propertyName, JToken value)
+        {
+            Data.Add(propertyName, value);
         }
 
         public string GetValue(string propertyName)
@@ -99,6 +113,10 @@ namespace WebsiteTemplate.CustomMenuItems
                 {
                     value = item as JObject;
                 }
+                else if (typeof(T) == typeof(JsonHelper))
+                {
+                    value = Parse(item.ToString());
+                }
                 else
                 {
                     value = item;
@@ -116,13 +134,25 @@ namespace WebsiteTemplate.CustomMenuItems
             JObject data;
             if (!String.IsNullOrWhiteSpace(json))
             {
-                data = JObject.Parse(json);
+                try
+                {
+                    data = JObject.Parse(json);
+                }
+                catch (Exception e)
+                {
+                    data = new JObject();
+                }
             }
             else
             {
                 data = new JObject();
             }
             return new JsonHelper(data);
+        }
+
+        public static JsonHelper FromObject(object item)
+        {
+            return new JsonHelper(JObject.FromObject(item));
         }
 
         public static T DeserializeObject<T>(string value)

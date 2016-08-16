@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
+using WebsiteTemplate.CustomMenuItems;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
@@ -26,8 +27,8 @@ namespace WebsiteTemplate.Backend.Users
 
         public override WebsiteTemplate.Menus.InputItems.FileInfo GetFileInfo(string data)
         {
-            var json = Newtonsoft.Json.Linq.JObject.Parse(data);
-            var id = json.GetValue("Id").ToString(); 
+            var json = JsonHelper.Parse(data);
+            var id = json.GetValue("Id"); 
             var result = new WebsiteTemplate.Menus.InputItems.FileInfo();
             //result.Data = File.ReadAllBytes(@"D:\Quintonn\Documents\Unisa Degree.pdf");
             result.Data = File.ReadAllBytes(@"D:\Quintonn\Documents\quintonn-rothmann-cv-1st-revision.docx");

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using WebsiteTemplate.Controllers;
+using WebsiteTemplate.CustomMenuItems;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
@@ -84,8 +85,9 @@ namespace WebsiteTemplate.Backend.UserRoles
 
         public override Task<InitializeResult> Initialize(string data)
         {
-            var json = JObject.Parse(data);
-            var id = json.GetValue("Id").ToString();
+            //var json = JObject.Parse(data);
+            var json = JsonHelper.Parse(data);
+            var id = json.GetValue("Id");
             
             using (var session = Store.OpenSession())
             {

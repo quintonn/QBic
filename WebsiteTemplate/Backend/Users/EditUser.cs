@@ -10,7 +10,7 @@ using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.SiteSpecific;
 using System.Linq;
-
+using WebsiteTemplate.CustomMenuItems;
 
 namespace WebsiteTemplate.Backend.Users
 {
@@ -18,8 +18,8 @@ namespace WebsiteTemplate.Backend.Users
     {
         public override System.Threading.Tasks.Task<InitializeResult> Initialize(string data)
         {
-            var json = JObject.Parse(data);
-            var id = json.GetValue("Id").ToString();
+            var json = JsonHelper.Parse(data);
+            var id = json.GetValue("Id");
             var results = new List<Event>();
             using (var session = Store.OpenSession())
             {

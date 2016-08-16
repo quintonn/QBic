@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using WebsiteTemplate.Controllers;
+using WebsiteTemplate.CustomMenuItems;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
@@ -43,7 +44,7 @@ namespace WebsiteTemplate.Backend.Menus
                 results.Add(new MenuItem("Back", EventNumber.ViewMenus, parentId));
             }
 
-            var jsonObject = new JObject();
+            var jsonObject = new JsonHelper();
             jsonObject.Add("IsNew", true);
             jsonObject.Add("ParentId", menuId);
             var json = jsonObject.ToString();
@@ -156,22 +157,31 @@ namespace WebsiteTemplate.Backend.Menus
         {
             try
             {
-                var json = JObject.Parse(data);
+                var json = JsonHelper.Parse(data);
                 var id = json.GetValue("Id");                                  // If 'sub-menus' column link is clicked
                 var dataItem = json.GetValue("data");                          // If 'back' menu-button button is clicked
-                var eventParams = json.GetValue("eventParameters") as JObject; // This is when 'search' is clicked on the filter
+                var eventParams = json.GetValue<JsonHelper>("eventParameters"); // This is when 'search' is clicked on the filter
 
-                if (id != null)
+                if (String.IsNullOrWhiteSpace(json.ToString()))
                 {
-                    MenuId = id.ToString();
+                    MenuId = data;
                 }
-                else if (dataItem != null)
+                else if (!String.IsNullOrWhiteSpace(id))
                 {
-                    MenuId = dataItem.ToString();
+                    MenuId = id;
                 }
-                else if (eventParams != null)
+                else if (String.IsNullOrWhiteSpace(dataItem))
                 {
-                    MenuId = eventParams.GetValue("MenuId")?.ToString();
+                    MenuId = "";// dataItem;
+                }
+                else if (!String.IsNullOrWhiteSpace(dataItem))
+                {
+                    MenuId = dataItem;
+                }
+                else
+                {
+                    throw new Exception("Unhandled situation. Not sure what to assign MenuId");
+                    MenuId = String.Empty;
                 }
             }
             catch (Exception e)

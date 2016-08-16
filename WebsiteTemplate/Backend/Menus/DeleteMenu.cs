@@ -90,11 +90,11 @@ namespace WebsiteTemplate.Backend.Menus
                 Console.WriteLine(menu == null);
             }
 
-                return new List<Event>()
+            return new List<Event>()
             {
-                new ShowMessage("Menu deleted successfully"),
                 new CancelInputDialog(),
-                new ExecuteAction(EventNumber.ViewMenus, parentId)
+                new ExecuteAction(EventNumber.ViewMenus, parentId),
+                new ShowMessage("Menu deleted successfully"),
             };
         }
     }
