@@ -105,6 +105,8 @@
             {
                 lastPage += 1;
             }
+
+            lastPage = Math.max(1, lastPage); // When user selects all it should not show 'page 1 of -1'
             return lastPage
         }, self);
         self.currentPage = ko.observable(self.settings.CurrentPage);
@@ -321,7 +323,7 @@
             {
                 return column.visible() == true;
             });
-            return cols.length;
+            return cols.length + 1;
         }, self);
 
         self.addData = function (data)

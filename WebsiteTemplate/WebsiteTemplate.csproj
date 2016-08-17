@@ -233,7 +233,9 @@
     <Content Include="Frontend\Scripts\siteMenu.js" />
     <Content Include="Frontend\Scripts\views.js" />
     <None Include="Frontend\Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Backend\TestItem\SuperCause.cs" />
