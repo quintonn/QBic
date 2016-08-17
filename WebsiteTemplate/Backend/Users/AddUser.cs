@@ -12,6 +12,7 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using NHibernate.Criterion;
 using WebsiteTemplate.Menus.PropertyChangedEvents;
+using WebsiteTemplate.CustomMenuItems;
 
 namespace WebsiteTemplate.Backend.Users
 {
@@ -63,6 +64,8 @@ namespace WebsiteTemplate.Backend.Users
                 //{
                 //    RaisePropertyChangedEvent = true
                 //});
+
+                //list.Add(new FileInput("File", "File"));
 
                 using (var session = Store.OpenSession())
                 {

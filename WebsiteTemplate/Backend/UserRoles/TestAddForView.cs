@@ -53,7 +53,6 @@ namespace WebsiteTemplate.Backend.UserRoles
             if (!String.IsNullOrWhiteSpace(data))
             {
                 var json = JsonHelper.Parse(data);
-                //var id = json.GetValue("Id").ToString();
                 var rowData = data;
                 if (json.GetValue("rowData") != null)
                 {

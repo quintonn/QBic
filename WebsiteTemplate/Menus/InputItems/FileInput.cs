@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Newtonsoft.Json.Linq;
+using WebsiteTemplate.CustomMenuItems;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
@@ -26,8 +27,7 @@ namespace WebsiteTemplate.Menus.InputItems
             {
                 return null;
             }
-            
-            var result = new FileInfo(jsonToken);
+            var result = new FileInfo(JsonHelper.FromObject(jsonToken));
             return result;
         }
     }

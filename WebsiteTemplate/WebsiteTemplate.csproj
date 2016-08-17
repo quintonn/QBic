@@ -256,6 +256,7 @@
     <Compile Include="Controllers\RoleAuthorization.cs" />
     <Compile Include="Controllers\RoleBlockedAttribute.cs" />
     <Compile Include="Controllers\AcmeController.cs" />
+    <Compile Include="CustomMenuItems\JsonArray.cs" />
     <Compile Include="CustomMenuItems\JsonHelper.cs" />
     <Compile Include="CustomMenuItems\XXXUtils.cs" />
     <Compile Include="Data\DataStore.cs" />

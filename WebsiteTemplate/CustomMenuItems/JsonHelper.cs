@@ -117,6 +117,12 @@ namespace WebsiteTemplate.CustomMenuItems
                 {
                     value = Parse(item.ToString());
                 }
+                else if (typeof(T) == typeof(JsonArray))
+                {
+                    //var arr = item as JArray;
+                    //value = new JsonArray(arr.Select(a => FromObject(a)).ToList());
+                    value = JsonArray.FromObject(item);
+                }
                 else
                 {
                     value = item;
@@ -127,6 +133,18 @@ namespace WebsiteTemplate.CustomMenuItems
                 return defaultValue;
             }
             return (T)value;
+        }
+
+        public object this[string key]
+        {
+            get
+            {
+                return Data[key];
+            }
+            set
+            {
+                Data[key] = JToken.FromObject(value);
+            }
         }
 
         public static JsonHelper Parse(string json)
@@ -158,6 +176,11 @@ namespace WebsiteTemplate.CustomMenuItems
         public static T DeserializeObject<T>(string value)
         {
             return JsonConvert.DeserializeObject<T>(value);
+        }
+
+        public static string SerializeObject(object value)
+        {
+            return JsonConvert.SerializeObject(value);
         }
     }
 }

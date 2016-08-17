@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using WebsiteTemplate.CustomMenuItems;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
@@ -29,19 +30,18 @@ namespace WebsiteTemplate.Menus.InputItems
 
         }
 
-        public FileInfo(JToken jtoken)
+        public FileInfo(JsonHelper json)
         {
-            var json = jtoken as JObject;
-            if (json == null)
+            if (json == null || String.IsNullOrWhiteSpace(json.ToString()))
             {
                 return;
             }
-            var data = json.GetValue("Data").ToString();
+            var data = json.GetValue("Data");
             Data = Convert.FromBase64String(data);
-            FileName = json.GetValue("FileName").ToString();
-            MimeType = json.GetValue("MimeType").ToString();
+            FileName = json.GetValue("FileName");
+            MimeType = json.GetValue("MimeType");
             var index = FileName.IndexOf(".");
-            FileExtension = json.GetValue("FileExtension")?.ToString();
+            FileExtension = json.GetValue("FileExtension");
             
             if (index > -1)
             {
