@@ -482,7 +482,7 @@ namespace WebsiteTemplate.Controllers
         [Route("GetFile/{*eventId}")]
         [RequireHttps]
         [Authorize]
-        [DeflateCompression]
+        //[DeflateCompression] // Converts data to json which doesn't work for files
         public async Task<IHttpActionResult> GetFile(int eventId)
         {
             var data = await Request.Content.ReadAsStringAsync();

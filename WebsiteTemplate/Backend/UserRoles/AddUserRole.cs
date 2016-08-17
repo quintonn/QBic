@@ -136,7 +136,7 @@ namespace WebsiteTemplate.Backend.UserRoles
 
                 //var file = GetValue<WebsiteTemplate.Menus.InputItems.FileInfo>("File");
 
-                if (String.IsNullOrWhiteSpace(name) || true)
+                if (String.IsNullOrWhiteSpace(name))
                 {
                     return new List<Event>()
                     {
