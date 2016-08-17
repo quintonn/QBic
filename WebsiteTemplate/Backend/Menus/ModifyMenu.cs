@@ -42,7 +42,8 @@ namespace WebsiteTemplate.Backend.Menus
                 list.Add(new StringInput("Name", "Menu Name", Menu.Name, null, true));
                 list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", Menu.Event == null && IsNew == false));
 
-                var events = MainController.EventList.Where(m => !String.IsNullOrWhiteSpace(m.Value.Description))
+                var events = MainController.EventList.Where(e => e.Value.ActionType != EventType.InputDataView)
+                                                     .Where(m => !String.IsNullOrWhiteSpace(m.Value.Description))
                                                      .Where(m => m.Value is ShowView) //TODO: Might have to add isEdit as property to GetInput type or change all edit/add to modify only
                                                      .OrderBy(m => m.Value.Description)
                                                      .ToDictionary(m => m.Key.ToString(), m => (object)m.Value.Description);
