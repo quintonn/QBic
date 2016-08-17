@@ -56,6 +56,14 @@ namespace WebsiteTemplate.Backend.Menus
                         }
                     });
 
+                //list.Add(new StringInput("Test", "Test")
+                //{
+                //    VisibilityConditions = new List<Condition>()
+                //    {
+                //        new Condition("Event", Comparison.Equals, "123")
+                //    }
+                //});
+
                 User xxx;
                 using (var session = Store.OpenSession())
                 {

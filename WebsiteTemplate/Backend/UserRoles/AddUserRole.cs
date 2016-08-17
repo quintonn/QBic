@@ -69,7 +69,7 @@ namespace WebsiteTemplate.Backend.UserRoles
                 //list.Add(new FileInput("File", "File", null, "x"));
 
                 //list.Add(new ViewInput("view", "View", new TestView(), "abc", null, false));
-                 Visibility Conditions is not workign properly. Eg. adding insurance person in claims. Insurance company does not become visible
+                 
                 var eventTypesEveryoneCanDo = new List<int>()
                 {
                     (int)EventNumber.CancelInputDialog,

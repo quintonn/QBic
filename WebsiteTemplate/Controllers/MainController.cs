@@ -39,6 +39,8 @@ namespace WebsiteTemplate.Controllers
         private static UnityContainer Container { get; set; }
         private static string ApplicationName { get; set; }
 
+        private static JsonSerializerSettings JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = "dd-MM-yyyy" };
+
         public MainController()
         {
             Store = new DataStore();
@@ -333,7 +335,7 @@ namespace WebsiteTemplate.Controllers
                 ApplicationName = ApplicationName,
                 Version = version
             };
-            return Json(json);
+            return Json(json, JSON_SETTINGS);
         }
 
         [HttpGet]
@@ -350,7 +352,7 @@ namespace WebsiteTemplate.Controllers
                 Role = "Admin",
                 Id = user.Id,
             };
-            return Json(json);
+            return Json(json, JSON_SETTINGS);
         }
 
         [HttpPost]
@@ -373,7 +375,7 @@ namespace WebsiteTemplate.Controllers
 
             var result = await eventItem.OnPropertyChanged(propertyName, propertyValue);
 
-            return Json(result);
+            return Json(result, JSON_SETTINGS);
         }
 
         [HttpPost]
@@ -432,7 +434,7 @@ namespace WebsiteTemplate.Controllers
                 {
                     item.Parameters = callParameters;
                 }
-                return Json(result);
+                return Json(result, JSON_SETTINGS);
             }
             catch (Exception ex)
             {
@@ -621,8 +623,8 @@ namespace WebsiteTemplate.Controllers
                 {
                     return BadRequest("ERROR: Invalid UIActionType: " + eventItem.GetType().ToString().Split(".".ToCharArray()).Last() + " with id " + id);
                 }
-
-                return Json(result);
+                
+                return Json(result, JSON_SETTINGS);
             }
             catch (Exception error)
             {
@@ -670,7 +672,7 @@ namespace WebsiteTemplate.Controllers
                     allowedMenuItems = viewMenu.Where(m => allowedEvents.Contains(m.EventNumber)).ToList();
                 }
 
-                return Json(allowedMenuItems);
+                return Json(allowedMenuItems, JSON_SETTINGS);
             }
             catch (Exception e)
             {
@@ -848,8 +850,8 @@ namespace WebsiteTemplate.Controllers
                 {
                     item.Parameters = parameters;
                 }
-                var jsonSettings = new JsonSerializerSettings { DateFormatString = "dd-MM-yyyy" };
-                return Json(result, jsonSettings);
+
+                return Json(result, JSON_SETTINGS);
             }
             catch (Exception error)
             {
@@ -928,7 +930,7 @@ namespace WebsiteTemplate.Controllers
                         results.Add(m);
                     });
                 }
-                return Json(results);
+                return Json(results, JSON_SETTINGS);
             }
             catch (Exception e)
             {

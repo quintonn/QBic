@@ -74,7 +74,7 @@
 
     function formatDate(dateString)
     {
-        return dateString;
+       return dateString;
     }
 
     function rowModel(data, id)
@@ -246,7 +246,6 @@
                 return Promise.resolve();
             }).then(function ()
             {
-                console.log('views ->self click. done');
                 dialog.closeBusyDialog();
             });
         };
@@ -419,8 +418,8 @@
             }
             catch (err)
             {
-                console.log('error cleaning node:');
-                console.log(err);
+                //console.log('error cleaning node:');
+                //console.log(err);
             }
         };
     }

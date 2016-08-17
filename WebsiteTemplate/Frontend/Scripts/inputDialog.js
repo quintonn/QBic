@@ -24,7 +24,7 @@
         }
         else
         {
-            alert("Unknown comparison " + condition.Comparison);
+            dialog.showMessage("Error", "Unknown comparison: " + condition.Comparison);
             return false;
         }
     };
@@ -63,22 +63,24 @@
                         });
                         return conditionList.length > 0;
                     });
+                    
                     for (var i = 0; i < inputsToHide.length; i++)
                     {
                         var inp = inputsToHide[i];
 
-                        var matchedConditions1 = $.grep(inp.VisibilityConditions, function (condition, indx2)
-                        {
-                            return condition.ColumnName == inModel.setting.InputName;
-                        });
+                        //var matchedConditions1 = $.grep(inp.VisibilityConditions, function (condition, indx2)
+                        //{
+                        //    return condition.ColumnName == inModel.setting.InputName;
+                        //});
                         var matchedConditions2 = $.grep(inp.VisibilityConditions, function (condition, indx2)
                         {
-                            //return condition.ColumnName == inModel.setting.InputName && inputDialog.conditionIsMet(condition, inModel.getInputValue());
                             return condition.ColumnName == inModel.setting.InputName && inputDialog.conditionIsMet(condition, value);
                         });
 
-                        // This might need revision - test with multiple conditions
-                        var showInput = matchedConditions1.length == matchedConditions2.length;
+                        // This might need revision - might need a way to have AND, OR, etc in the conditions.
+                        
+                        //var showInput = matchedConditions1.length == matchedConditions2.length;
+                        var showInput = matchedConditions2.length > 0;
 
                         model.toggleInputVisibility(inp.InputName, showInput);
                     }
@@ -514,14 +516,20 @@
             {
                 case 3: // Combobox
                     //TODO: Don't like this either, using knockout there must be a better way
+                    var valueSet = false;
                     var opt = self.options();
                     for (var i = 0; i < opt.length; i++)
                     {
                         if (opt[i].value == value)
                         {
                             self.inputValue(opt[i]);
+                            valueSet = true;
                             break;
                         }
+                    }
+                    if (valueSet == false)
+                    {
+                        self.inputValue("");
                     }
                     break;
                 case 5: // List selection / list source
