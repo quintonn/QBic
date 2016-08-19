@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.Unity;
+using System;
 using System.Collections.Generic;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.SiteSpecific;
@@ -20,6 +21,7 @@ namespace WebsiteTemplate.Menus
             }
         }
 
+        [InjectionConstructor]
         public ShowMessage()
             : base()
         {

@@ -11,20 +11,13 @@ using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Menus.BasicCrudItems
 {
-    public class BasicCrudView<T> : ShowView where T : BaseClass
+    public class BasicCrudView<T> : ShowView, IBasicCrudView where T : BaseClass
     {
-        private EventNumber Id { get; set; }
+        public EventNumber Id { get; set; }
 
-        private string ItemName { get; set; }
+        public string ItemName { get; set; }
 
-        private Dictionary<string, string> ColumnsToShowInView { get; set; }
-
-        public BasicCrudView(EventNumber id, string itemName, Dictionary<string, string> columnsToShowInView)
-        {
-            Id = id;
-            ItemName = itemName;
-            ColumnsToShowInView = columnsToShowInView;
-        }
+        public Dictionary<string, string> ColumnsToShowInView { get; set; }
 
         public override string Description
         {

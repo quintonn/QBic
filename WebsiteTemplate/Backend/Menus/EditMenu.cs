@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Backend.Menus
@@ -19,6 +20,12 @@ namespace WebsiteTemplate.Backend.Menus
         public override EventNumber GetId()
         {
             return EventNumber.EditMenu;
+        }
+
+        public EditMenu(MenuService service)
+            : base(service)
+        {
+
         }
     }
 }

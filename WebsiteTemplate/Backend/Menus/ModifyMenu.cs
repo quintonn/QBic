@@ -19,8 +19,13 @@ namespace WebsiteTemplate.Backend.Menus
 {
     public abstract class ModifyMenu : GetInput
     {
+        public ModifyMenu(MenuService menuService)
+        {
+            MenuService = menuService;
+        }
         private Menu Menu { get; set; } = new Menu();
         internal abstract bool IsNew { get; }
+        private MenuService MenuService { get; set; }
 
         public override string Description
         {
@@ -61,32 +66,6 @@ namespace WebsiteTemplate.Backend.Menus
                             new Condition("HasSubmenus", Comparison.Equals, "false")
                         }
                     });
-
-                //list.Add(new StringInput("Test", "Test")
-                //{
-                //    VisibilityConditions = new List<Condition>()
-                //    {
-                //        new Condition("Event", Comparison.Equals, "123")
-                //    }
-                //});
-
-                //list.Add(new DataSourceComboBoxInput<User>("User", "User", x => x.Id, x => x.UserName, xxx.Id, null, null, null, true, true)
-                //{
-                    //    MandatoryConditions = new List<Condition>()
-                    //    {
-                    //        new Condition("Name", Comparison.Equals, "test")
-                    //    },
-                    //    VisibilityConditions = new List<Condition>()
-                    //    {
-                    //        new Condition("Name", Comparison.Equals, "test")
-                    //    }
-                //    RaisePropertyChangedEvent = true
-                //});
-
-                //list.Add(new DataSourceComboBoxInput<User>("User2", "User2", x => x.Id, x => x.UserName, xxx.Id, null, null, null, true, true)
-                //{
-                    
-                //});
 
                 list.Add(new HiddenInput("ParentMenuId", ParentMenuId));
                 list.Add(new HiddenInput("Id", Menu?.Id));

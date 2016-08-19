@@ -12,14 +12,14 @@ namespace WebsiteTemplate.Backend.Services
 {
     public class MenuService
     {
-        private static DataStore DataStore { get; set; }
+        private DataStore DataStore { get; set; }
 
-        static MenuService()
+        public MenuService(DataStore store)
         {
-            DataStore = new DataStore();
+            DataStore = store;
         }
 
-        public static Menu RetrieveMenu(string menuId)
+        public Menu RetrieveMenu(string menuId)
         {
             using (var session = DataStore.OpenSession())
             {
@@ -28,7 +28,7 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        public static bool IsParentMenu(string menuId)
+        public bool IsParentMenu(string menuId)
         {
             using (var session = DataStore.OpenSession())
             {
@@ -41,7 +41,7 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        public static void DeleteMenu(string menuId)
+        public void DeleteMenu(string menuId)
         {
             using (var session = DataStore.OpenSession())
             {
@@ -53,7 +53,7 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        private static void DeleteChildMenus(string menuId, ISession session)
+        private void DeleteChildMenus(string menuId, ISession session)
         {
             var childMenuItems = session.CreateCriteria<Menu>()
                                             .CreateAlias("ParentMenu", "parent")
@@ -65,7 +65,7 @@ namespace WebsiteTemplate.Backend.Services
                 session.Delete(childMenu);
             }
         }
-        public static void SaveOrUpdateMenu(string menuId, string parentMenuId, EventNumber eventNumber, string name)
+        public void SaveOrUpdateMenu(string menuId, string parentMenuId, EventNumber eventNumber, string name)
         {
             using (var session = DataStore.OpenSession())
             {

@@ -231,6 +231,10 @@
     <Compile Include="Controllers\RoleAuthorization.cs" />
     <Compile Include="Controllers\RoleBlockedAttribute.cs" />
     <Compile Include="Controllers\AcmeController.cs" />
+    <Compile Include="Menus\BaseItems\IEvent.cs" />
+    <Compile Include="Menus\BasicCrudItems\IBasicCrudDelete.cs" />
+    <Compile Include="Menus\BasicCrudItems\IBasicCrudModify.cs" />
+    <Compile Include="Menus\BasicCrudItems\IBasicCrudView.cs" />
     <Compile Include="Utilities\JsonArray.cs" />
     <Compile Include="Utilities\JsonHelper.cs" />
     <Compile Include="Utilities\XXXUtils.cs" />

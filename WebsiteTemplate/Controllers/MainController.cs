@@ -29,11 +29,11 @@ namespace WebsiteTemplate.Controllers
     [RoutePrefix("api/v1")]
     public class MainController : ApiController
     {
-        public static IDictionary<int, Event> EventList { get; set; }
+        public static IDictionary<int, IEvent> EventList { get; set; }
 
         public static List<string> Log { get; set; }
 
-        private DataStore Store { get; set; }
+        private static DataStore Store { get; set; }
 
         private static IUnityContainer Container { get; set; }
         private static string ApplicationName { get; set; }
@@ -42,43 +42,34 @@ namespace WebsiteTemplate.Controllers
 
         public MainController()
         {
-            Store = new DataStore();
-            PopulateEventList();
-
-            CheckDefaultValues();
+            //CheckDefaultValues();
+            Console.WriteLine("Temp");
         }
 
         static MainController()
         {
-            try
-            {
-                EventList = new Dictionary<int, Event>();
+            Store = new DataStore();
+            EventList = new Dictionary<int, IEvent>();
 
-                Container = new UnityContainer();
-                Container.LoadConfiguration();
+            Container = new UnityContainer();
+            Container.LoadConfiguration();
+            Container.RegisterInstance(Store);
 
-                var appSettings = Container.Resolve<IApplicationSettings>();
-                ApplicationName = appSettings.GetApplicationName();
-                appSettings.RegisterUnityContainers(Container);
+            var appSettings = Container.Resolve<IApplicationSettings>();
+            ApplicationName = appSettings.GetApplicationName();
+            appSettings.RegisterUnityContainers(Container);
 
-                Log = new List<string>();
-                //CheckDefaultValues();
-                //PopulateEventList(); /// If this is here, the menu descriptions get overriden. Need to fix this: TODO
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+            Log = new List<string>();
+            CheckDefaultValues();
+            PopulateEventList();
         }
 
-        private void PopulateEventList()
+        private static void PopulateEventList()
         {
             if (EventList.Count > 0)
             {
-                //return;
-                EventList = new Dictionary<int, Event>();
+                return;
             }
-
             
             var curDir = System.Web.HttpRuntime.AppDomainAppPath;
             var dlls = Directory.GetFiles(curDir, "*.dll", SearchOption.AllDirectories);
@@ -133,42 +124,51 @@ namespace WebsiteTemplate.Controllers
 
                     if (type.GetInterface("IBasicCrudMenuItem") != null)
                     {
-                        var subType = (IBasicCrudMenuItem)Activator.CreateInstance(type);
+                        var subType = (IBasicCrudMenuItem)Container.Resolve(type);
 
                         var d1 = typeof(BasicCrudView<>);
                         Type[] typeArgs1 = { subType.InnerType };
                         var viewType = d1.MakeGenericType(typeArgs1);
 
-                        var viewInstance = (Event)Activator.CreateInstance(viewType, subType.GetBaseMenuId(), subType.GetBaseItemName(), subType.GetColumnsToShowInView());
+                        var viewInstance = (IBasicCrudView)Container.Resolve(viewType);
+                        viewInstance.Id = subType.GetBaseMenuId();
+                        viewInstance.ItemName = subType.GetBaseItemName();
+                        viewInstance.ColumnsToShowInView = subType.GetColumnsToShowInView();
                         viewInstance.Store = Store;
+
                         if (!EventList.ContainsKey(viewInstance.GetId()))
                         {
-                            EventList.Add(viewInstance.GetId(), viewInstance);
+                            EventList.Add(viewInstance.GetId(), viewInstance as Event);
                         }
 
                         var d2 = typeof(BasicCrudModify<>);
                         Type[] typeArgs2 = { subType.InnerType };
                         var modifyType = d2.MakeGenericType(typeArgs2);
-                        var modifyInstance = (Event)Activator.CreateInstance(modifyType, subType.GetBaseMenuId() + 1, subType.GetBaseItemName(), subType.GetInputProperties());
+                        var modifyInstance = (IBasicCrudModify)Container.Resolve(modifyType);
+                        modifyInstance.Id = subType.GetBaseMenuId() + 1;
+                        modifyInstance.ItemName = subType.GetBaseItemName();
+                        modifyInstance.InputProperties = subType.GetInputProperties();
                         modifyInstance.Store = Store;
                         if (!EventList.ContainsKey(modifyInstance.GetId()))
                         {
-                            EventList.Add(modifyInstance.GetId(), modifyInstance);
+                            EventList.Add(modifyInstance.GetId(), modifyInstance as Event);
                         }
 
                         var d3 = typeof(BasicCrudDelete<>);
                         Type[] typeArgs3 = { subType.InnerType };
                         var deleteType = d3.MakeGenericType(typeArgs2);
-                        var deleteInstance = (Event)Activator.CreateInstance(deleteType, subType.GetBaseMenuId() + 2, subType.GetBaseItemName());
+                        var deleteInstance = (IBasicCrudDelete)Container.Resolve(deleteType);
+                        deleteInstance.Id = subType.GetBaseMenuId() + 2;
+                        deleteInstance.ItemName = subType.GetBaseItemName();
                         deleteInstance.Store = Store;
                         if (!EventList.ContainsKey(deleteInstance.GetId()))
                         {
-                            EventList.Add(deleteInstance.GetId(), deleteInstance);
+                            EventList.Add(deleteInstance.GetId(), deleteInstance as Event);
                         }
                     }
                     else if (type != typeof(BasicCrudMenuItem<>))
                     {
-                        var instance = (Event)Activator.CreateInstance(type);
+                        var instance = (IEvent)Container.Resolve(type);
                         instance.Store = Store;
                         if (!EventList.ContainsKey(instance.GetId()))
                         {
@@ -181,12 +181,10 @@ namespace WebsiteTemplate.Controllers
 
         private static void CheckDefaultValues()
         {
-            var store = new DataStore();
-
             try
             {
                 //TODO: This should be in a class somewhere to be overriden for actual implementations
-                using (var session = store.OpenSession())
+                using (var session = Store.OpenSession())
                 {
                     Container.Resolve<IApplicationSettings>().SetupDefaults(session);
 
@@ -322,7 +320,7 @@ namespace WebsiteTemplate.Controllers
             }
         }
 
-        private void HandleProcessActionResult(IList<Event> result, Event eventItem)
+        private void HandleProcessActionResult(IList<Event> result, IEvent eventItem)
         {
             var jsonDataToUpdate = String.Empty;
             foreach (var item in result)
@@ -618,7 +616,7 @@ namespace WebsiteTemplate.Controllers
                     return BadRequest("No action has been found for event number: " + id);
                 }
 
-                var result = new List<Event>();
+                var result = new List<IEvent>();
 
                 var eventItem = EventList[id];
 

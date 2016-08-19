@@ -17,6 +17,7 @@ namespace WebsiteTemplate.Backend.Menus
 {
     public class DeleteMenu : DoSomething
     {
+        private MenuService MenuService { get; set; }
         public override string Description
         {
             get
@@ -28,6 +29,11 @@ namespace WebsiteTemplate.Backend.Menus
         public override EventNumber GetId()
         {
             return EventNumber.DeleteMenu;
+        }
+
+        public DeleteMenu(MenuService service)
+        {
+            MenuService = service;
         }
 
         public override async Task<IList<Event>> ProcessAction()

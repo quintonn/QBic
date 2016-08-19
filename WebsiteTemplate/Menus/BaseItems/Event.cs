@@ -13,7 +13,7 @@ using System.Collections;
 
 namespace WebsiteTemplate.Menus.BaseItems
 {
-    public abstract class Event
+    public abstract class Event : IEvent
     {
         [ScriptIgnore]
         [System.Xml.Serialization.XmlIgnore]

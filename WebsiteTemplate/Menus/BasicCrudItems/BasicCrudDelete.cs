@@ -10,7 +10,7 @@ using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Menus.BasicCrudItems
 {
-    public class BasicCrudDelete<T> : DoSomething where T : BaseClass
+    public class BasicCrudDelete<T> : DoSomething, IBasicCrudDelete where T : BaseClass
     {
         public override string Description
         {
@@ -20,15 +20,9 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             }
         }
 
-        private int Id { get; set; }
+        public int Id { get; set; }
 
-        private string ItemName { get; set; }
-
-        public BasicCrudDelete(int id, string itemName)
-        {
-            Id = id;
-            ItemName = itemName;
-        }
+        public string ItemName { get; set; }
 
         public override EventNumber GetId()
         {

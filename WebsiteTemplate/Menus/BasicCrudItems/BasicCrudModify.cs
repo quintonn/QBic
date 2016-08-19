@@ -11,23 +11,16 @@ using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Menus.BasicCrudItems
 {
-    public class BasicCrudModify<T> : GetInput where T : BaseClass
+    public class BasicCrudModify<T> : GetInput, IBasicCrudModify where T : BaseClass
     {
         private T Item { get; set; } = null;
         private bool IsNew { get; set; } = true;
 
-        private int Id { get; set; }
+        public int Id { get; set; }
 
-        private string ItemName { get; set; }
+        public string ItemName { get; set; }
 
-        private Dictionary<string, string> InputProperties { get; set; }
-
-        public BasicCrudModify(int id, string itemName, Dictionary<string, string> inputProperties)
-        {
-            Id = id;
-            ItemName = itemName;
-            InputProperties = inputProperties;
-        }
+        public Dictionary<string, string> InputProperties { get; set; }
 
         public override string Description
         {
