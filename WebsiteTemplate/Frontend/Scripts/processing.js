@@ -57,7 +57,7 @@
                     case 5:
                         return dialog.getUserConfirmation(item, item.Data, params);
                     case 6: // Execute UI action
-                        dialog.showBusyDialog();
+                        dialog.showBusyDialog("Processing...");
                         return mainApp.executeUIAction(item.EventNumber, item.ParametersToPass).then(dialog.closeBusyDialog);
                         //case 7:  Input Data View
                     case 8: // Update input view (view in input screen)
@@ -130,7 +130,7 @@
 
     processing.showOrDownloadFile = function (item)
     {
-        dialog.showBusyDialog();
+        dialog.showBusyDialog("Downloading file...");
         var url = mainApp.apiURL + item.DataUrl;
         url = url.replace("//", "/");
         mainApp.makeWebCall(url, "POST", item.RequestData, ["content-type", "FileName"]).then(function (resp)
