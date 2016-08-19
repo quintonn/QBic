@@ -1,19 +1,12 @@
 ﻿using BasicAuthentication.Security;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Data;
-using Newtonsoft.Json;
 using BasicAuthentication.Users;
 using System.Threading.Tasks;
-using System.Configuration;
-using System.Net.Configuration;
-using System.Diagnostics;
-using WebsiteTemplate.SiteSpecific.Utilities;
-using System.Net.Mail;
 using System.Net.Http;
 
 namespace WebsiteTemplate.Controllers

@@ -141,7 +141,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CustomMenuItems\Getting Started.txt" />
+    <Content Include="Utilities\Getting Started.txt" />
     <Content Include="Frontend\css\busyIndicator.css" />
     <Content Include="Frontend\css\font-awesome.min.css" />
     <Content Include="Frontend\css\images\ui-icons_444444_256x240.png" />
@@ -210,6 +210,7 @@
   <ItemGroup>
     <Compile Include="Backend\Menus\AddMenu.cs" />
     <Compile Include="Backend\Menus\EditMenu.cs" />
+    <Compile Include="Backend\Services\MenuService.cs" />
     <Compile Include="Backend\TestItem\SuperCause.cs" />
     <Compile Include="Backend\TestItem\SuperMenuItem.cs" />
     <Compile Include="Backend\UserRoles\AddUserRole.cs" />
@@ -230,9 +231,9 @@
     <Compile Include="Controllers\RoleAuthorization.cs" />
     <Compile Include="Controllers\RoleBlockedAttribute.cs" />
     <Compile Include="Controllers\AcmeController.cs" />
-    <Compile Include="CustomMenuItems\JsonArray.cs" />
-    <Compile Include="CustomMenuItems\JsonHelper.cs" />
-    <Compile Include="CustomMenuItems\XXXUtils.cs" />
+    <Compile Include="Utilities\JsonArray.cs" />
+    <Compile Include="Utilities\JsonHelper.cs" />
+    <Compile Include="Utilities\XXXUtils.cs" />
     <Compile Include="Data\DataStore.cs" />
     <Compile Include="Mappings\BaseClassMap.cs" />
     <Compile Include="Mappings\ChildDynamicMap.cs" />
@@ -319,8 +320,7 @@
     <Compile Include="Backend\Users\ViewUsers.cs" />
     <Compile Include="Menus\BaseItems\EventNumber.cs" />
     <Compile Include="SiteSpecific\DefaultsForTest\DefaultApplicationSettings.cs" />
-    <Compile Include="SiteSpecific\Utilities\IApplicationSettings.cs" />
-    <Compile Include="SiteSpecific\Utilities\WebsiteTemplateConstants.cs" />
+    <Compile Include="Utilities\IApplicationSettings.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>

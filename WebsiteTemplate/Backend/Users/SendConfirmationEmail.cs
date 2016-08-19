@@ -9,11 +9,11 @@ using System.Web;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
-using WebsiteTemplate.SiteSpecific.Utilities;
 using System.Net.Mail;
 using System.Net.Http;
-using WebsiteTemplate.SiteSpecific;
-using Newtonsoft.Json.Linq;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.Configuration;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Users
 {
@@ -72,7 +72,11 @@ namespace WebsiteTemplate.Backend.Users
             var myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
 
             var body = "Hi " + userName;
-            body += "\nWelcome to " + WebsiteTemplateConstants.ApplicatoinName;
+
+            var container = new UnityContainer();
+            container.LoadConfiguration();
+            var appSettings = container.Resolve<IApplicationSettings>(); //TODO: This should be passed in via constructor
+            body += "\nWelcome to " + appSettings.GetApplicationName();
 
             body += "\n\nPlease click on the following link to activate and activate your email:\n";
 

@@ -15,7 +15,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.Http;
-using WebsiteTemplate.CustomMenuItems;
+using WebsiteTemplate.Utilities;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
@@ -23,7 +23,6 @@ using WebsiteTemplate.Menus.BasicCrudItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
-using WebsiteTemplate.SiteSpecific.Utilities;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -36,7 +35,7 @@ namespace WebsiteTemplate.Controllers
 
         private DataStore Store { get; set; }
 
-        private static UnityContainer Container { get; set; }
+        private static IUnityContainer Container { get; set; }
         private static string ApplicationName { get; set; }
 
         private static JsonSerializerSettings JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = "dd-MM-yyyy" };
@@ -63,7 +62,6 @@ namespace WebsiteTemplate.Controllers
                 appSettings.RegisterUnityContainers(Container);
 
                 Log = new List<string>();
-
                 //CheckDefaultValues();
                 //PopulateEventList(); /// If this is here, the menu descriptions get overriden. Need to fix this: TODO
             }

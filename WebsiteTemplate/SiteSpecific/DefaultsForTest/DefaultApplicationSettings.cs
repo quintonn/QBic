@@ -10,7 +10,7 @@ using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
-using WebsiteTemplate.SiteSpecific.Utilities;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
 {

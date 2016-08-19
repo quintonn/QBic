@@ -19,6 +19,7 @@ namespace WebsiteTemplate.Models
         public Menu()
         {
             Event = null;
+            ParentMenu = null;
         }
 
         public override string ToString()

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using WebsiteTemplate.Controllers;
-using WebsiteTemplate.CustomMenuItems;
+using WebsiteTemplate.Utilities;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
@@ -13,6 +13,7 @@ using WebsiteTemplate.Menus.PropertyChangedEvents;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.SiteSpecific;
+using WebsiteTemplate.Backend.Services;
 
 namespace WebsiteTemplate.Backend.Menus
 {
@@ -109,10 +110,7 @@ namespace WebsiteTemplate.Backend.Menus
             else
             {
                 var id = jobject.GetValue("Id");
-                using (var session = Store.OpenSession())
-                {
-                    Menu = session.Get<Menu>(id);
-                }
+                Menu = MenuService.RetrieveMenu(id);
                 ParentMenuId = Menu?.ParentMenu?.Id;
             }
             
@@ -135,7 +133,8 @@ namespace WebsiteTemplate.Backend.Menus
             {
                 var name = GetValue("Name");
                 var hasSubMenus = GetValue<bool>("HasSubmenus");
-                var eventValue = GetValue<string>("Event");
+                int? eventValue = null;
+                var parentMenuId = GetValue<string>("ParentMenuId");
                 var menuId = GetValue("Id");
                 
                 if (String.IsNullOrWhiteSpace(name))
@@ -146,47 +145,20 @@ namespace WebsiteTemplate.Backend.Menus
                     };
                 }
 
-                int? eventNumber = null;
                 if (hasSubMenus == false)
                 {
-                    if (String.IsNullOrWhiteSpace(eventValue))
+                    eventValue = GetValue<int?>("Event");
+                    if (eventValue == null)
                     {
                         return new List<Event>()
                         {
                             new ShowMessage("Menu action is mandatory when 'Has Sub Menus' is unchecked.")
                         };
                     }
-
-                    eventNumber = Convert.ToInt32(eventValue);
                 }
 
-                Menu parentMenu = null;
-                using (var session = Store.OpenSession())
-                {
-                    Menu menu;
-                    if (!IsNew)
-                    {
-                        menu = session.Get<Menu>(menuId);
-                        ParentMenuId = menu.ParentMenu?.Id;
-                    }
-                    else
-                    {
-                        menu = new Menu();
-                    }
-
-                    if (!String.IsNullOrWhiteSpace(ParentMenuId))
-                    {
-                        parentMenu = session.Get<Menu>(ParentMenuId);
-                    }
-
-                    menu.Event = eventNumber;
-                    menu.Name = name;
-                    menu.ParentMenu = parentMenu;
-
-                    session.Save(menu);
-                    session.Flush();
-                }
-
+                MenuService.SaveOrUpdateMenu(menuId, parentMenuId, eventValue, name);
+                
                 return new List<Event>()
                 {
                     new CancelInputDialog(),

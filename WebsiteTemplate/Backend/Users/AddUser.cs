@@ -12,7 +12,7 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using NHibernate.Criterion;
 using WebsiteTemplate.Menus.PropertyChangedEvents;
-using WebsiteTemplate.CustomMenuItems;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Users
 {

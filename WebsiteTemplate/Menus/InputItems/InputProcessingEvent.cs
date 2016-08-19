@@ -41,7 +41,7 @@ namespace WebsiteTemplate.Menus.InputItems
                         value = new DateTime(1900, 01, 01); ///TODO: What do i do with default dates etc.
                     }
                 }
-                else if (typeof(T) == typeof(int))
+                else if (typeof(T) == typeof(int) || typeof(T) == typeof(int?))
                 {
                     var tempValue = InputData[propertyName];
                     int intValue;
@@ -51,7 +51,7 @@ namespace WebsiteTemplate.Menus.InputItems
                     }
                     else
                     {
-                        value = 0;
+                        value = defaultValue;
                     }
                 }
                 else if (typeof(T) == typeof(decimal))

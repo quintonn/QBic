@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
@@ -29,19 +30,6 @@ namespace WebsiteTemplate.Backend.Menus
             return EventNumber.DeleteMenu;
         }
 
-        public void DeleteChildMenus(string menuId, ISession session)
-        {
-            var childMenuItems = session.CreateCriteria<Menu>()
-                                            .CreateAlias("ParentMenu", "parent")
-                                            .Add(Restrictions.Eq("parent.Id", menuId))
-                                            .List<Menu>();
-            foreach (var childMenu in childMenuItems)
-            {
-                DeleteChildMenus(childMenu.Id, session);
-                session.Delete(childMenu);
-            }
-        }
-
         public override async Task<IList<Event>> ProcessAction()
         {
             var id = GetValue<string>("Id");
@@ -50,21 +38,16 @@ namespace WebsiteTemplate.Backend.Menus
 
             var parentId = String.Empty;
 
-            using (var session = Store.OpenSession())
+            var menu = MenuService.RetrieveMenu(id);
+            parentId = menu.ParentMenu == null ? String.Empty : menu.ParentMenu.Id;
+
+            var isParentMenu = MenuService.IsParentMenu(id);
+            if (isParentMenu && !confirmed)
             {
-                var menu = session.Get<Menu>(id);
-                parentId = menu.ParentMenu == null ? String.Empty : menu.ParentMenu.Id;
+                var tmpData = new Dictionary<string, object>(InputData);
+                tmpData.Add("Confirmation", true);
 
-                var childMenuItems = session.CreateCriteria<Menu>()
-                                            .CreateAlias("ParentMenu", "parent")
-                                            .Add(Restrictions.Eq("parent.Id", menu.Id))
-                                            .List<Menu>();
-                if (childMenuItems.Count > 0 && !confirmed)
-                {
-                    var tmpData = new Dictionary<string, object>(InputData);
-                    tmpData.Add("Confirmation", true);
-
-                    return new List<Event>()
+                return new List<Event>()
                     {
                         new UserConfirmation("Menu has sub-menus.\nThey will be deleted as well?")
                         {
@@ -74,21 +57,9 @@ namespace WebsiteTemplate.Backend.Menus
                             Data = tmpData
                         }
                     };
-                }
-                else
-                {
-                    DeleteChildMenus(menu.Id, session);
-                }
-
-                session.Delete(menu);
-                session.Flush();
             }
 
-            using (var session = Store.OpenSession())
-            {
-                var menu = session.Get<Menu>(id);
-                Console.WriteLine(menu == null);
-            }
+            MenuService.DeleteMenu(menu.Id);
 
             return new List<Event>()
             {
