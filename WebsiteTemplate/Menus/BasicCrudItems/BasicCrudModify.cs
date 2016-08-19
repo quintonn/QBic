@@ -1,18 +1,23 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
-using WebsiteTemplate.Utilities;
+using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.BasicCrudItems
 {
     public class BasicCrudModify<T> : GetInput, IBasicCrudModify where T : BaseClass
     {
+        private DataStore Store { get; set; }
+
+        public BasicCrudModify(DataStore store)
+        {
+            Store = store;
+        }
+
         private T Item { get; set; } = null;
         private bool IsNew { get; set; } = true;
 

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
     public abstract class InputProcessingEvent : Event
     {
+        internal DataStore Store { get; set; }
+
         public Dictionary<string, object> InputData { get; set; } = new Dictionary<string, object>();
 
         /// <summary>

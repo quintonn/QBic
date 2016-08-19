@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Web;
-using WebsiteTemplate.Data;
+﻿using System.Collections.Generic;
 
 namespace WebsiteTemplate.Menus.BaseItems
 {
     public interface IEvent
     {
-        DataStore Store { get; set; }
-        HttpRequestMessage Request { get; set; }
         EventNumber GetId();
         string GetEventId();
         Dictionary<string, object> GetEventParameters();

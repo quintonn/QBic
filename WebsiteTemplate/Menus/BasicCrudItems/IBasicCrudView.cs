@@ -12,6 +12,5 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
         EventNumber Id { get; set; }
         string ItemName { get; set; }
         Dictionary<string, string> ColumnsToShowInView { get; set; }
-        DataStore Store { get; set; }
     }
 }

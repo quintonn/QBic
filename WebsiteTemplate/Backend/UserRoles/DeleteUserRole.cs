@@ -32,19 +32,16 @@ namespace WebsiteTemplate.Backend.UserRoles
         {
             var id = GetValue<string>("Id");
 
-            using (var session = Store.OpenSession())
+            var isAssigned = UserRoleService.UserRoleIsAssigned(id);
+            if (isAssigned)
             {
-                var isAssigned = UserRoleService.UserRoleIsAssigned(id);
-                if (isAssigned)
+                return new List<Event>()
                 {
-                    return new List<Event>()
-                    {
-                        new ShowMessage("Cannot delete user role, it is assigned to users.")
-                    };
-                }
-
-                UserRoleService.DeleteUserRole(id);
+                    new ShowMessage("Cannot delete user role, it is assigned to users.")
+                };
             }
+
+            UserRoleService.DeleteUserRole(id);
 
             return new List<Event>()
             {

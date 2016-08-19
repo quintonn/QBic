@@ -1,13 +1,13 @@
-﻿using BasicAuthentication.Security;
+﻿using BasicAuthentication.Authentication;
+using BasicAuthentication.Security;
+using BasicAuthentication.Startup;
 using Microsoft.Owin;
 using Owin;
 using System;
 using System.Linq;
-using BasicAuthentication.Authentication;
-using System.Web.Http;
 using System.Net.Http.Formatting;
+using System.Web.Http;
 using WebsiteTemplate.Data;
-using BasicAuthentication.Startup;
 
 namespace WebsiteTemplate
 {

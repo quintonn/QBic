@@ -1,13 +1,13 @@
 ﻿using BasicAuthentication.Security;
+using BasicAuthentication.Users;
 using System;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using WebsiteTemplate.Models;
 using WebsiteTemplate.Data;
-using BasicAuthentication.Users;
-using System.Threading.Tasks;
-using System.Net.Http;
+using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Controllers
 {

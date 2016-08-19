@@ -1,18 +1,24 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using WebsiteTemplate.Utilities;
+using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.BasicCrudItems
 {
     public class BasicCrudView<T> : ShowView, IBasicCrudView where T : BaseClass
     {
+        private DataStore Store { get; set; }
+
+        public BasicCrudView(DataStore store)
+        {
+            Store = store;
+        }
+
         public EventNumber Id { get; set; }
 
         public string ItemName { get; set; }

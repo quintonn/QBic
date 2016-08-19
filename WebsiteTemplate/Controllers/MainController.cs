@@ -1,6 +1,5 @@
 ﻿using BasicAuthentication.ControllerHelpers;
 using BasicAuthentication.Security;
-using BasicAuthentication.Users;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
 using Newtonsoft.Json;
@@ -15,7 +14,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.Http;
-using WebsiteTemplate.Utilities;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
@@ -23,6 +21,7 @@ using WebsiteTemplate.Menus.BasicCrudItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -134,7 +133,6 @@ namespace WebsiteTemplate.Controllers
                         viewInstance.Id = subType.GetBaseMenuId();
                         viewInstance.ItemName = subType.GetBaseItemName();
                         viewInstance.ColumnsToShowInView = subType.GetColumnsToShowInView();
-                        viewInstance.Store = Store;
 
                         if (!EventList.ContainsKey(viewInstance.GetId()))
                         {
@@ -148,7 +146,6 @@ namespace WebsiteTemplate.Controllers
                         modifyInstance.Id = subType.GetBaseMenuId() + 1;
                         modifyInstance.ItemName = subType.GetBaseItemName();
                         modifyInstance.InputProperties = subType.GetInputProperties();
-                        modifyInstance.Store = Store;
                         if (!EventList.ContainsKey(modifyInstance.GetId()))
                         {
                             EventList.Add(modifyInstance.GetId(), modifyInstance as Event);
@@ -160,7 +157,6 @@ namespace WebsiteTemplate.Controllers
                         var deleteInstance = (IBasicCrudDelete)Container.Resolve(deleteType);
                         deleteInstance.Id = subType.GetBaseMenuId() + 2;
                         deleteInstance.ItemName = subType.GetBaseItemName();
-                        deleteInstance.Store = Store;
                         if (!EventList.ContainsKey(deleteInstance.GetId()))
                         {
                             EventList.Add(deleteInstance.GetId(), deleteInstance as Event);
@@ -169,7 +165,6 @@ namespace WebsiteTemplate.Controllers
                     else if (type != typeof(BasicCrudMenuItem<>))
                     {
                         var instance = (IEvent)Container.Resolve(type);
-                        instance.Store = Store;
                         if (!EventList.ContainsKey(instance.GetId()))
                         {
                             EventList.Add(instance.GetId(), instance);
@@ -289,7 +284,6 @@ namespace WebsiteTemplate.Controllers
                 var jsonData = JsonHelper.Parse(formData);
                 callParameters = jsonData.GetValue("parameters");
 
-                eventItem.Request = Request;
                 IList<Event> result;
 
                 var processedFormData = new Dictionary<string, object>();
@@ -303,6 +297,7 @@ namespace WebsiteTemplate.Controllers
                 using (var session = Store.OpenSession())
                 {
                     eventItem.InputData = processedFormData;
+                    eventItem.Store = Store;
                     result = await eventItem.ProcessAction(actionId);
                    
                     HandleProcessActionResult(result, eventItem);
@@ -428,8 +423,6 @@ namespace WebsiteTemplate.Controllers
                 Event result;
 
                 var eventItem = EventList[id];
-
-                eventItem.Request = Request;
 
                 if (eventItem is ShowView)
                 {
@@ -620,8 +613,6 @@ namespace WebsiteTemplate.Controllers
 
                 var eventItem = EventList[id];
 
-                eventItem.Request = Request;
-
                 if (eventItem is ShowView)
                 {
                     var action = eventItem as ShowView;
@@ -682,6 +673,7 @@ namespace WebsiteTemplate.Controllers
                     }
 
                     (eventItem as DoSomething).InputData = processedFormData;
+                    (eventItem as DoSomething).Store = Store;
                     var doResult = await (eventItem as DoSomething).ProcessAction();
                     HandleProcessActionResult(doResult, eventItem);
                     result.AddRange(doResult);

@@ -11,7 +11,6 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
     {
         int Id { get; set; }
         string ItemName { get; set; }
-        DataStore Store { get; set; }
         Dictionary<string, string> InputProperties { get; set; }
     }
 }

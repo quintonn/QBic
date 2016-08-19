@@ -1,99 +1,68 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NHibernate.Criterion;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
-using WebsiteTemplate.SiteSpecific;
-using System.Linq;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Users
 {
     public class EditUser : GetInput
     {
+        private UserService UserService { get; set; }
+
+        public EditUser(UserService service)
+        {
+            UserService = service;
+        }
+
         public override System.Threading.Tasks.Task<InitializeResult> Initialize(string data)
         {
             var json = JsonHelper.Parse(data);
             var id = json.GetValue("Id");
             var results = new List<Event>();
-            using (var session = Store.OpenSession())
-            {
-                User = session.Get<User>(id);
-
-                session.Flush();
-            }
+            User = UserService.RetrieveUser(id);
             return Task.FromResult<InitializeResult>(new InitializeResult(true));
         }
 
         public override async System.Threading.Tasks.Task<IList<Event>> ProcessAction(int actionNumber)
         {
-            if (actionNumber == 0)
+            if (actionNumber == 1)
             {
+                var id = GetValue<string>("Id");
+                var userName = GetValue<string>("UserName");
+                var email = GetValue<string>("Email");
                 var userRoles = GetValue<List<string>>("UserRoles");
 
-                using (var session = Store.OpenSession())
+                if (String.IsNullOrWhiteSpace(email))
                 {
-                    var id = GetValue<string>("Id");
-                    var userName = GetValue<string>("UserName");
-                    var email = GetValue<string>("Email");
-
-                    if (String.IsNullOrWhiteSpace(email))
-                    {
-                        return new List<Event>()
+                    return new List<Event>()
                         {
                             new ShowMessage("Unable to modify user. Email is mandatory.")
                         };
-                    }
-
-                    var existingUser = session.CreateCriteria<User>()
-                                              .Add(Restrictions.Eq("UserName", userName))
-                                              .Add(Restrictions.Not(Restrictions.Eq("Id", id)))
-                                              .UniqueResult<User>();
-                    
-                    if (existingUser != null)
+                }
+                if (String.IsNullOrWhiteSpace(userName))
+                {
+                    return new List<Event>()
                     {
-                        return new List<Event>()
+                        new ShowMessage("User name is mandatory.")
+                    };
+                }
+
+                var existingUser = UserService.FindUserByUserName(userName);
+                if (existingUser != null && existingUser.Id != id)
+                {
+                    return new List<Event>()
                         {
                             new ShowMessage("Unable to modify user. User with name {0} already exists.", userName)
                         };
-                    }
-
-                    var dbUser = session.Get<User>(id);
-                    dbUser.UserName = userName;
-
-                    dbUser.EmailConfirmed = dbUser.Email == email;
-                    dbUser.Email = email;
-                    session.Update(dbUser);
-
-                    var existingUserRoles = session.CreateCriteria<UserRoleAssociation>()
-                                                   .CreateAlias("User", "user")
-                                                   .Add(Restrictions.Eq("user.Id", dbUser.Id))
-                                                   .List<UserRoleAssociation>()
-                                                   .ToList();
-                    existingUserRoles.ForEach(u =>
-                    {
-                        session.Delete(u);
-                    });
-
-                    foreach (var role in userRoles)
-                    {
-                        var dbUserRole = session.Get<UserRole>(role.ToString());
-
-                        var roleAssociation = new UserRoleAssociation()
-                        {
-                            User = dbUser,
-                            UserRole = dbUserRole
-                        };
-                        session.Save(roleAssociation);
-                    }
-
-                    session.Flush();
                 }
+
+                UserService.UpdateUser(id, userName, email, userRoles);
 
                 return new List<Event>()
                 {
@@ -134,30 +103,22 @@ namespace WebsiteTemplate.Backend.Users
                 results.Add(new StringInput("Email", "Email", User?.Email));
                 results.Add(new HiddenInput("Id", User?.Id));
 
-                using (var session = Store.OpenSession())
-                {
-                    var items = session.CreateCriteria<UserRole>()
-                                       .List<UserRole>()
+                var items = UserService.GetUserRoles()
                                        .OrderBy(u => u.Description)
                                        .ToDictionary(u => u.Id, u => (object)u.Description);
-
-                    var existingItems = session.CreateCriteria<UserRoleAssociation>()
-                                               .CreateAlias("User", "user")
-                                               .Add(Restrictions.Eq("user.Id", User?.Id))
-                                               .List<UserRoleAssociation>()
+                var existingItems = UserService.RetrieveUserRoleAssocationsForUserId(User.Id)
                                                .OrderBy(u => u.UserRole.Description)
                                                .Select(u => u.UserRole.Id)
                                                .ToList();
 
-                    var listSelection = new ListSelectionInput("UserRoles", "User Roles", existingItems)
-                    {
-                        AvailableItemsLabel = "List of User Roles:",
-                        SelectedItemsLabel = "Chosen User Roles:",
-                        ListSource = items
-                    };
+                var listSelection = new ListSelectionInput("UserRoles", "User Roles", existingItems)
+                {
+                    AvailableItemsLabel = "List of User Roles:",
+                    SelectedItemsLabel = "Chosen User Roles:",
+                    ListSource = items
+                };
 
-                    results.Add(listSelection);
-                }
+                results.Add(listSelection);
 
                 return results;
             }
@@ -169,8 +130,8 @@ namespace WebsiteTemplate.Backend.Users
             {
                 return new List<InputButton>()
                 {
-                    new InputButton("Submit", 0),
-                    new InputButton("Cancel", 1, false)
+                    new InputButton("Cancel", 0, false),
+                    new InputButton("Submit", 1),
                 };
             }
         }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using WebsiteTemplate.Menus.BaseItems;
-using WebsiteTemplate.SiteSpecific;
+﻿using System.Collections.Generic;
 
 namespace WebsiteTemplate.Models
 {

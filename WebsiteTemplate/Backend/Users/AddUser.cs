@@ -1,23 +1,23 @@
-﻿using BasicAuthentication.Users;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
-using WebsiteTemplate.Models;
-using WebsiteTemplate.SiteSpecific;
-using System.Linq;
-using Newtonsoft.Json.Linq;
-using NHibernate.Criterion;
-using WebsiteTemplate.Menus.PropertyChangedEvents;
-using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Users
 {
     public class AddUser : GetInput
     {
+        private UserService UserService { get; set; }
+
+        public AddUser(UserService service)
+        {
+            UserService = service;
+        }
+
         public override EventNumber GetId()
         {
             return EventNumber.AddUser;
@@ -49,10 +49,7 @@ namespace WebsiteTemplate.Backend.Users
             {
                 var list = new List<InputField>();
 
-                list.Add(new StringInput("UserName", "User Name", mandatory: true)
-                {
-                    //RaisePropertyChangedEvent = true
-                });
+                list.Add(new StringInput("UserName", "User Name", mandatory: true));
                 list.Add(new StringInput("Email", "Email"));
                 list.Add(new PasswordInput("Password", "Password"));
                 list.Add(new PasswordInput("ConfirmPassword", "Confirm Password"));
@@ -67,22 +64,18 @@ namespace WebsiteTemplate.Backend.Users
 
                 //list.Add(new FileInput("File", "File"));
 
-                using (var session = Store.OpenSession())
-                {
-                    var items = session.CreateCriteria<UserRole>()
-                                       .List<UserRole>()
+                var items = UserService.GetUserRoles()
                                        .OrderBy(u => u.Description)
                                        .ToDictionary(u => u.Id, u => (object)u.Description);
 
-                    var listSelection = new ListSelectionInput("UserRoles", "User Roles")
-                    {
-                        AvailableItemsLabel = "List of User Roles:",
-                        SelectedItemsLabel = "Chosen User Roles:",
-                        ListSource = items
-                    };
+                var listSelection = new ListSelectionInput("UserRoles", "User Roles")
+                {
+                    AvailableItemsLabel = "List of User Roles:",
+                    SelectedItemsLabel = "Chosen User Roles:",
+                    ListSource = items
+                };
 
-                    list.Add(listSelection);
-                }
+                list.Add(listSelection);
 
                 return list;
             }
@@ -117,11 +110,8 @@ namespace WebsiteTemplate.Backend.Users
             }
             else if (actionNumber == 0)
             {
-                var user = new User(true)
-                {
-                    Email = GetValue<string>("Email"),
-                    UserName = GetValue<string>("UserName")
-                };
+                var email = GetValue<string>("Email");
+                var userName = GetValue<string>("UserName");
                 var password = GetValue<string>("Password");
                 var confirmPassword = GetValue<string>("ConfirmPassword");
 
@@ -140,62 +130,13 @@ namespace WebsiteTemplate.Backend.Users
 
                 var userRoles = GetValue<List<string>>("UserRoles");
 
-                var message = "";
-                var success = false;
+                var message = await UserService.CreateUser(userName, email, password, userRoles);
 
-                var result = await CoreAuthenticationEngine.UserManager.CreateAsync(user, password);
-
-                if (!result.Succeeded)
-                {
-                    message = "Unable to create user:\n" + String.Join("\n", result.Errors);
-                    return new List<Event>()
-                    {
-                         new ShowMessage(message)
-                    };
-                }
-
-                using (var session = Store.OpenSession())
-                {
-                    foreach (var role in userRoles)
-                    {
-                        var dbUserRole = session.Get<UserRole>(role.ToString());
-
-                        var roleAssociation = new UserRoleAssociation()
-                        {
-                            User = user,
-                            UserRole = dbUserRole
-                        };
-                        session.Save(roleAssociation);
-                    }
-                    session.Flush();
-                }
-
-                try
-                {
-                    var sendEmail = new SendConfirmationEmail();
-                    sendEmail.Store = Store;
-                    sendEmail.Request = Request;
-
-                    var formData = new Dictionary<string, object>()
-                    {
-                        {  "Id", user.Id }
-                    };
-                    sendEmail.InputData = formData;
-                    var emailResult = await sendEmail.ProcessAction();
-                    success = true;
-                }
-                catch (FormatException e)
-                {
-                    message = e.Message;
-
-                    success = false;
-                }
-
-                if (!success)
+                if (!String.IsNullOrWhiteSpace(message))
                 {
                     return new List<Event>()
                     {
-                        new ShowMessage("User created but there was an error sending activation email:\n" + message),
+                        new ShowMessage(message),
                         new CancelInputDialog(),
                         new ExecuteAction(EventNumber.ViewUsers, String.Empty)
                     };

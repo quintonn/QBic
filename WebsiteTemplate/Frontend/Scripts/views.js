@@ -12,7 +12,7 @@
         {
             data = data.replace("##view_id##", "view_" + id);
 
-            var model = new viewModel(viewData.Title, data, viewData, isEmbeddedView || false, id);
+            var model = new viewModel(viewData.Title, data, viewData, isEmbeddedView || false, id, viewData.ViewMessage);
             
             processing.loadViewMenu(id, model, viewData.DataForGettingMenu);
             
@@ -86,7 +86,7 @@
         self.cells = ko.observableArray([]);
     }
 
-    function viewModel(title, html, settings, isEmbeddedView, id)
+    function viewModel(title, html, settings, isEmbeddedView, id, viewMessage)
     {
         var self = this;
 
@@ -117,6 +117,7 @@
         }, self);
 
         self.viewTitle = ko.observable(title);
+        self.viewMessage = ko.observable(viewMessage);
 
         self.viewMenus = ko.observableArray([]);
         self.menuClick = function (menu, index, evt)
