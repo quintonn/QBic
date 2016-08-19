@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using WebsiteTemplate.CustomMenuItems;
+using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
 
@@ -12,13 +13,13 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 {
     public class BasicCrudView<T> : ShowView where T : BaseClass
     {
-        private int Id { get; set; }
+        private EventNumber Id { get; set; }
 
         private string ItemName { get; set; }
 
         private Dictionary<string, string> ColumnsToShowInView { get; set; }
 
-        public BasicCrudView(int id, string itemName, Dictionary<string, string> columnsToShowInView)
+        public BasicCrudView(EventNumber id, string itemName, Dictionary<string, string> columnsToShowInView)
         {
             Id = id;
             ItemName = itemName;
@@ -84,7 +85,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             }
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return Id;
         }

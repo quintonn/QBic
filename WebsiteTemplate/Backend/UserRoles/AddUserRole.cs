@@ -72,15 +72,15 @@ namespace WebsiteTemplate.Backend.UserRoles
                  
                 var eventTypesEveryoneCanDo = new List<int>()
                 {
-                    (int)EventNumber.CancelInputDialog,
-                    (int)EventNumber.DeleteInputViewItem,
-                    (int)EventNumber.ExecuteAction,
-                    (int)EventNumber.Nothing,
-                    (int)EventNumber.ShowMessage,
-                    (int)EventNumber.UpdateDataSourceComboBox,
-                    (int)EventNumber.UpdateInput,
-                    (int)EventNumber.UpdateInputView,
-                    (int)EventNumber.UserConfirmation,
+                    EventNumber.CancelInputDialog,
+                    EventNumber.DeleteInputViewItem,
+                    EventNumber.ExecuteAction,
+                    EventNumber.Nothing,
+                    EventNumber.ShowMessage,
+                    EventNumber.UpdateDataSourceComboBox,
+                    EventNumber.UpdateInput,
+                    EventNumber.UpdateInputView,
+                    EventNumber.UserConfirmation,
                 };
                 
                 
@@ -104,7 +104,7 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return EventNumber.AddUserRole;
         }

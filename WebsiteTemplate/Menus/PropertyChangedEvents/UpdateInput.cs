@@ -27,7 +27,7 @@ namespace WebsiteTemplate.Menus.PropertyChangedEvents
             }
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return EventNumber.UpdateInput;
         }

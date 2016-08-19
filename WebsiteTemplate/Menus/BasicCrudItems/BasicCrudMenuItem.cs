@@ -11,13 +11,13 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
     {
         Type InnerType { get; }
 
-        int GetId();
+        EventNumber GetId();
 
         Dictionary<string, string> GetColumnsToShowInView();
 
         Dictionary<string, string> GetInputProperties();
 
-        int GetBaseMenuId();
+        EventNumber GetBaseMenuId();
 
         string GetBaseItemName();
     }
@@ -48,7 +48,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             }
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return 0;
         }
@@ -57,7 +57,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 
         public abstract Dictionary<string, string> GetInputProperties();
 
-        public abstract int GetBaseMenuId();
+        public abstract EventNumber GetBaseMenuId();
 
         public abstract string GetBaseItemName();
 

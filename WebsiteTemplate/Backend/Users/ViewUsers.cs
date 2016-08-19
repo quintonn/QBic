@@ -12,7 +12,7 @@ namespace WebsiteTemplate.Backend.Users
 {
     public class ViewUsers : ShowView
     {
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return EventNumber.ViewUsers;
         }

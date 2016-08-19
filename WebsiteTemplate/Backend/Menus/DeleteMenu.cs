@@ -24,7 +24,7 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return EventNumber.DeleteMenu;
         }

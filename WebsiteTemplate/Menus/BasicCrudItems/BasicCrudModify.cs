@@ -81,7 +81,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             }
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return Id;
         }

@@ -242,6 +242,7 @@
     <Compile Include="Mappings\UserRoleAssociationMap.cs" />
     <Compile Include="Mappings\UserMap.cs" />
     <Compile Include="Menus\BaseItems\DeleteInputViewItem.cs" />
+    <Compile Include="Menus\BaseItems\EventNumberConverter.cs" />
     <Compile Include="Menus\BaseItems\InputViewUpdateType.cs" />
     <Compile Include="Menus\BaseItems\SubMenuAction.cs" />
     <Compile Include="Menus\BaseItems\EventType.cs" />

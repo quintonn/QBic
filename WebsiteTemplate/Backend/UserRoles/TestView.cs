@@ -55,7 +55,7 @@ namespace WebsiteTemplate.Backend.UserRoles
             return 2;
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return 9854;
         }

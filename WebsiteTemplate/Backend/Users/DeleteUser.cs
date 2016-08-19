@@ -13,7 +13,7 @@ namespace WebsiteTemplate.Backend.Users
 {
     public class DeleteUser : DoSomething
     {
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return EventNumber.DeleteUser;
         }

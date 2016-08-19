@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.BasicCrudItems;
 
 namespace WebsiteTemplate.Backend.TestItem
@@ -13,7 +14,7 @@ namespace WebsiteTemplate.Backend.TestItem
             return "Super Cause";
         }
 
-        public override int GetBaseMenuId()
+        public override EventNumber GetBaseMenuId()
         {
             return 123;
         }

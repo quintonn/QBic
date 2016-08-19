@@ -20,7 +20,7 @@ namespace WebsiteTemplate.Backend.Users
             }
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return EventNumber.Test;
         }

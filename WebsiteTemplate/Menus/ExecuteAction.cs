@@ -21,7 +21,7 @@ namespace WebsiteTemplate.Menus
             ParametersToPass = parametersToPass;
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return Menus.BaseItems.EventNumber.ExecuteAction;
         }

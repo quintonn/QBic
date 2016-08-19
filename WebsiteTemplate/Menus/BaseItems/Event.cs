@@ -34,11 +34,11 @@ namespace WebsiteTemplate.Menus.BaseItems
         /// <summary>
         /// Hard coded Id.
         /// </summary>
-        public abstract int GetId();
+        public abstract EventNumber GetId();
 
         public string GetEventId()
         {
-            return ((int)GetId()).ToString();
+            return GetId().ToString();
         }
 
         public virtual Dictionary<string, object> GetEventParameters()

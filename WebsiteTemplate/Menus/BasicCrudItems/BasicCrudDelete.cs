@@ -30,7 +30,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             ItemName = itemName;
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return Id;
         }

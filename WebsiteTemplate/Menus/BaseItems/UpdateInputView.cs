@@ -40,7 +40,7 @@ namespace WebsiteTemplate.Menus.BaseItems
             }
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return EventNumber.UpdateInputView;
         }

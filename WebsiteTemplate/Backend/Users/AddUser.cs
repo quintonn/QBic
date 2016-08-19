@@ -18,7 +18,7 @@ namespace WebsiteTemplate.Backend.Users
 {
     public class AddUser : GetInput
     {
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return EventNumber.AddUser;
         }

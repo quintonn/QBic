@@ -42,7 +42,7 @@ namespace WebsiteTemplate.Menus.PropertyChangedEvents
             ListItems = listItems;
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return EventNumber.UpdateDataSourceComboBox;
         }

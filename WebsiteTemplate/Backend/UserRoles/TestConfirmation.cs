@@ -13,7 +13,7 @@ namespace WebsiteTemplate.Backend.UserRoles
             :base("Create a new one?", "Yes", "No")
         {
             OnConfirmationUIAction = EventNumber.TestCreate;
-            OnCancelUIAction = WebsiteTemplate.Menus.BaseItems.EventNumber.CancelInputDialog;
+            OnCancelUIAction = EventNumber.CancelInputDialog;
         }
 
         public override string Description
@@ -24,7 +24,7 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return EventNumber.TestConfirmation;
         }
