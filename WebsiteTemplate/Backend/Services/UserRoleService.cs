@@ -1,4 +1,5 @@
-﻿using NHibernate.Criterion;
+﻿using NHibernate;
+using NHibernate.Criterion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -171,6 +172,32 @@ namespace WebsiteTemplate.Backend.Services
                 var results = items.Where(e => events.Contains(e.Key)).Select(i => i.Key.ToString()).ToList();
                 return results;
             }
+        }
+
+        public List<UserRole> RetrieveUserRoles(int currentPage, int linesPerPage, string filter)
+        {
+            using (var session = DataStore.OpenSession())
+            {
+                return CreateUserRoleQuery(session, filter)
+                                     .Skip((currentPage - 1) * linesPerPage)
+                                     .Take(linesPerPage)
+                                     .List<UserRole>()
+                                     .ToList();
+            }
+        }
+
+        public int RetrieveUserRoleCount(string filter)
+        {
+            using (var session = DataStore.OpenSession())
+            {
+                return CreateUserRoleQuery(session, filter).RowCount();
+            }
+        }
+
+        private IQueryOver<UserRole> CreateUserRoleQuery(ISession session, string filter)
+        {
+            return session.QueryOver<UserRole>().Where(Restrictions.On<UserRole>(x => x.Name).IsInsensitiveLike(filter, MatchMode.Anywhere) ||
+                                                       Restrictions.On<UserRole>(x => x.Description).IsInsensitiveLike(filter, MatchMode.Anywhere));
         }
     }
 }
