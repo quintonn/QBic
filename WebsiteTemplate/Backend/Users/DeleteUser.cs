@@ -22,7 +22,7 @@ namespace WebsiteTemplate.Backend.Users
         {
             get
             {
-                return "Deletes a user";
+                return "Delete User";
             }
         }
 

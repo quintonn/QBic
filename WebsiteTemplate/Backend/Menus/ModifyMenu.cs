@@ -1,19 +1,15 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Controllers;
-using WebsiteTemplate.Utilities;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
-using WebsiteTemplate.Menus.PropertyChangedEvents;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
-using WebsiteTemplate.SiteSpecific;
-using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Menus
 {
@@ -31,7 +27,7 @@ namespace WebsiteTemplate.Backend.Menus
         {
             get
             {
-                return IsNew ? "Add Menu" : "Edit Menu " + Menu.Name;
+                return IsNew ? "Add Menu" : "Edit Menu";
             }
         }
 
@@ -39,7 +35,7 @@ namespace WebsiteTemplate.Backend.Menus
         {
             get
             {
-                return Description;
+                return IsNew ? "New Menu" : Menu.Name;
             }
         }
 
@@ -52,15 +48,9 @@ namespace WebsiteTemplate.Backend.Menus
                 list.Add(new StringInput("Name", "Menu Name", Menu.Name, null, true));
                 list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", Menu.Event == null && IsNew == false));
 
-                var events = MainController.EventList.Where(e => e.Value.ActionType != EventType.InputDataView)
-                                                     .Where(m => !String.IsNullOrWhiteSpace(m.Value.Description))
-                                                     .Where(m => m.Value is ShowView) //TODO: Might have to add isEdit as property to GetInput type or change all edit/add to modify only
-                                                     .OrderBy(m => m.Value.Description)
-                                                     .ToDictionary(m => m.Key.ToString(), m => (object)m.Value.Description);
-
                 list.Add(new ComboBoxInput("Event", "Menu Action", Menu.Event?.ToString(), null, true)
                     {
-                        ListItems = events,
+                        ListItems = MenuService.GetEventList(),
                         VisibilityConditions = new List<Condition>()
                         {
                             new Condition("HasSubmenus", Comparison.Equals, "false")

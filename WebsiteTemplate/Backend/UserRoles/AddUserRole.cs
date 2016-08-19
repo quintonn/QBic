@@ -1,17 +1,10 @@
-﻿using Newtonsoft.Json.Linq;
-using NHibernate.Criterion;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
-using WebsiteTemplate.Backend.Users;
-using WebsiteTemplate.Controllers;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
-using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.UserRoles
 {
@@ -23,6 +16,13 @@ namespace WebsiteTemplate.Backend.UserRoles
             {
                 return "Add User Role";
             }
+        }
+
+        private UserRoleService UserRoleService { get; set; }
+
+        public AddUserRole(UserRoleService service)
+        {
+            UserRoleService = service;
         }
 
         public override IList<InputButton> InputButtons
@@ -68,33 +68,13 @@ namespace WebsiteTemplate.Backend.UserRoles
 
                 //list.Add(new FileInput("File", "File", null, "x"));
 
-                list.Add(new ViewInput("view", "View", new TestView(), "abc", null, false));
-                 
-                var eventTypesEveryoneCanDo = new List<int>()
-                {
-                    EventNumber.CancelInputDialog,
-                    EventNumber.DeleteInputViewItem,
-                    EventNumber.ExecuteAction,
-                    EventNumber.Nothing,
-                    EventNumber.ShowMessage,
-                    EventNumber.UpdateDataSourceComboBox,
-                    EventNumber.UpdateInput,
-                    EventNumber.UpdateInputView,
-                    EventNumber.UserConfirmation,
-                };
-                
-                
-                var items = MainController.EventList.Where(e => e.Key != null && !eventTypesEveryoneCanDo.Contains(e.Key))
-                                                    .ToDictionary(e => e.Key, e => e.Value.Description)
-                                                    .OrderBy(e => e.Value)
-                                                    .ToDictionary(e => e.Key.ToString(), e => (object)e.Value);
-
+                //list.Add(new ViewInput("view", "View", new TestView(), "abc", null, false));
 
                 var listSelection = new ListSelectionInput("Events", "Allowed Events")
                 {
                     AvailableItemsLabel = "List of Events:",
                     SelectedItemsLabel = "Chosen Events:",
-                    ListSource = items
+                    ListSource = UserRoleService.GetListOfEvents()
                 };
 
                 list.Add(listSelection);
@@ -158,38 +138,17 @@ namespace WebsiteTemplate.Backend.UserRoles
                     };
                 }
 
-                using (var session = Store.OpenSession())
+                var dbUserRole = UserRoleService.FindUserRoleByName(name);
+
+                if (dbUserRole != null)
                 {
-                    var dbUserRole = session.CreateCriteria<UserRole>()
-                                              .Add(Restrictions.Eq("Name", name))
-                                              .UniqueResult<UserRole>();
-                    if (dbUserRole != null)
-                    {
-                        return new List<Event>()
+                    return new List<Event>()
                         {
                             new ShowMessage("User role {0} already exists.", name)
                         };
-                    }
-
-                    dbUserRole = new UserRole()
-                    {
-                        Name = name,
-                        Description = description
-                    };
-                    session.Save(dbUserRole);
-
-                    foreach (var item in events)
-                    {
-                        var eventItem = new EventRoleAssociation()
-                        {
-                            Event = Convert.ToInt32(item),
-                            UserRole = dbUserRole
-                        };
-                        session.Save(eventItem);
-                    }
-
-                    session.Flush();
                 }
+
+                UserRoleService.AddUserRole(name, description, events);
 
                 return new List<Event>()
                 {

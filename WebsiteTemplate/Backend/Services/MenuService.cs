@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus.BaseItems;
+using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Services
@@ -101,6 +103,61 @@ namespace WebsiteTemplate.Backend.Services
                 session.SaveOrUpdate(dbMenu);
                 session.Flush();
             }
+        }
+
+        public Dictionary<string, object> GetEventList()
+        {
+            return MainController.EventList.Where(e => e.Value.ActionType != EventType.InputDataView)
+                                           .Where(m => !String.IsNullOrWhiteSpace(m.Value.Description))
+                                           .Where(m => m.Value is ShowView) // TODO: this is not right. can't have 'add xx' in menu at the moment
+                                           .OrderBy(m => m.Value.Description)  //    maybe need a setting 'allow in menu' etc
+                                           .ToDictionary(m => m.Key.ToString(), m => (object)m.Value.Description);
+        }
+
+        public List<Menu> RetrieveMenusWithFilter(string menuId, int currentPage, int linesPerPage, string filter)
+        {
+            using (var session = DataStore.OpenSession())
+            {
+                var query = CreateMenuListQuery(menuId, filter, session);
+
+                var results = query
+                      .Skip((currentPage - 1) * linesPerPage)
+                      .Take(linesPerPage)
+                      .List<Menu>()
+                      .ToList();
+                return results;
+            }
+        }
+
+        public int RetrieveMenusCountWithFilter(string menuId, string filter)
+        {
+            using (var session = DataStore.OpenSession())
+            {
+                var query = CreateMenuListQuery(menuId, filter, session);
+
+                return query.RowCount();
+            }
+        }
+
+        private IQueryOver<Menu> CreateMenuListQuery(string menuId, string filter, ISession session)
+        {
+            var query = session.QueryOver<Menu>();
+
+            if (!String.IsNullOrWhiteSpace(menuId))
+            {
+                query = query.Where(m => m.ParentMenu.Id == menuId);
+            }
+            else
+            {
+                query = query.Where(m => m.ParentMenu == null);
+            }
+
+            if (!String.IsNullOrWhiteSpace(filter))
+            {
+                query = query.WhereRestrictionOn(x => x.Name).IsLike(filter, MatchMode.Anywhere);
+            }
+
+            return query;
         }
     }
 }

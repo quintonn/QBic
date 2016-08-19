@@ -1,13 +1,8 @@
-﻿using Newtonsoft.Json.Linq;
-using NHibernate.Criterion;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Web;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
-using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.UserRoles
 {
@@ -21,6 +16,13 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
         }
 
+        private UserRoleService UserRoleService { get; set; }
+
+        public DeleteUserRole(UserRoleService service)
+        {
+            UserRoleService = service;
+        }
+
         public override EventNumber GetId()
         {
             return EventNumber.DeleteUserRole;
@@ -32,12 +34,8 @@ namespace WebsiteTemplate.Backend.UserRoles
 
             using (var session = Store.OpenSession())
             {
-                var userRoleAssociations = session.CreateCriteria<UserRoleAssociation>()
-                                                  .CreateAlias("UserRole", "role")
-                                                  .Add(Restrictions.Eq("role.Id", id))
-                                                  .List<UserRoleAssociation>()
-                                                  .ToList();
-                if (userRoleAssociations.Count > 0)
+                var isAssigned = UserRoleService.UserRoleIsAssigned(id);
+                if (isAssigned)
                 {
                     return new List<Event>()
                     {
@@ -45,20 +43,7 @@ namespace WebsiteTemplate.Backend.UserRoles
                     };
                 }
 
-                var eventRoles = session.CreateCriteria<EventRoleAssociation>()
-                                        .CreateAlias("UserRole", "role")
-                                        .Add(Restrictions.Eq("role.Id", id))
-                                        .List<EventRoleAssociation>()
-                                        .ToList();
-                eventRoles.ForEach(e =>
-                {
-                    session.Delete(e);
-                });
-
-                var userRole = session.Get<UserRole>(id);
-
-                session.Delete(userRole);
-                session.Flush();
+                UserRoleService.DeleteUserRole(id);
             }
 
             return new List<Event>()

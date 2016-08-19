@@ -1,16 +1,15 @@
-﻿using Newtonsoft.Json.Linq;
-using NHibernate.Criterion;
+﻿using NHibernate.Criterion;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Controllers;
-using WebsiteTemplate.Utilities;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
-using WebsiteTemplate.SiteSpecific;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Menus
 {
@@ -31,6 +30,13 @@ namespace WebsiteTemplate.Backend.Menus
             {
                 return mTitle;
             }
+        }
+
+        private MenuService MenuService { get; set; }
+
+        public ViewMenus(MenuService service)
+        {
+            MenuService = service;
         }
 
         public override IList<MenuItem> GetViewMenu(Dictionary<string, string> dataForMenu)
@@ -114,119 +120,73 @@ namespace WebsiteTemplate.Backend.Menus
         public override IEnumerable GetData(string data, int currentPage, int linesPerPage, string filter)
         {
             ProcessData(data);
-            using (var session = Store.OpenSession())
+
+            if (!String.IsNullOrWhiteSpace(MenuId))
             {
-                var query = session.QueryOver<Menu>();
-
-                if (!String.IsNullOrWhiteSpace(MenuId))
-                {
-                    query = query.Where(m => m.ParentMenu.Id == MenuId);
-
-                    var parentMenu = session.Get<Menu>(MenuId);
-                    ParentId = parentMenu.ParentMenu != null ? parentMenu.ParentMenu.Id : "";
-                    mTitle = "Menus: " + parentMenu.Name;
-                }
-                else
-                {
-                    mTitle = "Menus";
-                    query = query.Where(m => m.ParentMenu == null);
-                }
-
-                if (!String.IsNullOrWhiteSpace(filter))
-                {
-                    query = query.WhereRestrictionOn(x => x.Name).IsLike(filter, MatchMode.Anywhere);
-                }
-
-                var results = query
-                    .Skip((currentPage - 1) * linesPerPage)
-                    .Take(linesPerPage)
-                    .List<Menu>()
-                    .ToList();
-
-                var newList = results.Select(r => new
-                {
-                    Name = r.Name,
-                    Id = r.Id,
-                    Event = r.Event == null ? "" : MainController.EventList.ContainsKey(r.Event.Value) ? MainController.EventList[r.Event.Value].Description : "",
-                    ParentMenu = r.ParentMenu,
-                    CanDelete = r.CanDelete,
-                    //Date = DateTime.Now.Date
-                }).ToList();
-
-                return newList;
+                var parentMenu = MenuService.RetrieveMenu(MenuId);
+                ParentId = parentMenu.ParentMenu != null ? parentMenu.ParentMenu.Id : "";
+                mTitle = "Menus: " + parentMenu.Name;
             }
+            else
+            {
+                mTitle = "Menus";
+            }
+
+            var results = MenuService.RetrieveMenusWithFilter(MenuId, currentPage, linesPerPage, filter);
+
+            var newList = results.Select(r => new
+            {
+                Name = r.Name,
+                Id = r.Id,
+                Event = r.Event == null ? "" : MainController.EventList.ContainsKey(r.Event.Value) ? MainController.EventList[r.Event.Value].Description : "",
+                ParentMenu = r.ParentMenu,
+                CanDelete = r.CanDelete,
+                //Date = DateTime.Now.Date
+            }).ToList();
+
+            return newList;
         }
 
-        //TODO: Possible (most likely) change this to have JSON object as input. So i have this try catch in only one place
-        //      Then i can set the incoming json object to either be null, or a blank json object.
-        //      --- Lets see what happens in ClaimManager - if it'll be usefull
         public void ProcessData(string data)
         {
-            try
-            {
-                var json = JsonHelper.Parse(data);
-                var id = json.GetValue("Id");                                  // If 'sub-menus' column link is clicked
-                var dataItem = json.GetValue("data");                          // If 'back' menu-button button is clicked
-                var eventParams = json.GetValue<JsonHelper>("eventParameters"); // This is when 'search' is clicked on the filter
+            //try
+            //{
+            var json = JsonHelper.Parse(data);
+            var id = json.GetValue("Id");                                  // If 'sub-menus' column link is clicked
+            var dataItem = json.GetValue("data");                          // If 'back' menu-button button is clicked
+            var eventParams = json.GetValue<JsonHelper>("eventParameters"); // This is when 'search' is clicked on the filter
 
-                if (String.IsNullOrWhiteSpace(json.ToString()))
-                {
-                    MenuId = data;
-                }
-                else if (!String.IsNullOrWhiteSpace(id))
-                {
-                    MenuId = id;
-                }
-                else if (String.IsNullOrWhiteSpace(dataItem))
-                {
-                    MenuId = "";// dataItem;
-                }
-                else if (!String.IsNullOrWhiteSpace(dataItem))
-                {
-                    MenuId = dataItem;
-                }
-                else
-                {
-                    throw new Exception("Unhandled situation. Not sure what to assign MenuId");
-                    MenuId = String.Empty;
-                }
-            }
-            catch (Exception e)
+            if (String.IsNullOrWhiteSpace(json.ToString()))
             {
-                // Comes here when the 'Menus' menu item is clicked (i.e. viewing all top level menus)
-                MenuId = "";
-                Console.WriteLine(e.Message);
+                MenuId = data;
             }
+            else if (!String.IsNullOrWhiteSpace(id))
+            {
+                MenuId = id;
+            }
+            else if (!String.IsNullOrWhiteSpace(dataItem))
+            {
+                MenuId = dataItem;
+            }
+            else
+            {
+                //throw new Exception("Unhandled situation. Not sure what to assign MenuId");
+                MenuId = String.Empty;
+            }
+            //}
+            //catch (Exception e)
+            //{
+            // Comes here when the 'Menus' menu item is clicked (i.e. viewing all top level menus)
+            //  MenuId = "";
+            //Console.WriteLine(e.Message);
+            //}
         }
 
         public override int GetDataCount(string data, string filter)
         {
             ProcessData(data);
-            using (var session = Store.OpenSession())
-            {
-                var query = session.QueryOver<Menu>();
-                if (!String.IsNullOrWhiteSpace(MenuId))
-                {
-                    query = query.Where(m => m.ParentMenu.Id == MenuId);
-
-                    var parentMenu = session.Get<Menu>(MenuId);
-                    ParentId = parentMenu.ParentMenu != null ? parentMenu.ParentMenu.Id : "";
-                    mTitle = "Menus: " + parentMenu.Name;
-                }
-                else
-                {
-                    mTitle = "Menus";
-                    query = query.Where(m => m.ParentMenu == null);
-                }
-
-                if (!String.IsNullOrWhiteSpace(filter))
-                {
-                    query = query.WhereRestrictionOn(x => x.Name).IsLike(filter, MatchMode.Anywhere);
-                }
-
-                var count = query.RowCount();
-                return count;
-            }
+            var count = MenuService.RetrieveMenusCountWithFilter(MenuId, filter);
+            return count;
         }
 
         public override EventNumber GetId()

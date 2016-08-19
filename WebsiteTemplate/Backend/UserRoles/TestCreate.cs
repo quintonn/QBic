@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Web;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 
@@ -29,10 +26,9 @@ namespace WebsiteTemplate.Backend.UserRoles
             InputData.Add("age", "10");
 
             return new List<Event>()
-                {
-                    new UpdateInputView(InputViewUpdateType.AddOrUpdate),
-                    //new CancelInputDialog()
-                };
+            {
+                new UpdateInputView(InputViewUpdateType.AddOrUpdate),
+            };
         }
     }
 }
