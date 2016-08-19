@@ -56,7 +56,7 @@ namespace WebsiteTemplate.Backend.Menus
             jsonObject.Add("IsNew", true);
             jsonObject.Add("ParentId", menuId);
             var json = jsonObject.ToString();
-            results.Add(new MenuItem("Add", EventNumber.ModifyMenu, json));
+            results.Add(new MenuItem("Add", EventNumber.AddMenu, json));
 
             return results;
         }
@@ -94,7 +94,7 @@ namespace WebsiteTemplate.Backend.Menus
                 }
             }, MenuId);
 
-            columnConfig.AddLinkColumn("", "Id", "Edit", EventNumber.ModifyMenu, null);
+            columnConfig.AddLinkColumn("", "Id", "Edit", EventNumber.EditMenu, null);
 
             columnConfig.AddButtonColumn("", "Id", "X",
                 new UserConfirmation("Delete Menu Item?")

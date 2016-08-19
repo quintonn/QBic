@@ -16,20 +16,16 @@ using WebsiteTemplate.SiteSpecific;
 
 namespace WebsiteTemplate.Backend.Menus
 {
-    public class ModifyMenu : GetInput
+    public abstract class ModifyMenu : GetInput
     {
         private Menu Menu { get; set; } = new Menu();
-        private bool IsNew { get; set; } = true;
-        public override int GetId()
-        {
-            return EventNumber.ModifyMenu;
-        }
+        internal abstract bool IsNew { get; }
 
         public override string Description
         {
             get
             {
-                return IsNew ? "Add Menu" : "Edit Menu";
+                return IsNew ? "Add Menu" : "Edit Menu " + Menu.Name;
             }
         }
 
@@ -73,12 +69,6 @@ namespace WebsiteTemplate.Backend.Menus
                 //    }
                 //});
 
-                User xxx;
-                using (var session = Store.OpenSession())
-                {
-                    xxx = session.QueryOver<User>().Take(1).List<User>().First();
-                }
-
                 //list.Add(new DataSourceComboBoxInput<User>("User", "User", x => x.Id, x => x.UserName, xxx.Id, null, null, null, true, true)
                 //{
                     //    MandatoryConditions = new List<Condition>()
@@ -98,7 +88,6 @@ namespace WebsiteTemplate.Backend.Menus
                 //});
 
                 list.Add(new HiddenInput("ParentMenuId", ParentMenuId));
-                list.Add(new HiddenInput("IsNew", IsNew));
                 list.Add(new HiddenInput("Id", Menu?.Id));
 
 
@@ -111,16 +100,14 @@ namespace WebsiteTemplate.Backend.Menus
         public override async Task<InitializeResult> Initialize(string data)
         {
             var jobject = JsonHelper.Parse(data);
-            if (!String.IsNullOrWhiteSpace(jobject.GetValue("IsNew")))
+            if (IsNew)
             {
-                IsNew = jobject.GetValue<bool>("IsNew");
                 var parentId = jobject.GetValue("ParentId");
                 ParentMenuId = parentId;
                 Menu = new Menu();
             }
             else
             {
-                IsNew = false;
                 var id = jobject.GetValue("Id");
                 using (var session = Store.OpenSession())
                 {
@@ -146,7 +133,6 @@ namespace WebsiteTemplate.Backend.Menus
             }
             else if (actionNumber == 0)
             {
-                var isNew = GetValue<bool>("IsNew");
                 var name = GetValue("Name");
                 var hasSubMenus = GetValue<bool>("HasSubmenus");
                 var eventValue = GetValue<string>("Event");
@@ -178,7 +164,7 @@ namespace WebsiteTemplate.Backend.Menus
                 using (var session = Store.OpenSession())
                 {
                     Menu menu;
-                    if (!isNew)
+                    if (!IsNew)
                     {
                         menu = session.Get<Menu>(menuId);
                         ParentMenuId = menu.ParentMenu?.Id;
@@ -205,7 +191,7 @@ namespace WebsiteTemplate.Backend.Menus
                 {
                     new CancelInputDialog(),
                     new ExecuteAction(EventNumber.ViewMenus, ParentMenuId),
-                    new ShowMessage("Menu {0} successfully.", isNew ? "created" : "modified"),
+                    new ShowMessage("Menu {0} successfully.", IsNew ? "created" : "modified"),
                 };
             }
             return null;

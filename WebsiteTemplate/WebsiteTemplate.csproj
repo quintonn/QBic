@@ -238,6 +238,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Backend\Menus\AddMenu.cs" />
+    <Compile Include="Backend\Menus\EditMenu.cs" />
     <Compile Include="Backend\TestItem\SuperCause.cs" />
     <Compile Include="Backend\TestItem\SuperMenuItem.cs" />
     <Compile Include="Backend\UserRoles\AddUserRole.cs" />

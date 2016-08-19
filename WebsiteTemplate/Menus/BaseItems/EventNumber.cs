@@ -8,9 +8,11 @@
         public const int SendConfirmationEmail = 1002;
         public const int EditUser = 1003;
         public const int DeleteUser = 1004;
- 
-        public const int ViewMenus = 1008;
-        public const int ModifyMenu = 1009;
+
+
+        public const int ViewMenus = 1007;
+        public const int AddMenu = 1008;
+        public const int EditMenu = 1009;
         
         public const int DeleteMenu = 1010;
         
