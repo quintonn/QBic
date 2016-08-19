@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace WebsiteTemplate.CustomMenuItems
+namespace WebsiteTemplate.Utilities
 {
     /// <summary>
     /// Replace the name XXX with a name of my framework????
