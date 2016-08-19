@@ -16,12 +16,20 @@ namespace WebsiteTemplate.Backend.Menus
 {
     public class ViewMenus : ShowView
     {
-        private string mDescription = "View Menus";
+        private string mTitle = "View Menus";
         public override string Description
         {
             get
             {
-                return mDescription;
+                return "View Menus";
+            }
+        }
+
+        public override string Title
+        {
+            get
+            {
+                return mTitle;
             }
         }
 
@@ -117,11 +125,11 @@ namespace WebsiteTemplate.Backend.Menus
 
                     var parentMenu = session.Get<Menu>(MenuId);
                     ParentId = parentMenu.ParentMenu != null ? parentMenu.ParentMenu.Id : "";
-                    mDescription = "Menus: " + parentMenu.Name;
+                    mTitle = "Menus: " + parentMenu.Name;
                 }
                 else
                 {
-                    mDescription = "Menus";
+                    mTitle = "Menus";
                     query = query.Where(m => m.ParentMenu == null);
                 }
 
@@ -204,11 +212,11 @@ namespace WebsiteTemplate.Backend.Menus
 
                     var parentMenu = session.Get<Menu>(MenuId);
                     ParentId = parentMenu.ParentMenu != null ? parentMenu.ParentMenu.Id : "";
-                    mDescription = "Menus: " + parentMenu.Name;
+                    mTitle = "Menus: " + parentMenu.Name;
                 }
                 else
                 {
-                    mDescription = "Menus";
+                    mTitle = "Menus";
                     query = query.Where(m => m.ParentMenu == null);
                 }
 

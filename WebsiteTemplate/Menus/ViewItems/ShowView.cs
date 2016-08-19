@@ -19,6 +19,17 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// <param name="columnConfig"></param>
         public abstract void ConfigureColumns(ColumnConfiguration columnConfig);
 
+        /// <summary>
+        /// Returns the title that will be displayed when this view is rendered.
+        /// </summary>
+        public virtual string Title
+        {
+            get
+            {
+                return Description;
+            }
+        }
+
         private IList<ViewColumn> DoConfigureColumns()
         {
             var config = new ColumnConfiguration();

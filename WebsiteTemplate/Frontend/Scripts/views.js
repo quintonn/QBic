@@ -12,7 +12,7 @@
         {
             data = data.replace("##view_id##", "view_" + id);
 
-            var model = new viewModel(viewData.Description, data, viewData, isEmbeddedView || false, id);
+            var model = new viewModel(viewData.Title, data, viewData, isEmbeddedView || false, id);
             
             processing.loadViewMenu(id, model, viewData.DataForGettingMenu);
             

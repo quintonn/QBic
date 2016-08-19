@@ -33,6 +33,14 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
+        public override string Title
+        {
+            get
+            {
+                return Description;
+            }
+        }
+
         public override IList<InputField> InputFields
         {
             get

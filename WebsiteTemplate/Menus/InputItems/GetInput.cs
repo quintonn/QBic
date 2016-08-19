@@ -19,6 +19,17 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public abstract IList<InputField> InputFields { get; }
 
+        /// <summary>
+        /// Returns the title that will be displayed for this input screen.
+        /// </summary>
+        public virtual string Title
+        {
+            get
+            {
+                return Description;
+            }
+        }
+
         //public abstract IList<Event> InputButtons { get; } //TODO: This should be something else, not event.
         //public abstract IList<InputButton> InputButtons { get; }
         public virtual IList<InputButton> InputButtons
