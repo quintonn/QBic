@@ -53,7 +53,6 @@ namespace WebsiteTemplate.Backend.Menus
             }
 
             var jsonObject = new JsonHelper();
-            jsonObject.Add("IsNew", true);
             jsonObject.Add("ParentId", menuId);
             var json = jsonObject.ToString();
             results.Add(new MenuItem("Add", EventNumber.AddMenu, json));

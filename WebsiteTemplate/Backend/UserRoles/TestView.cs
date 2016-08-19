@@ -23,9 +23,7 @@ namespace WebsiteTemplate.Backend.UserRoles
         {
             columnConfig.AddStringColumn("Name", "name");
             columnConfig.AddStringColumn("Age", "age");
-            columnConfig.AddStringColumn("RowId", "rowId");
             columnConfig.AddLinkColumn("", "name", "edit", 777);
-            //columnConfig.AddLinkColumn("", "", "name", "x", 778);
             columnConfig.AddButtonColumn("", "Id", "X",
                 new UserConfirmation("Delete?")
                 {

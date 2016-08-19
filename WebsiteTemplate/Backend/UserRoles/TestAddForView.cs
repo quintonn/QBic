@@ -12,11 +12,6 @@ namespace WebsiteTemplate.Backend.UserRoles
 {
     public class TestAddForView : GetInput
     {
-        public TestAddForView()
-        {
-            Console.WriteLine("xx");
-        }
-
         public override string Description
         {
             get
@@ -27,8 +22,6 @@ namespace WebsiteTemplate.Backend.UserRoles
 
         private JsonHelper RowData { get; set; }
 
-        private int RowId { get; set; } = -1; //TODO: This should go on the base class or core code. not on every implementation of a GetInput used for InputView's input
-
         public override IList<InputField> InputFields
         {
             get
@@ -37,7 +30,6 @@ namespace WebsiteTemplate.Backend.UserRoles
                 {
                     new StringInput("name", "name", RowData.GetValue("name"), "", true),
                     new StringInput("age", "age", RowData.GetValue("age"), ""),
-                    new HiddenInput("rowId", RowId)
                 };
                 return result;
             }
@@ -53,19 +45,11 @@ namespace WebsiteTemplate.Backend.UserRoles
             if (!String.IsNullOrWhiteSpace(data))
             {
                 var json = JsonHelper.Parse(data);
-                var rowData = data;
-                if (json.GetValue("rowData") != null)
-                {
-                    rowData = json.GetValue("rowData")?.ToString();
-                }
-                
-                RowData = JsonHelper.Parse(rowData);
-                RowId = RowData.GetValue<int>("rowId");
+                RowData = JsonHelper.Parse(data);
             }
             else
             {
                 RowData = null;
-                RowId = -1;
             }
 
             return new InitializeResult(true);

@@ -26,7 +26,6 @@ namespace WebsiteTemplate.Backend.UserRoles
 
         public override async Task<IList<Event>> ProcessAction()
         {
-            int rowId = Convert.ToInt32(GetValue("rowId"));
             return new List<Event>()
             {
                 new UpdateInputView(InputViewUpdateType.Delete)

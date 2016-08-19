@@ -68,7 +68,7 @@ namespace WebsiteTemplate.Backend.UserRoles
 
                 //list.Add(new FileInput("File", "File", null, "x"));
 
-                //list.Add(new ViewInput("view", "View", new TestView(), "abc", null, false));
+                list.Add(new ViewInput("view", "View", new TestView(), "abc", null, false));
                  
                 var eventTypesEveryoneCanDo = new List<int>()
                 {

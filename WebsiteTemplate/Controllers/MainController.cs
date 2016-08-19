@@ -346,7 +346,8 @@ namespace WebsiteTemplate.Controllers
                     }
                     if (inputData.ContainsKey("rowId"))
                     {
-                        (item as UpdateInputView).RowId = Convert.ToInt32(inputData["rowId"]);
+                        throw new Exception("Put rowid code back");
+                        //(item as UpdateInputView).RowId = Convert.ToInt32(inputData["rowId"]);
                     }
                     if (String.IsNullOrWhiteSpace(jsonDataToUpdate))
                     {
@@ -667,17 +668,13 @@ namespace WebsiteTemplate.Controllers
                     var processedFormData = JsonHelper.DeserializeObject<Dictionary<string, object>>(data);
                     if (processedFormData != null && processedFormData.ContainsKey("rowData"))
                     {
-                        var rowData = processedFormData["rowData"].ToString();
-
-                        processedFormData = JsonHelper.DeserializeObject<Dictionary<string, object>>(rowData);
+                        throw new Exception("Put rowData code back");
+                        //var rowData = processedFormData["rowData"].ToString();
+                        //processedFormData = JsonHelper.DeserializeObject<Dictionary<string, object>>(rowData);
                     }
                     else if (processedFormData == null)
                     {
                         processedFormData = new Dictionary<string, object>(); // Cannot/should not be null
-                    }
-                    else
-                    {
-                        Console.WriteLine("");
                     }
 
                     if (!processedFormData.ContainsKey("ViewData") && !String.IsNullOrWhiteSpace(data))
