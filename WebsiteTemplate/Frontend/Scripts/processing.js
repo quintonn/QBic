@@ -104,7 +104,7 @@
                         });
                         break;
                     case 11:
-                        processing.showOrDownloadFile(item);
+                        return processing.showOrDownloadFile(item);
                         //main.makeWebCall(main.webApiURL + settings.DataUrl, "POST", callback, settings.RequestData);
                         break;
                         // case 11: View File
@@ -133,7 +133,7 @@
         dialog.showBusyDialog("Downloading file...");
         var url = mainApp.apiURL + item.DataUrl;
         url = url.replace("//", "/");
-        mainApp.makeWebCall(url, "POST", item.RequestData, ["content-type", "FileName"]).then(function (resp)
+        return mainApp.makeWebCall(url, "POST", item.RequestData, ["content-type", "FileName"]).then(function (resp)
         {
             dialog.closeBusyDialog();
             var dataUrl = "data:" + resp['content-type'] + ";base64," + resp.data;

@@ -43,10 +43,6 @@ namespace WebsiteTemplate.Controllers
         public async Task<IHttpActionResult> Initialize()
         {
             var json = await ApplicationService.InitializeSession();
-            var z = BadRequest("tmp");
-            var neg = z.ContentNegotiator as DefaultContentNegotiator;
-            var ex = neg.ExcludeMatchOnTypeOnly;
-            var form = z.Formatters;
             return Json(json, JSON_SETTINGS);
         }
 
@@ -78,16 +74,7 @@ namespace WebsiteTemplate.Controllers
         //[DeflateCompression] // Converts data to json which doesn't work for files
         public async Task<IHttpActionResult> GetFile(int eventId)
         {
-            try
-            {
-                var fileInfo = await Container.Resolve<FileProcessor>().Process(eventId, Request);
-                return fileInfo;
-                //return new FileActionResult(fileInfo);
-            }
-            catch (Exception error)
-            {
-                return BadRequest(error.Message);
-            }
+            return await Container.Resolve<FileProcessor>().Process(eventId, Request);
         }
 
         [HttpPost]

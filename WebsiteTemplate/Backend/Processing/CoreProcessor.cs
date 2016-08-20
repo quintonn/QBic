@@ -14,6 +14,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Http.Results;
 using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
@@ -65,8 +66,15 @@ namespace WebsiteTemplate.Backend.Processing
 
         internal async Task<IHttpActionResult> Process(int eventId, HttpRequestMessage requestMessage)
         {
-            try {
+            try
+            {
                 var result = await ProcessEvent(eventId);
+
+                if (result is FileActionResult)
+                {
+                    return result as FileActionResult;
+                }
+
                 var jsonResult = new JsonResult<T>(result, JSON_SETTINGS, Encoding.UTF8, requestMessage);
 
                 return jsonResult;
