@@ -1,11 +1,18 @@
 ﻿using Microsoft.Practices.Unity;
+using Newtonsoft.Json;
 using NHibernate;
 using NHibernate.Criterion;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Formatting;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Http;
+using System.Web.Http.Results;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus.BaseItems;
@@ -16,6 +23,7 @@ namespace WebsiteTemplate.Backend.Processing
 {
     public abstract class CoreProcessor<T>
     {
+        protected static JsonSerializerSettings JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = "dd-MM-yyyy" };
         protected static IApplicationSettings ApplicationSettings { get; set; }
         protected static DataStore Store { get; set; }
         protected static IUnityContainer Container { get; set; }
@@ -55,19 +63,18 @@ namespace WebsiteTemplate.Backend.Processing
             }
         }
 
-        internal Task<T> Process(int? eventId = null) //TODO: I would like to not need this. All calls should contain an event id
+        internal async Task<IHttpActionResult> Process(int eventId, HttpRequestMessage requestMessage)
         {
-            if (eventId == null)
-            {
-                var data = GetRequestData();
-                var json = JsonHelper.Parse(data);
-                data = json.GetValue("Data");
+            try {
+                var result = await ProcessEvent(eventId);
+                var jsonResult = new JsonResult<T>(result, JSON_SETTINGS, Encoding.UTF8, requestMessage);
 
-                json = JsonHelper.Parse(data);
-
-                eventId = json.GetValue("EventId", -1);
+                return jsonResult;
             }
-            return ProcessEvent((int)eventId);
+            catch (Exception error)
+            {
+                return new BadRequestErrorMessageResult(error.Message, new DefaultContentNegotiator(), requestMessage, new List<MediaTypeFormatter>());
+            }
         }
         public abstract Task<T> ProcessEvent(int eventId);
         protected string GetRequestData()

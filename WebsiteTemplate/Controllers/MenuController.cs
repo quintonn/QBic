@@ -16,9 +16,9 @@ namespace WebsiteTemplate.Controllers
     {
         private DataStore Store { get; set; }
 
-        public MenuController()
+        public MenuController(DataStore store)
         {
-            Store = new DataStore();
+            Store = store;
         }
 
         private string GetCurrentUrl()

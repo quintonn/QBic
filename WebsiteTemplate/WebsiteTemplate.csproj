@@ -40,8 +40,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicAuthentication, Version=0.0.6076.19243, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BasicAuthentication.0.0.6076.19243\lib\net45\BasicAuthentication.dll</HintPath>
+    <Reference Include="BasicAuthentication, Version=0.0.6076.28917, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicAuthentication.0.0.6076.28917\lib\net45\BasicAuthentication.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FluentNHibernate, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -244,12 +244,16 @@
     <Compile Include="Controllers\RoleAuthorization.cs" />
     <Compile Include="Controllers\RoleBlockedAttribute.cs" />
     <Compile Include="Controllers\AcmeController.cs" />
+    <Compile Include="Data\DataStoreExtensionMethods.cs" />
+    <Compile Include="Data\JoinedSubclassIdConvention.cs" />
+    <Compile Include="Data\SqlStatementInterceptor.cs" />
     <Compile Include="Menus\BaseItems\IEvent.cs" />
     <Compile Include="Menus\BasicCrudItems\IBasicCrudDelete.cs" />
     <Compile Include="Menus\BasicCrudItems\IBasicCrudModify.cs" />
     <Compile Include="Menus\BasicCrudItems\IBasicCrudView.cs" />
     <Compile Include="Utilities\JsonArray.cs" />
     <Compile Include="Utilities\JsonHelper.cs" />
+    <Compile Include="Utilities\UnityDependencyResolver.cs" />
     <Compile Include="Utilities\XXXUtils.cs" />
     <Compile Include="Data\DataStore.cs" />
     <Compile Include="Mappings\BaseClassMap.cs" />

@@ -2,12 +2,15 @@
 using BasicAuthentication.Security;
 using BasicAuthentication.Startup;
 using Microsoft.Owin;
+using Microsoft.Practices.Unity;
 using Owin;
 using System;
 using System.Linq;
 using System.Net.Http.Formatting;
 using System.Web.Http;
 using WebsiteTemplate.Data;
+using Microsoft.Practices.Unity.Configuration;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate
 {
@@ -27,14 +30,22 @@ namespace WebsiteTemplate
             };
 
             myApp.UseBasicUserTokenAuthentication(options);
-
-            var configuration = new HttpConfiguration();
-            configuration.MapHttpAttributeRoutes();
-
-            var jsonFormatter = configuration.Formatters.OfType<JsonMediaTypeFormatter>().First();
-
             myApp.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
-            myApp.UseWebApi(configuration);
+        }
+
+        public void Register(HttpConfiguration config)
+        {
+            config.MapHttpAttributeRoutes();
+            //var jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
+
+            var container = new UnityContainer();
+            container.LoadConfiguration();
+            container.RegisterInstance(DataStore.GetInstance());
+
+            var appSettings = container.Resolve<IApplicationSettings>();
+            appSettings.RegisterUnityContainers(container);
+
+            config.DependencyResolver = new UnityDependencyResolver(container);
         }
     }
 }

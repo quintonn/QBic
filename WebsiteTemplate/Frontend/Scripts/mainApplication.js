@@ -118,7 +118,7 @@ $(document).ready(function ()
     mainApp.raisePropertyChanged = function (params, eventId)
     {
         params = JSON.stringify(params);
-        var url = mainApp.apiURL + "propertyChanged";
+        var url = mainApp.apiURL + "propertyChanged/" + eventId;
         return mainApp.makeWebCall(url, "POST", params).then(function (resp)
         {
             return mainApp.processUIActionResult(resp, eventId);

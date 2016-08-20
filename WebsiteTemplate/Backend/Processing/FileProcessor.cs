@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Menus;
+using WebsiteTemplate.Controllers;
 
 namespace WebsiteTemplate.Backend.Processing
 {
-    public class FileProcessor : CoreProcessor<FileInfo>
+    public class FileProcessor : CoreProcessor<FileActionResult>
     {
         public FileProcessor(IUnityContainer container)
             : base(container)
@@ -18,7 +19,7 @@ namespace WebsiteTemplate.Backend.Processing
 
         }
 
-        public async override Task<FileInfo> ProcessEvent(int eventId)
+        public async override Task<FileActionResult> ProcessEvent(int eventId)
         {
             var data = GetRequestData();
 
@@ -30,7 +31,8 @@ namespace WebsiteTemplate.Backend.Processing
             var eventItem = EventList[eventId] as OpenFile;
 
             var fileInfo = eventItem.GetFileInfo(data);
-            return fileInfo;
+            //return fileInfo;
+            return new FileActionResult(fileInfo);
         }
     }
 }

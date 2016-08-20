@@ -15,7 +15,7 @@ namespace WebsiteTemplate.Data
         private DataStore Store { get; set; }
         public UserContext()
         {
-            Store = new DataStore();
+            Store = DataStore.GetInstance();
         }
 
         public override void Initialize()
