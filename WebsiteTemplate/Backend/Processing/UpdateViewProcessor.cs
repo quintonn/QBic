@@ -21,7 +21,7 @@ namespace WebsiteTemplate.Backend.Processing
 
         public async override Task<Event> ProcessEvent(int eventId)
         {
-            var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync() as User;
+            var user = GetLoggedInUser();
             var originalData = GetRequestData();
 
             var json = JsonHelper.Parse(originalData);

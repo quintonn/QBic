@@ -4,12 +4,15 @@ using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
 using System;
 using System.Configuration;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Data
 {
     public class DataStore
     {
+         I think this class is doing too much. and it's not being resolved using unity container.
+         maybe i can call the register before configure in the startup class
         private static DataStore _instance { get; set; }
 
         private DataStore()
@@ -79,7 +82,7 @@ namespace WebsiteTemplate.Data
             return Store.OpenSession();
         }
 
-        public void Save<T>(T item) where T : BaseClass
+        public void SaveOrUpdate<T>(T item) where T : BaseClass
         {
             System.Diagnostics.Trace.TraceInformation("saving an object : " + item.GetType().ToString());
             using (var session = Store.OpenSession())

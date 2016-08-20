@@ -220,6 +220,7 @@
     <Compile Include="Backend\Processing\UserMenuProcessor.cs" />
     <Compile Include="Backend\Processing\ViewMenuProcessor.cs" />
     <Compile Include="Backend\Services\ApplicationService.cs" />
+    <Compile Include="Backend\Services\AuditService.cs" />
     <Compile Include="Backend\Services\EventService.cs" />
     <Compile Include="Backend\Services\MenuService.cs" />
     <Compile Include="Backend\Services\UserRoleService.cs" />

@@ -29,6 +29,7 @@ namespace WebsiteTemplate.Backend.Processing
         protected static DataStore Store { get; set; }
         protected static IUnityContainer Container { get; set; }
         protected static EventService EventService { get; set; }
+        protected static AuditService AuditService { get; set; }
 
         private static bool SetupDone = false;
 
@@ -41,6 +42,7 @@ namespace WebsiteTemplate.Backend.Processing
                 ApplicationSettings = container.Resolve<IApplicationSettings>();
                 Store = container.Resolve<DataStore>();
                 EventService = container.Resolve<EventService>();
+                AuditService = container.Resolve<AuditService>();
             
                 PopulateDefaultValues();
                 SetupDone = true;
@@ -68,6 +70,7 @@ namespace WebsiteTemplate.Backend.Processing
         {
             try
             {
+                await AuditService.LogUserEvent(eventId);
                 var result = await ProcessEvent(eventId);
 
                 if (result is FileActionResult)
@@ -112,6 +115,12 @@ namespace WebsiteTemplate.Backend.Processing
 
             var events = eventRoleAssociations.Select(e => e.Event).ToList();
             return events;
+        }
+
+        protected async Task<User> GetLoggedInUser()
+        {
+            var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync() as User;
+            return user;
         }
     }
 }

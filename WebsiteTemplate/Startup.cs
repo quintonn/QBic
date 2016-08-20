@@ -36,7 +36,6 @@ namespace WebsiteTemplate
         public void Register(HttpConfiguration config)
         {
             config.MapHttpAttributeRoutes();
-            //var jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
 
             var container = new UnityContainer();
             container.LoadConfiguration();
