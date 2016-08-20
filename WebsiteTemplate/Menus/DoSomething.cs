@@ -16,6 +16,6 @@ namespace WebsiteTemplate.Menus
             }
         }
 
-        public abstract Task<IList<Event>> ProcessAction();
+        public abstract Task<IList<IEvent>> ProcessAction();
     }
 }

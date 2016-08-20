@@ -29,7 +29,7 @@ namespace WebsiteTemplate.Backend.Users
             return Task.FromResult<InitializeResult>(new InitializeResult(true));
         }
 
-        public override async System.Threading.Tasks.Task<IList<Event>> ProcessAction(int actionNumber)
+        public override async System.Threading.Tasks.Task<IList<IEvent>> ProcessAction(int actionNumber)
         {
             if (actionNumber == 1)
             {
@@ -40,14 +40,14 @@ namespace WebsiteTemplate.Backend.Users
 
                 if (String.IsNullOrWhiteSpace(email))
                 {
-                    return new List<Event>()
+                    return new List<IEvent>()
                         {
                             new ShowMessage("Unable to modify user. Email is mandatory.")
                         };
                 }
                 if (String.IsNullOrWhiteSpace(userName))
                 {
-                    return new List<Event>()
+                    return new List<IEvent>()
                     {
                         new ShowMessage("User name is mandatory.")
                     };
@@ -56,7 +56,7 @@ namespace WebsiteTemplate.Backend.Users
                 var existingUser = UserService.FindUserByUserName(userName);
                 if (existingUser != null && existingUser.Id != id)
                 {
-                    return new List<Event>()
+                    return new List<IEvent>()
                         {
                             new ShowMessage("Unable to modify user. User with name {0} already exists.", userName)
                         };
@@ -64,7 +64,7 @@ namespace WebsiteTemplate.Backend.Users
 
                 UserService.UpdateUser(id, userName, email, userRoles);
 
-                return new List<Event>()
+                return new List<IEvent>()
                 {
                     new ShowMessage("User modified successfully."),
                     new CancelInputDialog(),
@@ -72,7 +72,7 @@ namespace WebsiteTemplate.Backend.Users
                 };
             }
 
-            return new List<Event>()
+            return new List<IEvent>()
             {
                 new CancelInputDialog()
             };

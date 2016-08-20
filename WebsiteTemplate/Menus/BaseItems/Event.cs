@@ -9,9 +9,9 @@ namespace WebsiteTemplate.Menus.BaseItems
         /// </summary>
         public abstract EventNumber GetId();
 
-        public string GetEventId()
+        public int GetEventId()
         {
-            return GetId().ToString();
+            return GetId();
         }
 
         public virtual Dictionary<string, object> GetEventParameters()

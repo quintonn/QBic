@@ -40,8 +40,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicAuthentication, Version=0.0.6025.39892, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BasicAuthentication.0.0.6025.39892\lib\net45\BasicAuthentication.dll</HintPath>
+    <Reference Include="BasicAuthentication, Version=0.0.6076.19243, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicAuthentication.0.0.6076.19243\lib\net45\BasicAuthentication.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FluentNHibernate, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -210,6 +210,17 @@
   <ItemGroup>
     <Compile Include="Backend\Menus\AddMenu.cs" />
     <Compile Include="Backend\Menus\EditMenu.cs" />
+    <Compile Include="Backend\Processing\ActionExecutionProcessor.cs" />
+    <Compile Include="Backend\Processing\CoreProcessor.cs" />
+    <Compile Include="Backend\Processing\EventProcessor.cs" />
+    <Compile Include="Backend\Processing\FileProcessor.cs" />
+    <Compile Include="Backend\Processing\InputEventProcessor.cs" />
+    <Compile Include="Backend\Processing\PropertyChangeProcessor.cs" />
+    <Compile Include="Backend\Processing\UpdateViewProcessor.cs" />
+    <Compile Include="Backend\Processing\UserMenuProcessor.cs" />
+    <Compile Include="Backend\Processing\ViewMenuProcessor.cs" />
+    <Compile Include="Backend\Services\ApplicationService.cs" />
+    <Compile Include="Backend\Services\EventService.cs" />
     <Compile Include="Backend\Services\MenuService.cs" />
     <Compile Include="Backend\Services\UserRoleService.cs" />
     <Compile Include="Backend\Services\UserService.cs" />

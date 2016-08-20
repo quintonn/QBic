@@ -43,7 +43,7 @@ namespace WebsiteTemplate.Backend.Menus
             {
                 var list = new List<InputField>();
 
-                list.Add(new StringInput("Name", "Menu Name", Menu.Name, null, true));
+                list.Add(new StringInput("Name", "Menu Name", Menu.Name, null, true) { RaisePropertyChangedEvent = true });
                 list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", Menu.Event == null && IsNew == false));
 
                 list.Add(new ComboBoxInput("Event", "Menu Action", Menu.Event?.ToString(), null, true)
@@ -84,13 +84,13 @@ namespace WebsiteTemplate.Backend.Menus
             return new InitializeResult(true);
         }
 
-        public override async Task<IList<Event>> ProcessAction(int actionNumber)
+        public override async Task<IList<IEvent>> ProcessAction(int actionNumber)
         {
             ParentMenuId = GetValue<string>("ParentMenuId");
 
             if (actionNumber == 1)
             {
-                return new List<Event>()
+                return new List<IEvent>()
                 {
                     new CancelInputDialog(),
                     new ExecuteAction(EventNumber.ViewMenus, ParentMenuId)
@@ -106,7 +106,7 @@ namespace WebsiteTemplate.Backend.Menus
                 
                 if (String.IsNullOrWhiteSpace(name))
                 {
-                    return new List<Event>()
+                    return new List<IEvent>()
                     {
                         new ShowMessage("Menu name is mandatory and must be provided.")
                     };
@@ -117,7 +117,7 @@ namespace WebsiteTemplate.Backend.Menus
                     eventValue = GetValue<int?>("Event");
                     if (eventValue == null)
                     {
-                        return new List<Event>()
+                        return new List<IEvent>()
                         {
                             new ShowMessage("Menu action is mandatory when 'Has Sub Menus' is unchecked.")
                         };
@@ -126,7 +126,7 @@ namespace WebsiteTemplate.Backend.Menus
 
                 MenuService.SaveOrUpdateMenu(menuId, parentMenuId, eventValue, name);
                 
-                return new List<Event>()
+                return new List<IEvent>()
                 {
                     new CancelInputDialog(),
                     new ExecuteAction(EventNumber.ViewMenus, ParentMenuId),

@@ -31,11 +31,11 @@ namespace WebsiteTemplate.Backend.Users
             }
         }
 
-        public async override Task<IList<Event>> OnPropertyChanged(string propertyName, object propertyValue)
+        public async override Task<IList<IEvent>> OnPropertyChanged(string propertyName, object propertyValue)
         {
             //if (propertyName == "UserName" && propertyValue.ToString() == "test")
             //{
-            //    return new List<Event>()
+            //    return new List<IEvent>()
             //    {
             //        new UpdateInput("Email", "test@gmail.com")
             //    };
@@ -98,11 +98,11 @@ namespace WebsiteTemplate.Backend.Users
             return Task.FromResult<InitializeResult>(new InitializeResult(true));
         }
 
-        public override async System.Threading.Tasks.Task<IList<Event>> ProcessAction(int actionNumber)
+        public override async System.Threading.Tasks.Task<IList<IEvent>> ProcessAction(int actionNumber)
         {
             if (actionNumber == 1)
             {
-                return new List<Event>()
+                return new List<IEvent>()
                 {
                     new CancelInputDialog(),
                     //new ExecuteAction(EventNumber.ViewUsers, String.Empty)
@@ -122,7 +122,7 @@ namespace WebsiteTemplate.Backend.Users
 
                 if (password != confirmPassword)
                 {
-                    return new List<Event>()
+                    return new List<IEvent>()
                     {
                         new ShowMessage("Password and password confirmation do not match")
                     };
@@ -134,7 +134,7 @@ namespace WebsiteTemplate.Backend.Users
 
                 if (!String.IsNullOrWhiteSpace(message))
                 {
-                    return new List<Event>()
+                    return new List<IEvent>()
                     {
                         new ShowMessage(message),
                         new CancelInputDialog(),
@@ -142,7 +142,7 @@ namespace WebsiteTemplate.Backend.Users
                     };
                 }
 
-                return new List<Event>()
+                return new List<IEvent>()
                 {
                     new ShowMessage("User created successfully.\nCheck your inbox for activation email."),
                     new CancelInputDialog(),

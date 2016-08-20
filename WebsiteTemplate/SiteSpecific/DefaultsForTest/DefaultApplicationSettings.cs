@@ -4,7 +4,7 @@ using NHibernate;
 using NHibernate.Criterion;
 using System;
 using System.Linq;
-using WebsiteTemplate.Controllers;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
@@ -13,6 +13,11 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
 {
     public class DefaultApplicationSettings : IApplicationSettings
     {
+        private EventService EventService { get; set; }
+        public DefaultApplicationSettings(EventService eventService)
+        {
+            EventService = eventService;
+        }
         public string GetApplicationName()
         {
             return "Website Template";
@@ -76,7 +81,7 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
             }
 
             var menuList1 = session.CreateCriteria<Menu>()
-                                   .Add(Restrictions.Eq("Event", EventNumber.ViewUsers))
+                                   .Add(Restrictions.Eq("Event", (int)EventNumber.ViewUsers))
                                    .List<Menu>();
 
             if (menuList1.Count == 0)
@@ -91,7 +96,7 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
             }
 
             var menuList2 = session.CreateCriteria<Menu>()
-                                   .Add(Restrictions.Eq("Event", EventNumber.ViewMenus))
+                                   .Add(Restrictions.Eq("Event", (int)EventNumber.ViewMenus))
                                    .List<Menu>();
 
             if (menuList2.Count == 0)
@@ -105,7 +110,7 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
             }
 
             var userRoleMenu = session.CreateCriteria<Menu>()
-                                      .Add(Restrictions.Eq("Event", EventNumber.ViewUserRoles))
+                                      .Add(Restrictions.Eq("Event", (int)EventNumber.ViewUserRoles))
                                       .UniqueResult<Menu>();
             if (userRoleMenu == null)
             {
@@ -117,7 +122,7 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
                 session.Save(userRoleMenu);
             }
 
-            var allEvents = MainController.EventList.Where(e => e.Value.ActionType != EventType.InputDataView).Select(e => Convert.ToInt32(e.Value.GetEventId()))
+            var allEvents = EventService.EventList.Where(e => e.Value.ActionType != EventType.InputDataView).Select(e => e.Value.GetEventId())
                                   .ToList();
 
             var eras = session.CreateCriteria<EventRoleAssociation>()

@@ -29,9 +29,9 @@ namespace WebsiteTemplate.Backend.Users
             }
         }
 
-        public override async Task<IList<Event>> ProcessAction()
+        public override async Task<IList<IEvent>> ProcessAction()
         {
-            var results = new List<Event>();
+            var results = new List<IEvent>();
 
             var emailSentResultMessage = String.Empty;
             var id = GetValue("Id");

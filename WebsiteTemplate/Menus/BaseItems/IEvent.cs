@@ -5,7 +5,7 @@ namespace WebsiteTemplate.Menus.BaseItems
     public interface IEvent
     {
         EventNumber GetId();
-        string GetEventId();
+        int GetEventId();
         Dictionary<string, object> GetEventParameters();
         Dictionary<string, object> EventParameters { get; }
         int Id { get; }

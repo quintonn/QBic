@@ -28,14 +28,14 @@ namespace WebsiteTemplate.Backend.UserRoles
             return EventNumber.DeleteUserRole;
         }
 
-        public override async Task<IList<Event>> ProcessAction()
+        public override async Task<IList<IEvent>> ProcessAction()
         {
             var id = GetValue<string>("Id");
 
             var isAssigned = UserRoleService.UserRoleIsAssigned(id);
             if (isAssigned)
             {
-                return new List<Event>()
+                return new List<IEvent>()
                 {
                     new ShowMessage("Cannot delete user role, it is assigned to users.")
                 };
@@ -43,7 +43,7 @@ namespace WebsiteTemplate.Backend.UserRoles
 
             UserRoleService.DeleteUserRole(id);
 
-            return new List<Event>()
+            return new List<IEvent>()
             {
                 new ShowMessage("User role deleted successfully"),
                 new CancelInputDialog(),

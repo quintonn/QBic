@@ -29,13 +29,13 @@ namespace WebsiteTemplate.Backend.Users
             }
         }
 
-        public override async Task<IList<Event>> ProcessAction()
+        public override async Task<IList<IEvent>> ProcessAction()
         {
             var id = GetValue<string>("Id");
 
             UserService.DeleteUser(id);
 
-            return new List<Event>()
+            return new List<IEvent>()
             {
                 new ShowMessage("User deleted successfully"),
                 new CancelInputDialog(),

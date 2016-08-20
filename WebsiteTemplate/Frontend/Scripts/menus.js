@@ -5,7 +5,6 @@
         return mainApp.makeWebCall(mainApp.apiURL + "getUserMenu").then(function (data)
         {
             var menuItems = menus.getMenus(data, null);
-            
             _applicationModel.menuContainer().allMenus(menuItems);
         });
     };

@@ -106,11 +106,11 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             return new InitializeResult(true);
         }
 
-        public override async Task<IList<Event>> ProcessAction(int actionNumber)
+        public override async Task<IList<IEvent>> ProcessAction(int actionNumber)
         {
             if (actionNumber == 1)
             {
-                return new List<Event>()
+                return new List<IEvent>()
                 {
                     new CancelInputDialog(),
                     new ExecuteAction(Id -1)
@@ -129,7 +129,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 
                     if (value == null || String.IsNullOrWhiteSpace(value.ToString()))
                     {
-                        return new List<Event>()
+                        return new List<IEvent>()
                         {
                             new ShowMessage("{0} is mandatory and must be provided.", property.Key)
                         };
@@ -158,7 +158,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                     session.Flush();
                 }
 
-                return new List<Event>()
+                return new List<IEvent>()
                 {
                     new ShowMessage("{1} {0} successfully.", isNew ? "created" : "modified", ItemName),
                     new CancelInputDialog(),

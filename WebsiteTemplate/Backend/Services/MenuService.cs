@@ -3,7 +3,6 @@ using NHibernate.Criterion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
@@ -14,10 +13,12 @@ namespace WebsiteTemplate.Backend.Services
     public class MenuService
     {
         private DataStore DataStore { get; set; }
+        private EventService EventService { get; set; }
 
-        public MenuService(DataStore store)
+        public MenuService(DataStore store, EventService eventService)
         {
             DataStore = store;
+            EventService = eventService;
         }
 
         public Menu RetrieveMenu(string menuId)
@@ -106,7 +107,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public Dictionary<string, object> GetEventList()
         {
-            return MainController.EventList.Where(e => e.Value.ActionType != EventType.InputDataView)
+            return EventService.EventList.Where(e => e.Value.ActionType != EventType.InputDataView)
                                            .Where(m => !String.IsNullOrWhiteSpace(m.Value.Description))
                                            .Where(m => m.Value is ShowView) // TODO: this is not right. can't have 'add xx' in menu at the moment
                                            .OrderBy(m => m.Value.Description)  //    maybe need a setting 'allow in menu' etc

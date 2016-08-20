@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
-using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
@@ -17,10 +16,12 @@ namespace WebsiteTemplate.Backend.UserRoles
         public UserRole UserRole { get; set; }
 
         private UserRoleService UserRoleService { get; set; }
+        private EventService EventService { get; set; }
 
-        public EditUserRole(UserRoleService service)
+        public EditUserRole(UserRoleService service, EventService eventService)
         {
             UserRoleService = service;
+            EventService = eventService;
         }
         public override string Description
         {
@@ -52,7 +53,7 @@ namespace WebsiteTemplate.Backend.UserRoles
                 list.Add(new StringInput("Description", "Description", UserRole?.Description));
                 list.Add(new HiddenInput("Id", UserRole?.Id));
 
-                var items = MainController.EventList.ToDictionary(e => e.Key, e => e.Value.Description)
+                var items = EventService.EventList.ToDictionary(e => e.Key, e => e.Value.Description)
                                                     .OrderBy(e => e.Value)
                                                     .ToDictionary(e => e.Key.ToString(), e => (object)e.Value);
 
@@ -86,11 +87,11 @@ namespace WebsiteTemplate.Backend.UserRoles
             return Task.FromResult(new InitializeResult(true));
         }
 
-        public override async Task<IList<Event>> ProcessAction(int actionNumber)
+        public override async Task<IList<IEvent>> ProcessAction(int actionNumber)
         {
             if (actionNumber == 1)
             {
-                return new List<Event>()
+                return new List<IEvent>()
                 {
                     new CancelInputDialog(),
                     new ExecuteAction(EventNumber.ViewUserRoles)
@@ -106,14 +107,14 @@ namespace WebsiteTemplate.Backend.UserRoles
 
                 if (String.IsNullOrWhiteSpace(name))
                 {
-                    return new List<Event>()
+                    return new List<IEvent>()
                     {
                         new ShowMessage("Name is mandatory and must be provided.")
                     };
                 }
                 if (String.IsNullOrWhiteSpace(description))
                 {
-                    return new List<Event>()
+                    return new List<IEvent>()
                     {
                         new ShowMessage("Description is mandatory and must be provided.")
                     };
@@ -122,7 +123,7 @@ namespace WebsiteTemplate.Backend.UserRoles
                 var dbUserRole = UserRoleService.FindUserRoleByName(name);
                 if (dbUserRole != null && dbUserRole.Id != id)
                 {
-                    return new List<Event>()
+                    return new List<IEvent>()
                         {
                             new ShowMessage("User role {0} already exists.", name)
                         };
@@ -130,7 +131,7 @@ namespace WebsiteTemplate.Backend.UserRoles
 
                 UserRoleService.UpdateUserRole(id, name, description, events);
 
-                return new List<Event>()
+                return new List<IEvent>()
                 {
                     new ShowMessage("User role modified successfully."),
                     new CancelInputDialog(),

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using WebsiteTemplate.Menus.ViewItems;
 
 namespace WebsiteTemplate.Utilities
 {
@@ -50,6 +51,11 @@ namespace WebsiteTemplate.Utilities
                 return Marshal.PtrToStringUni(outPtr);
             }
             return mimeRet;
+        }
+
+        public static Version GetApplicationCoreVersion()
+        {
+            return typeof(ShowView).Assembly.GetName().Version;
         }
     }
 }

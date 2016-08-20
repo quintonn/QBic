@@ -24,7 +24,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             return Id;
         }
 
-        public override async Task<IList<Event>> ProcessAction()
+        public override async Task<IList<IEvent>> ProcessAction()
         {
             var id = GetValue<string>("Id");
 
@@ -36,7 +36,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                 session.Flush();
             }
 
-            return new List<Event>()
+            return new List<IEvent>()
             {
                 new ShowMessage(ItemName + " deleted successfully"),
                 new CancelInputDialog(),

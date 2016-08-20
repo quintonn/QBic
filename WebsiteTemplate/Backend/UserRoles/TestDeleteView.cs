@@ -20,9 +20,9 @@ namespace WebsiteTemplate.Backend.UserRoles
             return 778;
         }
 
-        public override async Task<IList<Event>> ProcessAction()
+        public override async Task<IList<IEvent>> ProcessAction()
         {
-            return new List<Event>()
+            return new List<IEvent>()
             {
                 new UpdateInputView(InputViewUpdateType.Delete)
             };

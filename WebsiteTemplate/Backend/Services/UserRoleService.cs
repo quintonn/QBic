@@ -13,10 +13,12 @@ namespace WebsiteTemplate.Backend.Services
     public class UserRoleService
     {
         private DataStore DataStore { get; set; }
+        private EventService EventService { get; set; }
 
-        public UserRoleService(DataStore store)
+        public UserRoleService(DataStore store, EventService eventService)
         {
             DataStore = store;
+            EventService = eventService;
         }
 
         public UserRole FindUserRoleByName(string name)
@@ -102,8 +104,7 @@ namespace WebsiteTemplate.Backend.Services
                     EventNumber.UserConfirmation,
                 };
 
-
-            var items = MainController.EventList.Where(e => e.Key != null && !eventTypesEveryoneCanDo.Contains(e.Key))
+            var items = EventService.EventList.Where(e => e.Key != null && !eventTypesEveryoneCanDo.Contains(e.Key))
                                                 .ToDictionary(e => e.Key, e => e.Value.Description)
                                                 .OrderBy(e => e.Value)
                                                 .ToDictionary(e => e.Key.ToString(), e => (object)e.Value);
@@ -149,13 +150,12 @@ namespace WebsiteTemplate.Backend.Services
             using (var session = DataStore.OpenSession())
             {
                 return session.Get<UserRole>(userRoleId);
-
             }
         }
 
         public List<string> RetrieveEventRoleAssociationsForUserRole(string userRoleId)
         {
-            var items = MainController.EventList.ToDictionary(e => e.Key, e => e.Value.Description)
+            var items = EventService.EventList.ToDictionary(e => e.Key, e => e.Value.Description)
                                                     .OrderBy(e => e.Value)
                                                     .ToDictionary(e => e.Key, e => (object)e.Value);
 

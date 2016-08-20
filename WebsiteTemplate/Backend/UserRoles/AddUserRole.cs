@@ -94,11 +94,11 @@ namespace WebsiteTemplate.Backend.UserRoles
             return new InitializeResult(true);
         }
 
-        public override async Task<IList<Event>> ProcessAction(int actionNumber)
+        public override async Task<IList<IEvent>> ProcessAction(int actionNumber)
         {
             if (actionNumber == 1)
             {
-                return new List<Event>()
+                return new List<IEvent>()
                 {
                     new CancelInputDialog(),
                     new ExecuteAction(EventNumber.ViewUserRoles, "")
@@ -118,21 +118,21 @@ namespace WebsiteTemplate.Backend.UserRoles
 
                 if (String.IsNullOrWhiteSpace(name))
                 {
-                    return new List<Event>()
+                    return new List<IEvent>()
                     {
                         new ShowMessage("Name is mandatory and must be provided. ")
                     };
                 }
                 if (String.IsNullOrWhiteSpace(description))
                 {
-                    return new List<Event>()
+                    return new List<IEvent>()
                     {
                         new ShowMessage("Description is mandatory and must be provided.")
                     };
                 }
                 if (events == null)
                 {
-                    return new List<Event>()
+                    return new List<IEvent>()
                     {
                         new ShowMessage("Events is not present and is mandatory.")
                     };
@@ -142,7 +142,7 @@ namespace WebsiteTemplate.Backend.UserRoles
 
                 if (dbUserRole != null)
                 {
-                    return new List<Event>()
+                    return new List<IEvent>()
                         {
                             new ShowMessage("User role {0} already exists.", name)
                         };
@@ -150,7 +150,7 @@ namespace WebsiteTemplate.Backend.UserRoles
 
                 UserRoleService.AddUserRole(name, description, events);
 
-                return new List<Event>()
+                return new List<IEvent>()
                 {
                     new ShowMessage("User role created successfully."),
                     new CancelInputDialog(),

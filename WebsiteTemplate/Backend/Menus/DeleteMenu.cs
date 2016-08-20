@@ -29,7 +29,7 @@ namespace WebsiteTemplate.Backend.Menus
             MenuService = service;
         }
 
-        public override async Task<IList<Event>> ProcessAction()
+        public override async Task<IList<IEvent>> ProcessAction()
         {
             var id = GetValue<string>("Id");
 
@@ -46,7 +46,7 @@ namespace WebsiteTemplate.Backend.Menus
                 var tmpData = new Dictionary<string, object>(InputData);
                 tmpData.Add("Confirmation", true);
 
-                return new List<Event>()
+                return new List<IEvent>()
                     {
                         new UserConfirmation("Menu has sub-menus.\nThey will be deleted as well?")
                         {
@@ -60,7 +60,7 @@ namespace WebsiteTemplate.Backend.Menus
 
             MenuService.DeleteMenu(menu.Id);
 
-            return new List<Event>()
+            return new List<IEvent>()
             {
                 new CancelInputDialog(),
                 new ExecuteAction(EventNumber.ViewMenus, parentId),

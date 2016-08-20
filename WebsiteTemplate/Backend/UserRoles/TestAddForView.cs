@@ -52,18 +52,18 @@ namespace WebsiteTemplate.Backend.UserRoles
             return new InitializeResult(true);
         }
 
-        public override async Task<IList<Event>> ProcessAction(int actionNumber)
+        public override async Task<IList<IEvent>> ProcessAction(int actionNumber)
         {
             if (actionNumber == 1)
             {
-                return new List<Event>()
+                return new List<IEvent>()
                 {
                     new CancelInputDialog(),
                 };
             }
             else if (actionNumber == 0)
             {
-                return new List<Event>()
+                return new List<IEvent>()
                 {
                     new UpdateInputView(InputViewUpdateType.AddOrUpdate),
                     new CancelInputDialog()

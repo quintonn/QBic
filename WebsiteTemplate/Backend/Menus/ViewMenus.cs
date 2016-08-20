@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using WebsiteTemplate.Backend.Services;
-using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
@@ -31,10 +30,12 @@ namespace WebsiteTemplate.Backend.Menus
         }
 
         private MenuService MenuService { get; set; }
+        private EventService EventService { get; set; }
 
-        public ViewMenus(MenuService service)
+        public ViewMenus(MenuService menuService, EventService eventService)
         {
-            MenuService = service;
+            MenuService = menuService;
+            EventService = eventService;
         }
 
         public override IList<MenuItem> GetViewMenu(Dictionary<string, string> dataForMenu)
@@ -136,7 +137,7 @@ namespace WebsiteTemplate.Backend.Menus
             {
                 Name = r.Name,
                 Id = r.Id,
-                Event = r.Event == null ? "" : MainController.EventList.ContainsKey(r.Event.Value) ? MainController.EventList[r.Event.Value].Description : "",
+                Event = r.Event == null ? "" : EventService.EventList.ContainsKey(r.Event.Value) ? EventService.EventList[r.Event.Value].Description : "",
                 ParentMenu = r.ParentMenu,
                 CanDelete = r.CanDelete,
                 //Date = DateTime.Now.Date

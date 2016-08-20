@@ -1,0 +1,75 @@
+﻿using Microsoft.Practices.Unity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Threading.Tasks;
+using WebsiteTemplate.Menus.BaseItems;
+using WebsiteTemplate.Utilities;
+using WebsiteTemplate.Menus.InputItems;
+using WebsiteTemplate.Menus;
+using Newtonsoft.Json.Linq;
+
+namespace WebsiteTemplate.Backend.Processing
+{
+    public class InputEventProcessor : EventProcessor<IList<IEvent>>
+    {
+        public InputEventProcessor(IUnityContainer container)
+            :base(container)
+        {
+
+        }
+
+        public async override Task<IList<IEvent>> ProcessEvent(int eventId)
+        {
+            var data = GetRequestData();
+            var json = JsonHelper.Parse(data);
+
+            var formData = json.GetValue("Data");
+            var actionId = json.GetValue<int>("ActionId");
+
+            var id = eventId;
+            var eventItem = EventList[id] as GetInput;
+
+            var inputButtons = eventItem.InputButtons;
+            if (inputButtons.Where(i => i.ActionNumber == actionId).Count() == 0)
+            {
+                return new List<IEvent>()
+                {
+                    new ShowMessage("No button with action number " + actionId + " exists for " + eventItem.Description),
+                };
+            };
+
+            var callParameters = String.Empty;
+
+            var jsonData = JsonHelper.Parse(formData);
+            callParameters = jsonData.GetValue("parameters");
+
+            IList<IEvent> result;
+
+            var processedFormData = new Dictionary<string, object>();
+
+            await eventItem.Initialize(formData);
+            foreach (var inputField in eventItem.InputFields)
+            {
+                var value = inputField.GetValue(jsonData.GetValue<JToken>(inputField.InputName));
+                processedFormData.Add(inputField.InputName, value);
+            }
+            using (var session = Store.OpenSession())
+            {
+                eventItem.InputData = processedFormData;
+                eventItem.Store = Store;
+                result = await eventItem.ProcessAction(actionId);
+
+                HandleProcessActionResult(result, eventItem);
+                session.Flush();
+            }
+            foreach (var item in result)
+            {
+                item.Parameters = callParameters;
+            }
+
+            return result;
+        }
+    }
+}
