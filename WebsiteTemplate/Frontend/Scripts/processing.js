@@ -59,7 +59,6 @@
                     case 6: // Execute UI action
                         dialog.showBusyDialog("Processing...");
                         return mainApp.executeUIAction(item.EventNumber, item.ParametersToPass).then(dialog.closeBusyDialog);
-                        //case 7:  Input Data View
                     case 8: // Update input view (view in input screen)
                     case 9: // DeleteInputViewItem
                         params = JSON.parse(params);
@@ -88,11 +87,6 @@
                         {
                             return model.deleteRow(rowId);
                         }
-                        //return dialog.showMessage("Error", "Unknown action type: " + actionType + " for event " + eventId);
-
-                        break;
-                        //case 9:  DeleteInputViewItem
-
                     case 10: // UpdateDataSourceComboBox
                         var dlgs = _applicationModel.modalDialogs();
                         var inputDlg = dlgs[dlgs.length - 1].model;
@@ -103,11 +97,8 @@
                             inp.setInputValue(inpValue);
                         });
                         break;
-                    case 11:
+                    case 11: // VIew File
                         return processing.showOrDownloadFile(item);
-                        //main.makeWebCall(main.webApiURL + settings.DataUrl, "POST", callback, settings.RequestData);
-                        break;
-                        // case 11: View File
                     case 12: //UpdateInput
                         var inputName = item.InputName;
                         var value = item.InputValue;
