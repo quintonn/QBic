@@ -40,8 +40,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicAuthentication, Version=0.0.6076.28917, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BasicAuthentication.0.0.6076.28917\lib\net45\BasicAuthentication.dll</HintPath>
+    <Reference Include="BasicAuthentication, Version=0.0.6077.41662, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicAuthentication.0.0.6077.41662\lib\net45\BasicAuthentication.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FluentNHibernate, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -221,6 +221,7 @@
     <Compile Include="Backend\Processing\ViewMenuProcessor.cs" />
     <Compile Include="Backend\Services\ApplicationService.cs" />
     <Compile Include="Backend\Services\AuditService.cs" />
+    <Compile Include="Backend\Services\DataService.cs" />
     <Compile Include="Backend\Services\EventService.cs" />
     <Compile Include="Backend\Services\MenuService.cs" />
     <Compile Include="Backend\Services\UserRoleService.cs" />

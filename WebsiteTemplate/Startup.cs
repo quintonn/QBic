@@ -16,9 +16,12 @@ namespace WebsiteTemplate
 {
     public class Startup : IStartup
     {
+        private static IUnityContainer Container { get; set; }
         public void Configuration(IAppBuilder app)
         {
+            //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
             var myApp = app;
+
             var options = new UserAuthenticationOptions()
             {
                 AccessControlAllowOrigin = "*",
@@ -26,7 +29,7 @@ namespace WebsiteTemplate
                 RefreshTokenExpireTimeSpan = TimeSpan.FromMinutes(120), //Refresh token expires after 2 hours
                 AllowInsecureHttp = false,
                 TokenEndpointPath = new PathString("/api/v1/token"), //path is actually now /api/v1/token
-                UserContext = new UserContext()
+                UserContext = Container.Resolve<UserContext>()
             };
 
             myApp.UseBasicUserTokenAuthentication(options);
@@ -35,16 +38,18 @@ namespace WebsiteTemplate
 
         public void Register(HttpConfiguration config)
         {
+            //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
             config.MapHttpAttributeRoutes();
 
-            var container = new UnityContainer();
-            container.LoadConfiguration();
-            container.RegisterInstance(DataStore.GetInstance());
+            Container = new UnityContainer();
+            Container.LoadConfiguration();
 
-            var appSettings = container.Resolve<IApplicationSettings>();
-            appSettings.RegisterUnityContainers(container);
+            Container.RegisterInstance(DataStore.GetInstance());
 
-            config.DependencyResolver = new UnityDependencyResolver(container);
+            var appSettings = Container.Resolve<IApplicationSettings>();
+            appSettings.RegisterUnityContainers(Container);
+
+            config.DependencyResolver = new UnityDependencyResolver(Container);
         }
     }
 }

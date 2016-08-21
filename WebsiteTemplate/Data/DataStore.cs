@@ -11,13 +11,14 @@ namespace WebsiteTemplate.Data
 {
     public class DataStore
     {
-         I think this class is doing too much. and it's not being resolved using unity container.
-         maybe i can call the register before configure in the startup class
+        // need to prevent global access to data store for save/update/delete. 
+        // this needs to go through data service so auditing etc can be done.
+        // maybe also for retrievals, not sure if that should be audited too. - maybe make this configurable. could impact performance
+        // to prevent performace impact, this might have to be handled by a background thread or something like that.
         private static DataStore _instance { get; set; }
 
         private DataStore()
         {
-
         }
 
         public static DataStore GetInstance()
@@ -80,31 +81,6 @@ namespace WebsiteTemplate.Data
         public ISession OpenSession()
         {
             return Store.OpenSession();
-        }
-
-        public void SaveOrUpdate<T>(T item) where T : BaseClass
-        {
-            System.Diagnostics.Trace.TraceInformation("saving an object : " + item.GetType().ToString());
-            using (var session = Store.OpenSession())
-            {
-                session.SaveOrUpdate(item);
-                session.Flush();
-            }
-            System.Diagnostics.Trace.TraceInformation("object saved: " + item.GetType().ToString());
-        }
-
-        public bool TryDelete(BaseClass item)
-        {
-            if (item.CanDelete == false)
-            {
-                return false;
-            }
-            using (var session = Store.OpenSession())
-            {
-                session.Delete(item);
-                session.Flush();
-            }
-            return true;
         }
     }
 }

@@ -43,7 +43,7 @@ namespace WebsiteTemplate.Backend.Processing
             }
             var viewMenu = eventItem.GetViewMenu(dataForMenu);
 
-            var user = GetLoggedInUser();
+            var user = await GetLoggedInUser();
             List<MenuItem> allowedMenuItems;
             using (var session = Store.OpenSession())
             {

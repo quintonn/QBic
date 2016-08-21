@@ -20,7 +20,7 @@ namespace WebsiteTemplate.Backend.Processing
         public async override System.Threading.Tasks.Task<IList<Menu>> ProcessEvent(int eventId)
         {
             var results = new List<Menu>();
-            var user = GetLoggedInUser();
+            var user = await GetLoggedInUser();
             using (var session = Store.OpenSession())
             {
                 var events = GetAllowedEventsForUser(session, user.Id).ToArray();

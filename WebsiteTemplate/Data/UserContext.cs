@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Data
@@ -13,9 +14,11 @@ namespace WebsiteTemplate.Data
     public class UserContext : CoreUserContext<User>
     {
         private DataStore Store { get; set; }
-        public UserContext()
+        private DataService DataService { get; set; }
+        public UserContext(DataStore store, DataService dataService)
         {
-            Store = DataStore.GetInstance();
+            Store = store;
+            DataService = dataService;
         }
 
         public override void Initialize()
@@ -59,13 +62,13 @@ namespace WebsiteTemplate.Data
 
         public override System.Threading.Tasks.Task CreateUserAsync(User user)
         {
-            Store.Save(user);
+            DataService.SaveOrUpdate(user);
             return Task.FromResult(0);
         }
 
         public override System.Threading.Tasks.Task DeleteUserAsync(User user)
         {
-            Store.TryDelete(user);
+            DataService.TryDelete(user);
             return Task.FromResult(0);
         }
 
@@ -254,7 +257,7 @@ namespace WebsiteTemplate.Data
                     }
                 }
                 //session.Save(dbUser);
-                Store.Save(dbUser);
+                DataService.SaveOrUpdate(dbUser);
                 session.Flush();
             }
             return Task.FromResult(0);
