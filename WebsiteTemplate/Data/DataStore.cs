@@ -11,10 +11,10 @@ namespace WebsiteTemplate.Data
 {
     public class DataStore
     {
-        // need to prevent global access to data store for save/update/delete. 
-        // this needs to go through data service so auditing etc can be done.
-        // maybe also for retrievals, not sure if that should be audited too. - maybe make this configurable. could impact performance
-        // to prevent performace impact, this might have to be handled by a background thread or something like that.
+         need to prevent global access to data store for save/update/delete. 
+         this needs to go through data service so auditing etc can be done.
+         maybe also for retrievals, not sure if that should be audited too. - maybe make this configurable. could impact performance
+         to prevent performace impact, this might have to be handled by a background thread or something like that.
         private static DataStore _instance { get; set; }
 
         private DataStore()
