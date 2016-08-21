@@ -15,6 +15,10 @@ namespace WebsiteTemplate.Data
          this needs to go through data service so auditing etc can be done.
          maybe also for retrievals, not sure if that should be audited too. - maybe make this configurable. could impact performance
          to prevent performace impact, this might have to be handled by a background thread or something like that.
+
+        for now just use nhibernate                                                                            
+
+        -- Long term maybe make my own query language??
         private static DataStore _instance { get; set; }
 
         private DataStore()
