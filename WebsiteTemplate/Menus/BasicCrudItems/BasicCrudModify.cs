@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
@@ -11,11 +12,11 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 {
     public class BasicCrudModify<T> : GetInput, IBasicCrudModify where T : BaseClass
     {
-        private DataStore Store { get; set; }
+        private DataService DataService { get; set; }
 
-        public BasicCrudModify(DataStore store)
+        public BasicCrudModify(DataService dataService)
         {
-            Store = store;
+            DataService = dataService;
         }
 
         private T Item { get; set; } = null;
@@ -97,7 +98,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             {
                 IsNew = false;
                 var id = json.GetValue("Id");
-                using (var session = Store.OpenSession())
+                using (var session = DataService.OpenSession())
                 {
                     Item = session.Get<T>(id);
                 }
@@ -136,7 +137,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                     }
                 }
 
-                using (var session = Store.OpenSession())
+                using (var session = DataService.OpenSession())
                 {
                     T item;
                     if (!isNew)
@@ -154,7 +155,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                         prop.SetValue(item, value.Value);
                     }
 
-                    session.Save(item);
+                    DataService.SaveOrUpdate(item);
                     session.Flush();
                 }
 

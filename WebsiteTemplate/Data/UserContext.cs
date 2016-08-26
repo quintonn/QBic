@@ -13,11 +13,9 @@ namespace WebsiteTemplate.Data
 {
     public class UserContext : CoreUserContext<User>
     {
-        private DataStore Store { get; set; }
         private DataService DataService { get; set; }
-        public UserContext(DataStore store, DataService dataService)
+        public UserContext(DataService dataService)
         {
-            Store = store;
             DataService = dataService;
         }
 
@@ -28,7 +26,7 @@ namespace WebsiteTemplate.Data
 
         public override Task<bool> UserCanLogIn(string userId)
         {
-            using (var session = Store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var user = session.Get<User>(userId);
                 if (user == null)
@@ -52,7 +50,7 @@ namespace WebsiteTemplate.Data
 
         public override System.Threading.Tasks.Task AddRefreshToken(BasicAuthentication.Security.RefreshToken token)
         {
-            using (var session = Store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 session.SaveOrUpdate(token);
                 session.Flush();
@@ -68,14 +66,18 @@ namespace WebsiteTemplate.Data
 
         public override System.Threading.Tasks.Task DeleteUserAsync(User user)
         {
-            DataService.TryDelete(user);
+            using (var session = DataService.OpenSession())
+            {
+                DataService.TryDelete(user);
+                session.Flush();
+            }
             return Task.FromResult(0);
         }
 
         public override System.Threading.Tasks.Task<BasicAuthentication.Security.RefreshToken> FindRefreshToken(string hashedTokenId)
         {
             RefreshToken token;
-            using (var session = Store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 token = session.QueryOver<RefreshToken>().Where(r => r.Id == hashedTokenId).SingleOrDefault();
             }
@@ -85,7 +87,7 @@ namespace WebsiteTemplate.Data
         public override System.Threading.Tasks.Task<User> FindUserByEmailAsync(string email)
         {
             User result;
-            using (var session = Store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 //result = session.Query<User>().Where(u => u.Email == email).FirstOrDefault();
                 result = session.CreateCriteria<User>()
@@ -99,7 +101,7 @@ namespace WebsiteTemplate.Data
         public override System.Threading.Tasks.Task<User> FindUserByIdAsync(string id)
         {
             User result;
-            using (var session = Store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 result = session.Get<User>(id);
                 session.Flush();
@@ -115,7 +117,7 @@ namespace WebsiteTemplate.Data
         public override System.Threading.Tasks.Task<User> FindUserByNameAsync(string name)
         {
             User result;
-            using (var session = Store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 //result = session.Query<User>().Where(u => u.UserName == name).FirstOrDefault();
                 result = session.CreateCriteria<User>()
@@ -173,7 +175,7 @@ namespace WebsiteTemplate.Data
 
         public override System.Threading.Tasks.Task RemoveRefreshToken(string hashedTokenId)
         {
-            using (var session = Store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var token = session.QueryOver<RefreshToken>().Where(r => r.Id == hashedTokenId).SingleOrDefault();
                 session.Delete(token);
@@ -217,7 +219,7 @@ namespace WebsiteTemplate.Data
 
         public override System.Threading.Tasks.Task UpdateUserAsync(User user)
         {
-            using (var session = Store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var dbUser = session.Get<User>(user.Id);
                 var properties = dbUser.GetType().GetProperties();
@@ -256,7 +258,6 @@ namespace WebsiteTemplate.Data
                         throw;
                     }
                 }
-                //session.Save(dbUser);
                 DataService.SaveOrUpdate(dbUser);
                 session.Flush();
             }

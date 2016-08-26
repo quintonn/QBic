@@ -9,7 +9,6 @@ using System.Net.Configuration;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web;
-using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
@@ -17,18 +16,18 @@ namespace WebsiteTemplate.Backend.Services
 {
     public class UserService
     {
-        private DataStore DataStore { get; set; }
+        private DataService DataService { get; set; }
         private IApplicationSettings ApplicationSettings { get; set; }
 
-        public UserService(DataStore store, IApplicationSettings appSettings)
+        public UserService(DataService dataService, IApplicationSettings appSettings)
         {
-            DataStore = store;
+            DataService = dataService;
             ApplicationSettings = appSettings;
         }
 
         public List<UserRole> GetUserRoles()
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 return session.QueryOver<UserRole>().List().ToList();
             }
@@ -49,7 +48,7 @@ namespace WebsiteTemplate.Backend.Services
                 return "Unable to create user:\n" + String.Join("\n", result.Errors);
             }
 
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 foreach (var role in userRoles)
                 {
@@ -60,7 +59,7 @@ namespace WebsiteTemplate.Backend.Services
                         User = user,
                         UserRole = dbUserRole
                     };
-                    session.Save(roleAssociation);
+                    DataService.SaveOrUpdate(roleAssociation);
                 }
                 session.Flush();
             }
@@ -136,7 +135,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public User RetrieveUser(string userId)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 return session.Get<User>(userId);
             }
@@ -144,7 +143,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public void DeleteUser(string userId)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var user = session.Get<User>(userId);
 
@@ -155,17 +154,17 @@ namespace WebsiteTemplate.Backend.Services
                                        .ToList();
                 userRoles.ForEach(u =>
                 {
-                    session.Delete(u);
+                    DataService.TryDelete(u);
                 });
 
-                session.Delete(user);
+                DataService.TryDelete(user);
                 session.Flush();
             }
         }
 
         public User FindUserByUserName(string userName)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 return session.QueryOver<User>().Where(u => u.UserName == userName).SingleOrDefault();
             }
@@ -173,14 +172,14 @@ namespace WebsiteTemplate.Backend.Services
 
         public void UpdateUser(string userId, string userName, string email, List<string> userRoles)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var dbUser = session.Get<User>(userId);
                 dbUser.UserName = userName;
 
                 dbUser.EmailConfirmed = dbUser.Email == email;
                 dbUser.Email = email;
-                session.Update(dbUser);
+                DataService.SaveOrUpdate(dbUser);
 
                 var existingUserRoles = session.CreateCriteria<UserRoleAssociation>()
                                                .CreateAlias("User", "user")
@@ -189,7 +188,7 @@ namespace WebsiteTemplate.Backend.Services
                                                .ToList();
                 existingUserRoles.ForEach(u =>
                 {
-                    session.Delete(u);
+                    DataService.TryDelete(u);
                 });
 
                 foreach (var role in userRoles)
@@ -201,7 +200,7 @@ namespace WebsiteTemplate.Backend.Services
                         User = dbUser,
                         UserRole = dbUserRole
                     };
-                    session.Save(roleAssociation);
+                    DataService.SaveOrUpdate(roleAssociation);
                 }
 
                 session.Flush();
@@ -210,7 +209,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public IList<UserRoleAssociation> RetrieveUserRoleAssocationsForUserId(string userId)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var existingItems = session.CreateCriteria<UserRoleAssociation>()
                                            .CreateAlias("User", "user")
@@ -222,7 +221,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public List<User> RetrieveUsers(int currentPage, int linesPerPage, string filter)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 return CreateUserQuery(session, filter)
                                      .Skip((currentPage - 1) * linesPerPage)
@@ -234,7 +233,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public int RetrieveUserCount(string filter)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 return CreateUserQuery(session, filter).RowCount();
             }

@@ -43,7 +43,7 @@ namespace WebsiteTemplate.Backend.Menus
             {
                 var list = new List<InputField>();
 
-                list.Add(new StringInput("Name", "Menu Name", Menu.Name, null, true) { RaisePropertyChangedEvent = true });
+                list.Add(new StringInput("Name", "Menu Name", Menu.Name, null, true));
                 list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", Menu.Event == null && IsNew == false));
 
                 list.Add(new ComboBoxInput("Event", "Menu Action", Menu.Event?.ToString(), null, true)

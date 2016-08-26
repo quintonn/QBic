@@ -65,7 +65,7 @@ namespace WebsiteTemplate.Backend.Processing
             }
             var action = eventItem as ShowView;
 
-            using (var session = Store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 data = originalData;
                 var parentData = data;

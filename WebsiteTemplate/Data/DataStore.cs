@@ -11,21 +11,21 @@ namespace WebsiteTemplate.Data
 {
     public class DataStore
     {
-         need to prevent global access to data store for save/update/delete. 
-         this needs to go through data service so auditing etc can be done.
-         maybe also for retrievals, not sure if that should be audited too. - maybe make this configurable. could impact performance
-         to prevent performace impact, this might have to be handled by a background thread or something like that.
+        // need to prevent global access to data store for save/update/delete. 
+        // this needs to go through data service so auditing etc can be done.
+        // maybe also for retrievals, not sure if that should be audited too. - maybe make this configurable. could impact performance
+        // to prevent performace impact, this might have to be handled by a background thread or something like that.
 
-        for now just use nhibernate                                                                            
+        //for now just use nhibernate                                                                            
 
-        -- Long term maybe make my own query language??
+        //-- Long term maybe make my own query language??
         private static DataStore _instance { get; set; }
 
         private DataStore()
         {
         }
 
-        public static DataStore GetInstance()
+        internal static DataStore GetInstance()
         {
             if (_instance == null)
             {
@@ -33,8 +33,6 @@ namespace WebsiteTemplate.Data
             }
             return _instance;
         }
-
-        private static object xlock = new object();
 
         private static ISessionFactory Store;
         private static NHibernate.Cfg.Configuration Configuration;

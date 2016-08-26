@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.Practices.Unity;
+using System.Threading.Tasks;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
 
@@ -6,11 +7,10 @@ namespace WebsiteTemplate.Backend.Services
 {
     public class AuditService
     {
-        private DataStore Store { get; set; }
-
-        public AuditService(DataStore store)
+        private DataStore DataStore { get; set; }
+        public AuditService(DataStore dataStore)
         {
-            Store = store;
+            DataStore = dataStore;
         }
 
         public async Task LogUserEvent(int eventId)
@@ -22,12 +22,5 @@ namespace WebsiteTemplate.Backend.Services
         {
             var id = item.Id;
         }
-    }
-
-    public enum AuditAction
-    {
-        New = 0,
-        Modify = 1,
-        Delete = 2
     }
 }

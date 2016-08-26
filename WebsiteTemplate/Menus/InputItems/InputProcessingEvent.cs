@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus.BaseItems;
 
@@ -7,7 +8,7 @@ namespace WebsiteTemplate.Menus.InputItems
 {
     public abstract class InputProcessingEvent : Event
     {
-        internal DataStore Store { get; set; }
+        internal DataService DataService { get; set; }
 
         public Dictionary<string, object> InputData { get; set; } = new Dictionary<string, object>();
 
@@ -125,7 +126,7 @@ namespace WebsiteTemplate.Menus.InputItems
             {
                 return default(T);
             }
-            using (var session = Store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var result = session.Get<T>(id);
                 return result;

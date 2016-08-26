@@ -45,10 +45,10 @@ namespace WebsiteTemplate.Backend.Processing
 
             var user = await GetLoggedInUser();
             List<MenuItem> allowedMenuItems;
-            using (var session = Store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
 
-                var allowedEvents = GetAllowedEventsForUser(session, user.Id);
+                var allowedEvents = GetAllowedEventsForUser(user.Id);
                 allowedMenuItems = viewMenu.Where(m => allowedEvents.Contains(m.EventNumber)).ToList();
             }
 

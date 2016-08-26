@@ -3,8 +3,6 @@ using NHibernate.Criterion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using WebsiteTemplate.Controllers;
-using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
 
@@ -12,18 +10,18 @@ namespace WebsiteTemplate.Backend.Services
 {
     public class UserRoleService
     {
-        private DataStore DataStore { get; set; }
+        private DataService DataService { get; set; }
         private EventService EventService { get; set; }
 
-        public UserRoleService(DataStore store, EventService eventService)
+        public UserRoleService(DataService dataService, EventService eventService)
         {
-            DataStore = store;
+            DataService = dataService;
             EventService = eventService;
         }
 
         public UserRole FindUserRoleByName(string name)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 return session.CreateCriteria<UserRole>()
                               .Add(Restrictions.Eq("Name", name))
@@ -33,7 +31,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public void AddUserRole(string name, string description, List<string> events)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var dbUserRole = new UserRole()
                 {
@@ -41,7 +39,7 @@ namespace WebsiteTemplate.Backend.Services
                     Description = description
                 };
 
-                session.Save(dbUserRole);
+                DataService.SaveOrUpdate(dbUserRole);
 
                 foreach (var item in events)
                 {
@@ -50,7 +48,7 @@ namespace WebsiteTemplate.Backend.Services
                         Event = Convert.ToInt32(item),
                         UserRole = dbUserRole
                     };
-                    session.Save(eventItem);
+                    DataService.SaveOrUpdate(eventItem);
                 }
 
                 session.Flush();
@@ -59,12 +57,12 @@ namespace WebsiteTemplate.Backend.Services
 
         public void UpdateUserRole(string id, string name, string description, List<string> events)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var dbUserRole = session.Get<UserRole>(id);
                 dbUserRole.Name = name;
                 dbUserRole.Description = description;
-                session.Save(dbUserRole);
+                DataService.SaveOrUpdate(dbUserRole);
 
 
                 var existingEvents = session.CreateCriteria<EventRoleAssociation>()
@@ -74,7 +72,7 @@ namespace WebsiteTemplate.Backend.Services
                                    .ToList();
                 existingEvents.ForEach(e =>
                 {
-                    session.Delete(e);
+                    DataService.TryDelete(e);
                 });
                 foreach (var item in events)
                 {
@@ -83,7 +81,7 @@ namespace WebsiteTemplate.Backend.Services
                         Event = Convert.ToInt32(item),
                         UserRole = dbUserRole
                     };
-                    session.Save(eventItem);
+                    DataService.SaveOrUpdate(eventItem);
                 }
                 session.Flush();
             }
@@ -113,7 +111,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public bool UserRoleIsAssigned(string userRoleId)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var userRoleAssociations = session.CreateCriteria<UserRoleAssociation>()
                                                   .CreateAlias("UserRole", "role")
@@ -126,7 +124,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public void DeleteUserRole(string userRoleId)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var eventRoles = session.CreateCriteria<EventRoleAssociation>()
                                        .CreateAlias("UserRole", "role")
@@ -135,19 +133,19 @@ namespace WebsiteTemplate.Backend.Services
                                        .ToList();
                 eventRoles.ForEach(e =>
                 {
-                    session.Delete(e);
+                    DataService.TryDelete(e);
                 });
 
                 var userRole = session.Get<UserRole>(userRoleId);
 
-                session.Delete(userRole);
+                DataService.TryDelete(userRole);
                 session.Flush();
             }
         }
 
         public UserRole RetrieveUserRole(string userRoleId)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 return session.Get<UserRole>(userRoleId);
             }
@@ -159,7 +157,7 @@ namespace WebsiteTemplate.Backend.Services
                                                     .OrderBy(e => e.Value)
                                                     .ToDictionary(e => e.Key, e => (object)e.Value);
 
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var events = session.CreateCriteria<EventRoleAssociation>()
                                     .CreateAlias("UserRole", "role")
@@ -175,7 +173,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public List<UserRole> RetrieveUserRoles(int currentPage, int linesPerPage, string filter)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 return CreateUserRoleQuery(session, filter)
                                      .Skip((currentPage - 1) * linesPerPage)
@@ -187,7 +185,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public int RetrieveUserRoleCount(string filter)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 return CreateUserRoleQuery(session, filter).RowCount();
             }

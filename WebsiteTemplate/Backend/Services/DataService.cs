@@ -1,9 +1,9 @@
-﻿using System;
+﻿using NHibernate;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
+using System.Linq;
 
 namespace WebsiteTemplate.Backend.Services
 {
@@ -11,6 +11,8 @@ namespace WebsiteTemplate.Backend.Services
     {
         private DataStore Store { get; set; } 
         private AuditService AuditService { get; set; }
+
+        private IList<ISession> Sessions { get; set; } = new List<ISession>();
         public DataService(DataStore store, AuditService auditService)
         {
             Store = store;
@@ -19,31 +21,53 @@ namespace WebsiteTemplate.Backend.Services
 
         public void SaveOrUpdate<T>(T item) where T : BaseClass
         {
-            System.Diagnostics.Trace.TraceInformation("saving an object : " + item.GetType().ToString());
-            
-            using (var session = Store.OpenSession())
+            var session = GetSession();
+            if (session == null)
             {
-                AuditService.AuditChange(item, String.IsNullOrWhiteSpace(item.Id) ? AuditAction.New : AuditAction.Modify);
-
-                session.SaveOrUpdate(item);
-                session.Flush();
+                throw new Exception("No session has been opened. Call OpenSession on DataService instance first");
             }
-            System.Diagnostics.Trace.TraceInformation("object saved: " + item.GetType().ToString());
+            AuditService.AuditChange(item, String.IsNullOrWhiteSpace(item.Id) ? AuditAction.New : AuditAction.Modify);
+
+            session.SaveOrUpdate(item);
         }
 
         public bool TryDelete<T>(T item) where T : BaseClass
         {
+            var session = GetSession();
+            if (session == null)
+            {
+                throw new Exception("No session has been opened. Call OpenSession on DataService instance first");
+            }
             if (item.CanDelete == false)
             {
                 return false;
             }
-            using (var session = Store.OpenSession())
-            {
-                AuditService.AuditChange(item, AuditAction.Delete);
-                session.Delete(item);
-                session.Flush();
-            }
+
+            AuditService.AuditChange(item, AuditAction.Delete);
+            session.Delete(item);
+
             return true;
+        }
+
+        private ISession GetSession()
+        {
+            CleanSessions();
+            return Sessions.LastOrDefault();
+        }
+
+        private void CleanSessions()
+        {
+            while (Sessions.Count > 0 && Sessions.Last().IsOpen == false)
+            {
+                Sessions.RemoveAt(Sessions.Count - 1);
+            }
+        }
+        public ISession OpenSession()
+        {
+            CleanSessions();
+            var session = Store.OpenSession();
+            Sessions.Add(session);
+            return session;
         }
     }
 }

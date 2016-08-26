@@ -55,10 +55,10 @@ namespace WebsiteTemplate.Backend.Processing
                 var value = inputField.GetValue(jsonData.GetValue<JToken>(inputField.InputName));
                 processedFormData.Add(inputField.InputName, value);
             }
-            using (var session = Store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 eventItem.InputData = processedFormData;
-                eventItem.Store = Store;
+                eventItem.DataService = DataService;
                 result = await eventItem.ProcessAction(actionId);
 
                 HandleProcessActionResult(result, eventItem);

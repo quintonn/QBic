@@ -13,6 +13,6 @@ namespace WebsiteTemplate.Utilities
 
         void RegisterUnityContainers(IUnityContainer container);
 
-        void SetupDefaults(ISession session);
+        void SetupDefaults();
     }
 }

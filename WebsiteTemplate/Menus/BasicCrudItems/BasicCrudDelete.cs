@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
 
@@ -15,6 +16,8 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             }
         }
 
+        private DataService DataService { get; set; }
+
         public int Id { get; set; }
 
         public string ItemName { get; set; }
@@ -24,15 +27,21 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             return Id;
         }
 
+        public BasicCrudDelete(DataService dataService)
+        {
+            DataService = dataService;
+        }
+
         public override async Task<IList<IEvent>> ProcessAction()
         {
             var id = GetValue<string>("Id");
 
-            using (var session = Store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var item = session.Get<T>(id);
 
-                session.Delete(item);
+                DataService.TryDelete(item);
+                
                 session.Flush();
             }
 

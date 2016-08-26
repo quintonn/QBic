@@ -3,7 +3,6 @@ using NHibernate.Criterion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
@@ -12,18 +11,18 @@ namespace WebsiteTemplate.Backend.Services
 {
     public class MenuService
     {
-        private DataStore DataStore { get; set; }
+        private DataService DataService { get; set; }
         private EventService EventService { get; set; }
 
-        public MenuService(DataStore store, EventService eventService)
+        public MenuService(DataService dataService, EventService eventService)
         {
-            DataStore = store;
+            DataService = dataService;
             EventService = eventService;
         }
 
         public Menu RetrieveMenu(string menuId)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var result = session.Get<Menu>(menuId);
                 return result;
@@ -32,7 +31,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public bool IsParentMenu(string menuId)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var childMenuItems = session.CreateCriteria<Menu>()
                                             .CreateAlias("ParentMenu", "parent")
@@ -45,12 +44,12 @@ namespace WebsiteTemplate.Backend.Services
 
         public void DeleteMenu(string menuId)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 DeleteChildMenus(menuId, session);
 
                 var menu = session.Get<Menu>(menuId);
-                session.Delete(menu);
+                DataService.TryDelete(menu);
                 session.Flush();
             }
         }
@@ -64,12 +63,12 @@ namespace WebsiteTemplate.Backend.Services
             foreach (var childMenu in childMenuItems)
             {
                 DeleteChildMenus(childMenu.Id, session);
-                session.Delete(childMenu);
+                DataService.TryDelete(childMenu);
             }
         }
         public void SaveOrUpdateMenu(string menuId, string parentMenuId, EventNumber eventNumber, string name)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 Menu dbMenu;
                 if (String.IsNullOrWhiteSpace(menuId))
@@ -100,7 +99,7 @@ namespace WebsiteTemplate.Backend.Services
                 }
                 dbMenu.Name = name;
 
-                session.SaveOrUpdate(dbMenu);
+                DataService.SaveOrUpdate(dbMenu);
                 session.Flush();
             }
         }
@@ -116,7 +115,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public List<Menu> RetrieveMenusWithFilter(string menuId, int currentPage, int linesPerPage, string filter)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var query = CreateMenuListQuery(menuId, filter, session);
 
@@ -131,7 +130,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public int RetrieveMenusCountWithFilter(string menuId, string filter)
         {
-            using (var session = DataStore.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var query = CreateMenuListQuery(menuId, filter, session);
 

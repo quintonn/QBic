@@ -21,9 +21,9 @@ namespace WebsiteTemplate.Backend.Processing
         {
             var results = new List<Menu>();
             var user = await GetLoggedInUser();
-            using (var session = Store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
-                var events = GetAllowedEventsForUser(session, user.Id).ToArray();
+                var events = GetAllowedEventsForUser(user.Id).ToArray();
 
                 var mainMenus = session.CreateCriteria<Menu>()
                                            .Add(Restrictions.In("Event", events))

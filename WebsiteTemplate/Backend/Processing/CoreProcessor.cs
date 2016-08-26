@@ -26,9 +26,9 @@ namespace WebsiteTemplate.Backend.Processing
     {
         protected static JsonSerializerSettings JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = "dd-MM-yyyy" };
         protected static IApplicationSettings ApplicationSettings { get; set; }
-        protected static DataStore Store { get; set; }
         protected static IUnityContainer Container { get; set; }
         protected static EventService EventService { get; set; }
+        protected static DataService DataService { get; set; }
         protected static AuditService AuditService { get; set; }
 
         private static bool SetupDone = false;
@@ -40,8 +40,8 @@ namespace WebsiteTemplate.Backend.Processing
                 Container = container;
 
                 ApplicationSettings = container.Resolve<IApplicationSettings>();
-                Store = container.Resolve<DataStore>();
                 EventService = container.Resolve<EventService>();
+                DataService = container.Resolve<DataService>();
                 AuditService = container.Resolve<AuditService>();
             
                 PopulateDefaultValues();
@@ -59,11 +59,7 @@ namespace WebsiteTemplate.Backend.Processing
 
         private static void PopulateDefaultValues()
         {
-            using (var session = Store.OpenSession())
-            {
-                ApplicationSettings.SetupDefaults(session);
-                session.Flush();
-            }
+            ApplicationSettings.SetupDefaults();
         }
 
         internal async Task<IHttpActionResult> Process(int eventId, HttpRequestMessage requestMessage)
@@ -99,22 +95,25 @@ namespace WebsiteTemplate.Backend.Processing
             }
         }
 
-        protected List<int> GetAllowedEventsForUser(ISession session, string userId)
+        protected List<int> GetAllowedEventsForUser(string userId)
         {
-            var roles = session.CreateCriteria<UserRoleAssociation>()
-                                   .CreateAlias("User", "user")
-                                   .Add(Restrictions.Eq("user.Id", userId))
-                                   .List<UserRoleAssociation>()
-                                   .ToList();
+            using (var session = DataService.OpenSession())
+            {
+                var roles = session.CreateCriteria<UserRoleAssociation>()
+                                       .CreateAlias("User", "user")
+                                       .Add(Restrictions.Eq("user.Id", userId))
+                                       .List<UserRoleAssociation>()
+                                       .ToList();
 
-            var userRoles = roles.Select(r => r.UserRole.Id).ToArray();
-            var eventRoleAssociations = session.CreateCriteria<EventRoleAssociation>()
-                                               .CreateAlias("UserRole", "role")
-                                               .Add(Restrictions.In("role.Id", userRoles))
-                                               .List<EventRoleAssociation>();
+                var userRoles = roles.Select(r => r.UserRole.Id).ToArray();
+                var eventRoleAssociations = session.CreateCriteria<EventRoleAssociation>()
+                                                   .CreateAlias("UserRole", "role")
+                                                   .Add(Restrictions.In("role.Id", userRoles))
+                                                   .List<EventRoleAssociation>();
 
-            var events = eventRoleAssociations.Select(e => e.Event).ToList();
-            return events;
+                var events = eventRoleAssociations.Select(e => e.Event).ToList();
+                return events;
+            }
         }
 
         protected async Task<User> GetLoggedInUser()

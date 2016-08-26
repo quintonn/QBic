@@ -71,7 +71,7 @@ namespace WebsiteTemplate.Backend.Processing
             {
                 var action = eventItem as ShowView;
 
-                using (var session = Store.OpenSession())
+                using (var session = DataService.OpenSession())
                 {
                     data = originalData;
                     var parentData = data;
@@ -127,7 +127,7 @@ namespace WebsiteTemplate.Backend.Processing
                 }
 
                 (eventItem as DoSomething).InputData = processedFormData;
-                (eventItem as DoSomething).Store = Store;
+                (eventItem as DoSomething).DataService = DataService;
                 var doResult = await (eventItem as DoSomething).ProcessAction();
                 HandleProcessActionResult(doResult, eventItem);
                 result.AddRange(doResult);
