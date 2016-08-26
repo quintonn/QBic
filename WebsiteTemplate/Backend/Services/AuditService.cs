@@ -18,7 +18,8 @@ namespace WebsiteTemplate.Backend.Services
         public async Task LogUserEvent(int eventId)
         {
             //var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync() as User;
-            
+
+            //TODO
             // May have to also create a web call for user confirmation.
             // This is to log when a user clicks ok on a message dialog box and log what the user chose and the message shown
 
@@ -28,10 +29,13 @@ namespace WebsiteTemplate.Backend.Services
             //     User X clicked on "Ok" on message "Menu Deleted successfully"
             //     User X clicked on menu item "Show Claims"
             //     User X clicked on "Cancel" on "Edit Cause" of "Test Cause"   --might have to show Id
+            // I think this covers everything
         }
 
         public void AuditChange<T>(T item, AuditAction action, string entityName) where T : BaseClass
         {
+            //TODO: I think i can do something to only log if there has been a change (on the modification action).
+            //      I can either add IPropertyChanged interface on base class, or do property comparison here. (I prefer the first options)
             var userTask = BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync();
             userTask.Wait();
             var user = userTask.Result as User;
