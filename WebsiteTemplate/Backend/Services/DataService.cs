@@ -26,9 +26,13 @@ namespace WebsiteTemplate.Backend.Services
             {
                 throw new Exception("No session has been opened. Call OpenSession on DataService instance first");
             }
-            AuditService.AuditChange(item, String.IsNullOrWhiteSpace(item.Id) ? AuditAction.New : AuditAction.Modify);
+
+            var action = String.IsNullOrWhiteSpace(item.Id) ? AuditAction.New : AuditAction.Modify;
 
             session.SaveOrUpdate(item);
+            var entityName = session.GetEntityName(item);
+
+            AuditService.AuditChange(item, action, entityName);
         }
 
         public bool TryDelete<T>(T item) where T : BaseClass
@@ -42,8 +46,9 @@ namespace WebsiteTemplate.Backend.Services
             {
                 return false;
             }
+            var entityName = session.GetEntityName(item);
 
-            AuditService.AuditChange(item, AuditAction.Delete);
+            AuditService.AuditChange(item, AuditAction.Delete, entityName);
             session.Delete(item);
 
             return true;

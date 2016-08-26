@@ -22,7 +22,8 @@ namespace WebsiteTemplate.Mappings
             Map(x => x.AuditAction).CustomType<GenericEnumMapper<AuditAction>>()
                                    .Not
                                    .Nullable();
-            Map(x => x.ObjectId).Nullable();
+            Map(x => x.ObjectId).Not.Nullable();
+            Map(x => x.EntityName).Not.Nullable();
             Map(x => x.OriginalObject).Nullable().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
             Map(x => x.NewObject).Nullable().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
         }

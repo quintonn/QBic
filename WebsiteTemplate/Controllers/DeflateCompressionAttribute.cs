@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Web.Http.Filters;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -9,8 +10,8 @@ namespace WebsiteTemplate.Controllers
 
         public override void OnActionExecuted(HttpActionExecutedContext actContext)
         {
-            var content = actContext.Response.Content;
-            var originalType = content.Headers.GetValues("Content-Type");
+            var content = actContext.Response?.Content;
+            var originalType = content == null ? new List<string>() { "application/json" } : content.Headers.GetValues("Content-Type");
             var bytes = content == null ? null : content.ReadAsByteArrayAsync().Result;
             var zlibbedContent = bytes == null ? new byte[0] :
             CompressionHelper.DeflateByte(bytes);

@@ -17,12 +17,24 @@ namespace WebsiteTemplate.Backend.Services
 
         public async Task LogUserEvent(int eventId)
         {
-            var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync() as User;
+            //var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync() as User;
+            
+            // May have to also create a web call for user confirmation.
+            // This is to log when a user clicks ok on a message dialog box and log what the user chose and the message shown
+
+            // I think this logging should relay some kind of info like this:
+            // User X click on menu/button/link for ABC
+            // Eg. User X clicked delete on "Menus" item "View Users"
+            //     User X clicked on "Ok" on message "Menu Deleted successfully"
+            //     User X clicked on menu item "Show Claims"
+            //     User X clicked on "Cancel" on "Edit Cause" of "Test Cause"   --might have to show Id
         }
 
-        public async void AuditChange<T>(T item, AuditAction action) where T : BaseClass
+        public void AuditChange<T>(T item, AuditAction action, string entityName) where T : BaseClass
         {
-            var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync() as User;
+            var userTask = BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync();
+            userTask.Wait();
+            var user = userTask.Result as User;
 
             using (var session = DataStore.OpenSession())
             {
@@ -38,6 +50,7 @@ namespace WebsiteTemplate.Backend.Services
                     AuditEventDateTimeUTC = DateTime.UtcNow,
                     User = user,
                     ObjectId = item.Id,
+                    EntityName = entityName,
                     OriginalObject = SerializeObject(existingItem),
                     NewObject = action != AuditAction.Delete ? SerializeObject(item) : String.Empty
                 };
