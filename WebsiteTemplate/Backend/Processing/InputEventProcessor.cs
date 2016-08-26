@@ -61,7 +61,7 @@ namespace WebsiteTemplate.Backend.Processing
                 eventItem.DataService = DataService;
                 result = await eventItem.ProcessAction(actionId);
 
-                HandleProcessActionResult(result, eventItem);
+                await HandleProcessActionResult(result, eventItem);
                 session.Flush();
             }
             foreach (var item in result)

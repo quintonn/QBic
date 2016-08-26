@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
@@ -17,7 +18,7 @@ namespace WebsiteTemplate.Backend.Processing
 
         }
 
-        protected async void HandleProcessActionResult(IList<IEvent> result, IEvent eventItem)
+        protected async Task HandleProcessActionResult(IList<IEvent> result, IEvent eventItem)
         {
             var jsonDataToUpdate = String.Empty;
             foreach (var item in result)
@@ -39,7 +40,7 @@ namespace WebsiteTemplate.Backend.Processing
                     }
                     if (inputData.ContainsKey("rowId"))
                     {
-                        throw new Exception("Put rowid code back");
+                        //throw new Exception("Put rowid code back");
                         //(item as UpdateInputView).RowId = Convert.ToInt32(inputData["rowId"]);
                     }
                     if (String.IsNullOrWhiteSpace(jsonDataToUpdate))

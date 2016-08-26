@@ -167,6 +167,10 @@ namespace WebsiteTemplate.Utilities
 
         public static JsonHelper FromObject(object item)
         {
+            if (String.IsNullOrWhiteSpace(item.ToString()))
+            {
+                return new JsonHelper();
+            }
             return new JsonHelper(JObject.FromObject(item));
         }
 
