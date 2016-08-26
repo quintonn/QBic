@@ -67,6 +67,19 @@ $(document).ready(function ()
         if (err.responseText != null)
         {
             errMsg = err.responseText;
+            
+            try
+            {
+                var tmp = JSON.parse(errMsg);
+                if (tmp.Message != null)
+                {
+                    errMsg = tmp.Message;
+                }
+            }
+            catch (error)
+            {
+                console.log(error);
+            }
         }
         if (err.stack != null)
         {
