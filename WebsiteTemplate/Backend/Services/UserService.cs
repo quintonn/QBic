@@ -186,12 +186,17 @@ namespace WebsiteTemplate.Backend.Services
                                                .Add(Restrictions.Eq("user.Id", dbUser.Id))
                                                .List<UserRoleAssociation>()
                                                .ToList();
-                existingUserRoles.ForEach(u =>
+
+                var rolesToDelete = existingUserRoles.Where(e => !userRoles.Contains(e.UserRole.Id)).ToList();
+                var existingUserRoleIds = existingUserRoles.Select(e => e.UserRole.Id).ToList();
+                var userRolesToAdd = userRoles.Where(e => !existingUserRoleIds.Contains(e)).ToList();
+
+                rolesToDelete.ForEach(u =>
                 {
                     DataService.TryDelete(u);
                 });
 
-                foreach (var role in userRoles)
+                foreach (var role in userRolesToAdd)
                 {
                     var dbUserRole = session.Get<UserRole>(role.ToString());
 

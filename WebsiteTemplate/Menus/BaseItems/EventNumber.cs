@@ -3,7 +3,7 @@
 namespace WebsiteTemplate.Menus.BaseItems
 {
     [JsonConverter(typeof(EventNumberConverter))]
-    public partial class EventNumber
+    public class EventNumber
     {
         private int Value { get; set; }
 

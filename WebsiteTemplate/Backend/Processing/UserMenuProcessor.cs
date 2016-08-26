@@ -43,24 +43,25 @@ namespace WebsiteTemplate.Backend.Processing
                 mainMenusWithSubMenus.ForEach(m =>
                 {
                     m.ParentMenu = null;
-                    AddSubMenu(m, session);
+                    AddSubMenu(m, session, events);
                     results.Add(m);
                 });
             }
             return results;
         }
 
-        private void AddSubMenu(Menu menu, ISession session)
+        private void AddSubMenu(Menu menu, ISession session, int[] events)
         {
             menu.ParentMenu = null;
             var subMenus = session.CreateCriteria<Menu>()
                                   .CreateAlias("ParentMenu", "parent")
+                                  .Add(Restrictions.In("Event", events))
                                   .Add(Restrictions.Eq("parent.Id", menu.Id))
                                   .List<Menu>()
                                   .ToList();
             foreach (var subMenu in subMenus)
             {
-                AddSubMenu(subMenu, session);
+                AddSubMenu(subMenu, session, events);
             }
             menu.SubMenus = subMenus;
         }

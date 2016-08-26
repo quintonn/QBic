@@ -64,21 +64,26 @@ namespace WebsiteTemplate.Backend.Services
                 dbUserRole.Description = description;
                 DataService.SaveOrUpdate(dbUserRole);
 
+                var eventItems = events.Select(e => Convert.ToInt32(e)).ToList();
 
                 var existingEvents = session.CreateCriteria<EventRoleAssociation>()
                                    .CreateAlias("UserRole", "role")
                                    .Add(Restrictions.Eq("role.Id", id))
                                    .List<EventRoleAssociation>()
                                    .ToList();
-                existingEvents.ForEach(e =>
+                var eventsToDelete = existingEvents.Where(e => !eventItems.Contains(e.Event)).ToList();
+                var existinEventIds = existingEvents.Select(e => e.Event).ToList();
+                var eventsToAdd = eventItems.Where(e => !existinEventIds.Contains(e)).ToList();
+
+                eventsToDelete.ForEach(e =>
                 {
                     DataService.TryDelete(e);
                 });
-                foreach (var item in events)
+                foreach (var item in eventsToAdd)
                 {
                     var eventItem = new EventRoleAssociation()
                     {
-                        Event = Convert.ToInt32(item),
+                        Event = item,
                         UserRole = dbUserRole
                     };
                     DataService.SaveOrUpdate(eventItem);
