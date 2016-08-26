@@ -249,10 +249,13 @@
     <Compile Include="Data\DataStoreExtensionMethods.cs" />
     <Compile Include="Data\JoinedSubclassIdConvention.cs" />
     <Compile Include="Data\SqlStatementInterceptor.cs" />
+    <Compile Include="Mappings\AuditEventMapping.cs" />
     <Compile Include="Menus\BaseItems\IEvent.cs" />
     <Compile Include="Menus\BasicCrudItems\IBasicCrudDelete.cs" />
     <Compile Include="Menus\BasicCrudItems\IBasicCrudModify.cs" />
     <Compile Include="Menus\BasicCrudItems\IBasicCrudView.cs" />
+    <Compile Include="Models\AuditAction.cs" />
+    <Compile Include="Models\AuditEvent.cs" />
     <Compile Include="Utilities\JsonArray.cs" />
     <Compile Include="Utilities\JsonHelper.cs" />
     <Compile Include="Utilities\UnityDependencyResolver.cs" />
