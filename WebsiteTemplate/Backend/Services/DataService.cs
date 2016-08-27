@@ -60,11 +60,19 @@ namespace WebsiteTemplate.Backend.Services
             return Sessions.LastOrDefault();
         }
 
+        private static object xLock = new object();
+
         private void CleanSessions()
         {
-            while (Sessions.Count > 0 && Sessions.Last().IsOpen == false)
+            lock (xLock)
             {
-                Sessions.RemoveAt(Sessions.Count - 1);
+                foreach (var item in Sessions.ToList())
+                {
+                    if (item == null || item.IsOpen == false)
+                    {
+                        Sessions.Remove(item);
+                    }
+                }
             }
         }
         public ISession OpenSession()

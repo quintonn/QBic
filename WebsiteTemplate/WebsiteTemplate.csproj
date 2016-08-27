@@ -212,6 +212,7 @@
     <Compile Include="Backend\Menus\EditMenu.cs" />
     <Compile Include="Backend\Processing\ActionExecutionProcessor.cs" />
     <Compile Include="Backend\Processing\CoreProcessor.cs" />
+    <Compile Include="Backend\Processing\CoreProcessorBase.cs" />
     <Compile Include="Backend\Processing\EventProcessor.cs" />
     <Compile Include="Backend\Processing\FileProcessor.cs" />
     <Compile Include="Backend\Processing\InputEventProcessor.cs" />
