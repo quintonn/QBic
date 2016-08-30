@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Backend.Processing.InputProcessing;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
-    public abstract class ModifyItemUsingDataService<TDataItemService, TBaseClass> : GetInput where TDataItemService : DataItemServiceCore<TBaseClass> where TBaseClass : BaseClass
+    public abstract class ModifyItemUsingDataService<TDataItemService, TBaseClass> : GetInput where TDataItemService : InputProcessingCore<TBaseClass> where TBaseClass : BaseClass
     {
         protected TDataItemService DataItemService { get; set; }
 

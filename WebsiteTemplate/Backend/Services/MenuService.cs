@@ -10,14 +10,23 @@ using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Services
 {
-    public class MenuService : NHibernateDataItemService<Menu>
+    public class MenuService
     {
         private EventService EventService { get; set; }
+        private DataService DataService { get; set; }
 
-        public MenuService(DataService dataService, EventService eventService)
-            : base(dataService)
+        public MenuService(EventService eventService, DataService dataService)
         {
+            DataService = dataService;
             EventService = eventService;
+        }
+
+        public Menu RetrieveMenuWithId(string menuId)
+        {
+            using (var session = DataService.OpenSession())
+            {
+                return session.Get<Menu>(menuId);
+            }
         }
 
         public bool IsParentMenu(string menuId)
@@ -33,12 +42,24 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        public override void DeleteItem(ISession session, string itemId)
+        public Dictionary<string, object> GetEventList()
         {
-            DeleteChildMenus(itemId, session);
+            return EventService.EventList.Where(e => e.Value.ActionType != EventType.InputDataView)
+                                           .Where(m => !String.IsNullOrWhiteSpace(m.Value.Description))
+                                           .Where(m => m.Value is ShowView) // TODO: this is not right. can't have 'add xx' in menu at the moment
+                                           .OrderBy(m => m.Value.Description)  //    maybe need a setting 'allow in menu' etc
+                                           .ToDictionary(m => m.Key.ToString(), m => (object)m.Value.Description);
+        }
 
-            var menu = session.Get<Menu>(itemId);
-            DataService.TryDelete(menu);
+        public void DeleteMenuWithId(string menuId)
+        {
+            using (var session = DataService.OpenSession())
+            {
+                DeleteChildMenus(menuId, session);
+
+                var menu = session.Get<Menu>(menuId);
+                DataService.TryDelete(menu);
+            }
         }
 
         private void DeleteChildMenus(string menuId, ISession session)
@@ -52,67 +73,6 @@ namespace WebsiteTemplate.Backend.Services
                 DeleteChildMenus(childMenu.Id, session);
                 DataService.TryDelete(childMenu);
             }
-        }
-
-        public override Menu RetrieveExistingItem(ISession session)
-        {
-            return null;
-        }
-
-        public override void UpdateItem(ISession session, Menu item)
-        {
-            var parentMenuId = GetValue("ParentMenuId");
-            var eventNumber = GetValue<int?>("Event");
-            var name = GetValue("Name");
-
-            if (!String.IsNullOrWhiteSpace(parentMenuId))
-            {
-                item.ParentMenu = session.Get<Menu>(parentMenuId);
-            }
-            else
-            {
-                item.ParentMenu = null;
-            }
-
-            if (eventNumber != null)
-            {
-                item.Event = eventNumber;
-            }
-            else
-            {
-                item.Event = null;
-            }
-            item.Name = name;
-        }
-
-        public Dictionary<string, object> GetEventList()
-        {
-            return EventService.EventList.Where(e => e.Value.ActionType != EventType.InputDataView)
-                                           .Where(m => !String.IsNullOrWhiteSpace(m.Value.Description))
-                                           .Where(m => m.Value is ShowView) // TODO: this is not right. can't have 'add xx' in menu at the moment
-                                           .OrderBy(m => m.Value.Description)  //    maybe need a setting 'allow in menu' etc
-                                           .ToDictionary(m => m.Key.ToString(), m => (object)m.Value.Description);
-        }
-
-        public override IQueryOver<Menu, Menu> CreateQueryForRetrieval(IQueryOver<Menu, Menu> query, string filter, IDictionary<string, object> additionalParameters)
-        {
-            var menuId = InputProcessingMethods.GetValue<string>(additionalParameters, "MenuId");
-            
-            if (!String.IsNullOrWhiteSpace(menuId))
-            {
-                query = query.Where(m => m.ParentMenu.Id == menuId);
-            }
-            else
-            {
-                query = query.Where(m => m.ParentMenu == null);
-            }
-
-            if (!String.IsNullOrWhiteSpace(filter))
-            {
-                query = query.WhereRestrictionOn(x => x.Name).IsLike(filter, MatchMode.Anywhere);
-            }
-
-            return query;
         }
     }
 }

@@ -208,6 +208,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Backend\UIProcessors\MenuProcessor.cs" />
     <Compile Include="Backend\Menus\AddMenu.cs" />
     <Compile Include="Backend\Menus\EditMenu.cs" />
     <Compile Include="Backend\Processing\ActionExecutionProcessor.cs" />
@@ -222,11 +223,11 @@
     <Compile Include="Backend\Processing\ViewMenuProcessor.cs" />
     <Compile Include="Backend\Services\ApplicationService.cs" />
     <Compile Include="Backend\Services\AuditService.cs" />
-    <Compile Include="Backend\Services\DataItemServiceCore.cs" />
+    <Compile Include="Backend\Processing\InputProcessing\InputProcessingCore.cs" />
     <Compile Include="Backend\Services\DataService.cs" />
     <Compile Include="Backend\Services\EventService.cs" />
     <Compile Include="Backend\Services\MenuService.cs" />
-    <Compile Include="Backend\Services\NHibernateDataItemService.cs" />
+    <Compile Include="Backend\Processing\InputProcessing\NHibernateInputProcessing.cs" />
     <Compile Include="Backend\Services\UserRoleService.cs" />
     <Compile Include="Backend\Services\UserService.cs" />
     <Compile Include="Backend\TestItem\SuperCause.cs" />

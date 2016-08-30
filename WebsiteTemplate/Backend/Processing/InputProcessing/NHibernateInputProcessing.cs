@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using WebsiteTemplate.Models;
 using System.Linq;
+using WebsiteTemplate.Backend.Services;
 
-namespace WebsiteTemplate.Backend.Services
+namespace WebsiteTemplate.Backend.Processing.InputProcessing
 {
-    public abstract class NHibernateDataItemService<T> : DataItemServiceCore<T> where T : BaseClass
+    public abstract class NHibernateDataItemService<T> : InputProcessingCore<T> where T : BaseClass
     {
 
         public NHibernateDataItemService(DataService dataService)

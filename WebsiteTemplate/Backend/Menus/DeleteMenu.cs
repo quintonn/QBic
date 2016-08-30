@@ -8,7 +8,7 @@ using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Backend.Menus
 {
-    public class DeleteMenu : DoSomething
+    public class DeleteMenu : DoSomething  TODO: Make a delete processor thing
     {
         private MenuService MenuService { get; set; }
         public override string Description
@@ -37,7 +37,7 @@ namespace WebsiteTemplate.Backend.Menus
 
             var parentId = String.Empty;
 
-            var menu = MenuService.RetrieveItem(id);
+            var menu = MenuService.RetrieveMenuWithId(id);
             parentId = menu.ParentMenu == null ? String.Empty : menu.ParentMenu.Id;
 
             var isParentMenu = MenuService.IsParentMenu(id);
@@ -58,7 +58,7 @@ namespace WebsiteTemplate.Backend.Menus
                     };
             }
 
-            MenuService.DeleteItem(menu.Id);
+            MenuService.DeleteMenuWithId(menu.Id);
 
             return new List<IEvent>()
             {

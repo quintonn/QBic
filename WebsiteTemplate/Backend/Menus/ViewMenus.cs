@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Backend.UIProcessors;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
@@ -11,7 +12,7 @@ using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Menus
 {
-    public class ViewMenus : ShowViewUsingDataService<MenuService, Menu>
+    public class ViewMenus : ShowViewUsingDataService<MenuProcessor, Menu>
     {
         private string mTitle = "View Menus";
         public override string Description
@@ -30,12 +31,9 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
-        private EventService EventService { get; set; }
-
-        public ViewMenus(MenuService menuService, EventService eventService)
-            :base(menuService)
+        public ViewMenus(MenuProcessor menuProcessor)
+            :base(menuProcessor)
         {
-            EventService = eventService;
         }
 
         public override IList<MenuItem> GetViewMenu(Dictionary<string, string> dataForMenu)

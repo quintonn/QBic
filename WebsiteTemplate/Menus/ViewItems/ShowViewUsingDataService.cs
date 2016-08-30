@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using WebsiteTemplate.Backend.Processing.InputProcessing;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Menus.ViewItems
 {
-    public abstract class ShowViewUsingDataService<TDataItemService, TBaseClass> : ShowView where TDataItemService : DataItemServiceCore<TBaseClass> where TBaseClass : BaseClass
+    public abstract class ShowViewUsingDataService<TDataItemService, TBaseClass> : ShowView where TDataItemService : InputProcessingCore<TBaseClass> where TBaseClass : BaseClass
     {
         protected TDataItemService DataItemService { get; set; }
 

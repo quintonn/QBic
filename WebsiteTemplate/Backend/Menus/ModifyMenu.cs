@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Backend.UIProcessors;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
@@ -11,12 +12,13 @@ using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Menus
 {
-    public abstract class ModifyMenu : ModifyItemUsingDataService<MenuService, Menu>
+    public abstract class ModifyMenu : ModifyItemUsingDataService<MenuProcessor, Menu>
     {
-        public ModifyMenu(MenuService menuService, bool isNew)
-            :base(menuService, isNew)
+        private MenuService MenuService { get; set; }
+        public ModifyMenu(MenuProcessor menuProcessor, bool isNew, MenuService menuService)
+            :base(menuProcessor, isNew)
         {
-
+            MenuService = menuService;
         }
 
         public override string ItemNameForDisplay
@@ -46,7 +48,7 @@ namespace WebsiteTemplate.Backend.Menus
 
                 list.Add(new ComboBoxInput("Event", "Menu Action", DataItem.Event?.ToString(), null, true)
                     {
-                        ListItems = DataItemService.GetEventList(),
+                        ListItems = MenuService.GetEventList(),
                         VisibilityConditions = new List<Condition>()
                         {
                             new Condition("HasSubmenus", Comparison.Equals, "false")

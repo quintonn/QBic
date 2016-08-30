@@ -1,16 +1,17 @@
 ﻿using System.Collections.Generic;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
 
-namespace WebsiteTemplate.Backend.Services
+namespace WebsiteTemplate.Backend.Processing.InputProcessing
 {
-    public abstract class DataItemServiceCore<T>  where T : BaseClass
+    public abstract class InputProcessingCore<T>  where T : BaseClass
     {
         protected DataService DataService { get; set; }
 
-        public IDictionary<string, object> InputData { get; set; }
+        internal IDictionary<string, object> InputData { get; set; }
 
-        public DataItemServiceCore(DataService dataService)
+        public InputProcessingCore(DataService dataService)
         {
             DataService = dataService;
             InputData = new Dictionary<string, object>();
