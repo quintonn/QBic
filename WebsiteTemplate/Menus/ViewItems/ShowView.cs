@@ -89,6 +89,11 @@ namespace WebsiteTemplate.Menus.ViewItems
 
         public IList<MenuItem> ViewMenu { get; set; }
 
+        /// <summary>
+        /// Retrieves data that will be passed to the view when retrieving the view menu.
+        /// There is a separate web call to retrieve the menu, so that the system can determine which menus the user is allowed
+        /// to access and see.
+        /// </summary>
         public virtual Dictionary<string, string> DataForGettingMenu
         {
             get

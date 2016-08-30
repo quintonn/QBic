@@ -83,7 +83,7 @@ namespace WebsiteTemplate.Backend.Processing
                     {
                         dataJson = JsonHelper.Parse(data);
 
-                        filter = dataJson.GetValue("filter");
+                        filter = dataJson.GetValue("filter").Trim();
                         parameters = dataJson.GetValue("parameters");
 
                         var viewSettings = dataJson.GetValue<JsonHelper>("viewSettings");

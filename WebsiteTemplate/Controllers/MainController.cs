@@ -1,8 +1,6 @@
 ﻿using BasicAuthentication.Security;
 using Microsoft.Practices.Unity;
 using Newtonsoft.Json;
-using System;
-using System.Net.Http.Formatting;
 using System.Threading.Tasks;
 using System.Web.Http;
 using WebsiteTemplate.Backend.Processing;

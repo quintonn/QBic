@@ -148,8 +148,6 @@ namespace WebsiteTemplate.Backend.Menus
 
         public void ProcessData(string data)
         {
-            //try
-            //{
             var json = JsonHelper.Parse(data);
             var id = json.GetValue("Id");                                  // If 'sub-menus' column link is clicked
             var dataItem = json.GetValue("data");                          // If 'back' menu-button button is clicked
@@ -172,15 +170,7 @@ namespace WebsiteTemplate.Backend.Menus
                 //throw new Exception("Unhandled situation. Not sure what to assign MenuId");
                 MenuId = String.Empty;
             }
-            //}
-            //catch (Exception e)
-            //{
-            // Comes here when the 'Menus' menu item is clicked (i.e. viewing all top level menus)
-            //  MenuId = "";
-            //Console.WriteLine(e.Message);
-            //}
         }
-
         public override int GetDataCount(string data, string filter)
         {
             ProcessData(data);

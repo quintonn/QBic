@@ -222,9 +222,11 @@
     <Compile Include="Backend\Processing\ViewMenuProcessor.cs" />
     <Compile Include="Backend\Services\ApplicationService.cs" />
     <Compile Include="Backend\Services\AuditService.cs" />
+    <Compile Include="Backend\Services\DataItemServiceCore.cs" />
     <Compile Include="Backend\Services\DataService.cs" />
     <Compile Include="Backend\Services\EventService.cs" />
     <Compile Include="Backend\Services\MenuService.cs" />
+    <Compile Include="Backend\Services\NHibernateDataItemService.cs" />
     <Compile Include="Backend\Services\UserRoleService.cs" />
     <Compile Include="Backend\Services\UserService.cs" />
     <Compile Include="Backend\TestItem\SuperCause.cs" />
@@ -255,6 +257,8 @@
     <Compile Include="Menus\BasicCrudItems\IBasicCrudDelete.cs" />
     <Compile Include="Menus\BasicCrudItems\IBasicCrudModify.cs" />
     <Compile Include="Menus\BasicCrudItems\IBasicCrudView.cs" />
+    <Compile Include="Menus\InputItems\InputProcessingMethods.cs" />
+    <Compile Include="Menus\InputItems\ModifyItemUsingDataService.cs" />
     <Compile Include="Models\AuditAction.cs" />
     <Compile Include="Models\AuditEvent.cs" />
     <Compile Include="Utilities\JsonArray.cs" />
