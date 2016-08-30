@@ -259,6 +259,7 @@
     <Compile Include="Menus\BasicCrudItems\IBasicCrudView.cs" />
     <Compile Include="Menus\InputItems\InputProcessingMethods.cs" />
     <Compile Include="Menus\InputItems\ModifyItemUsingDataService.cs" />
+    <Compile Include="Menus\ViewItems\ShowViewUsingDataService.cs" />
     <Compile Include="Models\AuditAction.cs" />
     <Compile Include="Models\AuditEvent.cs" />
     <Compile Include="Utilities\JsonArray.cs" />

@@ -8,30 +8,32 @@ namespace WebsiteTemplate.Backend.Services
 {
     public abstract class NHibernateDataItemService<T> : DataItemServiceCore<T> where T : BaseClass
     {
-        
+
         public NHibernateDataItemService(DataService dataService)
-            :base(dataService)
+            : base(dataService)
         {
 
         }
 
-        public abstract IQueryOver<T> CreateQueryForRetrieval(ISession session, string filter);
+        public abstract IQueryOver<T, T> CreateQueryForRetrieval(IQueryOver<T, T> query, string filter, IDictionary<string, object> additionalParameters);
 
-        public override int RetrieveItemCountWithFilter(string filter)
+        public override int RetrieveItemCountWithFilter(string filter, IDictionary<string, object> additionalParameters)
         {
             using (var session = DataService.OpenSession())
             {
-                var query = CreateQueryForRetrieval(session, filter);
+                var query = session.QueryOver<T>();
+                query = CreateQueryForRetrieval(query, filter, additionalParameters);
 
                 return query.RowCount();
             }
         }
 
-        public override IList<T> RetrieveItemsWithFilter(int currentPage, int linesPerPage, string filter)
+        public override IList<T> RetrieveItemsWithFilter(int currentPage, int linesPerPage, string filter, IDictionary<string, object> additionalParameters)
         {
             using (var session = DataService.OpenSession())
             {
-                var query = CreateQueryForRetrieval(session, filter);
+                var query = session.QueryOver<T>();
+                query = CreateQueryForRetrieval(query, filter, additionalParameters);
 
                 var results = query
                       .Skip((currentPage - 1) * linesPerPage)
@@ -41,8 +43,6 @@ namespace WebsiteTemplate.Backend.Services
                 return results;
             }
         }
-
-        public abstract T RetrieveItem(ISession session, string itemId);
 
         public override T RetrieveItem(string itemId)
         {
@@ -87,6 +87,22 @@ namespace WebsiteTemplate.Backend.Services
                 UpdateItem(session, item);
 
                 DataService.SaveOrUpdate(item);
+                session.Flush();
+            }
+        }
+
+        public virtual void DeleteItem(ISession session, string itemId)
+        {
+            var dbItem = session.Get<T>(itemId);
+            DataService.TryDelete<T>(dbItem);
+        }
+
+        public override void DeleteItem(string itemId)
+        {
+            using (var session = DataService.OpenSession())
+            {
+                DeleteItem(session, itemId);
+
                 session.Flush();
             }
         }

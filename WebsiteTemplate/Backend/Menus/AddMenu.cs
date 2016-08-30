@@ -5,23 +5,15 @@ namespace WebsiteTemplate.Backend.Menus
 {
     public class AddMenu : ModifyMenu
     {
-        internal override bool IsNew
+        public AddMenu(MenuService menuService)
+            :base(menuService, true)
         {
-            get
-            {
-                return true;
-            }
+                
         }
 
         public override EventNumber GetId()
         {
             return EventNumber.AddMenu;
-        }
-
-        public AddMenu(MenuService service)
-            :base(service)
-        {
-
         }
     }
 }

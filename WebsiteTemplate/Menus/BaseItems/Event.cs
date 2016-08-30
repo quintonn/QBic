@@ -14,11 +14,17 @@ namespace WebsiteTemplate.Menus.BaseItems
             return GetId();
         }
 
+        /// <summary>
+        /// Returns data to be passed from the front end when the user actions an event
+        /// </summary>
         public virtual Dictionary<string, object> GetEventParameters()
         {
             return null;
         }
 
+        /// <summary>
+        /// Returns data to be passed from the front end when the user actions an event
+        /// </summary>
         public Dictionary<string, object> EventParameters
         {
             get

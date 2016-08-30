@@ -11,21 +11,19 @@ using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Menus
 {
-    public abstract class ModifyMenu : GetInput
+    public abstract class ModifyMenu : ModifyItemUsingDataService<MenuService, Menu>
     {
-        public ModifyMenu(MenuService menuService)
+        public ModifyMenu(MenuService menuService, bool isNew)
+            :base(menuService, isNew)
         {
-            MenuService = menuService;
-        }
-        private Menu Menu { get; set; } = new Menu();
-        internal abstract bool IsNew { get; }
-        private MenuService MenuService { get; set; }
 
-        public override string Description
+        }
+
+        public override string ItemNameForDisplay
         {
             get
             {
-                return IsNew ? "Add Menu" : "Edit Menu";
+                return "Menu";
             }
         }
 
@@ -33,7 +31,7 @@ namespace WebsiteTemplate.Backend.Menus
         {
             get
             {
-                return IsNew ? "New Menu" : Menu.Name;
+                return IsNew ? "New Menu" : DataItem.Name;
             }
         }
 
@@ -43,12 +41,12 @@ namespace WebsiteTemplate.Backend.Menus
             {
                 var list = new List<InputField>();
 
-                list.Add(new StringInput("Name", "Menu Name", Menu.Name, null, true));
-                list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", Menu.Event == null && IsNew == false));
+                list.Add(new StringInput("Name", "Menu Name", DataItem.Name, null, true));
+                list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", DataItem.Event == null && IsNew == false));
 
-                list.Add(new ComboBoxInput("Event", "Menu Action", Menu.Event?.ToString(), null, true)
+                list.Add(new ComboBoxInput("Event", "Menu Action", DataItem.Event?.ToString(), null, true)
                     {
-                        ListItems = MenuService.GetEventList(),
+                        ListItems = DataItemService.GetEventList(),
                         VisibilityConditions = new List<Condition>()
                         {
                             new Condition("HasSubmenus", Comparison.Equals, "false")
@@ -56,7 +54,7 @@ namespace WebsiteTemplate.Backend.Menus
                     });
 
                 list.Add(new HiddenInput("ParentMenuId", ParentMenuId));
-                list.Add(new HiddenInput("Id", Menu?.Id));
+                list.Add(new HiddenInput("Id", DataItem?.Id));
 
 
                 return list;
@@ -72,68 +70,64 @@ namespace WebsiteTemplate.Backend.Menus
             {
                 var parentId = jobject.GetValue("ParentId");
                 ParentMenuId = parentId;
-                Menu = new Menu();
+                DataItem = new Menu();
             }
             else
             {
                 var id = jobject.GetValue("Id");
-                Menu = MenuService.RetrieveMenu(id);
-                ParentMenuId = Menu?.ParentMenu?.Id;
+                DataItem = DataItemService.RetrieveItem(id);
+                ParentMenuId = DataItem.ParentMenu?.Id;
             }
             
             return new InitializeResult(true);
         }
 
-        public override async Task<IList<IEvent>> ProcessAction(int actionNumber)
+        public override async Task<IList<IEvent>> ValidateInputs()
         {
-            ParentMenuId = GetValue<string>("ParentMenuId");
+            var name = GetValue("Name");
+            var hasSubMenus = GetValue<bool>("HasSubmenus");
+            int? eventValue = null;
+            var parentMenuId = GetValue<string>("ParentMenuId");
+            var menuId = GetValue("Id");
 
-            if (actionNumber == 1)
+            if (String.IsNullOrWhiteSpace(name))
             {
                 return new List<IEvent>()
                 {
-                    new CancelInputDialog(),
-                    new ExecuteAction(EventNumber.ViewMenus, ParentMenuId)
+                    new ShowMessage("Menu name is mandatory and must be provided.")
                 };
             }
-            else if (actionNumber == 0)
+
+            if (hasSubMenus == false)
             {
-                var name = GetValue("Name");
-                var hasSubMenus = GetValue<bool>("HasSubmenus");
-                int? eventValue = null;
-                var parentMenuId = GetValue<string>("ParentMenuId");
-                var menuId = GetValue("Id");
-                
-                if (String.IsNullOrWhiteSpace(name))
+                eventValue = GetValue<int?>("Event");
+                if (eventValue == null)
                 {
                     return new List<IEvent>()
-                    {
-                        new ShowMessage("Menu name is mandatory and must be provided.")
-                    };
-                }
-
-                if (hasSubMenus == false)
-                {
-                    eventValue = GetValue<int?>("Event");
-                    if (eventValue == null)
-                    {
-                        return new List<IEvent>()
                         {
                             new ShowMessage("Menu action is mandatory when 'Has Sub Menus' is unchecked.")
                         };
-                    }
                 }
-
-                MenuService.SaveOrUpdateMenu(menuId, parentMenuId, eventValue, name);
-                
-                return new List<IEvent>()
-                {
-                    new CancelInputDialog(),
-                    new ExecuteAction(EventNumber.ViewMenus, ParentMenuId),
-                    new ShowMessage("Menu {0} successfully.", IsNew ? "created" : "modified"),
-                };
             }
+
             return null;
+        }
+
+        public override EventNumber ViewToShowAfterModify
+        {
+            get
+            {
+                return EventNumber.ViewMenus;
+            }
+        }
+
+        public override string ParametersToPassToViewAfterModify
+        {
+            get
+            {
+                var parentMenuId = GetValue<string>("ParentMenuId");
+                return parentMenuId;
+            }
         }
     }
 }

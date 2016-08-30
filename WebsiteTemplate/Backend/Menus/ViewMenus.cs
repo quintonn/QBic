@@ -6,11 +6,12 @@ using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
+using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Menus
 {
-    public class ViewMenus : ShowView
+    public class ViewMenus : ShowViewUsingDataService<MenuService, Menu>
     {
         private string mTitle = "View Menus";
         public override string Description
@@ -29,12 +30,11 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
-        private MenuService MenuService { get; set; }
         private EventService EventService { get; set; }
 
         public ViewMenus(MenuService menuService, EventService eventService)
+            :base(menuService)
         {
-            MenuService = menuService;
             EventService = eventService;
         }
 
@@ -116,37 +116,7 @@ namespace WebsiteTemplate.Backend.Menus
             );
         }
 
-        public override IEnumerable GetData(string data, int currentPage, int linesPerPage, string filter)
-        {
-            ProcessData(data);
-
-            if (!String.IsNullOrWhiteSpace(MenuId))
-            {
-                var parentMenu = MenuService.RetrieveMenu(MenuId);
-                ParentId = parentMenu.ParentMenu != null ? parentMenu.ParentMenu.Id : "";
-                mTitle = "Menus: " + parentMenu.Name;
-            }
-            else
-            {
-                mTitle = "Menus";
-            }
-
-            var results = MenuService.RetrieveMenusWithFilter(MenuId, currentPage, linesPerPage, filter);
-
-            var newList = results.Select(r => new
-            {
-                Name = r.Name,
-                Id = r.Id,
-                Event = r.Event == null ? "" : EventService.EventList.ContainsKey(r.Event.Value) ? EventService.EventList[r.Event.Value].Description : "",
-                ParentMenu = r.ParentMenu,
-                CanDelete = r.CanDelete,
-                //Date = DateTime.Now.Date
-            }).ToList();
-
-            return newList;
-        }
-
-        public void ProcessData(string data)
+        public override void PerformAdditionalProcessingOnDataRetrieval(string data, bool obtainingDataCountOnly)
         {
             var json = JsonHelper.Parse(data);
             var id = json.GetValue("Id");                                  // If 'sub-menus' column link is clicked
@@ -167,15 +137,42 @@ namespace WebsiteTemplate.Backend.Menus
             }
             else
             {
-                //throw new Exception("Unhandled situation. Not sure what to assign MenuId");
-                MenuId = String.Empty;
+                MenuId = String.Empty; // Comes here when clicking back on view menu, but only on second screen, not third, fourth, etc.
+            }
+
+            if (!String.IsNullOrWhiteSpace(MenuId))
+            {
+                var parentMenu = DataItemService.RetrieveItem(MenuId);
+                ParentId = parentMenu.ParentMenu != null ? parentMenu.ParentMenu.Id : "";
+                mTitle = "Menus: " + parentMenu.Name;
+            }
+            else
+            {
+                mTitle = "Menus";
             }
         }
-        public override int GetDataCount(string data, string filter)
+
+        public override IDictionary<string, object> RetrieveAdditionalParametersForDataQuery(string data)
         {
-            ProcessData(data);
-            var count = MenuService.RetrieveMenusCountWithFilter(MenuId, filter);
-            return count;
+            var items = new Dictionary<string, object>()
+            {
+                { "MenuId", MenuId }
+            };
+            return items;
+        }
+
+        public override IEnumerable MapResultsToCustomData(IList<Menu> data)
+        {
+            var newList = data.Select(r => new
+            {
+                Name = r.Name,
+                Id = r.Id,
+                Event = r.Event == null ? "" : EventService.EventList.ContainsKey(r.Event.Value) ? EventService.EventList[r.Event.Value].Description : "",
+                ParentMenu = r.ParentMenu,
+                CanDelete = r.CanDelete,
+            }).ToList();
+
+            return newList;
         }
 
         public override EventNumber GetId()

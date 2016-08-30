@@ -8,13 +8,13 @@ using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
-    public abstract class ModifyItemUsingDataService<D, T> : GetInput where D : DataItemServiceCore<T> where T : BaseClass
+    public abstract class ModifyItemUsingDataService<TDataItemService, TBaseClass> : GetInput where TDataItemService : DataItemServiceCore<TBaseClass> where TBaseClass : BaseClass
     {
-        protected D DataItemService { get; set; }
+        protected TDataItemService DataItemService { get; set; }
 
         protected bool IsNew { get; set; }
 
-        protected T DataItem { get; set; }
+        protected TBaseClass DataItem { get; set; }
 
         public abstract string ItemNameForDisplay { get; }
 
@@ -27,7 +27,7 @@ namespace WebsiteTemplate.Menus.InputItems
             }
         }
 
-        public ModifyItemUsingDataService(D dataItemService, bool isNew)
+        public ModifyItemUsingDataService(TDataItemService dataItemService, bool isNew)
         {
             DataItemService = dataItemService;
             IsNew = isNew;
@@ -38,7 +38,7 @@ namespace WebsiteTemplate.Menus.InputItems
             var json = JsonHelper.Parse(data);
             if (IsNew)
             {
-                DataItem = null;
+                DataItem = Activator.CreateInstance<TBaseClass>();
             }
             else
             {
@@ -58,6 +58,8 @@ namespace WebsiteTemplate.Menus.InputItems
                 return String.Empty;
             }
         }
+
+        public abstract Task<IList<IEvent>> ValidateInputs();
 
         public override async Task<IList<IEvent>> ProcessAction(int actionNumber)
         {
@@ -83,13 +85,19 @@ namespace WebsiteTemplate.Menus.InputItems
                     };
                 }
 
+                var validationErrors = await ValidateInputs();
+                if (validationErrors != null && validationErrors.Count > 0)
+                {
+                    return validationErrors;
+                }
+
                 DataItemService.SaveOrUpdate(itemId);
 
                 return new List<IEvent>()
                 {
-                    new ShowMessage("{0} {1} successfully.", ItemNameForDisplay, IsNew ? "created" : "modified"),
+                    new ExecuteAction(ViewToShowAfterModify, ParametersToPassToViewAfterModify),
                     new CancelInputDialog(),
-                    new ExecuteAction(ViewToShowAfterModify, ParametersToPassToViewAfterModify)
+                    new ShowMessage("{0} {1} successfully.", ItemNameForDisplay, IsNew ? "created" : "modified"),
                 };
             }
             return null;

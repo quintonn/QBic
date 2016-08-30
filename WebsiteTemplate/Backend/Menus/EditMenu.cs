@@ -5,23 +5,15 @@ namespace WebsiteTemplate.Backend.Menus
 {
     public class EditMenu : ModifyMenu
     {
-        internal override bool IsNew
+        public EditMenu(MenuService service)
+            : base(service, false)
         {
-            get
-            {
-                return false;
-            }
+
         }
 
         public override EventNumber GetId()
         {
             return EventNumber.EditMenu;
-        }
-
-        public EditMenu(MenuService service)
-            : base(service)
-        {
-
         }
     }
 }

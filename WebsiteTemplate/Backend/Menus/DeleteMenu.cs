@@ -37,7 +37,7 @@ namespace WebsiteTemplate.Backend.Menus
 
             var parentId = String.Empty;
 
-            var menu = MenuService.RetrieveMenu(id);
+            var menu = MenuService.RetrieveItem(id);
             parentId = menu.ParentMenu == null ? String.Empty : menu.ParentMenu.Id;
 
             var isParentMenu = MenuService.IsParentMenu(id);
@@ -58,7 +58,7 @@ namespace WebsiteTemplate.Backend.Menus
                     };
             }
 
-            MenuService.DeleteMenu(menu.Id);
+            MenuService.DeleteItem(menu.Id);
 
             return new List<IEvent>()
             {

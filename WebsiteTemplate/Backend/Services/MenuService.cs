@@ -4,29 +4,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using WebsiteTemplate.Menus.BaseItems;
+using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Services
 {
-    public class MenuService
+    public class MenuService : NHibernateDataItemService<Menu>
     {
-        private DataService DataService { get; set; }
         private EventService EventService { get; set; }
 
         public MenuService(DataService dataService, EventService eventService)
+            : base(dataService)
         {
-            DataService = dataService;
             EventService = eventService;
-        }
-
-        public Menu RetrieveMenu(string menuId)
-        {
-            using (var session = DataService.OpenSession())
-            {
-                var result = session.Get<Menu>(menuId);
-                return result;
-            }
         }
 
         public bool IsParentMenu(string menuId)
@@ -42,16 +33,12 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        public void DeleteMenu(string menuId)
+        public override void DeleteItem(ISession session, string itemId)
         {
-            using (var session = DataService.OpenSession())
-            {
-                DeleteChildMenus(menuId, session);
+            DeleteChildMenus(itemId, session);
 
-                var menu = session.Get<Menu>(menuId);
-                DataService.TryDelete(menu);
-                session.Flush();
-            }
+            var menu = session.Get<Menu>(itemId);
+            DataService.TryDelete(menu);
         }
 
         private void DeleteChildMenus(string menuId, ISession session)
@@ -66,42 +53,36 @@ namespace WebsiteTemplate.Backend.Services
                 DataService.TryDelete(childMenu);
             }
         }
-        public void SaveOrUpdateMenu(string menuId, string parentMenuId, EventNumber eventNumber, string name)
+
+        public override Menu RetrieveExistingItem(ISession session)
         {
-            using (var session = DataService.OpenSession())
+            return null;
+        }
+
+        public override void UpdateItem(ISession session, Menu item)
+        {
+            var parentMenuId = GetValue("ParentMenuId");
+            var eventNumber = GetValue<int?>("Event");
+            var name = GetValue("Name");
+
+            if (!String.IsNullOrWhiteSpace(parentMenuId))
             {
-                Menu dbMenu;
-                if (String.IsNullOrWhiteSpace(menuId))
-                {
-                    dbMenu = new Menu();
-                }
-                else
-                {
-                    dbMenu = session.Get<Menu>(menuId);
-                }
-
-                if (!String.IsNullOrWhiteSpace(parentMenuId))
-                {
-                    dbMenu.ParentMenu = session.Get<Menu>(parentMenuId);
-                }
-                else
-                {
-                    dbMenu.ParentMenu = null;
-                }
-
-                if (eventNumber != null)
-                {
-                    dbMenu.Event = eventNumber;
-                }
-                else
-                {
-                    dbMenu.Event = null;
-                }
-                dbMenu.Name = name;
-
-                DataService.SaveOrUpdate(dbMenu);
-                session.Flush();
+                item.ParentMenu = session.Get<Menu>(parentMenuId);
             }
+            else
+            {
+                item.ParentMenu = null;
+            }
+
+            if (eventNumber != null)
+            {
+                item.Event = eventNumber;
+            }
+            else
+            {
+                item.Event = null;
+            }
+            item.Name = name;
         }
 
         public Dictionary<string, object> GetEventList()
@@ -113,35 +94,10 @@ namespace WebsiteTemplate.Backend.Services
                                            .ToDictionary(m => m.Key.ToString(), m => (object)m.Value.Description);
         }
 
-        public List<Menu> RetrieveMenusWithFilter(string menuId, int currentPage, int linesPerPage, string filter)
+        public override IQueryOver<Menu, Menu> CreateQueryForRetrieval(IQueryOver<Menu, Menu> query, string filter, IDictionary<string, object> additionalParameters)
         {
-            using (var session = DataService.OpenSession())
-            {
-                var query = CreateMenuListQuery(menuId, filter, session);
-
-                var results = query
-                      .Skip((currentPage - 1) * linesPerPage)
-                      .Take(linesPerPage)
-                      .List<Menu>()
-                      .ToList();
-                return results;
-            }
-        }
-
-        public int RetrieveMenusCountWithFilter(string menuId, string filter)
-        {
-            using (var session = DataService.OpenSession())
-            {
-                var query = CreateMenuListQuery(menuId, filter, session);
-
-                return query.RowCount();
-            }
-        }
-
-        private IQueryOver<Menu> CreateMenuListQuery(string menuId, string filter, ISession session)
-        {
-            var query = session.QueryOver<Menu>();
-
+            var menuId = InputProcessingMethods.GetValue<string>(additionalParameters, "MenuId");
+            
             if (!String.IsNullOrWhiteSpace(menuId))
             {
                 query = query.Where(m => m.ParentMenu.Id == menuId);

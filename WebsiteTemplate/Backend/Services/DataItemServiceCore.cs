@@ -20,11 +20,13 @@ namespace WebsiteTemplate.Backend.Services
 
         public abstract T RetrieveItem(string itemId);
 
-        public abstract int RetrieveItemCountWithFilter(string filter);
+        public abstract int RetrieveItemCountWithFilter(string filter, IDictionary<string, object> additionalParameters);
 
-        public abstract IList<T> RetrieveItemsWithFilter(int currentPage, int linesPerPage, string filter);
+        public abstract IList<T> RetrieveItemsWithFilter(int currentPage, int linesPerPage, string filter, IDictionary<string, object> additionalParameters);
 
         public abstract void SaveOrUpdate(string itemId);
+
+        public abstract void DeleteItem(string itemId);
 
         public T GetValue<T>(string propertyName, T defaultValue = default(T))
         {
