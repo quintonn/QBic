@@ -155,7 +155,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                         prop.SetValue(item, value.Value);
                     }
 
-                    DataService.SaveOrUpdate(item);
+                    DataService.SaveOrUpdate(session, item);
                     session.Flush();
                 }
 

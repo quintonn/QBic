@@ -232,6 +232,7 @@
     <Compile Include="Backend\Services\UserService.cs" />
     <Compile Include="Backend\TestItem\SuperCause.cs" />
     <Compile Include="Backend\TestItem\SuperMenuItem.cs" />
+    <Compile Include="Backend\UIProcessors\UserProcessor.cs" />
     <Compile Include="Backend\UserRoles\AddUserRole.cs" />
     <Compile Include="Backend\UserRoles\DeleteUserRole.cs" />
     <Compile Include="Backend\UserRoles\EditUserRole.cs" />
@@ -241,6 +242,7 @@
     <Compile Include="Backend\UserRoles\ViewUserRoles.cs" />
     <Compile Include="Backend\UserRoles\TestConfirmation.cs" />
     <Compile Include="Backend\UserRoles\TestCreate.cs" />
+    <Compile Include="Backend\Users\ModifyUser.cs" />
     <Compile Include="Backend\Users\TestView.cs" />
     <Compile Include="Controllers\CompressionHelper.cs" />
     <Compile Include="Controllers\DeflateCompressionAttribute.cs" />

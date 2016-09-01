@@ -8,9 +8,9 @@ using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
-    public abstract class ModifyItemUsingDataService<TDataItemService, TBaseClass> : GetInput where TDataItemService : InputProcessingCore<TBaseClass> where TBaseClass : BaseClass
+    public abstract class ModifyItemUsingDataService<TItemProcessor, TBaseClass> : GetInput where TItemProcessor : InputProcessingCore<TBaseClass> where TBaseClass : BaseClass
     {
-        protected TDataItemService DataItemService { get; set; }
+        protected TItemProcessor ItemProcessor { get; set; }
 
         protected bool IsNew { get; set; }
 
@@ -27,9 +27,9 @@ namespace WebsiteTemplate.Menus.InputItems
             }
         }
 
-        public ModifyItemUsingDataService(TDataItemService dataItemService, bool isNew)
+        public ModifyItemUsingDataService(TItemProcessor itemProcessor, bool isNew)
         {
-            DataItemService = dataItemService;
+            ItemProcessor = itemProcessor;
             IsNew = isNew;
         }
 
@@ -43,7 +43,7 @@ namespace WebsiteTemplate.Menus.InputItems
             else
             {
                 var id = json.GetValue("Id");
-                DataItem = DataItemService.RetrieveItem(id);
+                DataItem = ItemProcessor.RetrieveItem(id);
             }
 
             return new InitializeResult(true);
@@ -63,7 +63,7 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public override async Task<IList<IEvent>> ProcessAction(int actionNumber)
         {
-            DataItemService.InputData = InputData;
+            ItemProcessor.InputData = InputData;
             if (actionNumber == 1)
             {
                 return new List<IEvent>()
@@ -76,7 +76,7 @@ namespace WebsiteTemplate.Menus.InputItems
             {
                 var itemId = GetValue("Id");
 
-                var existingItem = DataItemService.RetrieveExistingItem();
+                var existingItem = ItemProcessor.RetrieveExistingItem();
                 if (IsNew && existingItem != null)
                 {
                     return new List<IEvent>()
@@ -91,7 +91,7 @@ namespace WebsiteTemplate.Menus.InputItems
                     return validationErrors;
                 }
 
-                DataItemService.SaveOrUpdate(itemId);
+                await ItemProcessor.SaveOrUpdate(itemId);
 
                 return new List<IEvent>()
                 {

@@ -40,7 +40,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             {
                 var item = session.Get<T>(id);
 
-                DataService.TryDelete(item);
+                DataService.TryDelete(session, item);
                 
                 session.Flush();
             }

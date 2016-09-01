@@ -1,19 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using WebsiteTemplate.Backend.Services;
+﻿using System.Collections.Generic;
+using WebsiteTemplate.Backend.UIProcessors;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
+using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Users
 {
-    public class ViewUsers : ShowView
+    public class ViewUsers : ShowViewUsingDataService<UserProcessor, User>
     {
-        private UserService UserService { get; set; }
-
-        public ViewUsers(UserService service)
+        public ViewUsers(UserProcessor userProcessor)
+            : base(userProcessor)
         {
-            UserService = service;
+
         }
 
         public override EventNumber GetId()
@@ -83,16 +82,6 @@ namespace WebsiteTemplate.Backend.Users
         public override string GetViewMessage()
         {
             return "TODO: Ability to sort items";
-        }
-
-        public override IEnumerable GetData(string data, int currentPage, int linesPerPage, string filter)
-        {
-            return UserService.RetrieveUsers(CurrentPage, linesPerPage, filter);
-        }
-
-        public override int GetDataCount(string data, string filter)
-        {
-            return UserService.RetrieveUserCount(filter);
         }
     }
 }

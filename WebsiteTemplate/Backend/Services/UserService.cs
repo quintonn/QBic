@@ -33,7 +33,7 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        public async Task<string> CreateUser(string userName, string email, string password, List<string> userRoles)
+        public async Task<string> CreateUser(ISession session, string userName, string email, string password, List<string> userRoles)
         {
             var user = new User(true)
             {
@@ -48,20 +48,19 @@ namespace WebsiteTemplate.Backend.Services
                 return "Unable to create user:\n" + String.Join("\n", result.Errors);
             }
 
-            using (var session = DataService.OpenSession())
+            foreach (var role in userRoles)
             {
-                foreach (var role in userRoles)
-                {
-                    var dbUserRole = session.Get<UserRole>(role.ToString());
+                var dbUserRole = session.Get<UserRole>(role.ToString());
 
-                    var roleAssociation = new UserRoleAssociation()
-                    {
-                        User = user,
-                        UserRole = dbUserRole
-                    };
-                    DataService.SaveOrUpdate(roleAssociation);
-                }
-                session.Flush();
+                var roleAssociation = new UserRoleAssociation()
+                {
+                    User = user,
+                    UserRole = dbUserRole
+                };
+
+                DataService.SaveOrUpdate<UserRoleAssociation>(session, roleAssociation);
+
+                var tmp = session.Get<UserRoleAssociation>(roleAssociation.Id);
             }
 
             try
@@ -154,10 +153,10 @@ namespace WebsiteTemplate.Backend.Services
                                        .ToList();
                 userRoles.ForEach(u =>
                 {
-                    DataService.TryDelete(u);
+                    DataService.TryDelete(session, u);
                 });
 
-                DataService.TryDelete(user);
+                DataService.TryDelete(session, user);
                 session.Flush();
             }
         }
@@ -179,7 +178,7 @@ namespace WebsiteTemplate.Backend.Services
 
                 dbUser.EmailConfirmed = dbUser.Email == email;
                 dbUser.Email = email;
-                DataService.SaveOrUpdate(dbUser);
+                DataService.SaveOrUpdate(session, dbUser);
 
                 var existingUserRoles = session.CreateCriteria<UserRoleAssociation>()
                                                .CreateAlias("User", "user")
@@ -193,7 +192,7 @@ namespace WebsiteTemplate.Backend.Services
 
                 rolesToDelete.ForEach(u =>
                 {
-                    DataService.TryDelete(u);
+                    DataService.TryDelete(session, u);
                 });
 
                 foreach (var role in userRolesToAdd)
@@ -205,7 +204,7 @@ namespace WebsiteTemplate.Backend.Services
                         User = dbUser,
                         UserRole = dbUserRole
                     };
-                    DataService.SaveOrUpdate(roleAssociation);
+                    DataService.SaveOrUpdate(session, roleAssociation);
                 }
 
                 session.Flush();

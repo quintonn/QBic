@@ -39,7 +39,7 @@ namespace WebsiteTemplate.Backend.Services
                     Description = description
                 };
 
-                DataService.SaveOrUpdate(dbUserRole);
+                DataService.SaveOrUpdate(session, dbUserRole);
 
                 foreach (var item in events)
                 {
@@ -48,7 +48,7 @@ namespace WebsiteTemplate.Backend.Services
                         Event = Convert.ToInt32(item),
                         UserRole = dbUserRole
                     };
-                    DataService.SaveOrUpdate(eventItem);
+                    DataService.SaveOrUpdate(session, eventItem);
                 }
 
                 session.Flush();
@@ -62,7 +62,7 @@ namespace WebsiteTemplate.Backend.Services
                 var dbUserRole = session.Get<UserRole>(id);
                 dbUserRole.Name = name;
                 dbUserRole.Description = description;
-                DataService.SaveOrUpdate(dbUserRole);
+                DataService.SaveOrUpdate(session, dbUserRole);
 
                 var eventItems = events.Select(e => Convert.ToInt32(e)).ToList();
 
@@ -77,7 +77,7 @@ namespace WebsiteTemplate.Backend.Services
 
                 eventsToDelete.ForEach(e =>
                 {
-                    DataService.TryDelete(e);
+                    DataService.TryDelete(session, e);
                 });
                 foreach (var item in eventsToAdd)
                 {
@@ -86,7 +86,7 @@ namespace WebsiteTemplate.Backend.Services
                         Event = item,
                         UserRole = dbUserRole
                     };
-                    DataService.SaveOrUpdate(eventItem);
+                    DataService.SaveOrUpdate(session, eventItem);
                 }
                 session.Flush();
             }
@@ -138,12 +138,12 @@ namespace WebsiteTemplate.Backend.Services
                                        .ToList();
                 eventRoles.ForEach(e =>
                 {
-                    DataService.TryDelete(e);
+                    DataService.TryDelete(session, e);
                 });
 
                 var userRole = session.Get<UserRole>(userRoleId);
 
-                DataService.TryDelete(userRole);
+                DataService.TryDelete(session, userRole);
                 session.Flush();
             }
         }

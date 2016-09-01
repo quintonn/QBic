@@ -3,10 +3,23 @@ using System;
 using System.Collections.Generic;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
-using System.Linq;
 
 namespace WebsiteTemplate.Backend.Services
 {
+    /*
+        Not sure if i'm happy with this class, in that I am passing session all over the place.
+        But maybe this can be a long term upgrade/fix. 
+        But this could end up lots of work later???
+
+
+        Also not sure if handling custom error message inside Processors is nice. Eg, inside ModifyUser class i am override ProcessAction.
+        - Quick fix is to have overrideable "SuccessMessage".
+        - But now i'm starting to create too many overrideable settings.
+        - Idk, think about this.
+
+        Have I added too much with all these processors, services, etc, etc??
+    */
+    xxxxxxxxx
     public class DataService
     {
         private DataStore Store { get; set; } 
@@ -19,14 +32,8 @@ namespace WebsiteTemplate.Backend.Services
             AuditService = auditService;
         }
 
-        public void SaveOrUpdate<T>(T item) where T : BaseClass
+        public void SaveOrUpdate<T>(ISession session, T item) where T : BaseClass
         {
-            var session = GetSession();
-            if (session == null)
-            {
-                throw new Exception("No session has been opened. Call OpenSession on DataService instance first");
-            }
-
             var action = String.IsNullOrWhiteSpace(item.Id) ? AuditAction.New : AuditAction.Modify;
 
             session.SaveOrUpdate(item);
@@ -35,13 +42,8 @@ namespace WebsiteTemplate.Backend.Services
             AuditService.AuditChange(item, action, entityName);
         }
 
-        public bool TryDelete<T>(T item) where T : BaseClass
+        public bool TryDelete<T>(ISession session, T item) where T : BaseClass
         {
-            var session = GetSession();
-            if (session == null)
-            {
-                throw new Exception("No session has been opened. Call OpenSession on DataService instance first");
-            }
             if (item.CanDelete == false)
             {
                 return false;
@@ -54,33 +56,9 @@ namespace WebsiteTemplate.Backend.Services
             return true;
         }
 
-        private ISession GetSession()
-        {
-            CleanSessions();
-            return Sessions.LastOrDefault();
-        }
-
-        private static object xLock = new object();
-
-        private void CleanSessions()
-        {
-            lock (xLock)
-            {
-                foreach (var item in Sessions.ToList())
-                {
-                    if (item == null || item.IsOpen == false)
-                    {
-                        Sessions.Remove(item);
-                    }
-                }
-            }
-        }
         public ISession OpenSession()
         {
-            CleanSessions();
-            var session = Store.OpenSession();
-            Sessions.Add(session);
-            return session;
+            return Store.OpenSession();
         }
     }
 }

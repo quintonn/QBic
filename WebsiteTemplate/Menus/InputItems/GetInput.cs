@@ -30,8 +30,9 @@ namespace WebsiteTemplate.Menus.InputItems
             }
         }
 
-        //public abstract IList<Event> InputButtons { get; } //TODO: This should be something else, not event.
-        //public abstract IList<InputButton> InputButtons { get; }
+        /// <summary>
+        /// By default this returns 2 buttons, 0-Submit and 1-Cancel
+        /// </summary>
         public virtual IList<InputButton> InputButtons
         {
             get
@@ -46,10 +47,15 @@ namespace WebsiteTemplate.Menus.InputItems
 
         /// <summary>
         /// This is called right before obtaining InputFields and InputButtons.
+        /// By default this method does nothing except return a succesfull result.
         /// </summary>
         /// <param name="data"></param>
         /// <returns>Returns an object containing success status as well as an error message if not successful.</returns>
-        public abstract Task<InitializeResult> Initialize(string data);
+        public virtual Task<InitializeResult> Initialize(string data)
+        {
+            return Task.FromResult(new InitializeResult(true));
+        }
+
 
         /// <summary>
         /// This is called once the input is obtained and a button is clicked.

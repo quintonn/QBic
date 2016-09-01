@@ -77,7 +77,7 @@ namespace WebsiteTemplate.Backend.Menus
             else
             {
                 var id = jobject.GetValue("Id");
-                DataItem = DataItemService.RetrieveItem(id);
+                DataItem = ItemProcessor.RetrieveItem(id);
                 ParentMenuId = DataItem.ParentMenu?.Id;
             }
             

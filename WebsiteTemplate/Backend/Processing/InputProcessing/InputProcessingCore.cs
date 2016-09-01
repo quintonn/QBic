@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
@@ -25,7 +26,7 @@ namespace WebsiteTemplate.Backend.Processing.InputProcessing
 
         public abstract IList<T> RetrieveItemsWithFilter(int currentPage, int linesPerPage, string filter, IDictionary<string, object> additionalParameters);
 
-        public abstract void SaveOrUpdate(string itemId);
+        public abstract Task SaveOrUpdate(string itemId);
 
         public abstract void DeleteItem(string itemId);
 

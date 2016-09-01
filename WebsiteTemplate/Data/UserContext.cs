@@ -14,9 +14,11 @@ namespace WebsiteTemplate.Data
     public class UserContext : CoreUserContext<User>
     {
         private DataService DataService { get; set; }
-        public UserContext(DataService dataService)
+        private DataStore DataStore { get; set; } // This is only here because the OpenSession is a mess and not working
+        public UserContext(DataService dataService, DataStore dataStore)
         {
             DataService = dataService;
+            DataStore = dataStore;
         }
 
         public override void Initialize()
@@ -26,7 +28,7 @@ namespace WebsiteTemplate.Data
 
         public override Task<bool> UserCanLogIn(string userId)
         {
-            using (var session = DataService.OpenSession())
+            using (var session = DataStore.OpenSession())
             {
                 var user = session.Get<User>(userId);
                 if (user == null)
@@ -50,7 +52,7 @@ namespace WebsiteTemplate.Data
 
         public override System.Threading.Tasks.Task AddRefreshToken(BasicAuthentication.Security.RefreshToken token)
         {
-            using (var session = DataService.OpenSession())
+            using (var session = DataStore.OpenSession())
             {
                 session.SaveOrUpdate(token);
                 session.Flush();
@@ -60,7 +62,11 @@ namespace WebsiteTemplate.Data
 
         public override System.Threading.Tasks.Task CreateUserAsync(User user)
         {
-            DataService.SaveOrUpdate(user);
+            using (var session = DataService.OpenSession())
+            {
+                DataService.SaveOrUpdate(session, user);
+                session.Flush();
+            }
             return Task.FromResult(0);
         }
 
@@ -68,7 +74,7 @@ namespace WebsiteTemplate.Data
         {
             using (var session = DataService.OpenSession())
             {
-                DataService.TryDelete(user);
+                DataService.TryDelete(session, user);
                 session.Flush();
             }
             return Task.FromResult(0);
@@ -77,7 +83,7 @@ namespace WebsiteTemplate.Data
         public override System.Threading.Tasks.Task<BasicAuthentication.Security.RefreshToken> FindRefreshToken(string hashedTokenId)
         {
             RefreshToken token;
-            using (var session = DataService.OpenSession())
+            using (var session = DataStore.OpenSession())
             {
                 token = session.QueryOver<RefreshToken>().Where(r => r.Id == hashedTokenId).SingleOrDefault();
             }
@@ -87,7 +93,7 @@ namespace WebsiteTemplate.Data
         public override System.Threading.Tasks.Task<User> FindUserByEmailAsync(string email)
         {
             User result;
-            using (var session = DataService.OpenSession())
+            using (var session = DataStore.OpenSession())
             {
                 //result = session.Query<User>().Where(u => u.Email == email).FirstOrDefault();
                 result = session.CreateCriteria<User>()
@@ -101,7 +107,7 @@ namespace WebsiteTemplate.Data
         public override System.Threading.Tasks.Task<User> FindUserByIdAsync(string id)
         {
             User result;
-            using (var session = DataService.OpenSession())
+            using (var session = DataStore.OpenSession())
             {
                 result = session.Get<User>(id);
                 session.Flush();
@@ -117,13 +123,11 @@ namespace WebsiteTemplate.Data
         public override System.Threading.Tasks.Task<User> FindUserByNameAsync(string name)
         {
             User result;
-            using (var session = DataService.OpenSession())
+            using (var session = DataStore.OpenSession())
             {
-                //result = session.Query<User>().Where(u => u.UserName == name).FirstOrDefault();
                 result = session.CreateCriteria<User>()
                                 .Add(Restrictions.Eq("UserName", name))
                                 .UniqueResult<User>();
-                session.Flush();
             }
             return Task.FromResult(result);
         }
@@ -175,7 +179,7 @@ namespace WebsiteTemplate.Data
 
         public override System.Threading.Tasks.Task RemoveRefreshToken(string hashedTokenId)
         {
-            using (var session = DataService.OpenSession())
+            using (var session = DataStore.OpenSession())
             {
                 var token = session.QueryOver<RefreshToken>().Where(r => r.Id == hashedTokenId).SingleOrDefault();
                 session.Delete(token);
@@ -219,7 +223,7 @@ namespace WebsiteTemplate.Data
 
         public override System.Threading.Tasks.Task UpdateUserAsync(User user)
         {
-            using (var session = DataService.OpenSession())
+            using (var session = DataStore.OpenSession())
             {
                 var dbUser = session.Get<User>(user.Id);
                 var properties = dbUser.GetType().GetProperties();
@@ -258,7 +262,7 @@ namespace WebsiteTemplate.Data
                         throw;
                     }
                 }
-                DataService.SaveOrUpdate(dbUser);
+                DataService.SaveOrUpdate(session, dbUser);
                 session.Flush();
             }
             return Task.FromResult(0);

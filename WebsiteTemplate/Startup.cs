@@ -11,6 +11,7 @@ using System.Web.Http;
 using WebsiteTemplate.Data;
 using Microsoft.Practices.Unity.Configuration;
 using WebsiteTemplate.Utilities;
+using WebsiteTemplate.Backend.Services;
 
 namespace WebsiteTemplate
 {
@@ -45,7 +46,7 @@ namespace WebsiteTemplate
             Container.LoadConfiguration();
 
             Container.RegisterInstance(DataStore.GetInstance());
-
+            
             var appSettings = Container.Resolve<IApplicationSettings>();
             appSettings.RegisterUnityContainers(Container);
 

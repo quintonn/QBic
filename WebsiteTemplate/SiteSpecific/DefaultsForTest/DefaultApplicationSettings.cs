@@ -65,7 +65,7 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
                         Name = "Admin",
                         Description = "Administrator"
                     };
-                    DataService.SaveOrUpdate(adminRole);
+                    DataService.SaveOrUpdate(session, adminRole);
                 }
 
                 var adminRoleAssociation = session.CreateCriteria<UserRoleAssociation>()
@@ -81,7 +81,7 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
                         User = adminUser,
                         UserRole = adminRole
                     };
-                    DataService.SaveOrUpdate(adminRoleAssociation);
+                    DataService.SaveOrUpdate(session, adminRoleAssociation);
                 }
 
                 var menuList1 = session.CreateCriteria<Menu>()
@@ -96,7 +96,7 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
                         Name = "Users",
                     };
 
-                    DataService.SaveOrUpdate(menu1);
+                    DataService.SaveOrUpdate(session, menu1);
                 }
 
                 var menuList2 = session.CreateCriteria<Menu>()
@@ -110,11 +110,12 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
                         Event = EventNumber.ViewMenus,
                         Name = "Menus",
                     };
-                    DataService.SaveOrUpdate(menu2);
+                    DataService.SaveOrUpdate(session, menu2);
                 }
 
                 var userRoleMenu = session.CreateCriteria<Menu>()
                                           .Add(Restrictions.Eq("Event", (int)EventNumber.ViewUserRoles))
+                                          .Add(Restrictions.IsNull("ParentMenu"))
                                           .UniqueResult<Menu>();
                 if (userRoleMenu == null)
                 {
@@ -123,7 +124,7 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
                         Event = EventNumber.ViewUserRoles,
                         Name = "User Roles"
                     };
-                    DataService.SaveOrUpdate(userRoleMenu);
+                    DataService.SaveOrUpdate(session, userRoleMenu);
                 }
 
                 var allEvents = EventService.EventList.Where(e => e.Value.ActionType != EventType.InputDataView).Select(e => e.Value.GetEventId())
@@ -139,7 +140,7 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
                 {
                     eras.ForEach(e =>
                     {
-                        DataService.TryDelete(e);
+                        DataService.TryDelete(session, e);
                     });
                     session.Flush();
                     foreach (var evt in allEvents)
@@ -149,7 +150,7 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
                             Event = evt,
                             UserRole = adminRole
                         };
-                        DataService.SaveOrUpdate(era);
+                        DataService.SaveOrUpdate(session, era);
                     }
                 }
                 session.Flush();

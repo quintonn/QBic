@@ -2,6 +2,7 @@
 using NHibernate.Criterion;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Processing.InputProcessing;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.InputItems;
@@ -28,7 +29,7 @@ namespace WebsiteTemplate.Backend.UIProcessors
             return null;
         }
 
-        public override void UpdateItem(ISession session, Menu item)
+        public override async Task UpdateItem(ISession session, Menu item)
         {
             var parentMenuId = GetValue("ParentMenuId");
             var eventNumber = GetValue<int?>("Event");

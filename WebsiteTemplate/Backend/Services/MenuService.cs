@@ -57,7 +57,7 @@ namespace WebsiteTemplate.Backend.Services
                 DeleteChildMenus(menuId, session);
 
                 var menu = session.Get<Menu>(menuId);
-                DataService.TryDelete(menu);
+                DataService.TryDelete(session, menu);
 
                 session.Flush();
             }
@@ -72,7 +72,7 @@ namespace WebsiteTemplate.Backend.Services
             foreach (var childMenu in childMenuItems)
             {
                 DeleteChildMenus(childMenu.Id, session);
-                DataService.TryDelete(childMenu);
+                DataService.TryDelete(session, childMenu);
             }
         }
     }
