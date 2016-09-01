@@ -258,6 +258,7 @@
     <Compile Include="Menus\BasicCrudItems\IBasicCrudDelete.cs" />
     <Compile Include="Menus\BasicCrudItems\IBasicCrudModify.cs" />
     <Compile Include="Menus\BasicCrudItems\IBasicCrudView.cs" />
+    <Compile Include="Menus\InputItems\DeleteItemUsingDataService.cs" />
     <Compile Include="Menus\InputItems\InputProcessingMethods.cs" />
     <Compile Include="Menus\InputItems\ModifyItemUsingDataService.cs" />
     <Compile Include="Menus\ViewItems\ShowViewUsingDataService.cs" />

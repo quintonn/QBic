@@ -2,14 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using WebsiteTemplate.Menus.BaseItems;
 using System.Threading.Tasks;
-using WebsiteTemplate.Models;
-using WebsiteTemplate.Utilities;
-using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Menus;
+using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
+using WebsiteTemplate.Menus.ViewItems;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Processing
 {
@@ -128,7 +126,7 @@ namespace WebsiteTemplate.Backend.Processing
                 (eventItem as DoSomething).InputData = processedFormData;
                 (eventItem as DoSomething).DataService = DataService;
                 var doResult = await (eventItem as DoSomething).ProcessAction();
-                HandleProcessActionResult(doResult, eventItem);
+                await HandleProcessActionResult(doResult, eventItem);
                 result.AddRange(doResult);
             }
             else if (eventItem is GetInput)

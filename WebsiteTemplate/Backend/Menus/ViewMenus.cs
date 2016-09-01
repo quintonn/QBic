@@ -116,37 +116,40 @@ namespace WebsiteTemplate.Backend.Menus
 
         public override void PerformAdditionalProcessingOnDataRetrieval(string data, bool obtainingDataCountOnly)
         {
-            var json = JsonHelper.Parse(data);
-            var id = json.GetValue("Id");                                  // If 'sub-menus' column link is clicked
-            var dataItem = json.GetValue("data");                          // If 'back' menu-button button is clicked
-            var eventParams = json.GetValue<JsonHelper>("eventParameters"); // This is when 'search' is clicked on the filter
+            if (obtainingDataCountOnly == true)
+            {
+                var json = JsonHelper.Parse(data);
+                var id = json.GetValue("Id");                                  // If 'sub-menus' column link is clicked
+                var dataItem = json.GetValue("data");                          // If 'back' menu-button button is clicked
+                var eventParams = json.GetValue<JsonHelper>("eventParameters"); // This is when 'search' is clicked on the filter
 
-            if (String.IsNullOrWhiteSpace(json.ToString()))
-            {
-                MenuId = data;
-            }
-            else if (!String.IsNullOrWhiteSpace(id))
-            {
-                MenuId = id;
-            }
-            else if (!String.IsNullOrWhiteSpace(dataItem))
-            {
-                MenuId = dataItem;
-            }
-            else
-            {
-                MenuId = String.Empty; // Comes here when clicking back on view menu, but only on second screen, not third, fourth, etc.
-            }
+                if (String.IsNullOrWhiteSpace(json.ToString()))
+                {
+                    MenuId = data;
+                }
+                else if (!String.IsNullOrWhiteSpace(id))
+                {
+                    MenuId = id;
+                }
+                else if (!String.IsNullOrWhiteSpace(dataItem))
+                {
+                    MenuId = dataItem;
+                }
+                else
+                {
+                    MenuId = String.Empty; // Comes here when clicking back on view menu, but only on second screen, not third, fourth, etc.
+                }
 
-            if (!String.IsNullOrWhiteSpace(MenuId))
-            {
-                var parentMenu = DataItemService.RetrieveItem(MenuId);
-                ParentId = parentMenu.ParentMenu != null ? parentMenu.ParentMenu.Id : "";
-                mTitle = "Menus: " + parentMenu.Name;
-            }
-            else
-            {
-                mTitle = "Menus";
+                if (!String.IsNullOrWhiteSpace(MenuId))
+                {
+                    var parentMenu = DataItemService.RetrieveItem(MenuId);
+                    ParentId = parentMenu.ParentMenu != null ? parentMenu.ParentMenu.Id : "";
+                    mTitle = "Menus: " + parentMenu.Name;
+                }
+                else
+                {
+                    mTitle = "Menus";
+                }
             }
         }
 

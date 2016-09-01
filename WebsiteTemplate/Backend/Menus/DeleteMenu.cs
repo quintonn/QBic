@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Backend.UIProcessors;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
-
+using WebsiteTemplate.Menus.InputItems;
+using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Menus
 {
-    public class DeleteMenu : DoSomething  TODO: Make a delete processor thing
+    public class DeleteMenu : DeleteItemUsingDataService<MenuProcessor, Menu>
     {
         private MenuService MenuService { get; set; }
         public override string Description
@@ -19,15 +21,34 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
+        public override EventNumber ViewToShowAfterModify
+        {
+            get
+            {
+                return EventNumber.ViewMenus;
+            }
+        }
+
         public override EventNumber GetId()
         {
             return EventNumber.DeleteMenu;
         }
 
-        public DeleteMenu(MenuService service)
+        public DeleteMenu(MenuProcessor menuProcessor, MenuService menuService)
+            : base(menuProcessor)
         {
-            MenuService = service;
+            MenuService = menuService;
         }
+
+        public override string ParametersToPassToViewAfterModify
+        {
+            get
+            {
+                return ParentId;
+            }
+        }
+
+        private string ParentId { get; set; }
 
         public override async Task<IList<IEvent>> ProcessAction()
         {
@@ -37,7 +58,7 @@ namespace WebsiteTemplate.Backend.Menus
 
             var parentId = String.Empty;
 
-            var menu = MenuService.RetrieveMenuWithId(id);
+            var menu = ItemProcessor.RetrieveItem(id);
             parentId = menu.ParentMenu == null ? String.Empty : menu.ParentMenu.Id;
 
             var isParentMenu = MenuService.IsParentMenu(id);
@@ -58,14 +79,9 @@ namespace WebsiteTemplate.Backend.Menus
                     };
             }
 
-            MenuService.DeleteMenuWithId(menu.Id);
+            ParentId = parentId;
 
-            return new List<IEvent>()
-            {
-                new CancelInputDialog(),
-                new ExecuteAction(EventNumber.ViewMenus, parentId),
-                new ShowMessage("Menu deleted successfully"),
-            };
+            return await base.ProcessAction();
         }
     }
 }
