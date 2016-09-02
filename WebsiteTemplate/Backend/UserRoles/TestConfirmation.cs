@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using WebsiteTemplate.Menus;
+﻿using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Backend.UserRoles
@@ -13,10 +9,18 @@ namespace WebsiteTemplate.Backend.UserRoles
             :base("Create a new one?", "Yes", "No")
         {
             OnConfirmationUIAction = EventNumber.TestCreate;
-            OnCancelUIAction = WebsiteTemplate.Menus.BaseItems.EventNumber.CancelInputDialog;
+            OnCancelUIAction = EventNumber.CancelInputDialog;
         }
 
-        public override int GetId()
+        public override string Description
+        {
+            get
+            {
+                return "Test Confirmation";
+            }
+        }
+
+        public override EventNumber GetId()
         {
             return EventNumber.TestConfirmation;
         }

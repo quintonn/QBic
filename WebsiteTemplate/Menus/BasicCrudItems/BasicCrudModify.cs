@@ -1,32 +1,32 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
+using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.BasicCrudItems
 {
-    public class BasicCrudModify<T> : GetInput where T : BaseClass
+    public class BasicCrudModify<T> : GetInput, IBasicCrudModify where T : BaseClass
     {
+        private DataService DataService { get; set; }
+
+        public BasicCrudModify(DataService dataService)
+        {
+            DataService = dataService;
+        }
+
         private T Item { get; set; } = null;
         private bool IsNew { get; set; } = true;
 
-        private int Id { get; set; }
+        public int Id { get; set; }
 
-        private string ItemName { get; set; }
+        public string ItemName { get; set; }
 
-        private Dictionary<string, string> InputProperties { get; set; }
-
-        public BasicCrudModify(int id, string itemName, Dictionary<string, string> inputProperties)
-        {
-            Id = id;
-            ItemName = itemName;
-            InputProperties = inputProperties;
-        }
+        public Dictionary<string, string> InputProperties { get; set; }
 
         public override string Description
         {
@@ -80,25 +80,25 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             }
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return Id;
         }
 
         public override async Task<InitializeResult> Initialize(string data)
         {
-            var jobject = JObject.Parse(data);
-            JToken tmp;
-            if (jobject.TryGetValue("IsNew", out tmp))
+            var json = JsonHelper.Parse(data);
+            
+            if (!String.IsNullOrWhiteSpace(json.GetValue("IsNew")))
             {
-                IsNew = Convert.ToBoolean(tmp);
+                IsNew = json.GetValue<bool>("IsNew");
                 Item = Activator.CreateInstance<T>();
             }
             else
             {
                 IsNew = false;
-                var id = jobject.GetValue("Id").ToString();
-                using (var session = Store.OpenSession())
+                var id = json.GetValue("Id");
+                using (var session = DataService.OpenSession())
                 {
                     Item = session.Get<T>(id);
                 }
@@ -107,11 +107,11 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             return new InitializeResult(true);
         }
 
-        public override async Task<IList<Event>> ProcessAction(int actionNumber)
+        public override async Task<IList<IEvent>> ProcessAction(int actionNumber)
         {
             if (actionNumber == 1)
             {
-                return new List<Event>()
+                return new List<IEvent>()
                 {
                     new CancelInputDialog(),
                     new ExecuteAction(Id -1)
@@ -130,14 +130,14 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 
                     if (value == null || String.IsNullOrWhiteSpace(value.ToString()))
                     {
-                        return new List<Event>()
+                        return new List<IEvent>()
                         {
                             new ShowMessage("{0} is mandatory and must be provided.", property.Key)
                         };
                     }
                 }
 
-                using (var session = Store.OpenSession())
+                using (var session = DataService.OpenSession())
                 {
                     T item;
                     if (!isNew)
@@ -155,11 +155,11 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                         prop.SetValue(item, value.Value);
                     }
 
-                    session.Save(item);
+                    DataService.SaveOrUpdate(session, item);
                     session.Flush();
                 }
 
-                return new List<Event>()
+                return new List<IEvent>()
                 {
                     new ShowMessage("{1} {0} successfully.", isNew ? "created" : "modified", ItemName),
                     new CancelInputDialog(),

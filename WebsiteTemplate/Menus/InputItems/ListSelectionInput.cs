@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
@@ -32,6 +32,11 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public override object GetValue(JToken jsonToken)
         {
+            var jArray = jsonToken as JArray;
+            if (jArray == null)
+            {
+                return null;
+            }
             return (jsonToken as JArray).Select(x => x.ToString()).ToList();
         }
     }
@@ -49,7 +54,7 @@ namespace WebsiteTemplate.Menus.InputItems
             var jObject = JObject.Load(reader);
             var json = jObject.ToString();
 
-            var item = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+            var item = JsonHelper.DeserializeObject<Dictionary<string, object>>(json);
             return item;
         }
 

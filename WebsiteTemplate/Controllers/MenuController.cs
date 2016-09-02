@@ -1,20 +1,13 @@
 ﻿using BasicAuthentication.Security;
+using BasicAuthentication.Users;
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using WebsiteTemplate.Models;
 using WebsiteTemplate.Data;
-using Newtonsoft.Json;
-using BasicAuthentication.Users;
-using System.Threading.Tasks;
-using System.Configuration;
-using System.Net.Configuration;
-using System.Diagnostics;
-using WebsiteTemplate.SiteSpecific.Utilities;
-using System.Net.Mail;
-using System.Net.Http;
+using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -23,9 +16,9 @@ namespace WebsiteTemplate.Controllers
     {
         private DataStore Store { get; set; }
 
-        public MenuController()
+        public MenuController(DataStore store)
         {
-            Store = new DataStore();
+            Store = store;
         }
 
         private string GetCurrentUrl()

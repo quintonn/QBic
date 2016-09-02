@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using Microsoft.Practices.Unity;
 
 namespace WebsiteTemplate.Menus.BaseItems
 {
     public class UpdateInputView : Event
     {
+        [InjectionConstructor]
         public UpdateInputView()
         {
             RowId = -1;
@@ -40,7 +38,7 @@ namespace WebsiteTemplate.Menus.BaseItems
             }
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return EventNumber.UpdateInputView;
         }

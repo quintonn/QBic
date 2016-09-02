@@ -19,6 +19,17 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// <param name="columnConfig"></param>
         public abstract void ConfigureColumns(ColumnConfiguration columnConfig);
 
+        /// <summary>
+        /// Returns the title that will be displayed when this view is rendered.
+        /// </summary>
+        public virtual string Title
+        {
+            get
+            {
+                return Description;
+            }
+        }
+
         private IList<ViewColumn> DoConfigureColumns()
         {
             var config = new ColumnConfiguration();
@@ -74,9 +85,22 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// </summary>
         //public abstract IList<object> OtherSettings { get; }
 
-        public abstract IList<MenuItem> GetViewMenu();
+        public abstract IList<MenuItem> GetViewMenu(Dictionary<string, string> dataForMenu);
 
         public IList<MenuItem> ViewMenu { get; set; }
+
+        /// <summary>
+        /// Retrieves data that will be passed to the view when retrieving the view menu.
+        /// There is a separate web call to retrieve the menu, so that the system can determine which menus the user is allowed
+        /// to access and see.
+        /// </summary>
+        public virtual Dictionary<string, string> DataForGettingMenu
+        {
+            get
+            {
+                return new Dictionary<string, string>();
+            }
+        }
 
         public override EventType ActionType
         {

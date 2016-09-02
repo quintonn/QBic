@@ -1,21 +1,18 @@
-﻿using Newtonsoft.Json.Linq;
-using NHibernate;
-using NHibernate.Criterion;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
+using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Backend.UIProcessors;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
+using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
-using WebsiteTemplate.SiteSpecific;
-
 
 namespace WebsiteTemplate.Backend.Menus
 {
-    public class DeleteMenu : DoSomething
+    public class DeleteMenu : DeleteItemUsingDataService<MenuProcessor, Menu>
     {
+        private MenuService MenuService { get; set; }
         public override string Description
         {
             get
@@ -24,50 +21,53 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
-        public override int GetId()
+        public override EventNumber ViewToShowAfterModify
+        {
+            get
+            {
+                return EventNumber.ViewMenus;
+            }
+        }
+
+        public override EventNumber GetId()
         {
             return EventNumber.DeleteMenu;
         }
 
-        public void DeleteChildMenus(string menuId, ISession session)
+        public DeleteMenu(MenuProcessor menuProcessor, MenuService menuService)
+            : base(menuProcessor)
         {
-            var childMenuItems = session.CreateCriteria<Menu>()
-                                            .CreateAlias("ParentMenu", "parent")
-                                            .Add(Restrictions.Eq("parent.Id", menuId))
-                                            .List<Menu>();
-            foreach (var childMenu in childMenuItems)
+            MenuService = menuService;
+        }
+
+        public override string ParametersToPassToViewAfterModify
+        {
+            get
             {
-                DeleteChildMenus(childMenu.Id, session);
-                session.Delete(childMenu);
+                return ParentId;
             }
         }
 
-        public override async Task<IList<Event>> ProcessAction()
+        private string ParentId { get; set; }
+
+        public override async Task<IList<IEvent>> ProcessAction()
         {
             var id = GetValue<string>("Id");
 
-            var confirmationString = String.Empty;
-            confirmationString = GetValue<string>("Confirmation");
-
-            var confirmed = !String.IsNullOrWhiteSpace(confirmationString);
+            var confirmed = GetValue<bool>("Confirmation");
 
             var parentId = String.Empty;
 
-            using (var session = Store.OpenSession())
+            var menu = ItemProcessor.RetrieveItem(id);
+            parentId = menu.ParentMenu == null ? String.Empty : menu.ParentMenu.Id;
+
+            var isParentMenu = MenuService.IsParentMenu(id);
+            if (isParentMenu && !confirmed)
             {
-                var menu = session.Get<Menu>(id);
-                parentId = menu.ParentMenu == null ? String.Empty : menu.ParentMenu.Id;
+                var tmpData = new Dictionary<string, object>(InputData);
+                tmpData.Add("Confirmation", true);
 
-                var childMenuItems = session.CreateCriteria<Menu>()
-                                            .CreateAlias("ParentMenu", "parent")
-                                            .Add(Restrictions.Eq("parent.Id", menu.Id))
-                                            .List<Menu>();
-                if (childMenuItems.Count > 0 && !confirmed)
-                {
-                    var tmpData = new Dictionary<string, object>(InputData);
-                    tmpData.Add("Confirmation", true);
-
-                    return new List<Event>()
+                return new List<IEvent>()
                     {
                         new UserConfirmation("Menu has sub-menus.\nThey will be deleted as well?")
                         {
@@ -77,22 +77,11 @@ namespace WebsiteTemplate.Backend.Menus
                             Data = tmpData
                         }
                     };
-                }
-                else
-                {
-                    DeleteChildMenus(menu.Id, session);
-                }
-
-                session.Delete(menu);
-                session.Flush();
             }
 
-            return new List<Event>()
-            {
-                new ShowMessage("Menu deleted successfully"),
-                new CancelInputDialog(),
-                new ExecuteAction(EventNumber.ViewMenus, parentId)
-            };
+            ParentId = parentId;
+
+            return await base.ProcessAction();
         }
     }
 }

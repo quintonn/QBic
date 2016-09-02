@@ -1,21 +1,14 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.UserRoles
 {
     public class TestAddForView : GetInput
     {
-        public TestAddForView()
-        {
-            Console.WriteLine("xx");
-        }
-
         public override string Description
         {
             get
@@ -24,9 +17,7 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
         }
 
-        private JObject RowData { get; set; }
-
-        private int RowId { get; set; } = -1; //TODO: This should go on the base class or core code. not on every implementation of a GetInput used for InputView's input
+        private JsonHelper RowData { get; set; }
 
         public override IList<InputField> InputFields
         {
@@ -34,15 +25,14 @@ namespace WebsiteTemplate.Backend.UserRoles
             {
                 var result = new List<InputField>()
                 {
-                    new StringInput("name", "name", RowData?.GetValue("name").ToString(), "", true),
-                    new StringInput("age", "age", RowData?.GetValue("age").ToString(), ""),
-                    new HiddenInput("rowId", RowId)
+                    new StringInput("name", "name", RowData.GetValue("name"), "", true),
+                    new StringInput("age", "age", RowData.GetValue("age"), ""),
                 };
                 return result;
             }
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return 777;
         }
@@ -51,38 +41,29 @@ namespace WebsiteTemplate.Backend.UserRoles
         {
             if (!String.IsNullOrWhiteSpace(data))
             {
-                var json = JObject.Parse(data);
-                //var id = json.GetValue("Id").ToString();
-                var rowData = data;
-                if (json.GetValue("rowData") != null)
-                {
-                    rowData = json.GetValue("rowData")?.ToString();
-                }
-                
-                RowData = JObject.Parse(rowData);
-                RowId = Convert.ToInt32(RowData.GetValue("rowId")?.ToString());
+                var json = JsonHelper.Parse(data);
+                RowData = JsonHelper.Parse(data);
             }
             else
             {
                 RowData = null;
-                RowId = -1;
             }
 
             return new InitializeResult(true);
         }
 
-        public override async Task<IList<Event>> ProcessAction(int actionNumber)
+        public override async Task<IList<IEvent>> ProcessAction(int actionNumber)
         {
             if (actionNumber == 1)
             {
-                return new List<Event>()
+                return new List<IEvent>()
                 {
                     new CancelInputDialog(),
                 };
             }
             else if (actionNumber == 0)
             {
-                return new List<Event>()
+                return new List<IEvent>()
                 {
                     new UpdateInputView(InputViewUpdateType.AddOrUpdate),
                     new CancelInputDialog()

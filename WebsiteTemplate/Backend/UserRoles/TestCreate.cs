@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Web;
+using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 
@@ -18,21 +16,20 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return EventNumber.TestCreate;
         }
 
-        public override async Task<IList<Event>> ProcessAction()
+        public override async Task<IList<IEvent>> ProcessAction()
         {
             InputData.Add("name", "Note1.txt");
             InputData.Add("age", "10");
 
-            return new List<Event>()
-                {
-                    new UpdateInputView(InputViewUpdateType.AddOrUpdate),
-                    //new CancelInputDialog()
-                };
+            return new List<IEvent>()
+            {
+                new UpdateInputView(InputViewUpdateType.AddOrUpdate),
+            };
         }
     }
 }

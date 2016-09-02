@@ -13,13 +13,14 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WebsiteTemplate</RootNamespace>
     <AssemblyName>WebsiteTemplate</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,8 +41,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicAuthentication, Version=0.0.6025.39892, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BasicAuthentication.0.0.6025.39892\lib\net45\BasicAuthentication.dll</HintPath>
+    <Reference Include="BasicAuthentication, Version=0.0.6077.41662, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicAuthentication.0.0.6077.41662\lib\net45\BasicAuthentication.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FluentNHibernate, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -50,6 +51,10 @@
     </Reference>
     <Reference Include="Iesi.Collections">
       <HintPath>..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.ZLib, Version=2.0.0.14, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MarkerMetro.Unity.Ionic.Zlib.2.0.0.14\lib\net35\Ionic.ZLib.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
@@ -103,6 +108,7 @@
     <Reference Include="Owin">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -119,8 +125,6 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -129,24 +133,51 @@
     <Reference Include="System.Web.Http.Owin">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Owin.5.2.3\lib\net45\System.Web.Http.Owin.dll</HintPath>
     </Reference>
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CustomMenuItems\Getting Started.txt" />
+    <Content Include="Utilities\Getting Started.txt" />
     <Content Include="Frontend\css\busyIndicator.css" />
+    <Content Include="Frontend\css\font-awesome.min.css" />
+    <Content Include="Frontend\css\images\ui-icons_444444_256x240.png" />
+    <Content Include="Frontend\css\images\ui-icons_555555_256x240.png" />
+    <Content Include="Frontend\css\images\ui-icons_777620_256x240.png" />
+    <Content Include="Frontend\css\images\ui-icons_777777_256x240.png" />
+    <Content Include="Frontend\css\images\ui-icons_cc0000_256x240.png" />
+    <Content Include="Frontend\css\images\ui-icons_ffffff_256x240.png" />
     <Content Include="Frontend\css\inputView.css" />
+    <Content Include="Frontend\css\jquery-ui.min.css" />
     <Content Include="Frontend\css\spinner1.css" />
     <Content Include="Frontend\css\views.css" />
-    <Content Include="Frontend\Scripts\masked_input_1.4.js" />
+    <Content Include="Frontend\css\w3.css" />
+    <Content Include="Frontend\fonts\fontawesome-webfont.svg" />
+    <Content Include="Frontend\Pages\confirmation.html" />
+    <Content Include="Frontend\Pages\dialog.html" />
+    <Content Include="Frontend\Scripts\applicationModel.js" />
+    <Content Include="Frontend\Scripts\date.js" />
+    <Content Include="Frontend\Scripts\dialog.js" />
+    <Content Include="Frontend\Scripts\jquery-3.1.0.min.js" />
+    <Content Include="Frontend\Scripts\jquery-ui.min.js" />
+    <Content Include="Frontend\Scripts\knockout-3.4.0.js" />
+    <Content Include="Frontend\Scripts\knockout-jqueryui.min.js" />
+    <Content Include="Frontend\Scripts\mainApplication.js" />
+    <Content Include="Frontend\Scripts\menus.js" />
     <Content Include="Frontend\Scripts\modernizr.js" />
+    <Content Include="Frontend\Scripts\processing.js" />
+    <Content Include="Frontend\Scripts\promise-7.0.4.min.js" />
+    <Content Include="Frontend\Scripts\promise-done-7.0.4.min.js" />
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Frontend\fonts\fontawesome-webfont.eot" />
+    <Content Include="Frontend\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Frontend\fonts\fontawesome-webfont.woff" />
+    <Content Include="Frontend\fonts\fontawesome-webfont.woff2" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -170,17 +201,39 @@
     <Content Include="Frontend\Pages\Views.html" />
     <Content Include="Frontend\Scripts\auth.js" />
     <Content Include="Frontend\Scripts\inputDialog.js" />
-    <Content Include="Frontend\Scripts\main.js" />
-    <Content Include="Frontend\Scripts\menuBuilder.js" />
-    <Content Include="Frontend\Scripts\navigation.js" />
-    <Content Include="Frontend\Scripts\siteMenu.js" />
     <Content Include="Frontend\Scripts\views.js" />
     <None Include="Frontend\Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Backend\Processing\InputProcessing\ProcessingResult.cs" />
+    <Compile Include="Backend\UIProcessors\MenuProcessor.cs" />
+    <Compile Include="Backend\Menus\AddMenu.cs" />
+    <Compile Include="Backend\Menus\EditMenu.cs" />
+    <Compile Include="Backend\Processing\ActionExecutionProcessor.cs" />
+    <Compile Include="Backend\Processing\CoreProcessor.cs" />
+    <Compile Include="Backend\Processing\CoreProcessorBase.cs" />
+    <Compile Include="Backend\Processing\EventProcessor.cs" />
+    <Compile Include="Backend\Processing\FileProcessor.cs" />
+    <Compile Include="Backend\Processing\InputEventProcessor.cs" />
+    <Compile Include="Backend\Processing\PropertyChangeProcessor.cs" />
+    <Compile Include="Backend\Processing\UpdateViewProcessor.cs" />
+    <Compile Include="Backend\Processing\UserMenuProcessor.cs" />
+    <Compile Include="Backend\Processing\ViewMenuProcessor.cs" />
+    <Compile Include="Backend\Services\ApplicationService.cs" />
+    <Compile Include="Backend\Services\AuditService.cs" />
+    <Compile Include="Backend\Processing\InputProcessing\InputProcessingCore.cs" />
+    <Compile Include="Backend\Services\DataService.cs" />
+    <Compile Include="Backend\Services\EventService.cs" />
+    <Compile Include="Backend\Services\MenuService.cs" />
+    <Compile Include="Backend\Processing\InputProcessing\NHibernateInputProcessing.cs" />
+    <Compile Include="Backend\Services\UserRoleService.cs" />
+    <Compile Include="Backend\Services\UserService.cs" />
     <Compile Include="Backend\TestItem\SuperCause.cs" />
     <Compile Include="Backend\TestItem\SuperMenuItem.cs" />
+    <Compile Include="Backend\UIProcessors\UserProcessor.cs" />
     <Compile Include="Backend\UserRoles\AddUserRole.cs" />
     <Compile Include="Backend\UserRoles\DeleteUserRole.cs" />
     <Compile Include="Backend\UserRoles\EditUserRole.cs" />
@@ -190,21 +243,44 @@
     <Compile Include="Backend\UserRoles\ViewUserRoles.cs" />
     <Compile Include="Backend\UserRoles\TestConfirmation.cs" />
     <Compile Include="Backend\UserRoles\TestCreate.cs" />
+    <Compile Include="Backend\Users\ModifyUser.cs" />
     <Compile Include="Backend\Users\TestView.cs" />
+    <Compile Include="Controllers\CompressionHelper.cs" />
+    <Compile Include="Controllers\DeflateCompressionAttribute.cs" />
     <Compile Include="Controllers\FileActionResult.cs" />
     <Compile Include="Controllers\MenuController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\RoleAuthorization.cs" />
     <Compile Include="Controllers\RoleBlockedAttribute.cs" />
-    <Compile Include="CustomMenuItems\XXXUtils.cs" />
+    <Compile Include="Controllers\AcmeController.cs" />
+    <Compile Include="Data\DataStoreExtensionMethods.cs" />
+    <Compile Include="Data\JoinedSubclassIdConvention.cs" />
+    <Compile Include="Data\SqlStatementInterceptor.cs" />
+    <Compile Include="Mappings\AuditEventMapping.cs" />
+    <Compile Include="Menus\BaseItems\IEvent.cs" />
+    <Compile Include="Menus\BasicCrudItems\IBasicCrudDelete.cs" />
+    <Compile Include="Menus\BasicCrudItems\IBasicCrudModify.cs" />
+    <Compile Include="Menus\BasicCrudItems\IBasicCrudView.cs" />
+    <Compile Include="Menus\InputItems\DeleteItemUsingDataService.cs" />
+    <Compile Include="Menus\InputItems\InputProcessingMethods.cs" />
+    <Compile Include="Menus\InputItems\ModifyItemUsingDataService.cs" />
+    <Compile Include="Menus\ViewItems\ShowViewUsingDataService.cs" />
+    <Compile Include="Models\AuditAction.cs" />
+    <Compile Include="Models\AuditEvent.cs" />
+    <Compile Include="Utilities\JsonArray.cs" />
+    <Compile Include="Utilities\JsonHelper.cs" />
+    <Compile Include="Utilities\UnityDependencyResolver.cs" />
+    <Compile Include="Utilities\XXXUtils.cs" />
     <Compile Include="Data\DataStore.cs" />
     <Compile Include="Mappings\BaseClassMap.cs" />
     <Compile Include="Mappings\ChildDynamicMap.cs" />
     <Compile Include="Mappings\DynamicMap.cs" />
     <Compile Include="Mappings\MenuMap.cs" />
+    <Compile Include="Mappings\RefreshTokenMap.cs" />
     <Compile Include="Mappings\UserRoleAssociationMap.cs" />
     <Compile Include="Mappings\UserMap.cs" />
     <Compile Include="Menus\BaseItems\DeleteInputViewItem.cs" />
+    <Compile Include="Menus\BaseItems\EventNumberConverter.cs" />
     <Compile Include="Menus\BaseItems\InputViewUpdateType.cs" />
     <Compile Include="Menus\BaseItems\SubMenuAction.cs" />
     <Compile Include="Menus\BaseItems\EventType.cs" />
@@ -230,6 +306,7 @@
     <Compile Include="Menus\InputItems\InputType.cs" />
     <Compile Include="Menus\InputItems\ListSelectionInput.cs" />
     <Compile Include="Menus\InputItems\MaskedInput.cs" />
+    <Compile Include="Menus\InputItems\NumericInput.cs" />
     <Compile Include="Menus\InputItems\PasswordInput.cs" />
     <Compile Include="Menus\InputItems\StringInput.cs" />
     <Compile Include="Menus\InputItems\ViewInput.cs" />
@@ -241,7 +318,8 @@
     <Compile Include="Menus\UserConfirmation.cs" />
     <Compile Include="Menus\ViewItems\BooleanColumn.cs" />
     <Compile Include="Menus\ViewItems\ButtonColumn.cs" />
-    <Compile Include="Menus\ViewItems\ButtonTextSource.cs" />
+    <Compile Include="Menus\ViewItems\ClickableColumn.cs" />
+    <Compile Include="Menus\ViewItems\ClickableType.cs" />
     <Compile Include="Menus\ViewItems\ColumnConfiguration.cs" />
     <Compile Include="Menus\ViewItems\ColumnDisplayType.cs" />
     <Compile Include="Menus\ViewItems\ColumnSetting.cs" />
@@ -279,11 +357,12 @@
     <Compile Include="Backend\Users\ViewUsers.cs" />
     <Compile Include="Menus\BaseItems\EventNumber.cs" />
     <Compile Include="SiteSpecific\DefaultsForTest\DefaultApplicationSettings.cs" />
-    <Compile Include="SiteSpecific\Utilities\IApplicationSettings.cs" />
-    <Compile Include="SiteSpecific\Utilities\WebsiteTemplateConstants.cs" />
+    <Compile Include="Utilities\IApplicationSettings.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

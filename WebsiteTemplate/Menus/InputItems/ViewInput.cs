@@ -29,8 +29,13 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public override object GetValue(JToken jsonToken)
         {
-            var viewData = JArray.Parse(jsonToken.ToString());
-            return viewData.ToList();
+            if (jsonToken is JObject)
+            {
+                var data = (jsonToken as JObject).GetValue("data") as JObject;
+                var viewData = data.GetValue("ViewData") as JArray;
+                return viewData.ToList();
+            }
+            throw new Exception("Unable to call GetValue for ViewInput with value:\n"+jsonToken?.ToString());
         }
     }
 }

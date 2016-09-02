@@ -1,37 +1,58 @@
-﻿namespace WebsiteTemplate.Menus.BaseItems
+﻿using Newtonsoft.Json;
+
+namespace WebsiteTemplate.Menus.BaseItems
 {
-    public static class EventNumber
+    [JsonConverter(typeof(EventNumberConverter))]
+    public class EventNumber
     {
-        public const int Nothing = 0;
-        public const int ViewUsers = 1000;
-        public const int AddUser = 1001;
-        public const int SendConfirmationEmail = 1002;
-        public const int EditUser = 1003;
-        public const int DeleteUser = 1004;
- 
-        public const int ViewMenus = 1008;
-        public const int ModifyMenu = 1009;
-        
-        public const int DeleteMenu = 1010;
-        
-        public const int ViewUserRoles = 1011;
-        public const int AddUserRole = 1012;
-        public const int EditUserRole = 1013;
-        public const int DeleteUserRole = 1014;
-        
-        public const int ShowMessage = 1100;
-        public const int UserConfirmation = 1101;
+        private int Value { get; set; }
 
-        public const int ExecuteAction = 1200;
-        public const int CancelInputDialog = 1500;
+        public EventNumber(int value)
+        {
+            Value = value;
+        }
 
-        public const int UpdateInputView = 1600;
-        public const int DeleteInputViewItem = 1601;
-        public const int UpdateDataSourceComboBox = 1602;
-        public const int UpdateInput = 1603;
+        public static EventNumber Nothing = new EventNumber(0);
+        public static EventNumber ViewUsers = new EventNumber(1000);
+        public static EventNumber AddUser = new EventNumber(1001);
+        public static EventNumber SendConfirmationEmail = new EventNumber(1002);
+        public static EventNumber EditUser = new EventNumber(1003);
+        public static EventNumber DeleteUser = new EventNumber(1004);
 
-        internal const int Test = 654321;
-        internal const int TestConfirmation = 654322;
-        internal const int TestCreate = 654323;
+        public static EventNumber ViewMenus = new EventNumber(1007);
+        public static EventNumber AddMenu = new EventNumber(1008);
+        public static EventNumber EditMenu = new EventNumber(1009);
+
+        public static EventNumber DeleteMenu = new EventNumber(1010);
+
+        public static EventNumber ViewUserRoles = new EventNumber(1011);
+        public static EventNumber AddUserRole = new EventNumber(1012);
+        public static EventNumber EditUserRole = new EventNumber(1013);
+        public static EventNumber DeleteUserRole = new EventNumber(1014);
+
+        public static EventNumber ShowMessage = new EventNumber(1100);
+        public static EventNumber UserConfirmation = new EventNumber(1101);
+
+        public static EventNumber ExecuteAction = new EventNumber(1200);
+        public static EventNumber CancelInputDialog = new EventNumber(1500);
+
+        public static EventNumber UpdateInputView = new EventNumber(1600);
+        public static EventNumber DeleteInputViewItem = new EventNumber(1601);
+        public static EventNumber UpdateDataSourceComboBox = new EventNumber(1602);
+        public static EventNumber UpdateInput = new EventNumber(1603);
+
+        internal static EventNumber Test = new EventNumber(654321);
+        internal static EventNumber TestConfirmation = new EventNumber(654322);
+        internal static EventNumber TestCreate = new EventNumber(654323);
+
+        public static implicit operator EventNumber(int value)
+        {
+            return new EventNumber(value);
+        }
+
+        public static implicit operator int(EventNumber eventNumber)
+        {
+            return eventNumber.Value;
+        }
     }
 }

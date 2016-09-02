@@ -1,672 +1,430 @@
-﻿var views = {
-
-    getTable: function ()
+﻿(function (views, $, undefined)
+{
+    views.getViewContent = function ()
     {
-        return document.getElementById('tblView');
-    },
+        return mainApp.makeWebCall("frontend/pages/Views.html?v=" + mainApp.version);
+    };
 
-    populateRow: function (row, settings, data, rowId, args, isNew)
+    views.showView = function (viewData, isEmbeddedView, id)
     {
-        if (data['rowId'] == null || data['rowId'].length == 0)
+        dialog.showBusyDialog('Loading data...');
+        return mainApp.makeWebCall("frontend/pages/Views.html?v=" + mainApp.version).then(function (data)
         {
-            data['rowId'] = rowId;
-        }
-        for (var j = 0; j < settings.Columns.length; j++)
-        {
-            var column = settings.Columns[j];
-            var cell;
-            if (isNew == true)
-            {
-                cell = document.createElement("td");
-            }
-            else
-            {
-                cell = row.cells[j];
-            }
+            data = data.replace("##view_id##", "view_" + id);
+
+            var model = new viewModel(viewData.Title, data, viewData, isEmbeddedView || false, id, viewData.ViewMessage);
             
-            var value = "";
+            processing.loadViewMenu(id, model, viewData.DataForGettingMenu);
+            
+            var columns = viewData.Columns;
 
-            if (column.ColumnName != null && column.ColumnName.length > 0)
+            for (var i = 0; i < columns.length; i++)
             {
-                value = data;//[i];
-                var colName = column.ColumnName;
-                while (colName.indexOf('.') > -1)
-                {
-                    var index = colName.indexOf('.');
-                    var partName = colName.substring(0, index);
-                    if (value == null)
-                    {
-                        break;
-                    }
-                    value = value[partName];
-                    
-                    colName = colName.substring(index + 1);
-                }
-                if (value != null)
-                {
-                    value = value[colName];
-                }
-            }
-
-            if (value === undefined && column.ColumnName.length != 0 && isNew == false)
-            {
-                //console.log('value for column ' + column.ColumnName + ' is undefined inside populate view');
-                continue;
-            }
-
-            if (column.ColumnType == 1) /// Boolean
-            {
-                if (value == true)
-                {
-                    value = column.TrueValueDisplay;
-                }
-                else if (value == false)
-                {
-                    value = column.FalseValueDisplay;
-                }
-                cell.innerHTML = value;
-            }
-            else if (column.ColumnType == 2) // Button
-            {
-                if (isNew == false)
-                {
-                    continue;
-                }
-                var button = document.createElement('button');
-
-                button.onclick = (function (ind)
-                {
-                    return function ()
-                    {
-                        var theColumn = settings.Columns[ind];
-
-                        var id = data["Id"];
-
-                        var formData =
-                            {
-                                Id: data[theColumn.KeyColumn],
-                            };
-
-                        formData['rowData'] = data;
-                        var thisRowId = this.getAttribute('rowId');
-                        formData['rowData']['rowId'] = thisRowId;
-
-                        if (theColumn.Event.ActionType == 5)
-                        {
-                            inputDialog.showMessage(theColumn.Event, null, formData, args);
-                        }
-                        else if (theColumn.Event.ActionType == 6)
-                        {
-                            var eventId = theColumn.Event.EventNumber;
-                            var formData = data["Id"];
-
-                            var viewSettings =
-                            {
-                                "currentPage": settings.CurrentPage,
-                                "linesPerPage": settings.LinesPerPage,
-                                "totalLines": settings.TotalLines
-                            };
-
-                            formData =
-                                {
-                                    data: formData,
-                                    viewSettings: ""
-                                };
-                            
-                            siteMenu.executeUIAction(eventId, formData, data["Id"]);
-                        }
-                        else
-                        {
-                            inputDialog.showMessage("Unknown action type " + theColumn.Event.ActionType);
-                        }
-                    }
-                })(j);
-
-                if (column.ButtonTextSource == 0) //Fixed button text
-                {
-                    button.innerHTML = column.ButtonText;
-                }
-                else
-                {
-                    inputDialog.showMessage("Unhandled ButtonTextSource: " + column.ButtonTextSource);
-                    button.innerHTML = "????";
-                }
-                button.setAttribute('rowId', rowId);
-                cell.appendChild(button);
-            }
-            else if (column.ColumnType == 3) /// Link
-            {
-                var a;
-                if (isNew == true)
-                {
-                    a = document.createElement('a');
-                    a.href = "#";
-                    a.innerHTML = column.LinkLabel;
-                }
-                else
-                {
-                    a = row.cells[j].firstChild;
-                }
+                var col = columns[i];
+                var colModel = new columnModel(i, col.ColumnLabel, col.ColumnType != 4);
                 
-                a.onclick = (function (col, xData)
-                {
-                    return function ()
-                    {
-                        var formData =
-                            {
-                                Id: xData[col.KeyColumn],
-                            };
-
-                        if (settings.ActionType == 7) /// View for input
-                        {
-                            formData['rowData'] = xData;
-                            var thisRowId = this.getAttribute('rowId');
-                            //formData['rowId'] = thisRowId;
-                            formData['rowData']['rowId'] = thisRowId;
-                        };
-
-                        var viewSettings =
-                            {
-                                "currentPage": settings.CurrentPage,
-                                "linesPerPage": settings.LinesPerPage,
-                                "totalLines": settings.TotalLines
-                            };
-                        formData["viewSettings"] = "";
-                        var id = col.EventNumber;
-                        siteMenu.executeUIAction(id, formData, args);
-                    }
-                })(column, data);
-                a.setAttribute('rowId', rowId);
-                if (isNew == true)
-                {
-                    cell.appendChild(a);
-                }
+                model.columns.push(colModel);
             }
-            else if (column.ColumnType == 5) /// Date
+
+            model.addData(viewData.ViewData);
+
+            return dialog.closeBusyDialog().then(function ()
             {
-                if (value != null && value.length > 0)
-                {
-                    value = new Date(value);
-                    var month = "0" + (value.getMonth() + 1);
-                    month = month.substring(month.length - 2);
-                    var day = "0" + value.getDate();
-                    day = day.substr(day.length - 2);
-                    value = value.getFullYear() + "-" + month  + "-" + day; // TODO: should be configurable in settings somewhere
-                }
-                cell.style.whiteSpace = "nowrap";
-                cell.innerHTML = value;
-            }
-            else
-            {
-                /// Replace new line characters with HTML breaks
-                if (value == null)
-                {
-                    value = "";
-                }
+                return Promise.resolve(model);
+            });
+        });
+    };
 
-                if (value == null)
-                {
-                    value = "";
-                }
-                var typ = typeof value;
-
-                if (typeof value === 'object')
-                {
-                    value = JSON.stringify(value);
-                }
-                else
-                {
-                    value = value.toString();
-                    value = value.replace(/\r/g, ','); //TODO: not sure if this is the greatest idea
-                    value = value.replace(/\n/g, ',');
-                    // OR
-                    //value = value.replace(/\r/g, ''); 
-                    //value = value.replace(/\n/g, '<br/>');
-                    // OR
-                    // Make this a setting
-                }
-
-                /// Don't do anything to the value
-                cell.innerHTML = value;
-            }
-
-            if (column.ColumnSetting != null)
-            {
-                if (column.ColumnSetting.ColumnSettingType == 0) /// Show/Hide column
-                {
-                    var show = column.ColumnSetting.Display == 0;
-                    var compareResult = true;
-
-                    for (var p = 0; p < column.ColumnSetting.Conditions.length; p++)
-                    {
-                        var condition = column.ColumnSetting.Conditions[p];
-                        var colName = condition.ColumnName;
-                        var comparison = condition.Comparison;
-                        var colVal = condition.ColumnValue;
-
-                        var actualValue = data[colName] || "";
-                        actualValue = actualValue.toString();
-
-                        if (comparison == 0)
-                        {
-                            compareResult = compareResult && actualValue == colVal;
-                        }
-                        else if (comparison == 1)
-                        {
-                            compareResult = compareResult && actualValue != colVal;
-                        }
-                        else
-                        {
-                            alert("Unknown comparison: " + comparison);
-                        }
-                    }
-
-                    if ((compareResult == false && show == true) || (compareResult == true && show == false))
-                    {
-
-                        var show = column.ColumnSetting.Display == 0;
-
-                        var cellValue = cell.innerHTML;
-                        var div = document.createElement('div');
-                        div.innerHTML = cellValue;
-
-                        var newCell = document.createElement('td');
-                        newCell.appendChild(div);
-
-                        div.style.display = 'none';
-
-                        cell = newCell;
-                    }
-                }
-            }
-
-            if (column.ColumnType == 4) /// Hidden column
-            {
-                cell.style.display = "none";
-            }
-            if (isNew)
-            {
-                row.appendChild(cell);
-            }
-        }
-    },
-
-    populateViewWithData: function (table, data, settings, args, isMainView)
+    function columnModel(id, label, visible)
     {
-        /// Add headings to table
-        var headerRow = document.createElement("tr");
+        var self = this;
+        self.id = id;
+        self.label = ko.observable(label);
+        self.visible = ko.observable(visible);
+    }
 
-        for (var j = 0; j < settings.Columns.length; j++)
-        {
-            var headCell = document.createElement("th");
-            headCell.innerHTML = settings.Columns[j].ColumnLabel;
-            headCell.setAttribute('columnName', settings.Columns[j].ColumnName);
-            if (settings.Columns[j].ColumnType == 4) /// Hidden column
-            {
-                headCell.style.display = "none";
-            }
-            headerRow.appendChild(headCell);
-        }
-        table.appendChild(headerRow);
-
-
-        /// Add the actual data
-        for (var i = 0; i < data.length; i++)
-        {
-            var row = document.createElement("tr");
-
-            views.populateRow(row, settings, data[i], i, args, true);
-
-            table.appendChild(row);
-        }
-
-        if (isMainView == true)
-        {
-            views.createFooterRow(table, settings);
-        }
-    },
-
-    createFooterRow: function(table, settings)
+    views.viewMenuModel = function(label, eventId, menuParams, viewParams)
     {
-        var footerRow = document.createElement('tr');
-        var footerCell = document.createElement('td');
-        footerCell.colSpan = 100;
-        footerCell.style.alignContent = "center";
-        footerCell.style.textAlign = "center";
-        footerCell.style.paddingBottom = "0";
-        var container = document.createElement('span');
+        var self = this;
+        self.label = ko.observable(label);
+        self.eventId = eventId;
+        self.menuParams = menuParams;
+        self.viewParams = viewParams;
+    }
 
-        var lastPage = Math.floor(settings.TotalLines / settings.LinesPerPage);
-        if ((settings.TotalLines % settings.LinesPerPage) > 0)
+    function cellModel(value, cellIsVisible, columnType)
+    {
+        var self = this;
+        self.value = ko.observable(value);
+
+        self.showCell = ko.observable(cellIsVisible);
+
+        self.columnType = ko.observable(columnType);
+
+        self.dateValue = ko.computed(function ()
         {
-            lastPage += 1;
-        }
-
-        var makeButton = function(html, func)
-        {
-            var button = document.createElement('button');
-            button.innerHTML = html;
-
-            switch (func)
+            if (self.columnType() == 5)
             {
-                case 0:
-                case 1:
-                    if (settings.CurrentPage <= 1)
-                    {
-                        button.disabled = "disabled";
-                    }
-                    break;
-                case 2:
-                case 3:
-                    if (settings.CurrentPage >= lastPage)
-                    {
-                        button.disabled = "disabled";
-                    }
-                    break;
-                default:
-                    dialog.showMessage("Unhandled case in footer button: " + func);
-                    break;
+                var date = formatDate(value);
+                return date;
+            }
+            return "";
+        }, self);
+    }
+
+    function formatDate(dateString)
+    {
+       return dateString;
+    }
+
+    function rowModel(data, id)
+    {
+        var self = this;
+
+        self.id = id;
+        self.data = data;
+        self.cells = ko.observableArray([]);
+    }
+
+    function viewModel(title, html, settings, isEmbeddedView, id, viewMessage)
+    {
+        var self = this;
+
+        self.settings = settings;
+
+        self.id = id;
+
+        self.linesPerPage = ko.observable(settings.LinesPerPage);
+
+        self.isEmbeddedView = isEmbeddedView;
+
+        self.lastPage = ko.computed(function()
+        {
+            var lastPage = Math.floor(self.settings.TotalLines / self.linesPerPage());
+            if ((self.settings.TotalLines % self.linesPerPage()) > 0)
+            {
+                lastPage += 1;
             }
 
-            button.onclick = (function (sett)
-            {
-                return function()
-                {
-                    var data =
-                    {
-                        currentPage: sett.CurrentPage,
-                        linesPerPage: sett.LinesPerPage,
-                        totalLines: sett.TotalLines
-                    };
-                    switch( func)
-                    {
-                        case 0:
-                            data.currentPage = 1; 
-                            break;
-                        case 1:
-                            data.currentPage -= 1;
-                            break;
-                        case 2:
-                            data.currentPage += 1;
-                            break;
-                        case 3:
-                            data.currentPage = lastPage;
-                            break;
-                        default:
-                            dialog.showMessage("Unhandled case in footer button: " + func);
-                            break;
-                    }
-                    data =
-                        {
-                            viewSettings: data
-                        };
-                    siteMenu.executeUIAction(sett.Id, data);
-                }
-            })(settings);
-            return button;
-        }
-        var createOption = function (value)
+            lastPage = Math.max(1, lastPage); // When user selects all it should not show 'page 1 of -1'
+            return lastPage
+        }, self);
+        self.currentPage = ko.observable(self.settings.CurrentPage);
+        
+        self.footerText = ko.computed(function ()
         {
-            var option = document.createElement('option');
-            option.innerHTML = value + "";
-            option.value = value;
-            return option;
+            return "Showing page " + self.settings.CurrentPage + " of " + self.lastPage();
+        }, self);
+
+        self.viewTitle = ko.observable(title);
+        self.viewMessage = ko.observable(viewMessage);
+
+        self.viewMenus = ko.observableArray([]);
+        self.menuClick = function (menu, index, evt)
+        {
+            dialog.showBusyDialog("Processing...").then(function ()
+            {
+                var data =
+                    {
+                        data: menu.menuParams,
+                        parameters: menu.viewParams
+                    }
+
+                if (self.settings.ActionType == 7) // View Input
+                {
+                    self.addViewDataToParams(data);
+                }
+                return mainApp.executeUIAction(menu.eventId, data);
+            }).then(dialog.closeBusyDialog);
         };
 
-        var firstButton = makeButton("<<", 0);
-        var prevButton = makeButton("<", 1);
-        var rowCountSelect = document.createElement('select');
-        rowCountSelect.style.marginRight = "5px";
-        rowCountSelect.style.width = "75px";
-        
-        rowCountSelect.appendChild(createOption(10));
-        rowCountSelect.appendChild(createOption(25));
-        rowCountSelect.appendChild(createOption(50));
-        rowCountSelect.appendChild(createOption(100));
-        rowCountSelect.appendChild(createOption("All"));
-
-        var lpp = settings.LinesPerPage;
-        if (lpp > 100)
+        self.addViewDataToParams = function (params)
         {
-            lpp = "All";
-        }
-        rowCountSelect.value = lpp;
-
-        rowCountSelect.onchange = (function (sett)
-        {
-            return function()
+            var rows = self.rows();
+            var rowsData = $.map(rows, function (r)
             {
-                var lines = this.options[this.selectedIndex].value;
-                
-                if (lines == "All")
-                {
-                    lines = 1000;
-                }
-                var data =
-                        {
-                            viewSettings: 
-                            {
-                                currentPage: sett.CurrentPage,
-                                linesPerPage: lines,
-                                totalLines: sett.TotalLines
-                            }
-                        };
-                siteMenu.executeUIAction(sett.Id, data);
+                return r.data;
+            });
+
+            var mainData = params['data'];
+            if (mainData == null || mainData.length == 0)
+            {
+                mainData = {};
             }
-        })(settings);
+            mainData = JSON.parse(JSON.stringify(mainData)); // without this a circular reference is created by the next line
+            mainData["ViewData"] = rowsData;
 
-        var nextButton = makeButton(">", 2);
-        var lastButton = makeButton(">>", 3);
+            params['data'] = mainData;
+            //params['ViewData'] = rowsData;
+        };
 
-        container.appendChild(firstButton);
-        container.appendChild(prevButton);
-        container.appendChild(rowCountSelect);
-        container.appendChild(nextButton);
-        container.appendChild(lastButton);
-
-        footerCell.appendChild(container);
-        footerRow.appendChild(footerCell);
-
-        var footerInfoRow = document.createElement('tr');
-        var footerInfoCell = document.createElement('td');
-        footerInfoCell.style.borderTop = "none";
-        footerInfoCell.style.paddingTop = "0";
-        footerInfoCell.style.alignContent = "center";
-        footerInfoCell.style.textAlign = "center";
-        footerInfoCell.colSpan = 100;
-        
-        var infoContainer = document.createElement("span");
-        infoContainer.innerHTML = "Showing page " + settings.CurrentPage + " of " + lastPage;
-
-        footerInfoCell.appendChild(infoContainer);
-        footerInfoRow.appendChild(footerInfoCell);
-
-        table.appendChild(footerRow);
-        table.appendChild(footerInfoRow);
-    },
-
-    populateViewMenu: function (viewMenu, settings, args, isInputView)
-    {
-        while (viewMenu.firstChild)
+        self.filterText = ko.observable(settings.Filter);
+        self.filterSearchClick = function ()
         {
-            viewMenu.removeChild(viewMenu.firstChild);
-        }
-
-        for (var i = 0; i < settings.ViewMenu.length; i++)
-        {
-            var menu = settings.ViewMenu[i];
-            var button = document.createElement('button');
-            button.innerHTML = menu.Label;
-
-            button.onclick = (function (id, index)
-            {
-                return function ()
-                {
-                    var vm = settings.ViewMenu[index];
-                    var data =
-                        {
-                            data: vm.ParametersToPass,                            
-                        }
-                    siteMenu.executeUIAction(id, data, isInputView == true ? args : vm.ParametersToPass);
-                }
-            })(menu.EventNumber, i);
-
-            viewMenu.appendChild(button);
-        }
-    },
-
-    populateView: function (data, settings, callback, args, isMainView)
-    {
-        navigation.loadHtmlBody('mainContent', 'Views.html', function ()
-        {
-            var viewTitle = document.getElementById('viewsTitle');
-            viewTitle.innerHTML = settings.Description;
-
-            var table = views.getTable();
-
-            views.populateViewWithData(table, data, settings, args, isMainView);
-
-            if (isMainView)
-            {
-                var searchDiv = document.getElementById('searchDiv');
-                searchDiv.style.display = "";
-
-                var searchButton = document.getElementById('btnSearch');
-                searchButton.onclick = (function (sett, searchArgs)
-                {
-                    return function()
-                    {
-                        var filter = document.getElementById('txtFilter').value;
-                        
-                        var tmpData =
+            var tmpData =
                         {
                             viewSettings:
                             {
-                                currentPage: sett.CurrentPage,
-                                linesPerPage: sett.LinesPerPage,
-                                totalLines: sett.TotalLines
+                                currentPage: self.settings.CurrentPage,
+                                linesPerPage: self.settings.LinesPerPage,
+                                totalLines: -1//self.settings.TotalLines
                             },
-                            filter: filter,
-                            data: searchArgs
+                            filter: self.filterText(),
+                            parameters: self.settings.Parameters,
+                            eventParameters: self.settings.EventParameters
                         };
 
-                        siteMenu.executeUIAction(sett.Id, tmpData, searchArgs);
-                    }
-                })(settings, args);
-
-                var filter = document.getElementById('txtFilter');
-                filter.value = settings.Filter;
-            }
-
-            var viewMenu = document.getElementById("viewsMenu");
-
-            views.populateViewMenu(viewMenu, settings, args);
-
-            var viewFooter = document.getElementById('viewsFooter');
-            if (settings.ViewMessage != null && settings.ViewMessage.length > 0)
-            {
-                viewFooter.innerHTML = settings.ViewMessage;
-            }
-            else
-            {
-                viewFooter.innerHTML = "";
-            }
-
-            if (callback)
-            {
-                callback();
-            }
-        });
-    },
-
-    deleteRowFromTable: function (table, rowId, isEdit)
-    {
-        var realRowIdDeleted = -1;
-        var rowToDelete = -1;
-
-        for (var i = 0; i < table.rows.length; i++)
+            self.updateViewData(self.settings.Id, tmpData);
+        };
+        self.filterKeyPressed = function (model, evt)
         {
-            var deleteRow = false;
-            var row = table.rows[i];
-
-            var aList = row.getElementsByTagName('a');
-            var buttons = row.getElementsByTagName('button');
-
-            for (var j = 0; j < aList.length; j++)
+            if (evt.keyCode == 13)
             {
-                var aItem = aList[j];
-
-                var rowIdAttribute = '-1';
-                if (aItem.hasAttribute('rowId'))
-                {
-                    rowIdAttribute = aItem.getAttribute('rowId');
-                }
-                rowIdAttribute = parseInt(rowIdAttribute);
-
-                if (rowIdAttribute > -1)
-                {
-                    var aRowId = rowIdAttribute;
-
-                    if (rowId == aRowId)
-                    {
-                        if (deleteRow == false)
-                        {
-                            deleteRow = true;
-                            rowToDelete = i;
-                            realRowIdDeleted = aRowId;
-                        }
-                    }
-                    else if (aRowId > rowId && (isEdit == null || isEdit == false))
-                    {
-                        aRowId = aRowId - 1;
-                        aItem.setAttribute('rowId', aRowId);
-                    }
-                }
+                self.filterSearchClick();
             }
-            
-            for (var j = 0; j < buttons.length; j++)
+            return true;
+        };
+        self.columns = ko.observableArray([]);
+        self.rows = ko.observableArray([]);
+
+        self.html = ko.observable(html);
+
+        self.click = function (rowItem, colIndex, rowIndex, evt)
+        {
+            dialog.showBusyDialog("Processing...").then(function ()
             {
-                var aItem = buttons[j];
-                var rowIdAttribute = '-1';
-                if (aItem.hasAttribute('rowId'))
+                var cellItem = rowItem.cells()[colIndex];
+                //var data = self.settings.ViewData[rowIndex];
+                var data = rowItem.data;
+                var theColumn = self.settings.Columns[colIndex];
+
+                var id = data[theColumn.KeyColumn];
+
+                var viewSettings =
+                    {
+                        "currentPage": self.settings.CurrentPage,
+                        "linesPerPage": self.settings.LinesPerPage,
+                        "totalLines": self.settings.TotalLines
+                    };
+
+                var params = theColumn.ParametersToPass || {};
+
+                params["ViewId"] = self.id;
+                params["RowId"] = rowItem.id;
+
+                var formData =
+                    {
+                        Id: id,
+                        data: data,
+                        viewSettings: "",  // Why is this not included in the call?
+                        //parameters: theColumn.ParametersToPass,
+                        parameters: params,
+                        eventParameters: self.settings.EventParameters
+                    };
+
+                if (self.settings.ActionType == 7) // View Input
                 {
-                    rowIdAttribute = aItem.getAttribute('rowId');
+                    self.addViewDataToParams(formData);
                 }
+
+                if (theColumn.Event == null || theColumn.Event.ActionType == 6) // 6 = execute UI Action
+                {
+                    var eventId = theColumn.Event == null ? theColumn.EventNumber : theColumn.Event.EventNumber;
+
+                    return mainApp.executeUIAction(eventId, formData);
+                }
+                else if (theColumn.Event.ActionType == 5) /// ShowMessage
+                {
+                    dialog.closeBusyDialog();
+                    dialog.getUserConfirmation(theColumn.Event, formData, params);
+                }
+                else
+                {
+                    dialog.closeBusyDialog.then(function ()
+                    {
+                        dialog.showMessage("Error", "Unknown action type " + theColumn.Event.ActionType);
+                    });
+                }
+
+                return Promise.resolve();
+            }).then(function ()
+            {
+                dialog.closeBusyDialog();
+            });
+        };
+
+        self.gotoPage = function (pageNum)
+        {
+            var data =
+                        {
+                            viewSettings:
+                            {
+                                currentPage: pageNum,
+                                linesPerPage: self.linesPerPage(),
+                                totalLines: self.settings.TotalLines
+                            },
+                            filter: self.filterText(),
+                            parameters: self.settings.Parameters,
+                            eventParameters: self.settings.EventParameters
+                        };
+            self.updateViewData(self.settings.Id, data);
+        }
+
+        self.updateViewData = function (eventId, params)
+        {
+            //return Promise.resolve();
+            dialog.showBusyDialog("Searching...");
+            processing.updateViewData(eventId, params).then(function (resp)
+            {
+                self.settings = resp;
+
+                self.currentPage(resp.CurrentPage);
+                self.filterText(resp.Filter);
+                self.linesPerPage(resp.LinesPerPage);
                 
-                rowIdAttribute = parseInt(rowIdAttribute);
+                self.addData(resp.ViewData, resp.Columns);
 
-                if (rowIdAttribute > -1)
+                self.lastPage.notifySubscribers();
+
+                dialog.closeBusyDialog();
+            }).catch(function(err)
+            {
+                dialog.closeBusyDialog();
+                mainApp.handleError(err);
+            });
+        }
+
+        self.firstClick = function()
+        {
+            self.gotoPage(1);
+        }
+        self.prevClick = function()
+        {
+            self.gotoPage(self.currentPage() - 1);
+        }
+        self.nextClick = function()
+        {
+            self.gotoPage(self.currentPage() + 1);
+        }
+        self.lastClick = function ()
+        {
+            self.gotoPage(self.lastPage());
+        }
+        self.linesPerPageChange = function(obj, event)
+        {
+            if (event.originalEvent)
+            { //user changed
+                self.gotoPage(1);
+            }
+        }
+
+        self.visibleColumnLength = ko.computed(function ()
+        {
+            var cols = self.columns().filter(function (column)
+            {
+                return column.visible() == true;
+            });
+            return cols.length + 1;
+        }, self);
+
+        self.addData = function (data)
+        {
+            self.rows([]);
+            var items = data || [];
+            for (var j = 0; j < items.length; j++)
+            {
+                var record = items[j];
+                self.addRow(record, j);
+            }
+        };
+
+        self.addRow = function (data, rowId)
+        {
+            var rowItem = new rowModel(data, rowId);
+            var columns = self.settings.Columns;
+
+            for (var k = 0; k < columns.length; k++)
+            {
+                var col = columns[k];
+                var value = processing.getColumnValue(col, data);
+
+                var cellIsVisible = col.ColumnType != 4 && processing.cellIsVisible(col, data);
+
+                var cell = new cellModel(value, cellIsVisible, col.ColumnType);
+                rowItem.cells.push(cell);
+            }
+            self.rows.push(rowItem);
+        };
+
+        self.deleteRow = function (rowId)
+        {
+            return new Promise(function (resolve, reject)
+            {
+                self.rows.remove(function (row)
                 {
-                    var aRowId = rowIdAttribute;
+                    return row.id == rowId;
+                });
+                resolve();
+            });
+        };
 
-                    if (rowId == aRowId)
+        self.updateRow = function (rowId, data)
+        {
+            return new Promise(function (resolve, reject)
+            {
+                if (rowId > -1)
+                {
+                    var rows = self.rows();
+
+                    var rowModel = $.grep(rows, function (r, indx)
                     {
-                        if (deleteRow == false)
-                        {
-                            deleteRow = true;
-                            rowToDelete = i;
-                            realRowIdDeleted = aRowId;
-                        }
-                    }
-                    else if (aRowId > rowId && (isEdit == null || isEdit == false))
+                        return r.id == rowId;
+                    })[0];
+
+                    rowModel.data = data;
+
+                    var columns = self.settings.Columns;
+
+                    for (var k = 0; k < columns.length; k++)
                     {
-                        aRowId = aRowId - 1;
-                        aItem.setAttribute('rowId', aRowId);
+                        var col = columns[k];
+                        var value = processing.getColumnValue(col, data);
+
+                        var cellIsVisible = col.ColumnType != 4 && processing.cellIsVisible(col, data);
+
+                        var cell = rowModel.cells()[k];
+                        cell.showCell(cellIsVisible);
+                        cell.value(value);
                     }
                 }
-            }
-        }
-        if (rowToDelete > -1)// && isEdit == false)
+                else
+                {
+                    $.each(self.rows(), function (indx, row)
+                    {
+                        rowId = Math.max(rowId, row.id);
+                    });
+                    rowId += 1;
+
+                    self.addRow(data, rowId);
+                }
+                resolve();
+            });
+        };
+
+        self.applyKoBindings = function ()
         {
-            if (isEdit == false)
+            var div = document.getElementById("view_" + self.id);
+            try
             {
-                table.deleteRow(rowToDelete);
+                ko.cleanNode(div);
+                ko.applyBindings(self, div);
             }
-            else
+            catch (err)
             {
-                return rowToDelete;
+                //console.log('error cleaning node:');
+                //console.log(err);
             }
-        }
-        return realRowIdDeleted;
-    },
-};
+        };
+    }
+
+}(window.views = window.views || {}, jQuery));

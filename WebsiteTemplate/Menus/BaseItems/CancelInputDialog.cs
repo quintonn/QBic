@@ -1,12 +1,8 @@
-﻿using System.Collections.Generic;
-using WebsiteTemplate.Menus.BaseItems;
-using WebsiteTemplate.SiteSpecific;
-
-namespace WebsiteTemplate.Menus.BaseItems
+﻿namespace WebsiteTemplate.Menus.BaseItems
 {
     public class CancelInputDialog : Event
     {
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return EventNumber.CancelInputDialog;
         }

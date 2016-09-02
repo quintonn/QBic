@@ -14,13 +14,13 @@ namespace WebsiteTemplate.Menus.BaseItems
         /// </summary>
         public abstract IList<int> ChildActionIds { get; }
 
-        public IList<Event> ChilUIActions
+        public IList<IEvent> ChildUIActions
         {
             get
             {
                 /// Use reflection here to get the list of all the UIAction items based on their ids from ChildActionIds
                 /// This is so that we can get the Name, Label, Etc, Etc
-                return new List<Event>();
+                return new List<IEvent>();
             }
         }
 

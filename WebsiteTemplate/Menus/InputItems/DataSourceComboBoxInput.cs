@@ -1,9 +1,8 @@
-﻿using NHibernate;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Web;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
 
@@ -50,7 +49,7 @@ namespace WebsiteTemplate.Menus.InputItems
                                        bool orderByAsc = true,
                                        bool addBlankValue = false)
         {
-            var store = new DataStore();
+            var store = DataStore.GetInstance();
             using (var session = store.OpenSession())
             {
                 var queryOver = session.QueryOver<T>();

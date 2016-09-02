@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Practices.Unity;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,7 @@ namespace WebsiteTemplate.Menus.PropertyChangedEvents
             }
         }
 
+        [InjectionConstructor]
         public UpdateDataSourceComboBoxSource()
         {
 
@@ -42,7 +44,7 @@ namespace WebsiteTemplate.Menus.PropertyChangedEvents
             ListItems = listItems;
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return EventNumber.UpdateDataSourceComboBox;
         }

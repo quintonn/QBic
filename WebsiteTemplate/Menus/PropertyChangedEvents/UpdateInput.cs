@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using Microsoft.Practices.Unity;
 using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Menus.PropertyChangedEvents
@@ -27,11 +24,12 @@ namespace WebsiteTemplate.Menus.PropertyChangedEvents
             }
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return EventNumber.UpdateInput;
         }
 
+        [InjectionConstructor]
         public UpdateInput()
         {
 

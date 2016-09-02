@@ -1,70 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
     public abstract class InputProcessingEvent : Event
     {
+        internal DataService DataService { get; set; }
+
         public Dictionary<string, object> InputData { get; set; } = new Dictionary<string, object>();
-
-        /// <summary>
-        /// This method assumes you know the return type.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="propertyName">The name of the input property to try and get.</param>
-        /// <param name="defaultValue">Optional default value to return if the property could not be found.</param>
-        /// <returns></returns>
-        public T GetValue<T>(string propertyName, T defaultValue = default(T))
-        {
-            //object value = default(T);
-            object value = defaultValue;
-
-            if (InputData.ContainsKey(propertyName))
-            {
-                if (typeof(T) == typeof(bool))
-                {
-                    value = Convert.ToBoolean(InputData[propertyName]);
-                }
-                else if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(DateTime?))
-                {
-                    var tempValue = InputData[propertyName];
-                    DateTime date;
-                    if (DateTime.TryParse(tempValue?.ToString(), out date))
-                    {
-                        value = date;
-                    }
-                    else if (typeof(T) == typeof(DateTime))
-                    {
-                        value = new DateTime(1900, 01, 01); ///TODO: What do i do with default dates etc.
-                    }
-                }
-                else if (typeof(T) == typeof(int))
-                {
-                    var tempValue = InputData[propertyName];
-                    int intValue;
-                    if (int.TryParse(tempValue?.ToString(), out intValue))
-                    {
-                        value = intValue;
-                    }
-                    else
-                    {
-                        value = 0;
-                    }
-                }
-                else
-                {
-                    value = (T)InputData[propertyName];
-                }
-            }
-            if (value == null)
-            {
-                return defaultValue;
-            }
-            return (T)value;
-        }
 
         public DateTime? GetDateFromString(string dateString, DateTime? defaultValue = null)
         {
@@ -86,19 +31,19 @@ namespace WebsiteTemplate.Menus.InputItems
             return defaultValue;
         }
 
-        public string GetValue(string propertyName)
+        public T GetValue<T>(string propertyName, T defaultValue = default(T))
         {
-            return GetValue<string>(propertyName);
+            return InputProcessingMethods.GetValue(InputData, propertyName, defaultValue);
         }
 
         public T GetDataSourceValue<T>(string propertyName)
         {
-            using (var session = Store.OpenSession())
-            {
-                var id = GetValue(propertyName);
-                var result = session.Get<T>(id);
-                return result;
-            }
+            return InputProcessingMethods.GetDataSourceValue<T>(InputData, DataService, propertyName);
+        }
+
+        public string GetValue(string propertyName)
+        {
+            return InputProcessingMethods.GetValue<string>(InputData, propertyName);
         }
     }
 }

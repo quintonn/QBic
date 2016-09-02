@@ -8,6 +8,7 @@
         Link = 3,
         Hidden = 4,
         Date = 5,
+        CheckBox = 6
         //Number = 1,
         //Time = 3,
         //Link = 4,

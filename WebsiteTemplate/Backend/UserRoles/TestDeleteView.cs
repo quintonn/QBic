@@ -1,9 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Web;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 
@@ -19,15 +15,14 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return 778;
         }
 
-        public override async Task<IList<Event>> ProcessAction()
+        public override async Task<IList<IEvent>> ProcessAction()
         {
-            int rowId = Convert.ToInt32(GetValue("rowId"));
-            return new List<Event>()
+            return new List<IEvent>()
             {
                 new UpdateInputView(InputViewUpdateType.Delete)
             };

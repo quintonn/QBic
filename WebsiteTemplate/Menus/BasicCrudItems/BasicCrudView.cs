@@ -1,28 +1,29 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using WebsiteTemplate.Data;
+using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.BasicCrudItems
 {
-    public class BasicCrudView<T> : ShowView where T : BaseClass
+    public class BasicCrudView<T> : ShowView, IBasicCrudView where T : BaseClass
     {
-        private int Id { get; set; }
+        private DataStore Store { get; set; }
 
-        private string ItemName { get; set; }
-
-        private Dictionary<string, string> ColumnsToShowInView { get; set; }
-
-        public BasicCrudView(int id, string itemName, Dictionary<string, string> columnsToShowInView)
+        public BasicCrudView(DataStore store)
         {
-            Id = id;
-            ItemName = itemName;
-            ColumnsToShowInView = columnsToShowInView;
+            Store = store;
         }
+
+        public EventNumber Id { get; set; }
+
+        public string ItemName { get; set; }
+
+        public Dictionary<string, string> ColumnsToShowInView { get; set; }
 
         public override string Description
         {
@@ -43,20 +44,20 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                 columnConfig.AddStringColumn(col.Value, col.Key);
             }
 
-            columnConfig.AddLinkColumn("", "", "Id", "Edit", Id + 1);
+            columnConfig.AddLinkColumn("", "Id", "Edit", Id + 1);
 
-            columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X",
-                columnSetting: new ShowHideColumnSetting()
+            columnConfig.AddButtonColumn("", "Id", "X",
+                new UserConfirmation("Delete " + ItemName + "?")
+                {
+                    OnConfirmationUIAction = Id + 2
+                },
+                new ShowHideColumnSetting()
                 {
                     Display = ColumnDisplayType.Show,
                     Conditions = new List<Condition>()
                    {
                        new Condition("CanDelete", Comparison.Equals, "true")
                    }
-                },
-                eventItem: new UserConfirmation("Delete " + ItemName + "?")
-                {
-                    OnConfirmationUIAction = Id + 2
                 }
             );
         }
@@ -83,16 +84,16 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             }
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return Id;
         }
 
-        public override IList<MenuItem> GetViewMenu()
+        public override IList<MenuItem> GetViewMenu(Dictionary<string, string> dataForMenu)
         {
             var results = new List<MenuItem>();
 
-            var jsonObject = new JObject();
+            var jsonObject = new JsonHelper();
             jsonObject.Add("IsNew", true);
             var json = jsonObject.ToString();
             results.Add(new MenuItem("Add", Id + 1, json));

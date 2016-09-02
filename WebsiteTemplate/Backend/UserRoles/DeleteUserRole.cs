@@ -1,13 +1,8 @@
-﻿using Newtonsoft.Json.Linq;
-using NHibernate.Criterion;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Web;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
-using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.UserRoles
 {
@@ -21,47 +16,34 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
         }
 
-        public override int GetId()
+        private UserRoleService UserRoleService { get; set; }
+
+        public DeleteUserRole(UserRoleService service)
+        {
+            UserRoleService = service;
+        }
+
+        public override EventNumber GetId()
         {
             return EventNumber.DeleteUserRole;
         }
 
-        public override async Task<IList<Event>> ProcessAction()
+        public override async Task<IList<IEvent>> ProcessAction()
         {
             var id = GetValue<string>("Id");
 
-            using (var session = Store.OpenSession())
+            var isAssigned = UserRoleService.UserRoleIsAssigned(id);
+            if (isAssigned)
             {
-                var userRoleAssociations = session.CreateCriteria<UserRoleAssociation>()
-                                                  .CreateAlias("UserRole", "role")
-                                                  .Add(Restrictions.Eq("role.Id", id))
-                                                  .List<UserRoleAssociation>()
-                                                  .ToList();
-                if (userRoleAssociations.Count > 0)
+                return new List<IEvent>()
                 {
-                    return new List<Event>()
-                    {
-                        new ShowMessage("Cannot delete user role, it is assigned to users.")
-                    };
-                }
-
-                var eventRoles = session.CreateCriteria<EventRoleAssociation>()
-                                        .CreateAlias("UserRole", "role")
-                                        .Add(Restrictions.Eq("role.Id", id))
-                                        .List<EventRoleAssociation>()
-                                        .ToList();
-                eventRoles.ForEach(e =>
-                {
-                    session.Delete(e);
-                });
-
-                var userRole = session.Get<UserRole>(id);
-
-                session.Delete(userRole);
-                session.Flush();
+                    new ShowMessage("Cannot delete user role, it is assigned to users.")
+                };
             }
 
-            return new List<Event>()
+            UserRoleService.DeleteUserRole(id);
+
+            return new List<IEvent>()
             {
                 new ShowMessage("User role deleted successfully"),
                 new CancelInputDialog(),

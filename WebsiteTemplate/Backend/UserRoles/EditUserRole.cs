@@ -1,21 +1,28 @@
-﻿using Newtonsoft.Json.Linq;
-using NHibernate.Criterion;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
-using WebsiteTemplate.Controllers;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.UserRoles
 {
     public class EditUserRole : GetInput
     {
         public UserRole UserRole { get; set; }
+
+        private UserRoleService UserRoleService { get; set; }
+        private EventService EventService { get; set; }
+
+        public EditUserRole(UserRoleService service, EventService eventService)
+        {
+            UserRoleService = service;
+            EventService = eventService;
+        }
         public override string Description
         {
             get
@@ -46,24 +53,12 @@ namespace WebsiteTemplate.Backend.UserRoles
                 list.Add(new StringInput("Description", "Description", UserRole?.Description));
                 list.Add(new HiddenInput("Id", UserRole?.Id));
 
-                var items = MainController.EventList.ToDictionary(e => e.Key, e => e.Value.Description)
+                var items = EventService.EventList.ToDictionary(e => e.Key, e => e.Value.Description)
                                                     .OrderBy(e => e.Value)
                                                     .ToDictionary(e => e.Key.ToString(), e => (object)e.Value);
 
+                var existingItems = UserRoleService.RetrieveEventRoleAssociationsForUserRole(UserRole.Id);
 
-                var existingItems = new List<string>();
-                using (var session = Store.OpenSession())
-                {
-                    var events = session.CreateCriteria<EventRoleAssociation>()
-                                        .CreateAlias("UserRole", "role")
-                                        .Add(Restrictions.Eq("role.Id", UserRole?.Id))
-                                        .List<EventRoleAssociation>()
-                                        .Select(e => e.Event)
-                                        .ToList();
-
-                    existingItems = items.Where(e => events.Contains(Convert.ToInt32(e.Key))).Select(i => i.Key.ToString()).ToList();
-
-                }
                 var listSelection = new ListSelectionInput("Events", "Allowed Events", existingItems)
                 {
                     AvailableItemsLabel = "List of Events:",
@@ -77,30 +72,26 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return EventNumber.EditUserRole;
         }
 
         public override Task<InitializeResult> Initialize(string data)
         {
-            var json = JObject.Parse(data);
-            var id = json.GetValue("Id").ToString();
-            
-            using (var session = Store.OpenSession())
-            {
-                UserRole = session.Get<UserRole>(id);
+            var json = JsonHelper.Parse(data);
+            var id = json.GetValue("Id");
 
-                session.Flush();
-            }
-            return Task.FromResult<InitializeResult>(new InitializeResult(true));
+            UserRole = UserRoleService.RetrieveUserRole(id);
+
+            return Task.FromResult(new InitializeResult(true));
         }
 
-        public override async Task<IList<Event>> ProcessAction(int actionNumber)
+        public override async Task<IList<IEvent>> ProcessAction(int actionNumber)
         {
             if (actionNumber == 1)
             {
-                return new List<Event>()
+                return new List<IEvent>()
                 {
                     new CancelInputDialog(),
                     new ExecuteAction(EventNumber.ViewUserRoles)
@@ -116,63 +107,31 @@ namespace WebsiteTemplate.Backend.UserRoles
 
                 if (String.IsNullOrWhiteSpace(name))
                 {
-                    return new List<Event>()
+                    return new List<IEvent>()
                     {
                         new ShowMessage("Name is mandatory and must be provided.")
                     };
                 }
                 if (String.IsNullOrWhiteSpace(description))
                 {
-                    return new List<Event>()
+                    return new List<IEvent>()
                     {
                         new ShowMessage("Description is mandatory and must be provided.")
                     };
                 }
 
-                using (var session = Store.OpenSession())
+                var dbUserRole = UserRoleService.FindUserRoleByName(name);
+                if (dbUserRole != null && dbUserRole.Id != id)
                 {
-                    var dbUserRole = session.CreateCriteria<UserRole>()
-                                             .Add(Restrictions.Eq("Name", name))
-                                             .Add(Restrictions.Not(Restrictions.Eq("Id", id)))
-                                             .UniqueResult<UserRole>();
-                    if (dbUserRole != null)
-                    {
-                        return new List<Event>()
+                    return new List<IEvent>()
                         {
                             new ShowMessage("User role {0} already exists.", name)
                         };
-                    }
-
-                    dbUserRole = session.Get<UserRole>(id);
-                    dbUserRole.Name = name;
-                    dbUserRole.Description = description;
-                    session.Save(dbUserRole);
-
-
-                    var existingEvents = session.CreateCriteria<EventRoleAssociation>()
-                                       .CreateAlias("UserRole", "role")
-                                       .Add(Restrictions.Eq("role.Id", dbUserRole.Id))
-                                       .List<EventRoleAssociation>()
-                                       .ToList();
-                    existingEvents.ForEach(e =>
-                    {
-                        session.Delete(e);
-                    });
-                    foreach (var item in events)
-                    {
-                        var eventItem = new EventRoleAssociation()
-                        {
-                            Event = Convert.ToInt32(item),
-                            UserRole = dbUserRole
-                        };
-                        session.Save(eventItem);
-                    }
-
-
-                    session.Flush();
                 }
 
-                return new List<Event>()
+                UserRoleService.UpdateUserRole(id, name, description, events);
+
+                return new List<IEvent>()
                 {
                     new ShowMessage("User role modified successfully."),
                     new CancelInputDialog(),

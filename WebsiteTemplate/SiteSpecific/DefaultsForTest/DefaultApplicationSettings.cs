@@ -1,19 +1,25 @@
-﻿using Microsoft.Practices.Unity;
+﻿using BasicAuthentication.Users;
+using Microsoft.Practices.Unity;
 using NHibernate;
 using NHibernate.Criterion;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using WebsiteTemplate.Data;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
-using WebsiteTemplate.SiteSpecific.Utilities;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
 {
     public class DefaultApplicationSettings : IApplicationSettings
     {
+        private EventService EventService { get; set; }
+        private DataService DataService { get; set; }
+        public DefaultApplicationSettings(EventService eventService, DataService dataService)
+        {
+            EventService = eventService;
+            DataService = dataService;
+        }
         public string GetApplicationName()
         {
             return "Website Template";
@@ -21,43 +27,133 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
 
         public void RegisterUnityContainers(IUnityContainer container)
         {
-            
+
         }
 
-        public void SetupDefaults(ISession session)
+        public void SetupDefaults()
         {
-            var testMenuList = session.CreateCriteria<Menu>()
-                                              .Add(Restrictions.Eq("Name", "Test1"))
-                                              .List<Menu>();
-            if (testMenuList.Count == 0)
+            using (var session = DataService.OpenSession())
             {
-                var testMenu = new Menu()
+                var adminUser = session.CreateCriteria<User>()
+                                                   .Add(Restrictions.Eq("UserName", "Admin"))
+                                                   .UniqueResult<User>();
+                if (adminUser == null)
                 {
-                    Name = "Test1",
-                };
-                session.Save(testMenu);
-
-                var testMenuList2 = session.CreateCriteria<Menu>()
-                                   .Add(Restrictions.Eq("Name", "Test2"))
-                                   .List<Menu>();
-                if (testMenuList2.Count == 0)
-                {
-                    var testMenu2 = new Menu()
+                    adminUser = new User(false)
                     {
-                        Name = "Test2",
-                        ParentMenu = testMenu,
+                        Email = "q10athome@gmail.com",
+                        EmailConfirmed = true,
+                        UserName = "Admin",
                     };
-                    session.Save(testMenu2);
+                    var result = CoreAuthenticationEngine.UserManager.CreateAsync(adminUser, "password");
+                    result.Wait();
 
-                    var menu3 = new Menu()
+                    if (!result.Result.Succeeded)
                     {
-                        Name = "Test3",
-                        ParentMenu = testMenu2,
-                        Event = EventNumber.ViewMenus
-                    };
-
-                    session.Save(menu3);
+                        throw new Exception("Unable to create user: " + "Admin");
+                    }
                 }
+
+
+                var adminRole = session.CreateCriteria<UserRole>()
+                                       .Add(Restrictions.Eq("Name", "Admin"))
+                                       .UniqueResult<UserRole>();
+                if (adminRole == null)
+                {
+                    adminRole = new UserRole()
+                    {
+                        Name = "Admin",
+                        Description = "Administrator"
+                    };
+                    DataService.SaveOrUpdate(session, adminRole);
+                }
+
+                var adminRoleAssociation = session.CreateCriteria<UserRoleAssociation>()
+                                                  .CreateAlias("User", "user")
+                                                  .CreateAlias("UserRole", "role")
+                                                  .Add(Restrictions.Eq("user.Id", adminUser.Id))
+                                                  .Add(Restrictions.Eq("role.Id", adminRole.Id))
+                                                  .UniqueResult<UserRoleAssociation>();
+                if (adminRoleAssociation == null)
+                {
+                    adminRoleAssociation = new UserRoleAssociation()
+                    {
+                        User = adminUser,
+                        UserRole = adminRole
+                    };
+                    DataService.SaveOrUpdate(session, adminRoleAssociation);
+                }
+
+                var menuList1 = session.CreateCriteria<Menu>()
+                                       .Add(Restrictions.Eq("Event", (int)EventNumber.ViewUsers))
+                                       .List<Menu>();
+
+                if (menuList1.Count == 0)
+                {
+                    var menu1 = new Menu()
+                    {
+                        Event = EventNumber.ViewUsers,
+                        Name = "Users",
+                    };
+
+                    DataService.SaveOrUpdate(session, menu1);
+                }
+
+                var menuList2 = session.CreateCriteria<Menu>()
+                                       .Add(Restrictions.Eq("Event", (int)EventNumber.ViewMenus))
+                                       .List<Menu>();
+
+                if (menuList2.Count == 0)
+                {
+                    var menu2 = new Menu()
+                    {
+                        Event = EventNumber.ViewMenus,
+                        Name = "Menus",
+                    };
+                    DataService.SaveOrUpdate(session, menu2);
+                }
+
+                var userRoleMenu = session.CreateCriteria<Menu>()
+                                          .Add(Restrictions.Eq("Event", (int)EventNumber.ViewUserRoles))
+                                          .Add(Restrictions.IsNull("ParentMenu"))
+                                          .UniqueResult<Menu>();
+                if (userRoleMenu == null)
+                {
+                    userRoleMenu = new Menu()
+                    {
+                        Event = EventNumber.ViewUserRoles,
+                        Name = "User Roles"
+                    };
+                    DataService.SaveOrUpdate(session, userRoleMenu);
+                }
+
+                var allEvents = EventService.EventList.Where(e => e.Value.ActionType != EventType.InputDataView).Select(e => e.Value.GetEventId())
+                                      .ToList();
+
+                var eras = session.CreateCriteria<EventRoleAssociation>()
+                                  .CreateAlias("UserRole", "role")
+                                  .Add(Restrictions.Eq("role.Id", adminRole.Id))
+                                  .List<EventRoleAssociation>()
+                                  .ToList();
+
+                if (eras.Count != allEvents.Count)
+                {
+                    eras.ForEach(e =>
+                    {
+                        DataService.TryDelete(session, e);
+                    });
+                    session.Flush();
+                    foreach (var evt in allEvents)
+                    {
+                        var era = new EventRoleAssociation()
+                        {
+                            Event = evt,
+                            UserRole = adminRole
+                        };
+                        DataService.SaveOrUpdate(session, era);
+                    }
+                }
+                session.Flush();
             }
         }
     }

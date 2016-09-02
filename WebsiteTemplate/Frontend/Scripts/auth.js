@@ -1,129 +1,112 @@
-﻿var auth = {
+﻿(function (auth, $, undefined)
+{
+    auth.accessToken = "";
+    auth.refreshToken = "";
 
-    doLogin: function ()
+    var accessTokenName = "";
+    var refreshTokenName = "";
+
+    auth.initialize = function ()
     {
-        var username = document.getElementById('txtName').value;
-        var password = document.getElementById('txtPassword').value;
-
-        var url = main.webApiURL + "token";
-        var data = "grant_type=password&username=" + username + "&password=" + password + "&client_id=" + main.applicationName;
-
-        main.makeWebCall(url, "POST", auth.onLoginSuccess, data);
-    },
-
-    onLoginSuccess: function (data)
-    {
-        console.log('login success: ' + data);
-        auth.refreshTokenResponse(data);
-        menuBuilder.clearNode("loginContainer");
-        main.init();
-    },
-
-    makeRefreshCall: function()
-    {
-        var refreshToken = auth.getRefreshToken();
-        console.log(refreshToken);
-        var data = "grant_type=refresh_token&client_id=" + main.applicationName + "&refresh_token=" + refreshToken;
-
-        main.makeWebCall(main.webApiURL + "token", "POST", auth.refreshTokenResponse, data);
-    },
-
-    getRefreshToken: function ()
-    {
-        try
+        return new Promise(function (resolve, reject)
         {
-            var tokenData = localStorage.getItem(main.tokenName);
-            tokenData = tokenData || "";
-            if (tokenData.length > 0)
-            {
-                tokenData = JSON.parse(tokenData);
-            }
+            accessTokenName = _applicationModel.applicationName() + "_accessToken";
+            refreshTokenName = _applicationModel.applicationName() + "_refreshToken";
+            auth.accessToken = localStorage.getItem(accessTokenName);
+            auth.refreshToken = localStorage.getItem(refreshTokenName);
+            resolve();
+        });
+    }
 
-            var userToken = "";
-            if (tokenData != null && tokenData.refresh_token != null)
-            {
-                userToken = tokenData.refresh_token;
-            }
-            return userToken;
-        }
-        catch (err)
+    auth.handleLoginSuccess = function(data)
+    {
+        _applicationModel.user().name(data.userName);
+
+        auth.accessToken = data.access_token;
+        auth.refreshToken = data.refresh_token;
+
+        localStorage.setItem(accessTokenName, auth.accessToken);
+        localStorage.setItem(refreshTokenName, auth.refreshToken);
+
+        return Promise.resolve();
+    }
+
+    auth.logout = function()
+    {
+        auth.accessToken = "";
+        auth.refreshToken = "";
+        localStorage.setItem(accessTokenName, "");
+        localStorage.setItem(refreshTokenName, "");
+        _applicationModel.user(new userModel());
+        return mainApp.startApplication();
+    }
+
+    auth.performLogin = function (username, password)
+    {
+        var url = mainApp.apiURL + "token";
+        var data = "grant_type=password&username=" + username + "&password=" + password + "&client_id=" + _applicationModel.applicationName();
+
+        dialog.showBusyDialog("Logging in...");
+        return mainApp.makeWebCall(url, "POST", data)
+                      .then(auth.handleLoginSuccess)
+                      .then(mainApp.startApplication)
+                      .then(dialog.closeBusyDialog)
+                      .then(dialog.closeModalDialog);
+    }
+
+    auth.performTokenRefresh = function ()
+    {
+        //dialog.showBusyDialog("Refreshing token..."); // Todo: Maybe don't show this
+        var url = mainApp.apiURL + "token";
+
+        //var data = "grant_type=refresh_token&refresh_token=" + auth.refreshToken + "&client_id=" + _applicationModel.applicationName();
+
+        var data =
+       {
+           "grant_type": "refresh_token",
+           "refresh_token": auth.refreshToken,
+           "client_id": _applicationModel.applicationName()
+       };
+
+        return new Promise(function (resolve, reject)
         {
-            inputDialog.showMessage(err + "\n" + err.stack);
-            localStorage.removeItem(main.tokenName);
-        }
-    },
+            $.ajax(
+                {
+                    url: url,
+                    method: "POST",
+                    headers: {
+                        "Authorization": auth.refreshToken
+                    },
+                    data: data
+                }).done(function (resp)
+                {
+                    console.log('successfully got new refresh token');
+                    console.log(resp);
+                    auth.handleLoginSuccess(resp).then(dialog.closeBusyDialog).then(resolve);
+                }).fail(function(error)
+                {
+                    reject(error);
+                });
+        });
+    };
 
-    getAccessToken: function ()
+}(window.auth = window.auth || {}, jQuery));
+
+function loginModel(callback)
+{
+    var self = this;
+    self.userName = ko.observable();
+    self.password = ko.observable();
+    self.loginClick = function ()
     {
-        try
+        auth.performLogin(self.userName(), self.password());
+    };
+    self.passwordKeyPressed = function (model, evt)
+    {
+        if (evt.keyCode == 13)
         {
-            var tokenData = localStorage.getItem(main.tokenName);
-            tokenData = tokenData || "";
-            if (tokenData.length > 0)
-            {
-                tokenData = JSON.parse(tokenData);
-            }
-            
-            var userToken = "";
-            if (tokenData != null && tokenData.access_token != null)
-            {
-                userToken = tokenData.access_token;
-            }
-            return userToken;
+            self.loginClick();
         }
-        catch (err)
-        {
-            inputDialog.showMessage(err + "\n" + err.stack);
-            localStorage.removeItem(main.tokenName);
-        }
-    },
-
-    refreshTokenResponse: function(data)
-    {
-        var userToken = data.access_token;
-        var userName = data.userName;
-
-        localStorage.setItem(main.tokenName, JSON.stringify(data));
-
-        auth.startRefreshTimer();
-    },
-
-    startRefreshTimer: function()
-    {
-        var data = localStorage.getItem(main.tokenName);
-
-        data = JSON.parse(data);
-
-        var expireTime = data[".expires"];
-        console.log('expire: ' + expireTime);
-        expireTime = new Date(expireTime);
-        console.log('expire: ' + expireTime);
-
-        var diff = Math.abs(new Date() - expireTime) - 5000; // refresh a few seconds before timeout
-        var expireTimeout = diff;
-
-        console.log('expireTimeout = ' + expireTimeout);
-
-        var refreshToken = data.refresh_token;
-        
-        //console.log("start refresh timer from refreshTokenResponse with timeout: " + expireTimeout / 1000 + " seconds / " + expireTimeout / 60000 + " minutes");
-        setTimeout(auth.refreshTokenHandler, expireTimeout);
-    },
-
-    refreshTokenHandler: function ()
-    {
-        auth.makeRefreshCall();
-    },
-
-    clearRefreshTokenHandler: function()
-    {
-        clearTimeout(auth.refreshTokenHandler);
-    },
-
-    logout: function ()
-    {
-        auth.clearRefreshTokenHandler();
-        navigation.clearSettings();
-        main.init();
-    },
-};
+        return true;
+    };
+}

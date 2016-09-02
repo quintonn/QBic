@@ -6,35 +6,3 @@
 
     TODO:This file should be edited by the server based on inputs from a config screen for the website defaults
 */
-
-body {
-    background-color: #FFF;
-    padding:50px;
-}
-
-label {
-    font-family: Trebuchet MS,Tahoma,Verdana,Arial,sans-serif;
-    font-size: 1.1em;
-    display: block;
-    min-width: 100px;
-}
-
-input {
-    border:2px ridge;
-}
-
-textarea {
-    border:2px ridge;
-}
-
-input[type=text] {
-    display: inline-block;
-}
-
-input[type=password] {
-    display: inline-block;
-}
-
-/*.edit .nonEdit {
-    display:none;
-}*/

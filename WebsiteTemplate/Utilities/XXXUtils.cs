@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using WebsiteTemplate.Menus.ViewItems;
 
-namespace WebsiteTemplate.CustomMenuItems
+namespace WebsiteTemplate.Utilities
 {
     /// <summary>
     /// Replace the name XXX with a name of my framework????
@@ -51,6 +51,11 @@ namespace WebsiteTemplate.CustomMenuItems
                 return Marshal.PtrToStringUni(outPtr);
             }
             return mimeRet;
+        }
+
+        public static Version GetApplicationCoreVersion()
+        {
+            return typeof(ShowView).Assembly.GetName().Version;
         }
     }
 }

@@ -1,16 +1,12 @@
-﻿using Newtonsoft.Json.Linq;
-using NHibernate;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Web;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Menus.BasicCrudItems
 {
-    public class BasicCrudDelete<T> : DoSomething where T : BaseClass
+    public class BasicCrudDelete<T> : DoSomething, IBasicCrudDelete where T : BaseClass
     {
         public override string Description
         {
@@ -20,34 +16,36 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             }
         }
 
-        private int Id { get; set; }
+        private DataService DataService { get; set; }
 
-        private string ItemName { get; set; }
+        public int Id { get; set; }
 
-        public BasicCrudDelete(int id, string itemName)
-        {
-            Id = id;
-            ItemName = itemName;
-        }
+        public string ItemName { get; set; }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return Id;
         }
 
-        public override async Task<IList<Event>> ProcessAction()
+        public BasicCrudDelete(DataService dataService)
+        {
+            DataService = dataService;
+        }
+
+        public override async Task<IList<IEvent>> ProcessAction()
         {
             var id = GetValue<string>("Id");
 
-            using (var session = Store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var item = session.Get<T>(id);
 
-                session.Delete(item);
+                DataService.TryDelete(session, item);
+                
                 session.Flush();
             }
 
-            return new List<Event>()
+            return new List<IEvent>()
             {
                 new ShowMessage(ItemName + " deleted successfully"),
                 new CancelInputDialog(),

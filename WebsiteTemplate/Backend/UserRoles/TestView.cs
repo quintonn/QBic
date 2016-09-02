@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
@@ -23,10 +21,8 @@ namespace WebsiteTemplate.Backend.UserRoles
         {
             columnConfig.AddStringColumn("Name", "name");
             columnConfig.AddStringColumn("Age", "age");
-            columnConfig.AddStringColumn("RowId", "rowId");
-            columnConfig.AddLinkColumn("", "", "name", "edit", 777);
-            //columnConfig.AddLinkColumn("", "", "name", "x", 778);
-            columnConfig.AddButtonColumn("", "", ButtonTextSource.Fixed, "X", null,
+            columnConfig.AddLinkColumn("", "name", "edit", 777);
+            columnConfig.AddButtonColumn("", "Id", "X",
                 new UserConfirmation("Delete?")
                 {
                     OnConfirmationUIAction = 778
@@ -48,7 +44,8 @@ namespace WebsiteTemplate.Backend.UserRoles
                     name = "Bob",
                     age = 20
                 }
-            };
+            }.Skip((currentPage - 1) * linesPerPage)
+             .Take(linesPerPage);
         }
 
         public override int GetDataCount(string data, string filter)
@@ -56,12 +53,12 @@ namespace WebsiteTemplate.Backend.UserRoles
             return 2;
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return 9854;
         }
 
-        public override IList<MenuItem> GetViewMenu()
+        public override IList<MenuItem> GetViewMenu(Dictionary<string, string> dataForMenu)
         {
             return new List<MenuItem>()
             {

@@ -6,61 +6,87 @@
 
     <title></title>
 
-    <link href="Frontend/css/busyIndicator.css" rel="stylesheet" />
-    <link href="Frontend/css/inputDialog.css" rel="stylesheet" />
-    <link href="Frontend/css/inputView.css" rel="stylesheet" />
-    <link href="Frontend/css/login.css" rel="stylesheet" />
     <link href="Frontend/css/main.css" rel="stylesheet" />
-    <link href="Frontend/css/menu.css" rel="stylesheet" />
-    <link href="Frontend/css/normalize.css" rel="stylesheet" />
-    <link href="Frontend/css/siteSpecific.css" rel="stylesheet" />
-    <link href="Frontend/css/spinner1.css" rel="stylesheet" />
+
+    <link href="Frontend/css/w3.css" rel="stylesheet" />
+    <link href="Frontend/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="Frontend/css/jquery-ui.min.css" rel="stylesheet" />
     <link href="Frontend/css/views.css" rel="stylesheet" />
-
-    <script src="Frontend/Scripts/views.js"></script>
-    <script src="Frontend/Scripts/auth.js"></script>
-    <script src="Frontend/Scripts/inputDialog.js"></script>
-    <script src="Frontend/Scripts/main.js"></script>
-    <script src="Frontend/Scripts/masked_input_1.4.js"></script>
-    <script src="Frontend/Scripts/menuBuilder.js"></script>
-    <script src="Frontend/Scripts/modernizr.js"></script>
-    <script src="Frontend/Scripts/navigation.js"></script>
-    <script src="Frontend/Scripts/siteMenu.js"></script>
     
+    <script src="Frontend/Scripts/jquery-3.1.0.min.js"></script>
+    <script src="Frontend/Scripts/jquery-ui.min.js"></script>
+    <script src="Frontend/Scripts/knockout-3.4.0.js"></script>
+    <script src="Frontend/Scripts/knockout-jqueryui.min.js"></script>
+    <script src="Frontend/Scripts/promise-7.0.4.min.js"></script>
+    <script src="Frontend/Scripts/promise-done-7.0.4.min.js"></script>
+    <script src="Frontend/Scripts/date.js"></script>
+    <script src="Frontend/Scripts/applicationModel.js"></script>
+    <script src="Frontend/Scripts/dialog.js"></script>
+    <script src="Frontend/Scripts/inputDialog.js"></script>
+    <script src="Frontend/Scripts/auth.js"></script>
+    <script src="Frontend/Scripts/menus.js"></script>
+    <script src="Frontend/Scripts/processing.js"></script>
+    <script src="Frontend/Scripts/views.js"></script>
+    <script src="Frontend/Scripts/mainApplication.js"></script>
 </head>
-<body onload="main.bodyOnLoad()">
+<body>
+    <script type="text/html" id="headingTemplate">
+        <h1 class="w3-xxxlarge" data-bind="text: applicationName"></h1>
 
-    <div style="width:100%">
-        <table style="width:100%">
-            <tr>
-                <td style="width:100%">
-                    <div id="menuContainer"></div>
-                </td>
+        <div class="w3-navbar">
+            <div class="w3-container w3-left" style="text-align:left">
+                <button class="w3-btn w3-blue" data-bind="text: menuContainer().home().name, click: menuContainer().home().menuClick"></button>
+                <button class="w3-btn w3-blue" data-bind="text: menuContainer().back().name, click: menuContainer().back().menuClick, visible: menuContainer().currentParent() != null"></button>
+                <span data-bind="foreach: menuContainer().currentMenuList">
+                    <button class="w3-btn w3-blue " data-bind="text: name, click: menuClick"></button>
+                </span>
+            </div>
+            <div class="w3-container w3-right">
+                <span data-bind="visible: showUser">
+                    <button class="w3-btn w3-blue " data-bind="text: user().name"></button>
+                    <button class="w3-btn w3-blue " data-bind="click: logoutClick">Logout</button>
+                </span>
+            </div>
+        </div>
+    </script>
 
-                <td>
-                    <a href="#" id="aUserName" style="margin-right:10px">xxx</a>
-                    </td>
-                <td>
-                    <button onclick="auth.logout()">Logout</button>
-                    <div id="userDetail" style="display:none;">
+    <div class="w3-container w3-blue w3-center w3-hide-small w3-top" data-bind="template: { name: 'headingTemplate'}">
+
+    </div>
+
+    <div class="w3-container w3-blue w3-center w3-hide-small" data-bind="template: { name: 'headingTemplate'}">
+
+    </div>
+
+    <!-- TODO: Add nav bar for small screens, currently there is no heading on small screens -->
+
+    <!--<div id="mainContent">
+        <h1>Hello</h1>
+    </div>-->
+
+    <div data-bind="foreach: modalDialogs">
+        <div class="w3-modal " style="display:block">
+            <div class="w3-modal-content" data-bind="html: html, attr: { id: 'modalDlg_' + myid() }"></div>
+        </div>
+    </div>
+
+    <div data-bind="foreach: busyContainers">
+        <div class="w3-modal w3-blue" style="display:block">
+            <p>
+                <div class="w3-container" style="top:0; left:0; bottom:0; right:0; margin: auto; position:absolute; height:5%">
+                    <div class="w3-center">
+                        <i class="fa fa-hourglass-half w3-xlarge w3-spin"></i>
+                        <p data-bind="text: busyText"></p>
                     </div>
-                </td>
-                    
-            </tr>
-            
-        </table>
+                </div>
+            </p>
+        </div>
     </div>
 
-    <div id="mainContent">
-        <h1 style="margin: 20px">Loading...</h1>
-    </div>
+    <div data-bind="foreach: currentView">  
+        <div class="w3-container" > <!-- The extra container is to make the view nicely padded -->
+            <div class="w3-container" data-bind="html: html">
 
-    <div id="loginContainer"></div>
-
-    <div id="busyContainer" style="z-index:100">
-        <div id="busyContainerDiv">
-            <div class="spinner1">
-                Loading…
             </div>
         </div>
     </div>

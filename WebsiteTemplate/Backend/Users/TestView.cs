@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Web;
+﻿using System.IO;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
-using WebsiteTemplate.Menus.InputItems;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Users
 {
@@ -19,19 +15,19 @@ namespace WebsiteTemplate.Backend.Users
             }
         }
 
-        public override int GetId()
+        public override EventNumber GetId()
         {
             return EventNumber.Test;
         }
 
         public override WebsiteTemplate.Menus.InputItems.FileInfo GetFileInfo(string data)
         {
-            var json = Newtonsoft.Json.Linq.JObject.Parse(data);
-            var id = json.GetValue("Id").ToString(); 
+            var json = JsonHelper.Parse(data);
+            var id = json.GetValue("Id"); 
             var result = new WebsiteTemplate.Menus.InputItems.FileInfo();
             //result.Data = File.ReadAllBytes(@"D:\Quintonn\Documents\Unisa Degree.pdf");
-            result.Data = File.ReadAllBytes(@"D:\Quintonn\Documents\Rothmann CV.docx");
-            result.FileName = "Unisa Degree.pdf";
+            result.Data = File.ReadAllBytes(@"D:\Quintonn\Documents\quintonn-rothmann-cv-1st-revision.docx");
+            result.FileName = "CV.docx";
             //result.MimeType = "application/pdf";
             result.MimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 

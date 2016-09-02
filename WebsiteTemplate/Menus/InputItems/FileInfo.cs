@@ -1,8 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
@@ -12,18 +9,8 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public string FileName { get; set; }
 
-        public string FileExtension
-        {
-            get
-            {
-                if (!String.IsNullOrWhiteSpace(FileName) && FileName.Contains("."))
-                {
-                    return FileName.Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Last();
-                }
-                return String.Empty;
-            }
-        }
-
+        public string FileExtension { get; set; }
+       
         public string MimeType { get; set; }
 
         public int Size
@@ -39,19 +26,38 @@ namespace WebsiteTemplate.Menus.InputItems
 
         }
 
-        public FileInfo(JToken jtoken)
+        public FileInfo(JsonHelper json)
         {
-            var jsonString = jtoken.ToString();
-            if (String.IsNullOrWhiteSpace(jsonString))
+            if (json == null || String.IsNullOrWhiteSpace(json.ToString()))
             {
                 return;
             }
-            var json = JObject.Parse(jsonString);
-            var data = json.GetValue("Data").ToString();
+            var data = json.GetValue("Data");
             Data = Convert.FromBase64String(data);
-            //var fileItem = json.GetValue("FileItem") as JObject;
-            FileName = json.GetValue("FileName").ToString();
-            MimeType = json.GetValue("MimeType").ToString();
+            FileName = json.GetValue("FileName");
+            MimeType = json.GetValue("MimeType");
+            var index = FileName.IndexOf(".");
+            FileExtension = json.GetValue("FileExtension");
+            
+            if (index > -1)
+            {
+                FileName = FileName.Substring(0, index);
+            }
+        }
+
+        public string GetFullFileName()
+        {
+            var fileName = FileName;
+            if (!String.IsNullOrWhiteSpace(FileExtension))
+            {
+                if (!FileExtension.Contains("."))
+                {
+                    fileName += ".";
+                }
+                fileName += FileExtension;
+            }
+
+            return fileName;
         }
     }
 }

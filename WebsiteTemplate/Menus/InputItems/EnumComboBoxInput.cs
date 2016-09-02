@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Web;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
@@ -13,8 +9,6 @@ namespace WebsiteTemplate.Menus.InputItems
         public EnumComboBoxInput(string name, 
                                  string label,
                                  bool addBlankValue = false,
-                                 //Func<FieldInfo, string> keyFunc,
-                                 //Func<FieldInfo, object> valueFunc,
                                  Func<KeyValuePair<T, string>, bool> whereClause = null,
                                  Func<KeyValuePair<T, string>, object> orderByClause = null,
                                  object defaultValue = null, 
@@ -29,9 +23,6 @@ namespace WebsiteTemplate.Menus.InputItems
             var enumValues = Enum.GetValues(typeof(T)).Cast<T>().ToList();
             var items = enumValues.ToDictionary(e => (T)e, e => e.ToString()).ToList();
 
-            //var items = fields.ToDictionary(keyFunc, valueFunc);
-            //var items = fields.ToDictionary(e => e.GetValue(null).ToString(), e => e.Name);
-            
             if (whereClause != null)
             {
                 items = items.Where(whereClause).ToList();

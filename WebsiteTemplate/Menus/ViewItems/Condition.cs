@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace WebsiteTemplate.Menus.ViewItems
+﻿namespace WebsiteTemplate.Menus.ViewItems
 {
     public class Condition
     {
@@ -13,7 +8,7 @@ namespace WebsiteTemplate.Menus.ViewItems
 
         public string ColumnValue { get; set; }
 
-        public Condition(string columnName, Comparison comparison, string columnValue)
+        public Condition(string columnName, Comparison comparison, string columnValue = null)
         {
             ColumnName = columnName;
             Comparison = comparison;
