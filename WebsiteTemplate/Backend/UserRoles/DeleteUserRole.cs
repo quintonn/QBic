@@ -5,7 +5,7 @@ using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.UserRoles
 {
-    public class DeleteUserRole : DeleteItemUsingDataService<UserRoleProcessor, UserRole>
+    public class DeleteUserRole : DeleteItemUsingInputProcessor<UserRoleProcessor, UserRole>
     {
         public override string Description
         {

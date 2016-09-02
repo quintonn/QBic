@@ -23,9 +23,10 @@ namespace WebsiteTemplate.Backend.Processing
 
         internal async Task<IHttpActionResult> Process(int eventId, HttpRequestMessage requestMessage)
         {
-            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            JsonResult<T> jsonResult;
+            try
             {
-                try
+                using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
                     await AuditService.LogUserEvent(eventId);
                     var result = await ProcessEvent(eventId);
@@ -35,17 +36,17 @@ namespace WebsiteTemplate.Backend.Processing
                         return result as FileActionResult;
                     }
 
-                    var jsonResult = new JsonResult<T>(result, JSON_SETTINGS, Encoding.UTF8, requestMessage);
+                    jsonResult = new JsonResult<T>(result, JSON_SETTINGS, Encoding.UTF8, requestMessage);
                     scope.Complete();
-                    return jsonResult;
                 }
-                catch (Exception error)
+                return jsonResult;
+            }
+            catch (Exception error)
+            {
+                return new BadRequestErrorMessageResult(error.Message, new DefaultContentNegotiator(), requestMessage, new List<MediaTypeFormatter>()
                 {
-                    return new BadRequestErrorMessageResult(error.Message, new DefaultContentNegotiator(), requestMessage, new List<MediaTypeFormatter>()
-                    {
-                        new JsonMediaTypeFormatter()
-                    });
-                }
+                    new JsonMediaTypeFormatter()
+                });
             }
         }
     }

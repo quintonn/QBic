@@ -27,8 +27,10 @@ namespace WebsiteTemplate.Controllers
         [AllowAnonymous]
         [RequireHttps]
         [DeflateCompression]
-        public IHttpActionResult InitializeSystem()
+        public async Task<IHttpActionResult> InitializeSystem()
         {
+            await Container.Resolve<InitializationProcessor>().Process(0, Request); // Just to initialize core processor
+
             var json = ApplicationService.InitializeApplication();
             return Json(json, JSON_SETTINGS);
         }
@@ -40,6 +42,8 @@ namespace WebsiteTemplate.Controllers
         [DeflateCompression]
         public async Task<IHttpActionResult> Initialize()
         {
+            await Container.Resolve<InitializationProcessor>().Process(0, Request); // Just to initialize core processor
+
             var json = await ApplicationService.InitializeSession();
             return Json(json, JSON_SETTINGS);
         }

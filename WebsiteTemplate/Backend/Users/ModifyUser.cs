@@ -11,7 +11,7 @@ using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Users
 {
-    public abstract class ModifyUser : ModifyItemUsingDataService<UserProcessor, User>
+    public abstract class ModifyUser : ModifyItemUsingInputProcessor<UserProcessor, User>
     {
         private UserService UserService { get; set; }
 

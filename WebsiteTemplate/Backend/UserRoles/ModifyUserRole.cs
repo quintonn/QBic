@@ -9,7 +9,7 @@ using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.UserRoles
 {
-    public abstract class ModifyUserRole : ModifyItemUsingDataService<UserRoleProcessor, UserRole>
+    public abstract class ModifyUserRole : ModifyItemUsingInputProcessor<UserRoleProcessor, UserRole>
     {
         private UserRoleService UserRoleService { get; set; }
         public ModifyUserRole(UserRoleProcessor itemProcessor, UserRoleService userRoleService, bool isNew) 

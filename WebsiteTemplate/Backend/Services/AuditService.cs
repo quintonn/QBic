@@ -20,7 +20,7 @@ namespace WebsiteTemplate.Backend.Services
             //var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync() as User;
 
             //TODO
-            // May have to also create a web call for user confirmation.
+            // May have to also create a web call for user confirmation screens/dialogs/notifications.
             // This is to log when a user clicks ok on a message dialog box and log what the user chose and the message shown
 
             // I think this logging should relay some kind of info like this:

@@ -16,7 +16,7 @@ namespace WebsiteTemplate.Backend.Processing
     public abstract class CoreProcessorBase
     {
         protected static JsonSerializerSettings JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = "dd-MM-yyyy" };
-        protected static IApplicationSettings ApplicationSettings { get; set; }
+        protected static ApplicationSettingsCore ApplicationSettings { get; set; }
         protected static IUnityContainer Container { get; set; }
         protected static EventService EventService { get; set; }
         protected static DataService DataService { get; set; }
@@ -30,7 +30,7 @@ namespace WebsiteTemplate.Backend.Processing
             {
                 Container = container;
 
-                ApplicationSettings = container.Resolve<IApplicationSettings>();
+                ApplicationSettings = container.Resolve<ApplicationSettingsCore>();
                 EventService = container.Resolve<EventService>();
                 DataService = container.Resolve<DataService>();
                 AuditService = container.Resolve<AuditService>();
@@ -42,7 +42,7 @@ namespace WebsiteTemplate.Backend.Processing
         }
         private static void PopulateDefaultValues()
         {
-            ApplicationSettings.SetupDefaults();
+            ApplicationSettings.SetupDefaultsInternal();
         }
 
         public IDictionary<int, IEvent> EventList

@@ -12,7 +12,7 @@ using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Menus
 {
-    public class ViewMenus : ShowViewUsingDataService<MenuProcessor, Menu>
+    public class ViewMenus : ShowViewUsingInputProcessor<MenuProcessor, Menu>
     {
         private string mTitle = "View Menus";
         public override string Description
@@ -142,7 +142,7 @@ namespace WebsiteTemplate.Backend.Menus
 
                 if (!String.IsNullOrWhiteSpace(MenuId))
                 {
-                    var parentMenu = DataItemService.RetrieveItem(MenuId);
+                    var parentMenu = ItemProcessor.RetrieveItem(MenuId);
                     ParentId = parentMenu.ParentMenu != null ? parentMenu.ParentMenu.Id : "";
                     mTitle = "Menus: " + parentMenu.Name;
                 }

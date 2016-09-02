@@ -8,7 +8,7 @@ using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
-    public abstract class ModifyItemUsingDataService<TItemProcessor, TBaseClass> : GetInput where TItemProcessor : InputProcessingCore<TBaseClass> where TBaseClass : BaseClass
+    public abstract class ModifyItemUsingInputProcessor<TItemProcessor, TBaseClass> : GetInput where TItemProcessor : InputProcessingCore<TBaseClass> where TBaseClass : BaseClass
     {
         protected TItemProcessor ItemProcessor { get; set; }
 
@@ -27,7 +27,7 @@ namespace WebsiteTemplate.Menus.InputItems
             }
         }
 
-        public ModifyItemUsingDataService(TItemProcessor itemProcessor, bool isNew)
+        public ModifyItemUsingInputProcessor(TItemProcessor itemProcessor, bool isNew)
         {
             ItemProcessor = itemProcessor;
             IsNew = isNew;
@@ -77,7 +77,7 @@ namespace WebsiteTemplate.Menus.InputItems
                 var itemId = GetValue("Id");
 
                 var existingItem = ItemProcessor.RetrieveExistingItem();
-                if (IsNew && existingItem != null && existingItem.Id != itemId)
+                if ((IsNew && existingItem != null) || (!IsNew && existingItem != null && existingItem.Id != itemId))
                 {
                     return new List<IEvent>()
                     {

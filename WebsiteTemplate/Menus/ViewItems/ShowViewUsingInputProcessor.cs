@@ -5,17 +5,17 @@ using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Menus.ViewItems
 {
-    public abstract class ShowViewUsingDataService<TDataItemService, TBaseClass> : ShowView where TDataItemService : InputProcessingCore<TBaseClass> where TBaseClass : BaseClass
+    public abstract class ShowViewUsingInputProcessor<TItemProcessor, TBaseClass> : ShowView where TItemProcessor : InputProcessingCore<TBaseClass> where TBaseClass : BaseClass
     {
-        protected TDataItemService DataItemService { get; set; }
+        protected TItemProcessor ItemProcessor { get; set; }
 
-        public ShowViewUsingDataService(TDataItemService dataItemService)
+        public ShowViewUsingInputProcessor(TItemProcessor itemProcessor)
         {
-            DataItemService = dataItemService;
+            ItemProcessor = itemProcessor;
         }
 
         /// <summary>
-        /// This method can be overridden to extract values from the user input and make it available to the <see cref="TDataItemService" /> when the <see cref="TDataItemService.RetrieveItemCountWithFilter" /> method is called.
+        /// This method can be overridden to extract values from the user input and make it available to the <see cref="TItemProcessor" /> when the <see cref="TItemProcessor.RetrieveItemCountWithFilter" /> method is called.
         /// </summary>
         /// <param name="data">Data passed to the view from any previous activities.</param>
         /// <returns>Collection of key/value pairs with any parameters that needs to be extracted from the view.</returns>
@@ -27,7 +27,7 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// <summary>
         /// Override this method in order to map the list of data elements from <see cref="TBaseClass" /> to any other class or dynamic type./>
         /// </summary>
-        /// <param name="data">The data being returned by the <see cref="TDataItemService" /></param>
+        /// <param name="data">The data being returned by the <see cref="TItemProcessor" /></param>
         /// <returns>Custom enumerable to be used when displaying results. Values must match what is configured in the <see cref="ShowViewUsingDataService.ConfigureColumns"/> method.</returns>
         public virtual IEnumerable MapResultsToCustomData(IList<TBaseClass> data)
         {
@@ -56,7 +56,7 @@ namespace WebsiteTemplate.Menus.ViewItems
         public override IEnumerable GetData(string data, int currentPage, int linesPerPage, string filter)
         {
             PerformAdditionalProcessingOnDataRetrieval(data, false);
-            var results = DataItemService.RetrieveItemsWithFilter(currentPage, linesPerPage, filter, RetrieveAdditionalParametersForDataQuery(data));
+            var results = ItemProcessor.RetrieveItemsWithFilter(currentPage, linesPerPage, filter, RetrieveAdditionalParametersForDataQuery(data));
             return MapResultsToCustomData(results);
         }
 
@@ -69,7 +69,7 @@ namespace WebsiteTemplate.Menus.ViewItems
         public override int GetDataCount(string data, string filter)
         {
             PerformAdditionalProcessingOnDataRetrieval(data, true);
-            return DataItemService.RetrieveItemCountWithFilter(filter, RetrieveAdditionalParametersForDataQuery(data));
+            return ItemProcessor.RetrieveItemCountWithFilter(filter, RetrieveAdditionalParametersForDataQuery(data));
         }
     }
 }

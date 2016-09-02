@@ -12,7 +12,7 @@ using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Menus
 {
-    public abstract class ModifyMenu : ModifyItemUsingDataService<MenuProcessor, Menu>
+    public abstract class ModifyMenu : ModifyItemUsingInputProcessor<MenuProcessor, Menu>
     {
         private MenuService MenuService { get; set; }
         public ModifyMenu(MenuProcessor menuProcessor, bool isNew, MenuService menuService)

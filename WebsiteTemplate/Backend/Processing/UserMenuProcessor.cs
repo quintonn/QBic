@@ -46,7 +46,10 @@ namespace WebsiteTemplate.Backend.Processing
                     AddSubMenu(m, session, events);
                     results.Add(m);
                 });
+
+                session.Flush();
             }
+
             return results;
         }
 

@@ -47,7 +47,7 @@ namespace WebsiteTemplate
 
             Container.RegisterInstance(DataStore.GetInstance());
             
-            var appSettings = Container.Resolve<IApplicationSettings>();
+            var appSettings = Container.Resolve<ApplicationSettingsCore>();
             appSettings.RegisterUnityContainers(Container);
 
             config.DependencyResolver = new UnityDependencyResolver(Container);

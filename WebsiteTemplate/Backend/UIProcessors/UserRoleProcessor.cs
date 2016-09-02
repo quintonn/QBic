@@ -13,6 +13,7 @@ namespace WebsiteTemplate.Backend.UIProcessors
     public class UserRoleProcessor : NHibernateDataItemService<UserRole>
     {
         private UserRoleService UserRoleService { get; set; }
+
         public UserRoleProcessor(DataService dataService, UserRoleService userRoleService)
             : base(dataService)
         {

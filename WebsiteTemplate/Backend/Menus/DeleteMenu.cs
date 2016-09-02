@@ -10,7 +10,7 @@ using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Menus
 {
-    public class DeleteMenu : DeleteItemUsingDataService<MenuProcessor, Menu>
+    public class DeleteMenu : DeleteItemUsingInputProcessor<MenuProcessor, Menu>
     {
         private MenuService MenuService { get; set; }
         public override string Description

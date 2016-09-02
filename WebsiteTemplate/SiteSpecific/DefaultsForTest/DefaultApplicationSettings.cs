@@ -11,26 +11,26 @@ using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
 {
-    public class DefaultApplicationSettings : IApplicationSettings
+    public class DefaultApplicationSettings : ApplicationSettingsCore
     {
         private EventService EventService { get; set; }
-        private DataService DataService { get; set; }
         public DefaultApplicationSettings(EventService eventService, DataService dataService)
+            : base(dataService)
         {
             EventService = eventService;
-            DataService = dataService;
         }
-        public string GetApplicationName()
+
+        public override string GetApplicationName()
         {
             return "Website Template";
         }
 
-        public void RegisterUnityContainers(IUnityContainer container)
+        public override void RegisterUnityContainers(IUnityContainer container)
         {
 
         }
 
-        public void SetupDefaults()
+        public override void SetupDefaults()
         {
             using (var session = DataService.OpenSession())
             {

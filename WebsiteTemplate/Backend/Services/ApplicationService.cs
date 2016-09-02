@@ -6,9 +6,9 @@ namespace WebsiteTemplate.Backend.Services
 {
     public class ApplicationService
     {
-        private static IApplicationSettings ApplicationSettings { get; set; }
+        private static ApplicationSettingsCore ApplicationSettings { get; set; }
 
-        public ApplicationService(IApplicationSettings applicationSettings)
+        public ApplicationService(ApplicationSettingsCore applicationSettings)
         {
             ApplicationSettings = applicationSettings;
         }

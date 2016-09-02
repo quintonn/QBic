@@ -14,6 +14,8 @@ namespace WebsiteTemplate.Controllers
             if (content == null)
             {
                 System.Console.WriteLine("Why");
+                base.OnActionExecuted(actContext);
+                return;
             }
             var originalType = content == null ? new List<string>() { "application/json" } : content.Headers.GetValues("Content-Type");
             var bytes = content == null ? null : content.ReadAsByteArrayAsync().Result;

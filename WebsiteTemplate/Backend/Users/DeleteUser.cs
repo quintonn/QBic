@@ -5,7 +5,7 @@ using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Users
 {
-    public class DeleteUser : DeleteItemUsingDataService<UserProcessor, User>
+    public class DeleteUser : DeleteItemUsingInputProcessor<UserProcessor, User>
     {
         public DeleteUser(UserProcessor userProcessor)
             : base(userProcessor)

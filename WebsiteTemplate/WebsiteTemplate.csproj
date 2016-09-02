@@ -208,6 +208,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Backend\Processing\InitializationProcessor.cs" />
     <Compile Include="Backend\Processing\InputProcessing\ProcessingResult.cs" />
     <Compile Include="Backend\UIProcessors\MenuProcessor.cs" />
     <Compile Include="Backend\Menus\AddMenu.cs" />
@@ -257,10 +258,10 @@
     <Compile Include="Menus\BasicCrudItems\IBasicCrudDelete.cs" />
     <Compile Include="Menus\BasicCrudItems\IBasicCrudModify.cs" />
     <Compile Include="Menus\BasicCrudItems\IBasicCrudView.cs" />
-    <Compile Include="Menus\InputItems\DeleteItemUsingDataService.cs" />
+    <Compile Include="Menus\InputItems\DeleteItemUsingInputProcessor.cs" />
     <Compile Include="Menus\InputItems\InputProcessingMethods.cs" />
-    <Compile Include="Menus\InputItems\ModifyItemUsingDataService.cs" />
-    <Compile Include="Menus\ViewItems\ShowViewUsingDataService.cs" />
+    <Compile Include="Menus\InputItems\ModifyItemUsingInputProcessor.cs" />
+    <Compile Include="Menus\ViewItems\ShowViewUsingInputProcessor.cs" />
     <Compile Include="Models\AuditAction.cs" />
     <Compile Include="Models\AuditEvent.cs" />
     <Compile Include="Utilities\JsonArray.cs" />
@@ -353,7 +354,7 @@
     <Compile Include="Backend\Users\ViewUsers.cs" />
     <Compile Include="Menus\BaseItems\EventNumber.cs" />
     <Compile Include="SiteSpecific\DefaultsForTest\DefaultApplicationSettings.cs" />
-    <Compile Include="Utilities\IApplicationSettings.cs" />
+    <Compile Include="Utilities\ApplicationSettingsCore.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>

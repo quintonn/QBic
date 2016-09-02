@@ -17,9 +17,9 @@ namespace WebsiteTemplate.Backend.Services
     public class UserService
     {
         private DataService DataService { get; set; }
-        private IApplicationSettings ApplicationSettings { get; set; }
+        private ApplicationSettingsCore ApplicationSettings { get; set; }
 
-        public UserService(DataService dataService, IApplicationSettings appSettings)
+        public UserService(DataService dataService, ApplicationSettingsCore appSettings)
         {
             DataService = dataService;
             ApplicationSettings = appSettings;

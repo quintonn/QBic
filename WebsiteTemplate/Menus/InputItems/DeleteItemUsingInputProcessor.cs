@@ -7,11 +7,11 @@ using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
-    public abstract class DeleteItemUsingDataService<TItemProcessor, TBaseClass> : DoSomething where TItemProcessor : InputProcessingCore<TBaseClass> where TBaseClass : BaseClass
+    public abstract class DeleteItemUsingInputProcessor<TItemProcessor, TBaseClass> : DoSomething where TItemProcessor : InputProcessingCore<TBaseClass> where TBaseClass : BaseClass
     {
         protected TItemProcessor ItemProcessor { get; set; }
 
-        public DeleteItemUsingDataService(TItemProcessor itemProcessor)
+        public DeleteItemUsingInputProcessor(TItemProcessor itemProcessor)
         {
             ItemProcessor = itemProcessor;
         }

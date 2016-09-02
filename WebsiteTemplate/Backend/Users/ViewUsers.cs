@@ -7,7 +7,7 @@ using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Users
 {
-    public class ViewUsers : ShowViewUsingDataService<UserProcessor, User>
+    public class ViewUsers : ShowViewUsingInputProcessor<UserProcessor, User>
     {
         public ViewUsers(UserProcessor userProcessor)
             : base(userProcessor)
