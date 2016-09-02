@@ -8,13 +8,48 @@ namespace WebsiteTemplate.Menus.InputItems
 {
     public static class InputProcessingMethods
     {
+        private static bool TryParseEnum<TEnum>(string value, bool ignoreCase, out TEnum resultValue)
+        {
+            resultValue = default(TEnum);
+            try
+            {
+                var result = (TEnum)Enum.Parse(typeof(TEnum), value, ignoreCase);
+                resultValue = result;
+
+                return true;
+            }
+            catch (Exception e)
+            {                
+                return false;
+            }
+        }
+
         public static T GetValue<T>(IDictionary<string, object> inputData, string propertyName, T defaultValue = default(T))
         {
             object value = defaultValue;
 
+            var nullableType = Nullable.GetUnderlyingType(typeof(T));
+
             if (inputData.ContainsKey(propertyName))
             {
-                if (typeof(T) == typeof(bool))
+                if (typeof(T).IsEnum || (nullableType != null && nullableType.IsEnum))
+                {
+                    T tempValue;
+                    if (TryParseEnum(inputData[propertyName]?.ToString(), true, out tempValue))
+                    {
+                        value = tempValue;
+                    }
+                    //else if (Nullable.GetUnderlyingType(typeof(T)) != null)
+                    else if (nullableType.IsEnum)
+                    {
+                        value = null;
+                    }
+                    else
+                    {
+                        throw new Exception(String.Format("Unable to parse non-nullable enum from value '{0}'", value));
+                    }
+                }
+                else if (typeof(T) == typeof(bool))
                 {
                     value = Convert.ToBoolean(inputData[propertyName]);
                 }

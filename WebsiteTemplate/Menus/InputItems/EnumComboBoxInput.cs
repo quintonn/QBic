@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
@@ -39,6 +40,12 @@ namespace WebsiteTemplate.Menus.InputItems
             }
 
             ListItems = listItems.ToDictionary(e => e.Key, e => e.Value);
+        }
+
+        public override object GetValue(JToken jsonToken)
+        {
+            var result = (T)Enum.Parse(typeof(T), jsonToken?.ToString());
+            return result;
         }
     }
 }
