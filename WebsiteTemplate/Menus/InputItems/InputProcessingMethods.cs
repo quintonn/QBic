@@ -10,7 +10,6 @@ namespace WebsiteTemplate.Menus.InputItems
     {
         public static T GetValue<T>(IDictionary<string, object> inputData, string propertyName, T defaultValue = default(T))
         {
-            //object value = default(T);
             object value = defaultValue;
 
             if (inputData.ContainsKey(propertyName))
@@ -29,7 +28,8 @@ namespace WebsiteTemplate.Menus.InputItems
                     }
                     else if (typeof(T) == typeof(DateTime))
                     {
-                        value = new DateTime(1900, 01, 01); ///TODO: What do i do with default dates etc.
+                        throw new Exception(String.Format("Unable to process the value '{0}' as date.", tempValue));
+                        //value = new DateTime(1900, 01, 01); ///TODO: What do i do with default dates etc.
                     }
                 }
                 else if (typeof(T) == typeof(int) || typeof(T) == typeof(int?))

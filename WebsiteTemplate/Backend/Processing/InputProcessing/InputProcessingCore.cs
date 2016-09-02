@@ -26,9 +26,9 @@ namespace WebsiteTemplate.Backend.Processing.InputProcessing
 
         public abstract IList<T> RetrieveItemsWithFilter(int currentPage, int linesPerPage, string filter, IDictionary<string, object> additionalParameters);
 
-        public abstract Task SaveOrUpdate(string itemId);
+        public abstract Task<ProcessingResult> SaveOrUpdate(string itemId);
 
-        public abstract void DeleteItem(string itemId);
+        public abstract ProcessingResult DeleteItem(string itemId);
 
         public T GetValue<T>(string propertyName, T defaultValue = default(T))
         {

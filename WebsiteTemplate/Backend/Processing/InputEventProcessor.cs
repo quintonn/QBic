@@ -14,7 +14,7 @@ namespace WebsiteTemplate.Backend.Processing
     public class InputEventProcessor : EventProcessor<IList<IEvent>>
     {
         public InputEventProcessor(IUnityContainer container)
-            :base(container)
+            : base(container)
         {
 
         }
@@ -54,15 +54,12 @@ namespace WebsiteTemplate.Backend.Processing
                 var value = inputField.GetValue(jsonData.GetValue<JToken>(inputField.InputName));
                 processedFormData.Add(inputField.InputName, value);
             }
-            using (var session = DataService.OpenSession())
-            {
-                eventItem.InputData = processedFormData;
-                eventItem.DataService = DataService;
-                result = await eventItem.ProcessAction(actionId);
 
-                await HandleProcessActionResult(result, eventItem);
-                session.Flush();
-            }
+            eventItem.InputData = processedFormData;
+            eventItem.DataService = DataService;
+            result = await eventItem.ProcessAction(actionId);
+
+            await HandleProcessActionResult(result, eventItem);
             foreach (var item in result)
             {
                 item.Parameters = callParameters;

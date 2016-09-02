@@ -59,7 +59,7 @@ namespace WebsiteTemplate.Menus.InputItems
             }
         }
 
-        public abstract Task<IList<IEvent>> ValidateInputs();
+        public abstract Task<ProcessingResult> ValidateInputs();
 
         public override async Task<IList<IEvent>> ProcessAction(int actionNumber)
         {
@@ -85,19 +85,36 @@ namespace WebsiteTemplate.Menus.InputItems
                     };
                 }
 
-                var validationErrors = await ValidateInputs();
-                if (validationErrors != null && validationErrors.Count > 0)
+                var validationError = await ValidateInputs();
+                if (validationError != null && validationError.Success == false)
                 {
-                    return validationErrors;
+                    return new List<IEvent>()
+                    {
+                        new ShowMessage(validationError.Message)
+                    };
                 }
 
-                await ItemProcessor.SaveOrUpdate(itemId);
+                var result = await ItemProcessor.SaveOrUpdate(itemId);
+
+                if (result.Success == false)
+                {
+                    return new List<IEvent>()
+                    {
+                        new ShowMessage(result.Message)
+                    };
+                }
+
+                var message = String.Format("{0} {1} successfully.", ItemNameForDisplay, IsNew ? "created" : "modified");
+                if (!String.IsNullOrWhiteSpace(result.Message))
+                {
+                    message = result.Message;
+                }
 
                 return new List<IEvent>()
                 {
                     new ExecuteAction(ViewToShowAfterModify, ParametersToPassToViewAfterModify),
                     new CancelInputDialog(),
-                    new ShowMessage("{0} {1} successfully.", ItemNameForDisplay, IsNew ? "created" : "modified"),
+                    new ShowMessage(message),
                 };
             }
             return null;

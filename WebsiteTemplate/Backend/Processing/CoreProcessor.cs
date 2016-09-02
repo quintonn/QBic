@@ -23,7 +23,7 @@ namespace WebsiteTemplate.Backend.Processing
 
         internal async Task<IHttpActionResult> Process(int eventId, HttpRequestMessage requestMessage)
         {
-            using (var scope = new TransactionScope())
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {

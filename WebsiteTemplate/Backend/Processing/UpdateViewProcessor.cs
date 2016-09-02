@@ -65,68 +65,66 @@ namespace WebsiteTemplate.Backend.Processing
             }
             var action = eventItem as ShowView;
 
-            using (var session = DataService.OpenSession())
+
+            data = originalData;
+            var parentData = data;
+
+            var currentPage = 1;
+            var linesPerPage = 10;
+            var totalLines = -1;
+            var filter = String.Empty;
+            var parameters = String.Empty;
+
+            var dataJson = new JsonHelper();
+            if (!String.IsNullOrWhiteSpace(data))
             {
-                data = originalData;
-                var parentData = data;
-
-                var currentPage = 1;
-                var linesPerPage = 10;
-                var totalLines = -1;
-                var filter = String.Empty;
-                var parameters = String.Empty;
-
-                var dataJson = new JsonHelper();
-                if (!String.IsNullOrWhiteSpace(data))
+                try
                 {
-                    try
+                    dataJson = JsonHelper.Parse(data);
+
+                    filter = dataJson.GetValue("filter").Trim();
+                    parameters = dataJson.GetValue("parameters");
+
+                    var viewSettings = dataJson.GetValue<JsonHelper>("viewSettings");
+                    if (viewSettings != null)
                     {
-                        dataJson = JsonHelper.Parse(data);
-
-                        filter = dataJson.GetValue("filter").Trim();
-                        parameters = dataJson.GetValue("parameters");
-
-                        var viewSettings = dataJson.GetValue<JsonHelper>("viewSettings");
-                        if (viewSettings != null)
+                        currentPage = viewSettings.GetValue<int>("currentPage");
+                        linesPerPage = viewSettings.GetValue<int>("linesPerPage");
+                        if (linesPerPage == -2)
                         {
-                            currentPage = viewSettings.GetValue<int>("currentPage");
-                            linesPerPage = viewSettings.GetValue<int>("linesPerPage");
-                            if (linesPerPage == -2)
-                            {
-                                currentPage = 1; //just in case it's not
-                                linesPerPage = int.MaxValue;
-                            }
-                            totalLines = viewSettings.GetValue<int>("totalLines");
+                            currentPage = 1; //just in case it's not
+                            linesPerPage = int.MaxValue;
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
+                        totalLines = viewSettings.GetValue<int>("totalLines");
                     }
                 }
-                else
+                catch (Exception e)
                 {
-                    parentData = data;  // In case user modified parentData -> this smells??
+                    Console.WriteLine(e.Message);
                 }
-
-                if (totalLines == -1 || !String.IsNullOrWhiteSpace(filter))
-                {
-                    totalLines = action.GetDataCount(parentData, filter);
-                }
-
-                var list = action.GetData(parentData, currentPage, linesPerPage, filter);
-                action.ViewData = list;
-
-                totalLines = Math.Max(totalLines, list.Cast<object>().Count());
-
-                action.CurrentPage = currentPage;
-                action.LinesPerPage = linesPerPage == int.MaxValue ? -2 : linesPerPage;
-                action.TotalLines = totalLines;
-                action.Filter = filter;
-                action.Parameters = parameters;
-
-                return action;
             }
+            else
+            {
+                parentData = data;  // In case user modified parentData -> this smells??
+            }
+
+            if (totalLines == -1 || !String.IsNullOrWhiteSpace(filter))
+            {
+                totalLines = action.GetDataCount(parentData, filter);
+            }
+
+            var list = action.GetData(parentData, currentPage, linesPerPage, filter);
+            action.ViewData = list;
+
+            totalLines = Math.Max(totalLines, list.Cast<object>().Count());
+
+            action.CurrentPage = currentPage;
+            action.LinesPerPage = linesPerPage == int.MaxValue ? -2 : linesPerPage;
+            action.TotalLines = totalLines;
+            action.Filter = filter;
+            action.Parameters = parameters;
+
+            return action;
         }
     }
 }

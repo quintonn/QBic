@@ -68,38 +68,35 @@ namespace WebsiteTemplate.Backend.Processing
             {
                 var action = eventItem as ShowView;
 
-                using (var session = DataService.OpenSession())
+                data = originalData;
+                var parentData = data;
+
+                var dataJson = new JsonHelper();
+                if (!String.IsNullOrWhiteSpace(data) && !(eventItem is ViewForInput))
                 {
-                    data = originalData;
-                    var parentData = data;
-
-                    var dataJson = new JsonHelper();
-                    if (!String.IsNullOrWhiteSpace(data) && !(eventItem is ViewForInput))
-                    {
-                        dataJson = JsonHelper.Parse(data);
-                        parameters = dataJson.GetValue("parameters");
-                    }
-                    else
-                    {
-                        parentData = data;  // In case user modified parentData -> this smells??
-                    }
-
-                    var totalLines = action.GetDataCount(parentData, String.Empty);
-
-                    var list = action.GetData(parentData, 1, 10, String.Empty);
-                    action.ViewData = list;
-
-                    totalLines = Math.Max(totalLines, list.Cast<object>().Count());
-
-                    action.CurrentPage = 1;
-                    action.LinesPerPage = 10;
-                    action.TotalLines = totalLines;
-                    action.Filter = String.Empty;
-
-                    //clicking back in view many times breaks filter args- test with menus
-
-                    result.Add(action);
+                    dataJson = JsonHelper.Parse(data);
+                    parameters = dataJson.GetValue("parameters");
                 }
+                else
+                {
+                    parentData = data;  // In case user modified parentData -> this smells??
+                }
+
+                var totalLines = action.GetDataCount(parentData, String.Empty);
+
+                var list = action.GetData(parentData, 1, 10, String.Empty);
+                action.ViewData = list;
+
+                totalLines = Math.Max(totalLines, list.Cast<object>().Count());
+
+                action.CurrentPage = 1;
+                action.LinesPerPage = 10;
+                action.TotalLines = totalLines;
+                action.Filter = String.Empty;
+
+                //clicking back in view many times breaks filter args- test with menus
+
+                result.Add(action);
             }
             else if (eventItem is DoSomething)
             {

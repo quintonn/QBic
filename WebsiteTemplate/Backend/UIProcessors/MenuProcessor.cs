@@ -19,9 +19,10 @@ namespace WebsiteTemplate.Backend.UIProcessors
             MenuService = menuService;
         }
 
-        public override void DeleteItem(ISession session, string itemId)
+        public override ProcessingResult DeleteItem(ISession session, string itemId)
         {
             MenuService.DeleteMenuWithId(itemId);
+            return new ProcessingResult(true);
         }
 
         public override Menu RetrieveExistingItem(ISession session)
@@ -29,7 +30,7 @@ namespace WebsiteTemplate.Backend.UIProcessors
             return null;
         }
 
-        public override async Task UpdateItem(ISession session, Menu item)
+        public override async Task<ProcessingResult> UpdateItem(Menu item)
         {
             var parentMenuId = GetValue("ParentMenuId");
             var eventNumber = GetValue<int?>("Event");
@@ -37,7 +38,7 @@ namespace WebsiteTemplate.Backend.UIProcessors
 
             if (!String.IsNullOrWhiteSpace(parentMenuId))
             {
-                item.ParentMenu = session.Get<Menu>(parentMenuId);
+                item.ParentMenu = MenuService.RetrieveMenuWithId(parentMenuId);
             }
             else
             {
@@ -53,6 +54,8 @@ namespace WebsiteTemplate.Backend.UIProcessors
                 item.Event = null;
             }
             item.Name = name;
+
+            return new ProcessingResult(true);
         }
 
         public override IQueryOver<Menu, Menu> CreateQueryForRetrieval(IQueryOver<Menu, Menu> query, string filter, IDictionary<string, object> additionalParameters)

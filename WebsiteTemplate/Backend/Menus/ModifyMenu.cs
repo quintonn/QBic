@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WebsiteTemplate.Backend.Processing.InputProcessing;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Backend.UIProcessors;
-using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Menus.ViewItems;
@@ -84,7 +84,7 @@ namespace WebsiteTemplate.Backend.Menus
             return new InitializeResult(true);
         }
 
-        public override async Task<IList<IEvent>> ValidateInputs()
+        public override async Task<ProcessingResult> ValidateInputs()
         {
             var name = GetValue("Name");
             var hasSubMenus = GetValue<bool>("HasSubmenus");
@@ -94,10 +94,7 @@ namespace WebsiteTemplate.Backend.Menus
 
             if (String.IsNullOrWhiteSpace(name))
             {
-                return new List<IEvent>()
-                {
-                    new ShowMessage("Menu name is mandatory and must be provided.")
-                };
+                return new ProcessingResult(false, "Menu name is mandatory and must be provided.");
             }
 
             if (hasSubMenus == false)
@@ -105,10 +102,7 @@ namespace WebsiteTemplate.Backend.Menus
                 eventValue = GetValue<int?>("Event");
                 if (eventValue == null)
                 {
-                    return new List<IEvent>()
-                        {
-                            new ShowMessage("Menu action is mandatory when 'Has Sub Menus' is unchecked.")
-                        };
+                    return new ProcessingResult(false, "Menu action is mandatory when 'Has Sub Menus' is unchecked.");
                 }
             }
 
@@ -127,8 +121,7 @@ namespace WebsiteTemplate.Backend.Menus
         {
             get
             {
-                var parentMenuId = GetValue<string>("ParentMenuId");
-                return parentMenuId;
+                return GetValue<string>("ParentMenuId");
             }
         }
     }

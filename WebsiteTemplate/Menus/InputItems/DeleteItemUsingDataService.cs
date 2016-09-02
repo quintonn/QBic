@@ -32,13 +32,27 @@ namespace WebsiteTemplate.Menus.InputItems
 
             var itemId = GetValue<string>("Id");
 
-            ItemProcessor.DeleteItem(itemId);
+            var result = ItemProcessor.DeleteItem(itemId);
+
+            if (result.Success == false)
+            {
+                return new List<IEvent>()
+                {
+                    new ShowMessage(result.Message)
+                };
+            }
+
+            var message = "Item deleted successfully";
+            if (!String.IsNullOrWhiteSpace(result.Message))
+            {
+                message = result.Message;
+            }
 
             return new List<IEvent>()
             {
                 new CancelInputDialog(),
                 new ExecuteAction(ViewToShowAfterModify, ParametersToPassToViewAfterModify),
-                new ShowMessage("Item deleted successfully"),
+                new ShowMessage(message),
             };
         }
     }

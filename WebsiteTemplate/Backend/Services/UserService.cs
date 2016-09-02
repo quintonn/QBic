@@ -33,7 +33,7 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        public async Task<string> CreateUser(ISession session, string userName, string email, string password, List<string> userRoles)
+        public async Task<string> CreateUser(string userName, string email, string password, List<string> userRoles)
         {
             var user = new User(true)
             {
@@ -41,28 +41,30 @@ namespace WebsiteTemplate.Backend.Services
                 UserName = userName
             };
 
-            var result = await CoreAuthenticationEngine.UserManager.CreateAsync(user, password);
-
-            if (!result.Succeeded)
+            using (var session = DataService.OpenSession())
             {
-                return "Unable to create user:\n" + String.Join("\n", result.Errors);
-            }
+                var result = await CoreAuthenticationEngine.UserManager.CreateAsync(user, password);
 
-            foreach (var role in userRoles)
-            {
-                var dbUserRole = session.Get<UserRole>(role.ToString());
-
-                var roleAssociation = new UserRoleAssociation()
+                if (!result.Succeeded)
                 {
-                    User = user,
-                    UserRole = dbUserRole
-                };
+                    return "Unable to create user:\n" + String.Join("\n", result.Errors);
+                }
 
-                DataService.SaveOrUpdate<UserRoleAssociation>(session, roleAssociation);
+                foreach (var role in userRoles)
+                {
+                    var dbUserRole = session.Get<UserRole>(role.ToString());
 
-                var tmp = session.Get<UserRoleAssociation>(roleAssociation.Id);
+                    var roleAssociation = new UserRoleAssociation()
+                    {
+                        User = user,
+                        UserRole = dbUserRole
+                    };
+
+                    DataService.SaveOrUpdate<UserRoleAssociation>(session, roleAssociation);
+                }
+
+                session.Flush();
             }
-
             try
             {
                 var emailResult = await SendEmail(user.Id, userName, email);

@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
+using WebsiteTemplate.Backend.Processing.InputProcessing;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Backend.UIProcessors;
-using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
@@ -88,7 +87,7 @@ namespace WebsiteTemplate.Backend.Users
             }
         }
 
-        public override async Task<IList<IEvent>> ValidateInputs()
+        public override async Task<ProcessingResult> ValidateInputs()
         {
             var email = GetValue<string>("Email");
             var userName = GetValue<string>("UserName");
@@ -97,54 +96,19 @@ namespace WebsiteTemplate.Backend.Users
 
             if (String.IsNullOrWhiteSpace(email))
             {
-                return new List<IEvent>()
-                        {
-                            new ShowMessage("Email is mandatory.")
-                        };
+                return new ProcessingResult(false, "Email is mandatory.");
             }
             if (String.IsNullOrWhiteSpace(userName))
             {
-                return new List<IEvent>()
-                    {
-                        new ShowMessage("User name is mandatory.")
-                    };
+                return new ProcessingResult(false, "User name is mandatory.");
             }
 
             if (IsNew && password != confirmPassword)
             {
-                return new List<IEvent>()
-                {
-                    new ShowMessage("Password and password confirmation do not match")
-                };
+                return new ProcessingResult(false, "Password and password confirmation do not match");
             }
 
             return null;
-        }
-
-        public override async Task<IList<IEvent>> ProcessAction(int actionNumber)
-        {
-            try
-            {
-                var result = await base.ProcessAction(actionNumber);
-
-                return result;
-            }
-            catch (Exception error)
-            {
-                if (error.Message.Contains("activation email"))
-                {
-                    return new List<IEvent>()
-                    {
-                        new ExecuteAction(ViewToShowAfterModify, ParametersToPassToViewAfterModify),
-                        new CancelInputDialog(),
-                        new ShowMessage(error.Message)
-                    };
-                }
-                else
-                {
-                    throw;
-                }
-            }
         }
     }
 }

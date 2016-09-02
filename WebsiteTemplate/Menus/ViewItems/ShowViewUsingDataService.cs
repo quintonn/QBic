@@ -15,7 +15,7 @@ namespace WebsiteTemplate.Menus.ViewItems
         }
 
         /// <summary>
-        /// This method can be overriden to extract values from the user input and make it available to the <see cref="TDataItemService" /> when the <see cref="TDataItemService.RetrieveItemCountWithFilter" /> method is called.
+        /// This method can be overridden to extract values from the user input and make it available to the <see cref="TDataItemService" /> when the <see cref="TDataItemService.RetrieveItemCountWithFilter" /> method is called.
         /// </summary>
         /// <param name="data">Data passed to the view from any previous activities.</param>
         /// <returns>Collection of key/value pairs with any parameters that needs to be extracted from the view.</returns>

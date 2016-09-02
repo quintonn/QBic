@@ -31,44 +31,37 @@ namespace WebsiteTemplate.Backend.UIProcessors
             return UserService.FindUserByUserName(userName);
         }
 
-        public override async Task SaveOrUpdate(string itemId)
+        public override async Task<ProcessingResult> SaveOrUpdate(string itemId)
         {
             var message = String.Empty;
-            using (var session = DataService.OpenSession())
+            var email = GetValue<string>("Email");
+            var userName = GetValue<string>("UserName");
+            var password = GetValue<string>("Password");
+            var confirmPassword = GetValue<string>("ConfirmPassword");
+
+            var userRoles = GetValue<List<string>>("UserRoles");
+
+            if (!String.IsNullOrWhiteSpace(itemId))
             {
-                var email = GetValue<string>("Email");
-                var userName = GetValue<string>("UserName");
-                var password = GetValue<string>("Password");
-                var confirmPassword = GetValue<string>("ConfirmPassword");
-
-                var userRoles = GetValue<List<string>>("UserRoles");
-
-                if (!String.IsNullOrWhiteSpace(itemId))
+                var existingUser = UserService.FindUserByUserName(userName);
+                if (existingUser != null && existingUser.Id != itemId)
                 {
-                    var existingUser = UserService.FindUserByUserName(userName);
-                    if (existingUser != null && existingUser.Id != itemId)
-                    {
-                        throw new Exception(String.Format("Unable to modify user. User with name {0} already exists.", userName));
-                    }
+                    return new ProcessingResult(false, String.Format("Unable to modify user. User with name {0} already exists.", userName));
+                }
 
-                    UserService.UpdateUser(itemId, userName, email, userRoles);
-                }
-                else
-                {
-                    message = await UserService.CreateUser(session, userName, email, password, userRoles);
-                }
-                session.Flush();
+                UserService.UpdateUser(itemId, userName, email, userRoles);
+            }
+            else
+            {
+                message = await UserService.CreateUser(userName, email, password, userRoles);
             }
 
-            if (!String.IsNullOrWhiteSpace(message))
-            {
-                throw new Exception(message);
-            }
+            return new ProcessingResult(true, message);
         }
 
-        public override async Task UpdateItem(ISession session, User item)
+        public override async Task<ProcessingResult> UpdateItem(User item)
         {
-            
+            return new ProcessingResult(true);
         }
     }
 }
