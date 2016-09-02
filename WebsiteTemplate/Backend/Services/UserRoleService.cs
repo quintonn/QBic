@@ -94,7 +94,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public Dictionary<string, object> GetListOfEvents()
         {
-            var eventTypesEveryoneCanDo = new List<int>()
+            var eventTypesNoOneCanDo = new List<int>()
                 {
                     EventNumber.CancelInputDialog,
                     EventNumber.DeleteInputViewItem,
@@ -107,7 +107,7 @@ namespace WebsiteTemplate.Backend.Services
                     EventNumber.UserConfirmation,
                 };
 
-            var items = EventService.EventList.Where(e => e.Key != null && !eventTypesEveryoneCanDo.Contains(e.Key))
+            var items = EventService.EventList.Where(e => e.Key != null && !eventTypesNoOneCanDo.Contains(e.Key))
                                                 .ToDictionary(e => e.Key, e => e.Value.Description)
                                                 .OrderBy(e => e.Value)
                                                 .ToDictionary(e => e.Key.ToString(), e => (object)e.Value);
@@ -158,6 +158,10 @@ namespace WebsiteTemplate.Backend.Services
 
         public List<string> RetrieveEventRoleAssociationsForUserRole(string userRoleId)
         {
+            if (String.IsNullOrWhiteSpace(userRoleId))
+            {
+                return new List<string>();
+            }
             var items = EventService.EventList.ToDictionary(e => e.Key, e => e.Value.Description)
                                                     .OrderBy(e => e.Value)
                                                     .ToDictionary(e => e.Key, e => (object)e.Value);

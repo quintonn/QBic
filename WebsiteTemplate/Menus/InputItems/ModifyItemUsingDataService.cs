@@ -77,7 +77,7 @@ namespace WebsiteTemplate.Menus.InputItems
                 var itemId = GetValue("Id");
 
                 var existingItem = ItemProcessor.RetrieveExistingItem();
-                if (IsNew && existingItem != null)
+                if (IsNew && existingItem != null && existingItem.Id != itemId)
                 {
                     return new List<IEvent>()
                     {

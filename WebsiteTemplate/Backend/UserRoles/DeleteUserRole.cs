@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using WebsiteTemplate.Backend.Services;
-using WebsiteTemplate.Menus;
+﻿using WebsiteTemplate.Backend.UIProcessors;
 using WebsiteTemplate.Menus.BaseItems;
+using WebsiteTemplate.Menus.InputItems;
+using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.UserRoles
 {
-    public class DeleteUserRole : DoSomething
+    public class DeleteUserRole : DeleteItemUsingDataService<UserRoleProcessor, UserRole>
     {
         public override string Description
         {
@@ -16,39 +15,22 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
         }
 
-        private UserRoleService UserRoleService { get; set; }
-
-        public DeleteUserRole(UserRoleService service)
+        public override EventNumber ViewToShowAfterModify
         {
-            UserRoleService = service;
+            get
+            {
+                return EventNumber.ViewUserRoles;
+            }
+        }
+
+        public DeleteUserRole(UserRoleProcessor processor)
+            : base(processor)
+        {
         }
 
         public override EventNumber GetId()
         {
             return EventNumber.DeleteUserRole;
-        }
-
-        public override async Task<IList<IEvent>> ProcessAction()
-        {
-            var id = GetValue<string>("Id");
-
-            var isAssigned = UserRoleService.UserRoleIsAssigned(id);
-            if (isAssigned)
-            {
-                return new List<IEvent>()
-                {
-                    new ShowMessage("Cannot delete user role, it is assigned to users.")
-                };
-            }
-
-            UserRoleService.DeleteUserRole(id);
-
-            return new List<IEvent>()
-            {
-                new ShowMessage("User role deleted successfully"),
-                new CancelInputDialog(),
-                new ExecuteAction(EventNumber.ViewUserRoles)
-            };
         }
     }
 }

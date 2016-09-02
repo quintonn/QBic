@@ -19,9 +19,9 @@ namespace WebsiteTemplate.Backend.UIProcessors
             MenuService = menuService;
         }
 
-        public override ProcessingResult DeleteItem(ISession session, string itemId)
+        public override ProcessingResult PreDeleteActivities(ISession session, string itemId)
         {
-            MenuService.DeleteMenuWithId(itemId);
+            MenuService.DeleteChildMenus(itemId, session);
             return new ProcessingResult(true);
         }
 

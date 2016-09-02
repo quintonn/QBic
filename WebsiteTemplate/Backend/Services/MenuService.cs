@@ -63,7 +63,7 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        private void DeleteChildMenus(string menuId, ISession session)
+        public void DeleteChildMenus(string menuId, ISession session)
         {
             var childMenuItems = session.CreateCriteria<Menu>()
                                             .CreateAlias("ParentMenu", "parent")

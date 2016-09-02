@@ -105,6 +105,8 @@ namespace WebsiteTemplate.Backend.Processing.InputProcessing
             return new ProcessingResult(true);
         }
 
+        public abstract ProcessingResult PreDeleteActivities(ISession session, string itemId);
+
         public virtual ProcessingResult DeleteItem(ISession session, string itemId)
         {
             var dbItem = session.Get<T>(itemId);
@@ -116,7 +118,12 @@ namespace WebsiteTemplate.Backend.Processing.InputProcessing
         {
             using (var session = DataService.OpenSession())
             {
-                var result = DeleteItem(session, itemId);
+                var result = PreDeleteActivities(session, itemId);
+                if (result.Success == false)
+                {
+                    return result;  // Don't flush
+                }
+                result = DeleteItem(session, itemId);
                 if (result.Success == false)
                 {
                     return result;  // Don't flush

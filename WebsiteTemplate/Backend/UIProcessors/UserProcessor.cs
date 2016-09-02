@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Processing.InputProcessing;
 using WebsiteTemplate.Backend.Services;
+using System.Linq;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.UIProcessors
@@ -29,6 +30,21 @@ namespace WebsiteTemplate.Backend.UIProcessors
             var userName = GetValue<string>("UserName");
 
             return UserService.FindUserByUserName(userName);
+        }
+
+        public override ProcessingResult PreDeleteActivities(ISession session, string itemId)
+        {
+            var userRoles = session.CreateCriteria<UserRoleAssociation>()
+                                       .CreateAlias("User", "user")
+                                       .Add(Restrictions.Eq("user.Id", itemId))
+                                       .List<UserRoleAssociation>()
+                                       .ToList();
+            userRoles.ForEach(u =>
+            {
+                DataService.TryDelete(session, u);
+            });
+
+            return new ProcessingResult(true);
         }
 
         public override async Task<ProcessingResult> SaveOrUpdate(string itemId)

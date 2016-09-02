@@ -1,46 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using WebsiteTemplate.Backend.Services;
-using WebsiteTemplate.Menus;
+﻿using WebsiteTemplate.Backend.UIProcessors;
 using WebsiteTemplate.Menus.BaseItems;
+using WebsiteTemplate.Menus.InputItems;
+using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Users
 {
-    public class DeleteUser : DoSomething
+    public class DeleteUser : DeleteItemUsingDataService<UserProcessor, User>
     {
-        private UserService UserService { get; set; }
-
-        public DeleteUser(UserService service)
+        public DeleteUser(UserProcessor userProcessor)
+            : base(userProcessor)
         {
-            UserService = service;
-        }
-
-        public override EventNumber GetId()
-        {
-            return EventNumber.DeleteUser;
         }
 
         public override string Description
         {
             get
             {
-                return "Delete User";
+                return "Delete a user";
             }
         }
 
-        public override async Task<IList<IEvent>> ProcessAction()
+        public override EventNumber ViewToShowAfterModify
         {
-            var id = GetValue<string>("Id");
-
-            UserService.DeleteUser(id);
-
-            return new List<IEvent>()
+            get
             {
-                new ShowMessage("User deleted successfully"),
-                new CancelInputDialog(),
-                new ExecuteAction(EventNumber.ViewUsers, String.Empty)
-            };
+                return EventNumber.ViewUsers;
+            }
+        }
+
+        public override EventNumber GetId()
+        {
+            return EventNumber.DeleteUser;
         }
     }
 }

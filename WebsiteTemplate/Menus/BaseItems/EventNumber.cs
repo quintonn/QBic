@@ -41,10 +41,6 @@ namespace WebsiteTemplate.Menus.BaseItems
         public static EventNumber UpdateDataSourceComboBox = new EventNumber(1602);
         public static EventNumber UpdateInput = new EventNumber(1603);
 
-        internal static EventNumber Test = new EventNumber(654321);
-        internal static EventNumber TestConfirmation = new EventNumber(654322);
-        internal static EventNumber TestCreate = new EventNumber(654323);
-
         public static implicit operator EventNumber(int value)
         {
             return new EventNumber(value);

@@ -142,27 +142,6 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        public void DeleteUser(string userId)
-        {
-            using (var session = DataService.OpenSession())
-            {
-                var user = session.Get<User>(userId);
-
-                var userRoles = session.CreateCriteria<UserRoleAssociation>()
-                                       .CreateAlias("User", "user")
-                                       .Add(Restrictions.Eq("user.Id", userId))
-                                       .List<UserRoleAssociation>()
-                                       .ToList();
-                userRoles.ForEach(u =>
-                {
-                    DataService.TryDelete(session, u);
-                });
-
-                DataService.TryDelete(session, user);
-                session.Flush();
-            }
-        }
-
         public User FindUserByUserName(string userName)
         {
             using (var session = DataService.OpenSession())

@@ -48,12 +48,15 @@ namespace WebsiteTemplate.Menus.InputItems
                 message = result.Message;
             }
 
-            return new List<IEvent>()
+            var events = new List<IEvent>();
+            events.Add(new CancelInputDialog());
+            if (ViewToShowAfterModify != null)
             {
-                new CancelInputDialog(),
-                new ExecuteAction(ViewToShowAfterModify, ParametersToPassToViewAfterModify),
-                new ShowMessage(message),
-            };
+                events.Add(new ExecuteAction(ViewToShowAfterModify, ParametersToPassToViewAfterModify));
+            }
+            events.Add(new ShowMessage(message));
+
+            return events;
         }
     }
 }

@@ -37,13 +37,7 @@ namespace WebsiteTemplate.Backend.Users
             );
             
             columnConfig.AddLinkColumn("", "Id", "Edit", EventNumber.EditUser);
-            columnConfig.AddLinkColumn("", "Id", "View", EventNumber.Test);
-
-            //columnConfig.AddButtonColumn("Roles", "", ButtonTextSource.Fixed, "...",
-            //    columnSetting: null,
-            //    eventItem: new ExecuteAction(EventNumber.ViewUserRoleAssociations, String.Empty) /// The data is passed from the view automatically
-            //);
-
+            
             columnConfig.AddButtonColumn("", "Id", "X",
                 new UserConfirmation("Delete User?")
                 {
