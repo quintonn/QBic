@@ -23,7 +23,6 @@ namespace WebsiteTemplate.Backend.Processing
             var user = await GetLoggedInUser();
             using (var session = DataService.OpenSession())
             {
-                session.DefaultReadOnly = true;
                 var events = GetAllowedEventsForUser(user.Id).ToArray();
 
                 var mainMenus = session.CreateCriteria<Menu>()
@@ -47,8 +46,6 @@ namespace WebsiteTemplate.Backend.Processing
                     AddSubMenu(m, session, events);
                     results.Add(m);
                 });
-
-                session.Flush();
             }
 
             return results;

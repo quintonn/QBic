@@ -26,19 +26,15 @@ namespace WebsiteTemplate.Backend.Processing
             JsonResult<T> jsonResult;
             try
             {
-                using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                await AuditService.LogUserEvent(eventId);
+                var result = await ProcessEvent(eventId);
+
+                if (result is FileActionResult)
                 {
-                    await AuditService.LogUserEvent(eventId);
-                    var result = await ProcessEvent(eventId);
-
-                    if (result is FileActionResult)
-                    {
-                        return result as FileActionResult;
-                    }
-
-                    jsonResult = new JsonResult<T>(result, JSON_SETTINGS, Encoding.UTF8, requestMessage);
-                    scope.Complete();
+                    return result as FileActionResult;
                 }
+
+                jsonResult = new JsonResult<T>(result, JSON_SETTINGS, Encoding.UTF8, requestMessage);
                 return jsonResult;
             }
             catch (Exception error)
