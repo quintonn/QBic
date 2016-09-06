@@ -2,7 +2,7 @@
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.BasicCrudItems;
 
-namespace WebsiteTemplate.Backend.TestItem
+namespace WebsiteTemplate.Backend.TestItems
 {
     public class SuperMenuItem : BasicCrudMenuItem<SuperCause>
     {

@@ -24,6 +24,7 @@ namespace WebsiteTemplate.Backend.Processing.InputProcessing
             using (var session = DataService.OpenSession())
             {
                 var query = session.QueryOver<T>();
+                
                 query = CreateQueryForRetrieval(query, filter, additionalParameters);
 
                 return query.RowCount();

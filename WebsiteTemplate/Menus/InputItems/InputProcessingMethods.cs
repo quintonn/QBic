@@ -24,6 +24,26 @@ namespace WebsiteTemplate.Menus.InputItems
             }
         }
 
+        public static decimal GetDecimalValue(string decimalString, decimal defaultValue = 0)
+        {
+            decimal result;
+            if (Decimal.TryParse(decimalString, out result))
+            {
+                return result;
+            }
+            return defaultValue;
+        }
+
+        public static DateTime? GetDateFromString(string dateString, DateTime? defaultValue = null)
+        {
+            DateTime result;
+            if (DateTime.TryParse(dateString, out result))
+            {
+                return result;
+            }
+            return defaultValue;
+        }
+
         public static T GetValue<T>(IDictionary<string, object> inputData, string propertyName, T defaultValue = default(T))
         {
             object value = defaultValue;

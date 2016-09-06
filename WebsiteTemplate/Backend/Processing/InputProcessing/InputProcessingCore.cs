@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.InputItems;
@@ -43,6 +44,16 @@ namespace WebsiteTemplate.Backend.Processing.InputProcessing
         public string GetValue(string propertyName)
         {
             return InputProcessingMethods.GetValue<string>(InputData, propertyName);
+        }
+
+        public DateTime? GetDateFromString(string dateString, DateTime? defaultValue = null)
+        {
+            return InputProcessingMethods.GetDateFromString(dateString, defaultValue);
+        }
+
+        public decimal GetDecimalValue(string decimalString, decimal defaultValue = 0)
+        {
+            return InputProcessingMethods.GetDecimalValue(decimalString, defaultValue);
         }
     }
 }

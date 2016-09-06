@@ -45,6 +45,10 @@
       <HintPath>..\packages\BasicAuthentication.0.0.6077.41662\lib\net45\BasicAuthentication.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="DocumentGenerator, Version=0.0.6093.37165, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentGenerator.0.0.6093.37165\lib\net46\DocumentGenerator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="FluentNHibernate, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\FluentNHibernate.2.0.3.0\lib\net40\FluentNHibernate.dll</HintPath>
@@ -97,6 +101,18 @@
       <HintPath>..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="MigraDoc.DocumentObjectModel, Version=1.32.4334.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp-MigraDoc-GDI.1.32.4334.0\lib\net20\MigraDoc.DocumentObjectModel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MigraDoc.Rendering, Version=1.32.4334.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp-MigraDoc-GDI.1.32.4334.0\lib\net20\MigraDoc.Rendering.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MigraDoc.RtfRendering, Version=1.32.4334.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp-MigraDoc-GDI.1.32.4334.0\lib\net20\MigraDoc.RtfRendering.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -107,6 +123,14 @@
     </Reference>
     <Reference Include="Owin">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp-MigraDoc-GDI.1.32.4334.0\lib\net20\PdfSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PdfSharp.Charting, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp-MigraDoc-GDI.1.32.4334.0\lib\net20\PdfSharp.Charting.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
@@ -210,6 +234,8 @@
   <ItemGroup>
     <Compile Include="Backend\Processing\InitializationProcessor.cs" />
     <Compile Include="Backend\Processing\InputProcessing\ProcessingResult.cs" />
+    <Compile Include="Backend\TestItems\TestView.cs" />
+    <Compile Include="Backend\TestItems\TestPdf.cs" />
     <Compile Include="Backend\UIProcessors\MenuProcessor.cs" />
     <Compile Include="Backend\Menus\AddMenu.cs" />
     <Compile Include="Backend\Menus\EditMenu.cs" />
@@ -232,8 +258,8 @@
     <Compile Include="Backend\Processing\InputProcessing\NHibernateInputProcessing.cs" />
     <Compile Include="Backend\Services\UserRoleService.cs" />
     <Compile Include="Backend\Services\UserService.cs" />
-    <Compile Include="Backend\TestItem\SuperCause.cs" />
-    <Compile Include="Backend\TestItem\SuperMenuItem.cs" />
+    <Compile Include="Backend\TestItems\SuperCause.cs" />
+    <Compile Include="Backend\TestItems\SuperMenuItem.cs" />
     <Compile Include="Backend\UIProcessors\UserProcessor.cs" />
     <Compile Include="Backend\UIProcessors\UserRoleProcessor.cs" />
     <Compile Include="Backend\UserRoles\AddUserRole.cs" />

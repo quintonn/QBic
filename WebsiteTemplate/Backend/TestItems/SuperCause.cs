@@ -1,7 +1,7 @@
 ﻿using System;
 using WebsiteTemplate.Mappings;
 
-namespace WebsiteTemplate.Backend.TestItem
+namespace WebsiteTemplate.Backend.TestItems
 {
     public class SuperCause : DynamicClass
     {

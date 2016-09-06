@@ -13,22 +13,12 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public DateTime? GetDateFromString(string dateString, DateTime? defaultValue = null)
         {
-            DateTime result;
-            if (DateTime.TryParse(dateString, out result))
-            {
-                return result;
-            }
-            return defaultValue;
+            return InputProcessingMethods.GetDateFromString(dateString, defaultValue);
         }
 
         public decimal GetDecimalValue(string decimalString, decimal defaultValue = 0)
         {
-            decimal result;
-            if (Decimal.TryParse(decimalString, out result))
-            {
-                return result;
-            }
-            return defaultValue;
+            return InputProcessingMethods.GetDecimalValue(decimalString, defaultValue);
         }
 
         public T GetValue<T>(string propertyName, T defaultValue = default(T))
