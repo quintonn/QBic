@@ -52,7 +52,7 @@ namespace WebsiteTemplate.Backend.TestItems
             var user = userTask.Result as User;
             var formats = DateTime.Now.GetDateTimeFormats();
             
-            var footer = "Printed by " + user.UserName + " on " + System.DateTime.Now.ToShortDateString();
+            var footer = "Printed by " + user.UserName + " on " + System.DateTime.Now.ToString("yyyy-MM-dd");
             document.SetDocumentFooter(footer);
 
             document.SetSideMargin(Unit.FromCentimeter(1));
