@@ -72,7 +72,6 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                                     .List<T>().ToList();
                 return result;
             }
-
         }
 
         public override int GetDataCount(string data, string filter)
