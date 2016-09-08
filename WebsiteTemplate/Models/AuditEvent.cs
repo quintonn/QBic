@@ -14,5 +14,7 @@ namespace WebsiteTemplate.Models
         public string EntityName { get; set; }
         public string OriginalObject { get; set; }
         public string NewObject { get; set; }
+
+        //public IList<EventRoleAssociation> EventRoles { get; set; }
     }
 }

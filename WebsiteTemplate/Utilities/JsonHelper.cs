@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using WebsiteTemplate.Menus.InputItems;
 
 namespace WebsiteTemplate.Utilities
 {
@@ -48,9 +49,28 @@ namespace WebsiteTemplate.Utilities
 
             var item = Data.GetValue(propertyName);
 
+            var nullableType = Nullable.GetUnderlyingType(typeof(T));
+
             if (item != null)
             {
-                if (typeof(T) == typeof(String))
+                if (typeof(T).IsEnum || (nullableType != null && nullableType.IsEnum))
+                {
+                    T tempValue;
+                    if (InputProcessingMethods.TryParseEnum(item.ToString(), true, out tempValue))
+                    {
+                        value = tempValue;
+                    }
+                    //else if (Nullable.GetUnderlyingType(typeof(T)) != null)
+                    else if (nullableType.IsEnum)
+                    {
+                        value = null;
+                    }
+                    else
+                    {
+                        throw new Exception(String.Format("Unable to parse non-nullable enum from value '{0}'", value));
+                    }
+                }
+                else if (typeof(T) == typeof(String))
                 {
                     value = item.ToString();
                 }
@@ -181,7 +201,12 @@ namespace WebsiteTemplate.Utilities
 
         public static string SerializeObject(object value)
         {
-            return JsonConvert.SerializeObject(value);
+            var jsonSettings = new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            };
+
+            return JsonConvert.SerializeObject(value, Formatting.None, jsonSettings);
         }
     }
 }

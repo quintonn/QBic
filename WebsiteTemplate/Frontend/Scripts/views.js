@@ -43,13 +43,14 @@
         self.visible = ko.observable(visible);
     }
 
-    views.viewMenuModel = function(label, eventId, menuParams, viewParams)
+    views.viewMenuModel = function(label, eventId, menuParams, viewParams, includeDataInView)
     {
         var self = this;
         self.label = ko.observable(label);
         self.eventId = eventId;
         self.menuParams = menuParams;
         self.viewParams = viewParams;
+        self.includeDataInView = includeDataInView;
     }
 
     function cellModel(value, cellIsVisible, columnType)
@@ -127,13 +128,15 @@
                 var data =
                     {
                         data: menu.menuParams,
-                        parameters: menu.viewParams
+                        parameters: menu.viewParams,
+                        //filterValue: self.filterText()
                     }
 
-                if (self.settings.ActionType == 7) // View Input
+                if (menu.includeDataInView == true)
                 {
                     self.addViewDataToParams(data);
                 }
+
                 return mainApp.executeUIAction(menu.eventId, data);
             }).then(dialog.closeBusyDialog);
         };
@@ -145,15 +148,24 @@
             {
                 return r.data;
             });
-
             var mainData = params['data'];
             if (mainData == null || mainData.length == 0)
             {
                 mainData = {};
             }
-            mainData = JSON.parse(JSON.stringify(mainData)); // without this a circular reference is created by the next line
+            
+            if (typeof mainData == "object")
+            {
+                mainData = JSON.parse(JSON.stringify(mainData)); // without this a circular reference is created by the next line    
+            }
+            else
+            {
+                mainData = JSON.parse(mainData); // without this a circular reference is created by the next line
+            }
+            
             mainData["ViewData"] = rowsData;
-
+            mainData["Filter"] = self.filterText();
+            
             params['data'] = mainData;
             //params['ViewData'] = rowsData;
         };

@@ -234,6 +234,7 @@
   <ItemGroup>
     <Compile Include="Backend\Processing\InitializationProcessor.cs" />
     <Compile Include="Backend\Processing\InputProcessing\ProcessingResult.cs" />
+    <Compile Include="Backend\TestItems\CauseChild.cs" />
     <Compile Include="Backend\TestItems\TestView.cs" />
     <Compile Include="Backend\TestItems\TestPdf.cs" />
     <Compile Include="Backend\UIProcessors\MenuProcessor.cs" />

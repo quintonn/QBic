@@ -4,7 +4,9 @@ using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
 using System;
 using System.Configuration;
+using System.Diagnostics;
 using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Backend.TestItems;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Data
@@ -39,7 +41,7 @@ namespace WebsiteTemplate.Data
 
         static DataStore()
         {
-            //if (Debugger.IsAttached == false) Debugger.Launch();
+            //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
             
             Store = CreateSessionFactory();
 

@@ -8,7 +8,7 @@ namespace WebsiteTemplate.Menus.InputItems
 {
     public static class InputProcessingMethods
     {
-        private static bool TryParseEnum<TEnum>(string value, bool ignoreCase, out TEnum resultValue)
+        internal static bool TryParseEnum<TEnum>(string value, bool ignoreCase, out TEnum resultValue)
         {
             resultValue = default(TEnum);
             try

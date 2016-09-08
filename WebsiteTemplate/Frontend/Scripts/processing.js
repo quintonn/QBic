@@ -1,4 +1,5 @@
 ﻿/// <reference path="mainApplication.js" />
+/// <reference path="views.js" />
 
 (function (processing, $, undefined)
 {
@@ -267,7 +268,7 @@
             for (var i = 0; i < menuItems.length; i++)
             {
                 var menu = menuItems[i];
-                var mModel = new views.viewMenuModel(menu.Label, menu.EventNumber, menu.ParametersToPass, params);
+                var mModel = new views.viewMenuModel(menu.Label, menu.EventNumber, menu.ParametersToPass, params, menu.IncludeDataInView);
                 model.viewMenus.push(mModel);
             }
             dialog.closeBusyDialog();
