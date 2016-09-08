@@ -30,7 +30,7 @@ namespace WebsiteTemplate.Backend.Processing
 
             var eventItem = EventList[eventId] as OpenFile;
 
-            var fileInfo = eventItem.GetFileInfo(data);
+            var fileInfo = await eventItem.GetFileInfo(data);
             //return fileInfo;
             return new FileActionResult(fileInfo);
         }

@@ -1,4 +1,5 @@
-﻿using WebsiteTemplate.Menus.BaseItems;
+﻿using System.Threading.Tasks;
+using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 
 namespace WebsiteTemplate.Menus
@@ -28,7 +29,7 @@ namespace WebsiteTemplate.Menus
             }
         }
 
-        public abstract FileInfo GetFileInfo(string data);
+        public abstract Task<FileInfo> GetFileInfo(string data);
 
         public override EventType ActionType
         {

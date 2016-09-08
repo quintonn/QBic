@@ -80,8 +80,8 @@ namespace WebsiteTemplate.Mappings
 
                 dynamic tmp = generic.Invoke(this, new object[] { column.Name });
 
-                //HasMany<object>(x => x.Id).KeyColumn("").Inverse().AsBag();  // for intellisense
-                HasMany(tmp).KeyColumn(tableName + "_id").Inverse().AsBag().Not.LazyLoad();
+                //HasMany<object>(x => x.Id).KeyColumn("").Inverse().AsSet();  // for intellisense
+                HasMany(tmp).KeyColumn(tableName + "_id").Inverse().AsSet().Not.LazyLoad();
             }
         }
 

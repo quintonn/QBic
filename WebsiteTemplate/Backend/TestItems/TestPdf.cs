@@ -5,6 +5,7 @@ using Microsoft.Practices.Unity;
 using MigraDoc.DocumentObjectModel;
 using System;
 using System.Globalization;
+using System.Threading.Tasks;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
@@ -29,7 +30,7 @@ namespace WebsiteTemplate.Backend.TestItems
             }
         }
 
-        public override FileInfo GetFileInfo(string data)
+        public override async Task<FileInfo> GetFileInfo(string data)
         {
             var result = new FileInfo();
 

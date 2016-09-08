@@ -12,6 +12,11 @@ namespace WebsiteTemplate.Backend.TestItems
 
         public virtual DateTime? SuperDate { get; set; }
 
-        public virtual IList<CauseChild> CauseChildren { get; set; }
+        public virtual ISet<CauseChild> CauseChildren { get; set; }
+
+        public SuperCause()
+        {
+            CauseChildren = new HashSet<CauseChild>();
+        }
     }
 }
