@@ -48,6 +48,19 @@ namespace WebsiteTemplate.Menus.BaseItems
 
         public static implicit operator int(EventNumber eventNumber)
         {
+            if (eventNumber == null)
+            {
+                return 0;
+            }
+            return eventNumber.Value;
+        }
+
+        public static implicit operator int?(EventNumber eventNumber)
+        {
+            if (eventNumber == null)
+            {
+                return null;
+            }
             return eventNumber.Value;
         }
     }
