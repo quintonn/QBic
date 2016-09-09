@@ -199,14 +199,14 @@ namespace WebsiteTemplate.Utilities
             return JsonConvert.DeserializeObject<T>(value);
         }
 
-        public static string SerializeObject(object value)
+        public static string SerializeObject(object value, Formatting formatting = Formatting.None)
         {
             var jsonSettings = new JsonSerializerSettings()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             };
 
-            return JsonConvert.SerializeObject(value, Formatting.None, jsonSettings);
+            return JsonConvert.SerializeObject(value, formatting, jsonSettings);
         }
     }
 }

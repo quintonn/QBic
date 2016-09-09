@@ -23,6 +23,12 @@ namespace WebsiteTemplate.Utilities
 
         }
 
+        //public static JsonArray ParseStringList(string jsonString)
+        //{
+        //    var list = Newtonsoft.Json.Linq.JArray.Parse(jsonString).ToList();
+        //    return new JsonArray(list);
+        //}
+
         public static JsonArray FromObject(object collection)
         {
             try

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using WebsiteTemplate.Menus.BaseItems;
+using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
 
@@ -45,7 +46,7 @@ namespace WebsiteTemplate.Backend.Services
         {
             return EventService.EventList.Where(e => e.Value.ActionType != EventType.InputDataView)
                                            .Where(m => !String.IsNullOrWhiteSpace(m.Value.Description))
-                                           .Where(m => m.Value is ShowView) // TODO: this is not right. can't have 'add xx' in menu at the moment
+                                           .Where(m => m.Value is ShowView || (m.Value is GetInput && (m.Value as GetInput).Id == EventNumber.AuditReportFilter)) // TODO: this is not right. can't have 'add xx' in menu at the moment
                                            .OrderBy(m => m.Value.Description)  //    maybe need a setting 'allow in menu' etc
                                            .ToDictionary(m => m.Key.ToString(), m => (object)m.Value.Description);
         }

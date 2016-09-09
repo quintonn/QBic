@@ -58,8 +58,10 @@
                     case 5:
                         return dialog.getUserConfirmation(item, item.Data, params);
                     case 6: // Execute UI action
-                        dialog.showBusyDialog("Processing...");
-                        return mainApp.executeUIAction(item.EventNumber, item.ParametersToPass).then(dialog.closeBusyDialog);
+                        return dialog.showBusyDialog("Processing...").then(function ()
+                        {
+                            return mainApp.executeUIAction(item.EventNumber, item.ParametersToPass).then(dialog.closeBusyDialog);
+                        });
                     case 8: // Update input view (view in input screen)
                     case 9: // DeleteInputViewItem
                         params = JSON.parse(params);
@@ -166,7 +168,7 @@
                     dialog.showMessage("Info", "The content was blocked by your browser. Look in the top-right corner to allow popups on this site or to view the file this time only.");
                 }
             }
-        });
+        }).catch(dialog.closeBusyDialog);
     };
 
     processing.supportsBlob = function ()

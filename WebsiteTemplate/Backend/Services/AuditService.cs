@@ -1,5 +1,5 @@
-﻿using Microsoft.Practices.Unity;
-using System;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
@@ -39,6 +39,8 @@ namespace WebsiteTemplate.Backend.Services
             var userTask = BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync();
             userTask.Wait();
             var user = userTask.Result as User;
+            //TODO: what if user is anonymous, null or system events???
+            entityName = entityName.Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Last();
 
             using (var session = DataStore.OpenSession())
             {
@@ -69,7 +71,7 @@ namespace WebsiteTemplate.Backend.Services
             {
                 return String.Empty;
             }
-            var result = JsonHelper.SerializeObject(item);
+            var result = JsonHelper.SerializeObject(item, Newtonsoft.Json.Formatting.Indented);
             return result;
         }
     }

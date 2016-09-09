@@ -58,7 +58,7 @@ namespace WebsiteTemplate.Backend.TestItems
 
             document.SetSideMargin(Unit.FromCentimeter(1));
 
-            using (var stream = document.GenerateDocument())
+            using (var stream = document.GenerateDocument(false))
             {
                 result.Data = stream.ToArray();
                 result.FileName = document.DocumentTitle;

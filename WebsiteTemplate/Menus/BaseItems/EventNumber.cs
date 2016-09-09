@@ -41,6 +41,9 @@ namespace WebsiteTemplate.Menus.BaseItems
         public static EventNumber UpdateDataSourceComboBox = new EventNumber(1602);
         public static EventNumber UpdateInput = new EventNumber(1603);
 
+        public static EventNumber AuditReportFilter = new EventNumber(1610);
+        public static EventNumber CreateAuditReport = new EventNumber(1611);
+
         public static implicit operator EventNumber(int value)
         {
             return new EventNumber(value);

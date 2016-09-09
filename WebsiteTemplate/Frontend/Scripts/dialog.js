@@ -28,6 +28,14 @@
         });
     };
 
+    dialog.closeAllBusyDialogs = function ()
+    {
+        while (_applicationModel.busyContainers().length > 0)
+        {
+            _applicationModel.busyContainers.pop();
+        }
+    };
+
     dialog.closeBusyDialog = function ()
     {
         var model = _applicationModel.busyContainers()[_applicationModel.busyContainers().length - 1];

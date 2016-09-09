@@ -45,8 +45,8 @@
       <HintPath>..\packages\BasicAuthentication.0.0.6077.41662\lib\net45\BasicAuthentication.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DocumentGenerator, Version=0.0.6093.37165, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DocumentGenerator.0.0.6093.37165\lib\net46\DocumentGenerator.dll</HintPath>
+    <Reference Include="DocumentGenerator, Version=0.0.6096.22270, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentGenerator.0.0.6096.22270\lib\net46\DocumentGenerator.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FluentNHibernate, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -232,6 +232,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Backend\AuditReport\AuditReportFilter.cs" />
+    <Compile Include="Backend\AuditReport\CreateAuditReport.cs" />
     <Compile Include="Backend\Processing\InitializationProcessor.cs" />
     <Compile Include="Backend\Processing\InputProcessing\ProcessingResult.cs" />
     <Compile Include="Backend\TestItems\CauseChild.cs" />
