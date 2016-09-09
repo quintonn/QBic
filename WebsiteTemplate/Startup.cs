@@ -45,10 +45,13 @@ namespace WebsiteTemplate
             Container = new UnityContainer();
             Container.LoadConfiguration();
 
-            Container.RegisterInstance(DataStore.GetInstance());
-            
             var appSettings = Container.Resolve<ApplicationSettingsCore>();
-            appSettings.RegisterUnityContainers(Container);
+            Container.RegisterInstance(DataStore.GetInstance(appSettings));
+
+            Container.RegisterType(typeof(ApplicationStartup), appSettings.GetApplicationStartupType);
+
+            var appStartup = Container.Resolve<ApplicationStartup>();
+            appStartup.RegisterUnityContainers(Container);
 
             config.DependencyResolver = new UnityDependencyResolver(Container);
         }

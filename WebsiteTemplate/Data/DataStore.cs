@@ -8,6 +8,7 @@ using System.Diagnostics;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Backend.TestItems;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Data
 {
@@ -23,15 +24,19 @@ namespace WebsiteTemplate.Data
         //-- Long term maybe make my own query language??
         private static DataStore _instance { get; set; }
 
-        private DataStore()
+        private ApplicationSettingsCore AppSettings { get; set; }
+
+        private DataStore(ApplicationSettingsCore appSettings)
         {
+            AppSettings = appSettings;
+            init();
         }
 
-        internal static DataStore GetInstance()
+        internal static DataStore GetInstance(ApplicationSettingsCore appSettings)
         {
             if (_instance == null)
             {
-                _instance = new DataStore();
+                _instance = new DataStore(appSettings);
             }
             return _instance;
         }
@@ -39,7 +44,8 @@ namespace WebsiteTemplate.Data
         private static ISessionFactory Store;
         private static NHibernate.Cfg.Configuration Configuration;
 
-        static DataStore()
+        //static DataStore()
+        private void init()
         {
             //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
             
@@ -48,11 +54,15 @@ namespace WebsiteTemplate.Data
             new SchemaUpdate(Configuration).Execute(true, true);
         }
 
-        private static ISessionFactory CreateSessionFactory()
+        private ISessionFactory CreateSessionFactory()
         {
             //if (Debugger.IsAttached == false) Debugger.Launch();
             var container = new FluentMappingsContainer();
+
             var mainConnectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
+            //mainConnectionString = Encryption.Encrypt(mainConnectionString, AppSettings.ApplicationPassPhrase);
+            mainConnectionString = Encryption.Decrypt(mainConnectionString, AppSettings.ApplicationPassPhrase);
+            
             if (String.IsNullOrWhiteSpace(mainConnectionString))
             {
                 throw new ArgumentNullException("MainDataStore connection string property in web.config does not contain a value for connection string");

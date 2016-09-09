@@ -79,7 +79,9 @@ namespace WebsiteTemplate.Backend.Services
 
         public async Task<string> SendEmail(string userId, string userName, string emailAddress)
         {
+            //TODO: This should be a setting in a system settings table.
             var smtp = ConfigurationManager.GetSection("system.net/mailSettings/smtp") as SmtpSection;
+
             if (smtp == null)
             {
                 return await Task.FromResult(String.Empty);

@@ -34,6 +34,7 @@ namespace WebsiteTemplate.Backend.Menus
         public ViewMenus(MenuProcessor menuProcessor)
             :base(menuProcessor)
         {
+            
         }
 
         public override IList<MenuItem> GetViewMenu(Dictionary<string, string> dataForMenu)

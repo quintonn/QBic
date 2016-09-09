@@ -202,6 +202,7 @@
     <Content Include="Frontend\fonts\fontawesome-webfont.ttf" />
     <Content Include="Frontend\fonts\fontawesome-webfont.woff" />
     <Content Include="Frontend\fonts\fontawesome-webfont.woff2" />
+    <Content Include="ConnectionStrings.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -293,6 +294,9 @@
     <Compile Include="Menus\ViewItems\ShowViewUsingInputProcessor.cs" />
     <Compile Include="Models\AuditAction.cs" />
     <Compile Include="Models\AuditEvent.cs" />
+    <Compile Include="SiteSpecific\DefaultsForTest\DefaultStartup.cs" />
+    <Compile Include="Utilities\ApplicationStartup.cs" />
+    <Compile Include="Utilities\Encryption.cs" />
     <Compile Include="Utilities\JsonArray.cs" />
     <Compile Include="Utilities\JsonHelper.cs" />
     <Compile Include="Utilities\UnityDependencyResolver.cs" />
