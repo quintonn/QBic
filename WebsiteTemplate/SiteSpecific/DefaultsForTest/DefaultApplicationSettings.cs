@@ -25,5 +25,13 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
                 return typeof(DefaultStartup);
             }
         }
+
+        public override string SystemEmailAddress
+        {
+            get
+            {
+                return "q10atwork@gmail.com";
+            }
+        }
     }
 }

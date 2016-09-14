@@ -79,12 +79,15 @@ namespace WebsiteTemplate.Backend.Services
 
         public async Task<string> SendEmail(string userId, string userName, string emailAddress)
         {
-            //TODO: This should be a setting in a system settings table.
-            var smtp = ConfigurationManager.GetSection("system.net/mailSettings/smtp") as SmtpSection;
-
-            if (smtp == null)
+            Models.SystemSettings settings;
+            using (var session = DataService.OpenSession())
             {
-                return await Task.FromResult(String.Empty);
+                settings = session.QueryOver<Models.SystemSettings>().SingleOrDefault<Models.SystemSettings>();
+            }
+
+            if (settings == null)
+            {
+                throw new Exception("No system settings have been setup.");
             }
 
             var emailToken = CoreAuthenticationEngine.UserManager.GenerateEmailConfirmationTokenAsync(userId).Result;
@@ -99,17 +102,18 @@ namespace WebsiteTemplate.Backend.Services
 
             body += GetCurrentUrl() + "/api/v1/menu/ConfirmEmail?userId=" + userId + "&token=" + HttpUtility.UrlEncode(emailToken);
 
-            var mailMessage = new MailMessage(smtp.From, emailAddress, "Email Confirmation", body);
+            var mailMessage = new MailMessage(settings.EmailFromAddress, emailAddress, "Email Confirmation", body);
 
             var sendEmailTask = Task.Run(() =>
             {
                 try
                 {
-                    var smtpClient = new SmtpClient(smtp.Network.Host, smtp.Network.Port);
+                    var smtpClient = new SmtpClient(settings.EmailHost, settings.EmailPort);
 
-                    smtpClient.Credentials = new System.Net.NetworkCredential(smtp.Network.UserName, smtp.Network.Password);
+                    var password = Encryption.Decrypt(settings.EmailPassword, ApplicationSettings.ApplicationPassPhrase);
+                    smtpClient.Credentials = new System.Net.NetworkCredential(settings.EmailUserName, password);
                     smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                    smtpClient.EnableSsl = smtp.Network.EnableSsl;
+                    smtpClient.EnableSsl = settings.EmailEnableSsl;
 
                     smtpClient.Send(mailMessage);
                 }

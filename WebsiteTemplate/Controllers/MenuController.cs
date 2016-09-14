@@ -3,6 +3,7 @@ using BasicAuthentication.Users;
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
@@ -37,6 +38,10 @@ namespace WebsiteTemplate.Controllers
         {
             try
             {
+                // Set current user to 'System' user for auditing purposes. Because no user will be logged in at the moment.
+                var principal = new GenericPrincipal(new GenericIdentity("System"), new string[] { });
+                HttpContext.Current.User = principal;
+
                 var queryString = this.Request.GetQueryNameValuePairs();
                 var userId = queryString.Single(q => q.Key == "userId").Value;
                 var emailToken = queryString.Single(q => q.Key == "token").Value;

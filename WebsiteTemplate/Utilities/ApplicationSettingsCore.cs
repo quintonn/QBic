@@ -11,5 +11,7 @@ namespace WebsiteTemplate.Utilities
         public abstract string ApplicationPassPhrase { get; }
 
         public abstract Type GetApplicationStartupType { get; }
+
+        public abstract string SystemEmailAddress { get; }
     }
 }

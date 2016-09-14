@@ -42,7 +42,31 @@ namespace WebsiteTemplate.Backend.Processing
         }
         private static void PopulateDefaultValues()
         {
+            CreateInternalUsers();
             ApplicationStartup.SetupDefaultsInternal();
+        }
+
+        private static void CreateInternalUsers()
+        {
+            using (var session = DataService.OpenSession())
+            {
+                var exists = session.QueryOver<User>().Where(i => i.UserName == "System").RowCount() > 0;
+                if (exists == false)
+                {
+                    var systemUser = new User()
+                    {
+                        CanDelete = false,
+                        Email = Container.Resolve<ApplicationSettingsCore>().SystemEmailAddress,
+                        EmailConfirmed = true,
+                        UserName = "System",
+                        UserStatus = UserStatus.Active,
+                        PasswordHash = ""
+                    };
+
+                    session.Save(systemUser);
+                    session.Flush();
+                }
+            }
         }
 
         public IDictionary<int, IEvent> EventList

@@ -15,7 +15,6 @@ namespace WebsiteTemplate.Mappings
             {
                 Id(x => x.Id).GeneratedBy.Custom<CustomIdentifierGenerator>();
             }
-            //Id(x => x.Id).GeneratedBy.Custom<CustomIdentifierGenerator>();
 
             Map(x => x.CanDelete).Default("1")
                                  .Not.Nullable();
