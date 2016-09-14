@@ -186,12 +186,19 @@
             var tabs = self.tabs().slice(0);
             tabs.push(self.combinedTab());
 
-            var getInputs = function (tab)
+            var getInputsFunc = function (tab)
             {
-                return tab.getInputs(validateInput);
+                if (tab != null)
+                {
+                    return tab.getInputs(validateInput);
+                }
+                else
+                {
+                    return [];
+                }
             }
 
-            return Promise.all(tabs.map(getInputs));
+            return Promise.all(tabs.map(getInputsFunc));
         }
 
         self.buttonClick = function(btn, evt)
