@@ -199,14 +199,24 @@ namespace WebsiteTemplate.Utilities
             return JsonConvert.DeserializeObject<T>(value);
         }
 
-        public static string SerializeObject(object value, Formatting formatting = Formatting.None)
+        public static T DeserializeObject<T>(string value, bool includeTypeInfo = false)
         {
             var jsonSettings = new JsonSerializerSettings()
             {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                TypeNameHandling = includeTypeInfo == true ? TypeNameHandling.All : TypeNameHandling.None,
+            };
+            return JsonConvert.DeserializeObject<T>(value, jsonSettings);
+        }
+
+        public static string SerializeObject(object value, bool prettyFormat = false, bool includeTypeInfo = false)
+        {
+            var jsonSettings = new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                TypeNameHandling = includeTypeInfo == true ? TypeNameHandling.All : TypeNameHandling.None,
             };
 
-            return JsonConvert.SerializeObject(value, formatting, jsonSettings);
+            return JsonConvert.SerializeObject(value, prettyFormat == true ? Formatting.Indented : Formatting.None, jsonSettings);
         }
     }
 }

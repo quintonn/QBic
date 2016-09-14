@@ -44,6 +44,11 @@ namespace WebsiteTemplate.Menus.BaseItems
         public static EventNumber AuditReportFilter = new EventNumber(1610);
         public static EventNumber CreateAuditReport = new EventNumber(1611);
 
+        public static EventNumber ModifySystemSettings = new EventNumber(1620);
+
+        public static EventNumber CreateBackup = new EventNumber(1700);
+        public static EventNumber RestoreBackup = new EventNumber(1701);
+
         public static implicit operator EventNumber(int value)
         {
             return new EventNumber(value);

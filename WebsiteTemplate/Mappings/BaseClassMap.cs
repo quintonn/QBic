@@ -7,7 +7,15 @@ namespace WebsiteTemplate.Mappings
     {
         public BaseClassMap()
         {
-            Id(x => x.Id).GeneratedBy.Custom<CustomIdentifierGenerator>();
+            if (DynamicClass.SetIdsToBeAssigned == true)
+            {
+                Id(x => x.Id).GeneratedBy.Assigned(); // This is for when doing backup restore.
+            }
+            else
+            {
+                Id(x => x.Id).GeneratedBy.Custom<CustomIdentifierGenerator>();
+            }
+            //Id(x => x.Id).GeneratedBy.Custom<CustomIdentifierGenerator>();
 
             Map(x => x.CanDelete).Default("1")
                                  .Not.Nullable();

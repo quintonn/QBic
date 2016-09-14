@@ -4,7 +4,7 @@
     {
         public virtual string Id { get; set; }
 
-        public virtual bool CanDelete { get; protected set; }
+        public virtual bool CanDelete { get; set; }
 
         public BaseClass()
         {

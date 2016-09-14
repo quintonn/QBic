@@ -62,28 +62,37 @@ namespace WebsiteTemplate.Data
             var mainConnectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
             //mainConnectionString = Encryption.Encrypt(mainConnectionString, AppSettings.ApplicationPassPhrase);
             mainConnectionString = Encryption.Decrypt(mainConnectionString, AppSettings.ApplicationPassPhrase);
-            
+
             if (String.IsNullOrWhiteSpace(mainConnectionString))
             {
                 throw new ArgumentNullException("MainDataStore connection string property in web.config does not contain a value for connection string");
             }
 
+            Configuration = CreateNewConfigurationUsingConnectionString(mainConnectionString);
+            
+            return Configuration.BuildSessionFactory();
+        }
+
+        public NHibernate.Cfg.Configuration CreateNewConfigurationUsingConnectionString(string connectionString)
+        {
             var config = Fluently.Configure()
               .Database(
 
-                FluentNHibernate.Cfg.Db.MsSqlConfiguration.MsSql2012.ConnectionString(mainConnectionString)
+                FluentNHibernate.Cfg.Db.MsSqlConfiguration.MsSql2012.ConnectionString(connectionString)
               )
 
               .Mappings(m => m.FluentMappings.CustomAddFromAssemblyOf<User>().Conventions.Add<JoinedSubclassIdConvention>());
-            
+
             config.ExposeConfiguration(x =>
             {
                 //x.SetInterceptor(new SqlStatementInterceptor());
                 x.Properties.Add("use_proxy_validator", "false");
             });
-            Configuration = config.BuildConfiguration();
+            var configuration = config.BuildConfiguration();
 
-            return Configuration.BuildSessionFactory();
+            return configuration;
+
+            //return configuration.BuildSessionFactory();
         }
 
         public void ResetData()

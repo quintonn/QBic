@@ -7,13 +7,13 @@ namespace WebsiteTemplate.Models
 {
     public class AuditEvent : BaseClass
     {
-        public User User { get; set; }
-        public DateTime AuditEventDateTimeUTC { get; set; }
-        public AuditAction AuditAction { get; set; }
-        public string ObjectId { get; set; }
-        public string EntityName { get; set; }
-        public string OriginalObject { get; set; }
-        public string NewObject { get; set; }
+        public virtual User User { get; set; }
+        public virtual DateTime AuditEventDateTimeUTC { get; set; }
+        public virtual AuditAction AuditAction { get; set; }
+        public virtual string ObjectId { get; set; }
+        public virtual string EntityName { get; set; }
+        public virtual string OriginalObject { get; set; }
+        public virtual string NewObject { get; set; }
 
         //public IList<EventRoleAssociation> EventRoles { get; set; }
     }

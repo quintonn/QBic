@@ -13,7 +13,7 @@ namespace WebsiteTemplate.Mappings
     /// </summary>
     public class DynamicClass : BaseClass
     {
-
+        internal static bool SetIdsToBeAssigned { get; set; } = false;
     }
 
     public class DynamicMap<T> : ClassMap<T> where T : DynamicClass
@@ -23,7 +23,14 @@ namespace WebsiteTemplate.Mappings
             var tableName = typeof(T).Name.Split(".".ToCharArray()).Last();
             Table(tableName);
 
-            Id(x => x.Id).GeneratedBy.Custom<CustomIdentifierGenerator>();
+            if (DynamicClass.SetIdsToBeAssigned == true)
+            {
+                Id(x => x.Id).GeneratedBy.Assigned(); // This is for when doing backup restore.
+            }
+            else
+            {
+                Id(x => x.Id).GeneratedBy.Custom<CustomIdentifierGenerator>();
+            }
 
             Map(x => x.CanDelete).Default("1")
                                  .Not.Nullable();
@@ -65,6 +72,7 @@ namespace WebsiteTemplate.Mappings
                 References(tmp)
                            //.Not.Nullable()
                            .Nullable()
+                           .Cascade.None()
                            .LazyLoad(Laziness.False);
             }
 
@@ -81,7 +89,7 @@ namespace WebsiteTemplate.Mappings
                 dynamic tmp = generic.Invoke(this, new object[] { column.Name });
 
                 //HasMany<object>(x => x.Id).KeyColumn("").Inverse().AsSet();  // for intellisense
-                HasMany(tmp).KeyColumn(tableName + "_id").Inverse().AsSet().Not.LazyLoad();
+                HasMany(tmp).KeyColumn(tableName + "_id").Inverse().AsSet().Not.LazyLoad();//.Cascade.None();
             }
         }
 

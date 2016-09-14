@@ -235,8 +235,11 @@
   <ItemGroup>
     <Compile Include="Backend\AuditReport\AuditReportFilter.cs" />
     <Compile Include="Backend\AuditReport\CreateAuditReport.cs" />
+    <Compile Include="Backend\Backups\CreateBackup.cs" />
     <Compile Include="Backend\Processing\InitializationProcessor.cs" />
     <Compile Include="Backend\Processing\InputProcessing\ProcessingResult.cs" />
+    <Compile Include="Backend\Services\BackupService.cs" />
+    <Compile Include="Backend\SystemSettings\ModiffySystemSettings.cs" />
     <Compile Include="Backend\TestItems\CauseChild.cs" />
     <Compile Include="Backend\TestItems\TestView.cs" />
     <Compile Include="Backend\TestItems\TestPdf.cs" />
@@ -294,6 +297,7 @@
     <Compile Include="Menus\ViewItems\ShowViewUsingInputProcessor.cs" />
     <Compile Include="Models\AuditAction.cs" />
     <Compile Include="Models\AuditEvent.cs" />
+    <Compile Include="Models\SystemSettings.cs" />
     <Compile Include="SiteSpecific\DefaultsForTest\DefaultStartup.cs" />
     <Compile Include="Utilities\ApplicationStartup.cs" />
     <Compile Include="Utilities\Encryption.cs" />

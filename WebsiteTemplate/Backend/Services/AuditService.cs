@@ -71,7 +71,7 @@ namespace WebsiteTemplate.Backend.Services
             {
                 return String.Empty;
             }
-            var result = JsonHelper.SerializeObject(item, Newtonsoft.Json.Formatting.Indented);
+            var result = JsonHelper.SerializeObject(item, true);
             return result;
         }
     }

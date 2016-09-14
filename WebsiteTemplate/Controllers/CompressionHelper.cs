@@ -1,21 +1,46 @@
-﻿using System.IO;
+﻿using Ionic.Zlib;
+using System.IO;
 
 namespace WebsiteTemplate.Controllers
 {
     public class CompressionHelper
     {
-        public static byte[] DeflateByte(byte[] str)
+        /// <summary>
+        /// This creates a zipped version of the data.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="compressionLevel"></param>
+        /// <returns></returns>
+        public static byte[] DeflateByte(byte[] data, CompressionLevel compressionLevel = CompressionLevel.BestSpeed)
         {
-            if (str == null)
+            if (data == null)
             {
                 return null;
             }
 
             using (var output = new MemoryStream())
             {
-                using (var compressor = new Ionic.Zlib.DeflateStream(output, Ionic.Zlib.CompressionMode.Compress, Ionic.Zlib.CompressionLevel.BestSpeed))
+                using (var compressor = new Ionic.Zlib.DeflateStream(output, Ionic.Zlib.CompressionMode.Compress, compressionLevel))
                 {
-                    compressor.Write(str, 0, str.Length);
+                    compressor.Write(data, 0, data.Length);
+                }
+
+                return output.ToArray();
+            }
+        }
+
+        public static byte[] InflateByte(byte[] data)
+        {
+            if (data == null)
+            {
+                return null;
+            }
+
+            using (var output = new MemoryStream())
+            {
+                using (var compressor = new Ionic.Zlib.DeflateStream(output, CompressionMode.Decompress))
+                {
+                    compressor.Write(data, 0, data.Length);
                 }
 
                 return output.ToArray();

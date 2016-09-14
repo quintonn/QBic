@@ -42,12 +42,24 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
+        private static List<int> EventsAllowedInMenu() // TODO: this is not right. can't have 'add xx' in menu at the moment
+        {
+            var result = new List<int>();
+
+            result.Add(EventNumber.AuditReportFilter);
+            result.Add(EventNumber.ModifySystemSettings);
+            result.Add(EventNumber.CreateBackup);
+            result.Add(EventNumber.RestoreBackup);
+
+            return result;
+        }
+
         public Dictionary<string, object> GetEventList()
         {
             return EventService.EventList.Where(e => e.Value.ActionType != EventType.InputDataView)
                                            .Where(m => !String.IsNullOrWhiteSpace(m.Value.Description))
-                                           .Where(m => m.Value is ShowView || (m.Value is GetInput && (m.Value as GetInput).Id == EventNumber.AuditReportFilter)) // TODO: this is not right. can't have 'add xx' in menu at the moment
-                                           .OrderBy(m => m.Value.Description)  //    maybe need a setting 'allow in menu' etc
+                                           .Where(m => m.Value is ShowView || EventsAllowedInMenu().Contains(m.Value.Id)) // TODO: this is not right. can't have 'add xx' in menu at the moment
+                                           .OrderBy(m => m.Value.Description) //    maybe need a setting 'allow in menu' etc
                                            .ToDictionary(m => m.Key.ToString(), m => (object)m.Value.Description);
         }
 
