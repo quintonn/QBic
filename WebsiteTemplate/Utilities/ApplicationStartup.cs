@@ -18,17 +18,8 @@ namespace WebsiteTemplate.Utilities
 
         internal void SetupDefaultsInternal()
         {
-            DataService.PerformAuditing = false;
-            //TODO: Not sure if disabling auditing is what i want to do though????
-            try
-            {
-                SetupDefaults();
-            }
-
-            finally
-            {
-                DataService.PerformAuditing = true;
-            }
+            XXXUtils.SetCurrentUser("System");
+            SetupDefaults();
         }
     }
 }

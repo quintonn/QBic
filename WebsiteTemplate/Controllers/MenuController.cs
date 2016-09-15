@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Http;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -39,8 +40,7 @@ namespace WebsiteTemplate.Controllers
             try
             {
                 // Set current user to 'System' user for auditing purposes. Because no user will be logged in at the moment.
-                var principal = new GenericPrincipal(new GenericIdentity("System"), new string[] { });
-                HttpContext.Current.User = principal;
+                XXXUtils.SetCurrentUser("System");
 
                 var queryString = this.Request.GetQueryNameValuePairs();
                 var userId = queryString.Single(q => q.Key == "userId").Value;

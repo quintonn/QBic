@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 using System.Text;
+using System.Web;
 using WebsiteTemplate.Menus.ViewItems;
 
 namespace WebsiteTemplate.Utilities
@@ -56,6 +58,11 @@ namespace WebsiteTemplate.Utilities
         public static Version GetApplicationCoreVersion()
         {
             return typeof(ShowView).Assembly.GetName().Version;
+        }
+
+        public static void SetCurrentUser(string userName)
+        {
+            HttpContext.Current.User = new GenericPrincipal(new GenericIdentity(userName), new string[] { });
         }
     }
 }
