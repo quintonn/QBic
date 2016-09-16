@@ -43,11 +43,54 @@ $(document).ready(function ()
         console.log('start app');
         return auth.initialize()
                    .then(mainApp.initialize)
-                   .then(menus.loadMenu);
+                   .then(menus.loadMenu).catch(function(err)
+                   {
+                       dialog.closeBusyDialog();
+
+                       if (err.indexOf('Confirmed:') >-1)
+                       {
+                           var parts = err.split(":");
+                           var user = parts[1];
+                           
+                           return dialog.showMessage("Info", "Thank you for confirming you email address. You can now log in using your username and password").then(function ()
+                           {
+                               window.location.href = window.location.href.split("?")[0].split("#")[0];
+                               return auth.logout();
+                           });
+                       }
+
+                       if (err.indexOf('PassReset:') > -1)
+                       {
+                           var userId = mainApp.getParamaterByName('userId');
+                           var token = mainApp.getParameterByName('token');
+                       
+                           // Show screen to capture password, then call api/v1/menu/PasswordReset
+                       }
+                       
+                       return mainApp.handleError(err);
+                   });
     };
 
     mainApp.initialize = function ()
     {
+        var confirmedUser = mainApp.getParameterByName("confirmed");
+        if (confirmedUser != null && confirmedUser.length > 0)
+        {
+            return Promise.reject('Confirmed:' + confirmedUser);
+        }
+
+        var passwordReset = mainApp.getParameterByName("passReset");
+        if (passwordReset == "true")
+        {
+            return Promise.reject('PassReset:');
+        }
+
+        var errors = mainApp.getParameterByName("errors");
+        if (errors != null && errors.length > 0)
+        {
+            return Promise.reject(errors);
+        }
+        
         return mainApp.makeWebCall(mainApp.apiURL + "initialize").then(function (data)
         {
             var userName = data['User'];
@@ -58,6 +101,20 @@ $(document).ready(function ()
             return Promise.resolve();
         });
     };
+
+    mainApp.getParameterByName = function(name, url)
+    {
+        if (url == null || url.length == 0)
+        {
+            url = window.location.href;
+        }
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
 
     mainApp.handleError = function (err)
     {

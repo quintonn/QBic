@@ -92,6 +92,35 @@
 
 }(window.auth = window.auth || {}, jQuery));
 
+function passwordResetModel()
+{
+    var self = this;
+    self.emailOrUsername = ko.observable();
+    self.resetPasswordClick = function ()
+    {
+        var url = mainApp.apiURL + "menu/RequestPasswordReset";
+        //var data = "{usernameOrEmail:" + self.emailOrUsername() + "}";
+        var data =
+        {
+            usernameOrEmail: self.emailOrUsername()
+        };
+        data = JSON.stringify(data);
+
+        dialog.showBusyDialog("Resetting password...");
+        mainApp.makeWebCall(url, "POST", data)
+                      .then(function (responseData)
+                      {
+                          dialog.closeBusyDialog();
+                          return dialog.showMessage("Info", responseData);
+                      })
+                      //.then(auth.handleLoginSuccess)
+                      //.then(mainApp.startApplication)
+                      .then(dialog.closeBusyDialog)
+                      .then(dialog.closeModalDialog)
+                      .then(auth.logout);
+    };
+}
+
 function loginModel(callback)
 {
     var self = this;
@@ -101,6 +130,11 @@ function loginModel(callback)
     {
         auth.performLogin(self.userName(), self.password());
     };
+    self.forgotPasswordClick = function ()
+    {
+        dialog.closeModalDialog().then(dialog.showPasswordResetDialog);
+    };
+
     self.passwordKeyPressed = function (model, evt)
     {
         if (evt.keyCode == 13)

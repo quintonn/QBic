@@ -67,7 +67,7 @@ namespace WebsiteTemplate.Backend.Services
             }
             try
             {
-                var emailResult = await SendEmail(user.Id, userName, email);
+                var emailResult = await SendAcccountFonfirmationEmail(user.Id, userName, email);
 
                 return emailResult;
             }
@@ -77,7 +77,72 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        public async Task<string> SendEmail(string userId, string userName, string emailAddress)
+        public async Task<string> SendPasswordResetLink(string userNameOrEmail)
+        {
+            Models.SystemSettings settings;
+            using (var session = DataService.OpenSession())
+            {
+                settings = session.QueryOver<Models.SystemSettings>().SingleOrDefault<Models.SystemSettings>();
+            }
+
+            if (settings == null)
+            {
+                throw new Exception("No system settings have been setup.");
+            }
+
+            var user = await CoreAuthenticationEngine.UserManager.FindByNameAsync(userNameOrEmail) as User;
+
+            if (user == null)
+            {
+                user = await CoreAuthenticationEngine.UserManager.FindByEmailAsync(userNameOrEmail) as User;
+            }
+
+            if (user != null)
+            {
+                var passwordResetLink = await CoreAuthenticationEngine.UserManager.GeneratePasswordResetTokenAsync(user.Id);
+
+                var myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
+
+                var body = "Hi " + user.UserName;
+
+                body += "\nA request has been made to reset your password on " + ApplicationSettings.GetApplicationName();
+
+                body += "\n\nClick on the following link to reset your password:\n";
+
+                //TODO: Maybe encrypt the parameters in the URL -- Encryption.Encrypt..
+                body += GetCurrentUrl() + "?passReset=true&userId=" + user.Id + "&token=" + HttpUtility.UrlEncode(passwordResetLink);
+
+                var mailMessage = new MailMessage(settings.EmailFromAddress, user.Email, "Password Reset", body);
+
+                var sendEmailTask = Task.Run(() =>
+                {
+                    try
+                    {
+                        var smtpClient = new SmtpClient(settings.EmailHost, settings.EmailPort);
+
+                        var password = Encryption.Decrypt(settings.EmailPassword, ApplicationSettings.ApplicationPassPhrase);
+                        smtpClient.Credentials = new System.Net.NetworkCredential(settings.EmailUserName, password);
+                        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                        smtpClient.EnableSsl = settings.EmailEnableSsl;
+
+                        smtpClient.Send(mailMessage);
+                    }
+                    catch (Exception e)
+                    {
+                        var message = e.Message + "\n" + e.ToString();
+                        //return message;
+                    }
+                });
+            }
+            else
+            {
+                await Task.Delay(1000); // To prevent it being too obvious that a username/email address exists or does not.
+            }
+
+            return "If a user with username or email address exists then a password reset link will be sent to the user's registered email address.";
+        }
+
+        public async Task<string> SendAcccountFonfirmationEmail(string userId, string userName, string emailAddress)
         {
             Models.SystemSettings settings;
             using (var session = DataService.OpenSession())
@@ -98,7 +163,7 @@ namespace WebsiteTemplate.Backend.Services
 
             body += "\nWelcome to " + ApplicationSettings.GetApplicationName();
 
-            body += "\n\nPlease click on the following link to activate and activate your email:\n";
+            body += "\n\nPlease click on the following link to activate your account and confirm your email address:\n";
 
             body += GetCurrentUrl() + "/api/v1/menu/ConfirmEmail?userId=" + userId + "&token=" + HttpUtility.UrlEncode(emailToken);
 

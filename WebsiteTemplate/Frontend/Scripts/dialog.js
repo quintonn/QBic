@@ -87,11 +87,30 @@
         }
     };
 
+    dialog.showPasswordResetDialog = function ()
+    {
+        return mainApp.makeWebCall("Frontend/Pages/PasswordResetRequest.html?v=" + mainApp.version).then(function (data)
+        {
+            return addPasswordResetModel(data);
+        });
+    };
+
     dialog.showMessage = function (type, message)
     {
-        var dlgSetting = new dialogSetting(type, message);
-        return dialog.showDialogWithId('dialog', dlgSetting);
+        return new Promise(function (resolve, reject)
+        {
+            var dlgSetting = new dialogSetting(type, message, resolve);
+            dialog.showDialogWithId('dialog', dlgSetting);
+        });
     };
+
+    function addPasswordResetModel(data)
+    {
+        var resetModel = new passwordResetModel();
+        var model = new modalDialogModel(data, resetModel, _applicationModel.modalDialogs().length + 1);
+        _applicationModel.addModalDialog(model);
+        return Promise.resolve();
+    }
 
     function addLoginModel()
     {
@@ -101,7 +120,8 @@
             var model = new modalDialogModel(loginHtml, lModel, _applicationModel.modalDialogs().length + 1);
 
             _applicationModel.addModalDialog(model);
-        } catch (err)
+        }
+        catch (err)
         {
             console.error(err);
         }
@@ -144,7 +164,7 @@
         };
     }
 
-    function dialogSetting(heading, message)
+    function dialogSetting(heading, message, onCloseCallback)
     {
         var self = this;
         self.heading = heading;
@@ -153,6 +173,7 @@
         self.closeClick = function ()
         {
             dialog.closeModalDialog();
+            onCloseCallback();
         };
 
         self.errorTypeColor = ko.computed(function ()

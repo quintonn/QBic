@@ -1,12 +1,14 @@
 ﻿using BasicAuthentication.Security;
 using BasicAuthentication.Users;
 using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
@@ -16,11 +18,15 @@ namespace WebsiteTemplate.Controllers
     [RoutePrefix("api/v1/menu")]
     public class MenuController : ApiController
     {
-        private DataStore Store { get; set; }
+        //private DataStore Store { get; set; }
+        private DataService DataService { get; set; }
 
-        public MenuController(DataStore store)
+        private UserService UserService { get; set; }
+
+        public MenuController(DataService dataService, UserService userService)
         {
-            Store = store;
+            DataService = dataService;
+            UserService = userService;
         }
 
         private string GetCurrentUrl()
@@ -29,6 +35,31 @@ namespace WebsiteTemplate.Controllers
             var uri = request.Url.Request.RequestUri;
             var result = uri.Scheme + "://" + uri.Host + request.VirtualPathRoot;
             return result;
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("RequestPasswordReset")]
+        [RequireHttps]
+        public async Task<IHttpActionResult> RequestPasswordReset()
+        {
+            XXXUtils.SetCurrentUser("System");
+
+            var data = GetRequestData();
+            var json = JsonHelper.Parse(data);
+            var usernameOrEmail = json.GetValue("usernameOrEmail");
+
+            try
+            {
+                var result = await UserService.SendPasswordResetLink(usernameOrEmail);
+
+                //var url = GetCurrentUrl() + "?passReset=" + HttpUtility.UrlEncode(result);
+                return Json(result);
+            }
+            catch (Exception error)
+            {
+                return BadRequest(error.Message);
+            }
         }
 
         [AllowAnonymous]
@@ -50,7 +81,7 @@ namespace WebsiteTemplate.Controllers
                 if (verifyToken.Succeeded)
                 {
                     /// Maybe show a confirmation/welcome page
-                    using (var session = Store.OpenSession())
+                    using (var session = DataService.OpenSession())
                     {
                         var user = session.Load<User>(userId);
                         var url = GetCurrentUrl() + "?confirmed=" + HttpUtility.UrlEncode(user.UserName);
@@ -69,6 +100,61 @@ namespace WebsiteTemplate.Controllers
             catch (Exception exception)
             {
                 return BadRequest(exception.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("PasswordReset")]
+        [RequireHttps]
+        public async Task<IHttpActionResult> PasswordReset()
+        {
+            try
+            {
+                // Set current user to 'System' user for auditing purposes. Because no user will be logged in at the moment.
+                XXXUtils.SetCurrentUser("System");
+
+                var queryString = this.Request.GetQueryNameValuePairs();
+                var userId = queryString.Single(q => q.Key == "userId").Value;
+                var passwordResetToken = queryString.Single(q => q.Key == "token").Value;
+                var newPasssword = queryString.Single(q => q.Key == "password").Value;
+                //var verifyToken = await CoreAuthenticationEngine.UserManager.ConfirmEmailAsync(userId, emailToken);
+
+                //Need show UI to user for new password screen first, and then include the token in that request.
+
+                //if (verifyToken.Succeeded)
+                {
+                    /// Maybe show a confirmation/welcome page
+                    using (var session = DataService.OpenSession())
+                    {
+                        var user = session.Load<User>(userId);
+                        var url = GetCurrentUrl() + "?passResetConfirmed=" + HttpUtility.UrlEncode(user.UserName);
+                        return Redirect(url);
+                    }
+                }
+               /* else
+                {
+                    var message = String.Join("\n", verifyToken.Errors);
+                    //return BadRequest(message);
+                    //This won't work but is just an example of what to do
+                    //return Redirect("https://localhost/CustomIdentity/Pages/Error.html?Errors=" + verifyToken.Result.Errors.First());
+                    return Redirect(GetCurrentUrl() + "?errors=" + HttpUtility.UrlEncode(message));
+                }*/
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
+        }
+
+        protected string GetRequestData()
+        {
+            using (var stream = HttpContext.Current.Request.InputStream)
+            using (var mem = new MemoryStream())
+            {
+                stream.CopyTo(mem);
+                var res = System.Text.Encoding.UTF8.GetString(mem.ToArray());
+                return res;
             }
         }
     }
