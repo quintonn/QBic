@@ -47,6 +47,18 @@ $(document).ready(function ()
                    {
                        dialog.closeBusyDialog();
 
+                       if (err.indexOf('AnonAction:') > -1)
+                       {
+                           var anonymousAction = mainApp.getParameterByName('anonAction');
+                           var params = mainApp.getParameterByName("params");
+                           
+                           dialog.closeModalDialog(); // call this in case log in dialog is showing
+
+                           //window.location.href = window.location.href.split("?")[0].split("#")[0];
+
+                           return mainApp.executeUIAction(anonymousAction, params, true);
+                       }
+
                        if (err.indexOf('Confirmed:') >-1)
                        {
                            var parts = err.split(":");
@@ -58,14 +70,6 @@ $(document).ready(function ()
                                return auth.logout();
                            });
                        }
-
-                       if (err.indexOf('PassReset:') > -1)
-                       {
-                           var userId = mainApp.getParamaterByName('userId');
-                           var token = mainApp.getParameterByName('token');
-                       
-                           // Show screen to capture password, then call api/v1/menu/PasswordReset
-                       }
                        
                        return mainApp.handleError(err);
                    });
@@ -73,16 +77,16 @@ $(document).ready(function ()
 
     mainApp.initialize = function ()
     {
+        var anonymousAction = mainApp.getParameterByName("anonAction");
+        if (anonymousAction != null && anonymousAction.length > 0)
+        {
+            return Promise.reject('AnonAction:' + anonymousAction);
+        }
+
         var confirmedUser = mainApp.getParameterByName("confirmed");
         if (confirmedUser != null && confirmedUser.length > 0)
         {
             return Promise.reject('Confirmed:' + confirmedUser);
-        }
-
-        var passwordReset = mainApp.getParameterByName("passReset");
-        if (passwordReset == "true")
-        {
-            return Promise.reject('PassReset:');
         }
 
         var errors = mainApp.getParameterByName("errors");
@@ -156,7 +160,7 @@ $(document).ready(function ()
                 {
                     Data: params || ""
                 };
-            
+
             data = JSON.stringify(data);
 
             var url = mainApp.apiURL + "executeUIAction/" + eventId;

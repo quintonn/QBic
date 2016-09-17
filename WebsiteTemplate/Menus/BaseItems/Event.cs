@@ -15,6 +15,25 @@ namespace WebsiteTemplate.Menus.BaseItems
         }
 
         /// <summary>
+        /// Determines whether or not this event allows anonymous users to execute the event without being logged in.
+        /// </summary>
+        public virtual bool RequiresAuthorization
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public virtual bool AllowInMenu
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Returns data to be passed from the front end when the user actions an event
         /// </summary>
         public virtual Dictionary<string, object> GetEventParameters()

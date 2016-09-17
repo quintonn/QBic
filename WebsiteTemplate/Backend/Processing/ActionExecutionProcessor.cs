@@ -68,6 +68,10 @@ namespace WebsiteTemplate.Backend.Processing
             {
                 var action = eventItem as ShowView;
 
+                var user = await GetLoggedInUser();
+                var allowedMenus = GetAllowedEventsForUser(user.Id);
+                action.Columns = action.DoConfigureColumns(allowedMenus);
+
                 data = originalData;
                 var parentData = data;
 
@@ -154,6 +158,10 @@ namespace WebsiteTemplate.Backend.Processing
             else if (eventItem is UserConfirmation)
             {
                 (eventItem as UserConfirmation).Data = originalData;
+                result.Add(eventItem);
+            }
+            else if (eventItem is LogoutEvent)
+            {
                 result.Add(eventItem);
             }
             else

@@ -28,6 +28,14 @@ namespace WebsiteTemplate.Backend.Backups
             }
         }
 
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         //TODO: Need to ask user for confirmation. Maybe even have file name as input
 
         public override async Task<FileInfo> GetFileInfo(string data)

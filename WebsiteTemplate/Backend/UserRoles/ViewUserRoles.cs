@@ -23,6 +23,14 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
         }
 
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
             columnConfig.AddStringColumn("Name", "Name");

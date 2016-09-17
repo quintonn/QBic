@@ -127,6 +127,7 @@ namespace WebsiteTemplate.Backend.Services
                     }
                     else if (type != typeof(BasicCrudMenuItem<>))
                     {
+                        //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
                         var instance = (IEvent)Container.Resolve(type);
                         if (!EventList.ContainsKey(instance.GetId()))
                         {

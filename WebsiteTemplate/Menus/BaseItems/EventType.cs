@@ -15,5 +15,6 @@
         UpdateDataSourceComboBox = 10,
         ViewFile = 11,
         UpdateInput = 12,
+        Logout = 13
     }
 }

@@ -30,6 +30,14 @@ namespace WebsiteTemplate.Backend.TestItems
             }
         }
 
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public override async Task<FileInfo> GetFileInfo(string data)
         {
             var result = new FileInfo();

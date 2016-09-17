@@ -15,5 +15,13 @@ namespace WebsiteTemplate.Backend.Users
         {
             return EventNumber.AddUser;
         }
+
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return true;
+            }
+        }
     }
 }

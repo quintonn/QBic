@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using WebsiteTemplate.Backend.Processing;
 using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -51,7 +52,7 @@ namespace WebsiteTemplate.Controllers
         [HttpPost]
         [Route("propertyChanged/{*eventId}")]
         [RequireHttps]
-        [Authorize]
+        [ConditionalAuthorize]
         [DeflateCompression]
         public async Task<IHttpActionResult> OnPropertyChanged(int eventId)
         {
@@ -61,10 +62,11 @@ namespace WebsiteTemplate.Controllers
         [HttpPost]
         [Route("processEvent/{*eventId}")]
         [RequireHttps]
-        [Authorize]
+        [ConditionalAuthorize]
         [DeflateCompression]
         public async Task<IHttpActionResult> ProcessEvent(int eventId)
         {
+            var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync();
             return await Container.Resolve<InputEventProcessor>().Process(eventId, Request);
         }
 
@@ -72,7 +74,7 @@ namespace WebsiteTemplate.Controllers
         [HttpPost]
         [Route("GetFile/{*eventId}")]
         [RequireHttps]
-        [Authorize]
+        [ConditionalAuthorize]
         //[DeflateCompression] // Converts data to json which doesn't work for files
         public async Task<IHttpActionResult> GetFile(int eventId)
         {
@@ -82,7 +84,7 @@ namespace WebsiteTemplate.Controllers
         [HttpPost]
         [Route("updateViewData/{*eventId}")]
         [RequireHttps]
-        [Authorize]
+        [ConditionalAuthorize]
         [DeflateCompression]
         public async Task<IHttpActionResult> UpdateViewData(int eventId)
         {
@@ -92,7 +94,7 @@ namespace WebsiteTemplate.Controllers
         [HttpPost]
         [Route("getViewMenu/{*eventId}")]
         [RequireHttps]
-        [Authorize]
+        [ConditionalAuthorize]
         [DeflateCompression]
         public async Task<IHttpActionResult> GetViewMenu(int eventId)
         {
@@ -102,7 +104,7 @@ namespace WebsiteTemplate.Controllers
         [HttpPost]
         [Route("executeUIAction/{*eventId}")]
         [RequireHttps]
-        [Authorize]
+        [ConditionalAuthorize]
         [DeflateCompression]
         public async Task<IHttpActionResult> ExecuteUIAction(int eventId)
         {
@@ -112,7 +114,7 @@ namespace WebsiteTemplate.Controllers
         [HttpGet]
         [Route("getUserMenu")]
         [RequireHttps]
-        [Authorize]
+        [Authorize] // TODO: We need a way to have menu's for when we don't require a logged in user.
         [DeflateCompression]
         public async Task<IHttpActionResult> GetUserMenu()
         {

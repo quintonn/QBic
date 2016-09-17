@@ -107,6 +107,18 @@
                         var value = item.InputValue;
                         return inputDialog.updateInput(inputName, value);
                         break;
+                    case 13: //Logout
+                        {
+                            dialog.closeModalDialog();
+                            return auth.logout().then(function (x)
+                            {
+                                // Clear the URL
+                                window.location.href = window.location.href.split("?")[0].split("#")[0];
+                                
+                                return Promise.resolve(x);
+                            });
+                            break;
+                        }
                     default:
                         console.warn(item);
                         return dialog.showMessage("Error", "Unknown action type: " + actionType + " for event " + eventId);

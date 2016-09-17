@@ -31,6 +31,14 @@ namespace WebsiteTemplate.Backend.SystemSettings
             }
         }
 
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public override IList<InputField> InputFields
         {
             get

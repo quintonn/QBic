@@ -9,6 +9,7 @@ using System.Net.Configuration;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web;
+using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
@@ -109,8 +110,11 @@ namespace WebsiteTemplate.Backend.Services
 
                 body += "\n\nClick on the following link to reset your password:\n";
 
-                //TODO: Maybe encrypt the parameters in the URL -- Encryption.Encrypt..
-                body += GetCurrentUrl() + "?passReset=true&userId=" + user.Id + "&token=" + HttpUtility.UrlEncode(passwordResetLink);
+                //TODO: Maybe encrypt the parameters in the URL -- Encryption.Encrypt.
+                var json = new JsonHelper();
+                json.Add("userId", user.Id);
+                json.Add("token", passwordResetLink);
+                body += GetCurrentUrl() + "?anonAction=" + ((int)EventNumber.ResetPassword) + "&params=" + HttpUtility.UrlEncode(json.ToString());
 
                 var mailMessage = new MailMessage(settings.EmailFromAddress, user.Email, "Password Reset", body);
 
@@ -134,10 +138,8 @@ namespace WebsiteTemplate.Backend.Services
                     }
                 });
             }
-            else
-            {
-                await Task.Delay(1000); // To prevent it being too obvious that a username/email address exists or does not.
-            }
+
+            await Task.Delay(1000); // To prevent it being too obvious that a username/email address exists or does not.
 
             return "If a user with username or email address exists then a password reset link will be sent to the user's registered email address.";
         }

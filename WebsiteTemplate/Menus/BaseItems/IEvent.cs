@@ -12,5 +12,7 @@ namespace WebsiteTemplate.Menus.BaseItems
         string Description { get; }
         EventType ActionType { get; }
         string Parameters { get; set; }
+        bool RequiresAuthorization { get; }
+        bool AllowInMenu { get; }
     }
 }

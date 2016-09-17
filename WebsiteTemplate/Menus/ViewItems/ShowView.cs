@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Menus.ViewItems
@@ -30,17 +30,30 @@ namespace WebsiteTemplate.Menus.ViewItems
             }
         }
 
-        private IList<ViewColumn> DoConfigureColumns()
+        internal IList<ViewColumn> DoConfigureColumns(IList<int> allowedUserEvents)
         {
             var config = new ColumnConfiguration();
             ConfigureColumns(config);
-            return config.GetColumns();
+
+            var columns = config.GetColumns().Where(c => AllowColumn(c, allowedUserEvents)).ToList();
+            return columns;
+        }
+
+        private bool AllowColumn(ViewColumn column, IList<int> allowedEvents)
+        {
+            var col = column as ClickableColumn;
+            if (col == null)
+            {
+                return true;
+            }
+            var eventNumber = col.Event == null ? col.EventNumber : col.Event.GetEventId();
+            return allowedEvents.Contains(eventNumber);
         }
 
         /// <summary>
         /// The columns to show in the view.
         /// </summary>
-        public IList<ViewColumn> Columns { get { return DoConfigureColumns(); } }
+        public IList<ViewColumn> Columns { get; internal set; }
 
         /// <summary>
         /// Name of database table from which to retrieve the columns.

@@ -58,8 +58,8 @@ namespace WebsiteTemplate.Backend.Services
         {
             return EventService.EventList.Where(e => e.Value.ActionType != EventType.InputDataView)
                                            .Where(m => !String.IsNullOrWhiteSpace(m.Value.Description))
-                                           .Where(m => m.Value is ShowView || EventsAllowedInMenu().Contains(m.Value.Id)) // TODO: this is not right. can't have 'add xx' in menu at the moment
-                                           .OrderBy(m => m.Value.Description) //    maybe need a setting 'allow in menu' etc
+                                           .Where(m => m.Value.AllowInMenu == true)
+                                           .OrderBy(m => m.Value.Description)
                                            .ToDictionary(m => m.Key.ToString(), m => (object)m.Value.Description);
         }
 

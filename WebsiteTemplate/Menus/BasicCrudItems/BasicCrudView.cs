@@ -19,6 +19,14 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             Store = store;
         }
 
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public EventNumber Id { get; set; }
 
         public string ItemName { get; set; }

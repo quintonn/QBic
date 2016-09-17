@@ -237,6 +237,7 @@
     <Compile Include="Backend\AuditReport\AuditReportFilter.cs" />
     <Compile Include="Backend\AuditReport\CreateAuditReport.cs" />
     <Compile Include="Backend\Backups\CreateBackup.cs" />
+    <Compile Include="Backend\PasswordReset\ResetPassword.cs" />
     <Compile Include="Backend\Processing\InitializationProcessor.cs" />
     <Compile Include="Backend\Processing\InputProcessing\ProcessingResult.cs" />
     <Compile Include="Backend\Services\BackupService.cs" />
@@ -277,6 +278,7 @@
     <Compile Include="Backend\UserRoles\ViewUserRoles.cs" />
     <Compile Include="Backend\Users\ModifyUser.cs" />
     <Compile Include="Controllers\CompressionHelper.cs" />
+    <Compile Include="Controllers\ConditionalAuthorizeAttribute.cs" />
     <Compile Include="Controllers\DeflateCompressionAttribute.cs" />
     <Compile Include="Controllers\FileActionResult.cs" />
     <Compile Include="Controllers\MenuController.cs" />
@@ -295,6 +297,7 @@
     <Compile Include="Menus\InputItems\DeleteItemUsingInputProcessor.cs" />
     <Compile Include="Menus\InputItems\InputProcessingMethods.cs" />
     <Compile Include="Menus\InputItems\ModifyItemUsingInputProcessor.cs" />
+    <Compile Include="Menus\LogoutEvent.cs" />
     <Compile Include="Menus\ViewItems\ShowViewUsingInputProcessor.cs" />
     <Compile Include="Models\AuditAction.cs" />
     <Compile Include="Models\AuditEvent.cs" />

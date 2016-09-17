@@ -21,6 +21,14 @@ namespace WebsiteTemplate.Backend.AuditReport
             }
         }
 
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         private UserService UserService { get; set; }
 
         public AuditReportFilter(UserService userService)

@@ -31,6 +31,14 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public ViewMenus(MenuProcessor menuProcessor)
             :base(menuProcessor)
         {

@@ -96,6 +96,11 @@ function passwordResetModel()
 {
     var self = this;
     self.emailOrUsername = ko.observable();
+    self.cancelClick = function()
+    {
+        dialog.closeModalDialog();
+        auth.logout();
+    };
     self.resetPasswordClick = function ()
     {
         var url = mainApp.apiURL + "menu/RequestPasswordReset";

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using WebsiteTemplate.Backend.UIProcessors;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
@@ -13,6 +14,14 @@ namespace WebsiteTemplate.Backend.Users
             : base(userProcessor)
         {
 
+        }
+
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return true;
+            }
         }
 
         public override EventNumber GetId()

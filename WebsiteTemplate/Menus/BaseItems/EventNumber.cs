@@ -13,6 +13,7 @@ namespace WebsiteTemplate.Menus.BaseItems
         }
 
         public static EventNumber Nothing = new EventNumber(0);
+        public static EventNumber Logout = new EventNumber(10);
         public static EventNumber ViewUsers = new EventNumber(1000);
         public static EventNumber AddUser = new EventNumber(1001);
         public static EventNumber SendConfirmationEmail = new EventNumber(1002);
@@ -48,6 +49,8 @@ namespace WebsiteTemplate.Menus.BaseItems
 
         public static EventNumber CreateBackup = new EventNumber(1700);
         public static EventNumber RestoreBackup = new EventNumber(1701);
+
+        public static EventNumber ResetPassword = new EventNumber(1710);
 
         public static implicit operator EventNumber(int value)
         {

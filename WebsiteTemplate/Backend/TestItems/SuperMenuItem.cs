@@ -17,6 +17,14 @@ namespace WebsiteTemplate.Backend.TestItems
             return 123;
         }
 
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public override Dictionary<string, string> GetColumnsToShowInView()
         {
             var res = new Dictionary<string, string>();
