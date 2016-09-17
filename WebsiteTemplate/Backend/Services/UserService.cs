@@ -110,11 +110,11 @@ namespace WebsiteTemplate.Backend.Services
 
                 body += "\n\nClick on the following link to reset your password:\n";
 
-                //TODO: Maybe encrypt the parameters in the URL -- Encryption.Encrypt.
                 var json = new JsonHelper();
                 json.Add("userId", user.Id);
                 json.Add("token", passwordResetLink);
-                body += GetCurrentUrl() + "?anonAction=" + ((int)EventNumber.ResetPassword) + "&params=" + HttpUtility.UrlEncode(json.ToString());
+                var parameters = Encryption.Encrypt(json.ToString(), ApplicationSettings.ApplicationPassPhrase);
+                body += GetCurrentUrl() + "?anonAction=" + ((int)EventNumber.ResetPassword) + "&params=" + HttpUtility.UrlEncode(parameters);
 
                 var mailMessage = new MailMessage(settings.EmailFromAddress, user.Email, "Password Reset", body);
 

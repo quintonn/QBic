@@ -15,12 +15,14 @@ namespace WebsiteTemplate.Backend.PasswordReset
     public class ResetPassword : GetInput
     {
         private UserService UserService { get; set; }
+        private ApplicationSettingsCore AppSettings { get; set; }
         private string UserId { get; set; }
         private string PasswordToken { get; set; }
 
-        public ResetPassword(UserService userService)
+        public ResetPassword(UserService userService, ApplicationSettingsCore appSettings)
         {
             UserService = userService;
+            AppSettings = appSettings;
         }
 
         public override string Description
@@ -62,10 +64,14 @@ namespace WebsiteTemplate.Backend.PasswordReset
 
         public override async Task<InitializeResult> Initialize(string data)
         {
-            var json = JsonHelper.Parse(data);
+            if (!data.Contains("UserId"))
+            {
+                var jsonData = Encryption.Decrypt(data, AppSettings.ApplicationPassPhrase);
+                var json = JsonHelper.Parse(jsonData);
 
-            UserId = json.GetValue("userId");
-            PasswordToken = json.GetValue("token");
+                UserId = json.GetValue("userId");
+                PasswordToken = json.GetValue("token");
+            }
 
             return new InitializeResult(true);
         }
@@ -99,6 +105,17 @@ namespace WebsiteTemplate.Backend.PasswordReset
                 }
 
                 XXXUtils.SetCurrentUser("System");
+
+                var verifyTokenResult = await CoreAuthenticationEngine.UserManager.VerifyUserTokenAsync(userId, "ResetPassword", passwordToken);
+                if (verifyTokenResult == false)
+                {
+                    //TODO: This does not actually do what i expected. The tokens never expire. wtf?!  -- ok, got them to expire after 6 hours, still. wtf
+                    //      Need to implement this ourselves. Keep a table of used tokens.
+                    return new List<IEvent>()
+                    {
+                        new ShowMessage("Unable to reset password. The password reset link is no longer valid")
+                    };
+                }
 
                 var idResult = await CoreAuthenticationEngine.UserManager.ResetPasswordAsync(userId, passwordToken, newPassword);
                 if (idResult.Succeeded == false)

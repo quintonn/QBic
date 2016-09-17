@@ -66,7 +66,6 @@ namespace WebsiteTemplate.Controllers
         [DeflateCompression]
         public async Task<IHttpActionResult> ProcessEvent(int eventId)
         {
-            var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync();
             return await Container.Resolve<InputEventProcessor>().Process(eventId, Request);
         }
 
