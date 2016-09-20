@@ -12,5 +12,9 @@ namespace WebsiteTemplate.Menus.ViewItems
         Contains = 2,
         IsNotNull = 3,
         IsNull = 4,
+        GreaterThan = 5,
+        GreaterThanOrEqual = 6,
+        LessThan = 7,
+        LessThanOrEqual = 8
     }
 }

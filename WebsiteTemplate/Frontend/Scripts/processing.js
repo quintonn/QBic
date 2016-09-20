@@ -337,6 +337,18 @@
                 return actualValue != null && actualValue.length > 0;
             case 4: // IsNull
                 return (actualValue == null || actualValue.length == 0);
+            case 5: // Greater Than
+                actualValue = parseInt(actualValue);
+                return actualValue != null && actualValue > colVal;
+            case 6: // Greater than or equal
+                actualValue = parseInt(actualValue);
+                return actualValue != null && actualValue >= colVal;
+            case 7: // Less than
+                actualValue = parseInt(actualValue);
+                return actualValue != null && actualValue < colVal;
+            case 8: // Less than or equal to
+                actualValue = parseInt(actualValue);
+                return actualValue != null && actualValue <= colVal;
             default:
                 dialog.showMessage("Error", "Unknown condition comparison type: " + comparison);
                 break;

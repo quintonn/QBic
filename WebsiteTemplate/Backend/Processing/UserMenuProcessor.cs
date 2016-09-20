@@ -48,7 +48,7 @@ namespace WebsiteTemplate.Backend.Processing
                 });
             }
 
-            return results;
+            return results.OrderBy(m => m.Position).ToList();
         }
 
         private void AddSubMenu(Menu menu, ISession session, int[] events)
@@ -64,7 +64,7 @@ namespace WebsiteTemplate.Backend.Processing
             {
                 AddSubMenu(subMenu, session, events);
             }
-            menu.SubMenus = subMenus;
+            menu.SubMenus = subMenus.OrderBy(m => m.Position).ToList();
         }
     }
 }

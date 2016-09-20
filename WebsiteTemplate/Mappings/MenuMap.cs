@@ -22,6 +22,10 @@ namespace WebsiteTemplate.Mappings
               //.CustomType<EventNumber>()
               //.Not
               .Nullable();
+
+            Map(x => x.Position)
+                .Default("-1")
+                .Not.Nullable();
         }
     }
 }

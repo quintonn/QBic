@@ -1,6 +1,7 @@
 ﻿using NHibernate;
 using NHibernate.Criterion;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Processing.InputProcessing;
@@ -22,6 +23,25 @@ namespace WebsiteTemplate.Backend.UIProcessors
         public override ProcessingResult PreDeleteActivities(ISession session, string itemId)
         {
             MenuService.DeleteChildMenus(itemId, session);
+            var menu = session.Get<Menu>(itemId);
+            if (menu.ParentMenu == null)
+            {
+                var otherMenus = session.QueryOver<Menu>().Where(m => m.ParentMenu == null && m.Position > menu.Position).List<Menu>();
+                foreach (var m in otherMenus)
+                {
+                    m.Position--;
+                    DataService.SaveOrUpdate(session, m);
+                }
+            }
+            else
+            {
+                var otherMenus = session.QueryOver<Menu>().Where(m => m.ParentMenu.Id == menu.ParentMenu.Id && m.Position > menu.Position).List<Menu>();
+                foreach (var m in otherMenus)
+                {
+                    m.Position--;
+                    DataService.SaveOrUpdate(session, m);
+                }
+            }
             return new ProcessingResult(true);
         }
 
@@ -53,7 +73,25 @@ namespace WebsiteTemplate.Backend.UIProcessors
             {
                 item.Event = null;
             }
+
             item.Name = name;
+
+            if (String.IsNullOrWhiteSpace(item.Id))
+            {
+                using (var session = DataService.OpenSession())
+                {
+                    if (!String.IsNullOrWhiteSpace(parentMenuId))
+                    {
+                        var lastMenu = session.QueryOver<Menu>().Where(m => m.ParentMenu.Id == parentMenuId).OrderBy(m => m.Position).Asc().List<Menu>().LastOrDefault();
+                        item.Position = lastMenu != null ? lastMenu.Position + 1 : 0;
+                    }
+                    else
+                    {
+                        var lastMenu = session.QueryOver<Menu>().Where(m => m.ParentMenu == null).OrderBy(m => m.Position).Asc().List<Menu>().LastOrDefault();
+                        item.Position = lastMenu != null ? lastMenu.Position + 1 : 0;
+                    }
+                }
+            }
 
             return new ProcessingResult(true);
         }
@@ -75,6 +113,8 @@ namespace WebsiteTemplate.Backend.UIProcessors
             {
                 query = query.WhereRestrictionOn(x => x.Name).IsLike(filter, MatchMode.Anywhere);
             }
+
+            query = query.OrderBy(m => m.Position).Asc();
 
             return query;
         }

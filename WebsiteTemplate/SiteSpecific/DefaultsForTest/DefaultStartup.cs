@@ -88,6 +88,7 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
                     {
                         Event = EventNumber.ViewUsers,
                         Name = "Users",
+                        Position = 0
                     };
 
                     DataService.SaveOrUpdate(session, menu1);
@@ -103,6 +104,7 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
                     {
                         Event = EventNumber.ViewMenus,
                         Name = "Menus",
+                        Position = 1
                     };
                     DataService.SaveOrUpdate(session, menu2);
                 }
@@ -116,7 +118,8 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
                     userRoleMenu = new Menu()
                     {
                         Event = EventNumber.ViewUserRoles,
-                        Name = "User Roles"
+                        Name = "User Roles",
+                        Position = 2
                     };
                     DataService.SaveOrUpdate(session, userRoleMenu);
                 }

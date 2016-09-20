@@ -94,8 +94,6 @@ namespace WebsiteTemplate.Backend.Menus
 
             columnConfig.AddStringColumn("Event", "Event");
 
-            //columnConfig.AddDateColumn("Date", "Date");
-
             columnConfig.AddButtonColumn("Sub Menus", "Id", "...", EventNumber.ViewMenus, new ShowHideColumnSetting()
             {
                 Display = ColumnDisplayType.Show,
@@ -116,11 +114,26 @@ namespace WebsiteTemplate.Backend.Menus
                 {
                     Display = ColumnDisplayType.Show,
                     Conditions = new List<Condition>()
-                   {
-                       new Condition("CanDelete", Comparison.Equals, "true")
-                   }
+                    {
+                        new Condition("CanDelete", Comparison.Equals, "true")
+                    }
                 }
             );
+
+            columnConfig.AddHiddenColumn("Position");
+
+            columnConfig.AddButtonColumn("", "Id", "Up", EventNumber.IncrementMenuOrder,
+                new ShowHideColumnSetting()
+                {
+                    Display = ColumnDisplayType.Show,
+                    Conditions = new List<Condition>()
+                    {
+                        new Condition("Position", Comparison.GreaterThan, "0")
+                    }
+                });
+
+            columnConfig.AddButtonColumn("", "Id", "Down", EventNumber.DecrementMenuOrder);
+            //TODO: Would be good to hide the Down button for the last item.
         }
 
         public override void PerformAdditionalProcessingOnDataRetrieval(string data, bool obtainingDataCountOnly)
@@ -143,6 +156,10 @@ namespace WebsiteTemplate.Backend.Menus
                 else if (!String.IsNullOrWhiteSpace(dataItem))
                 {
                     MenuId = dataItem;
+                }
+                else if (!String.IsNullOrWhiteSpace(eventParams?.ToString()))
+                {
+                    MenuId = eventParams.GetValue("MenuId");
                 }
                 else
                 {
@@ -180,6 +197,7 @@ namespace WebsiteTemplate.Backend.Menus
                 Event = r.Event == null ? "" : EventService.EventList.ContainsKey(r.Event.Value) ? EventService.EventList[r.Event.Value].Description : "",
                 ParentMenu = r.ParentMenu,
                 CanDelete = r.CanDelete,
+                Position = r.Position
             }).ToList();
 
             return newList;

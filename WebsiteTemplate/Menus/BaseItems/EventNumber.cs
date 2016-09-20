@@ -23,7 +23,8 @@ namespace WebsiteTemplate.Menus.BaseItems
         public static EventNumber ViewMenus = new EventNumber(1007);
         public static EventNumber AddMenu = new EventNumber(1008);
         public static EventNumber EditMenu = new EventNumber(1009);
-
+        public static EventNumber IncrementMenuOrder = new EventNumber(901);
+        public static EventNumber DecrementMenuOrder = new EventNumber(902);
         public static EventNumber DeleteMenu = new EventNumber(1010);
 
         public static EventNumber ViewUserRoles = new EventNumber(1011);

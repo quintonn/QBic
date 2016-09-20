@@ -12,6 +12,8 @@ namespace WebsiteTemplate.Models
 
         public virtual int? Event { get; set; }
 
+        public virtual int Position { get; set; }
+
         public Menu()
         {
             Event = null;
