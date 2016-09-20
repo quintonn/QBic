@@ -12,6 +12,19 @@ using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Services
 {
+    public class BasicClassEqualityComparer : IEqualityComparer<BaseClass>
+    {
+        public bool Equals(BaseClass x, BaseClass y)
+        {
+            return x.Id == y.Id;
+        }
+
+        public int GetHashCode(BaseClass obj)
+        {
+            return 0;
+        }
+    }
+
     public class BackupService
     {
         private DataService DataService { get; set; }
@@ -56,14 +69,115 @@ namespace WebsiteTemplate.Backend.Services
             var config = store.CreateNewConfigurationUsingConnectionString(connectionString);
             var factory = config.BuildSessionFactory();
 
+            IList<BaseClass> items = null;
             using (var session = factory.OpenSession())
             {
-                var dbItems = session.QueryOver<BaseClass>().List<BaseClass>();
-                foreach (var item in dbItems)
+                items = session.QueryOver<BaseClass>().List<BaseClass>();
+            }
+
+            //Delete(dbItems, factory);
+
+            var comparer = new BasicClassEqualityComparer();
+
+            var users = items.Where(i => i is User).ToList();
+            var userRoles = items.Where(i => i is UserRole).ToList();
+            var eventRoleItems = items.Where(i => i is EventRoleAssociation).ToList();
+            var auditEvents = items.Where(i => i is AuditEvent).ToList();
+            var otherItems = items.Except(users, comparer)
+                                  .Except(userRoles, comparer)
+                                  .Except(eventRoleItems, comparer)
+                                  .Except(auditEvents, comparer)
+                                  .ToList();
+
+            Delete(otherItems, factory);
+            Delete(eventRoleItems, factory);
+            Delete(auditEvents, factory);
+            Delete(userRoles, factory);
+            Delete(users, factory);
+
+            using (var session = factory.OpenSession())
+            {
+                var count = session
+                        .CreateCriteria<BaseClass>()
+                        .SetProjection(
+                            Projections.Count(Projections.Id())
+                        )
+                        .List<int>()
+                        .Sum();
+                if (count != 0)
+                {
+                    throw new Exception("Not all items were deleted. Contact support");
+                }
+            }
+        }
+
+        private void Delete(IList<BaseClass> items, ISessionFactory factory, int count = 10)
+        {
+            var itemCount = Math.Max(100, items.Count / 2);
+            var itemsToDelete = items;
+            var nextItems = itemsToDelete.Take(itemCount).ToList();
+            var cnt = 0;
+            var errorCnt = 0;
+            while (itemsToDelete.Count > 0)
+            {
+                try
+                {
+                    if (nextItems.Count > 0)
+                    {
+                        DeleteItems(nextItems, factory);
+                        using (var session = factory.OpenSession())
+                        {
+                            var dbItems = session.QueryOver<BaseClass>().Where(Restrictions.On<UserRole>(x => x.Id).IsIn(items.Select(i => i.Id).ToArray())).List<BaseClass>();
+                            itemsToDelete = dbItems.ToList();
+                        }
+                    }
+                    else
+                    {
+                        cnt++;
+                    }
+                }
+                catch (Exception error)
+                {
+                    Console.WriteLine(error.InnerException?.Message);
+                    errorCnt++;
+                    cnt++;
+
+                    if (itemCount >= itemsToDelete.Count)
+                    {
+                        itemCount = itemsToDelete.Count / 2;
+                        itemCount = Math.Max(itemCount, 1);
+                    }
+
+                    if (errorCnt == 10)
+                    {
+                        itemCount--;
+                        errorCnt = 0;
+                        cnt = 0;
+                    }
+                    if (itemCount < 0)
+                    {
+                        throw new Exception("Unable to complete delete of existing items");
+                    }
+                }
+
+                if ((itemCount * cnt) > itemsToDelete.Count)
+                {
+                    cnt = 0;
+                }
+                nextItems = itemsToDelete.Skip(itemCount * cnt).Take(itemCount).ToList();
+            }
+        }
+
+        private void DeleteItems(IList<BaseClass> items, ISessionFactory factory, int count = 10)
+        {
+            var failedItems = new List<BaseClass>();
+            using (var session = factory.OpenStatelessSession())
+            {
+                session.SetBatchSize(items.Count);
+                foreach (var item in items)
                 {
                     session.Delete(item);
                 }
-                session.Flush();
             }
         }
 
@@ -76,82 +190,129 @@ namespace WebsiteTemplate.Backend.Services
 
             //CreateNewDatabaseSchema(connectionString); //Not sure if this should be an explicit call or not.
 
-            var store = DataStore.GetInstance(null);
-            //var connectionString = "Integrated Security=SSPI;Persist Security Info=False;Data Source=localhost;Initial Catalog=WebsiteTemplate";
-            var config = store.CreateNewConfigurationUsingConnectionString(connectionString);
-            var factory = config.BuildSessionFactory();
-            
-            var existingCount = 0l;
-            var lastCount = -1l;
-            while (existingCount < items.Count)
+            try
             {
+                DynamicClass.SetIdsToBeAssigned = true;
+                var store = DataStore.GetInstance(null);
+                //var connectionString = "Integrated Security=SSPI;Persist Security Info=False;Data Source=localhost;Initial Catalog=WebsiteTemplate";
+                var config = store.CreateNewConfigurationUsingConnectionString(connectionString);
+                var factory = config.BuildSessionFactory();
+
+                var comparer = new BasicClassEqualityComparer();
+
+                var users = items.Where(i => i is User).ToList();
+                var eventRoleItems = items.Where(i => i is EventRoleAssociation).ToList();
+                var auditEvents = items.Where(i => i is AuditEvent).ToList();
+                var otherItems = items.Except(users, comparer).Except(eventRoleItems, comparer).Except(auditEvents, comparer).ToList();
+
+                Insert(users, factory);
+                Insert(otherItems, factory);
+                Insert(eventRoleItems, factory);
+                Insert(auditEvents, factory);
+
                 using (var session = factory.OpenSession())
                 {
-                    existingCount = session.CreateCriteria<BaseClass>()
-                                           .SetProjection(Projections.RowCountInt64())
-                                           .List<long>()
-                                           .Sum();
-                    session.Flush();
-                }
-
-                if (existingCount == items.Count)
-                {
-                    break; // success
-                }
-
-                if (lastCount == existingCount)
-                {
-                    throw new Exception("Error restoring backup, no change after retrying inserting new items.");
-                }
-                lastCount = existingCount;
-
-                try
-                {
-                    using (var session = factory.OpenSession())
+                    var count = session
+                            .CreateCriteria<BaseClass>()
+                            .SetProjection(
+                                Projections.Count(Projections.Id())
+                            )
+                            .List<int>()
+                            .Sum();
+                    if (count != items.Count)
                     {
-                        var existingItems = session.QueryOver<BaseClass>().List<BaseClass>().ToList();
-                        SaveItemsToDb(existingItems, items, session); // checks if item already exists, if not, tries to save it. Also has some try-catch processing
-
-                        session.Flush();
+                        throw new Exception("Not all items were restored. Contact support");
                     }
                 }
-                catch (Exception exception)
-                {
-                    //Do nothing, just try again.
-                }
+            }
+            finally
+            {
+                DynamicClass.SetIdsToBeAssigned = false; // Change it back
             }
         }
-        private bool SaveItemsToDb(List<BaseClass> existingItems, List<BaseClass> items, ISession session, int count = 10)
+
+        private void Insert(IList<BaseClass> items, ISessionFactory factory, int count = 10)
         {
-            var unsavedList = new List<BaseClass>();
-            foreach (var item in items)
+            var itemCount = Math.Max(100, items.Count / 2);
+            var itemsToAdd = items;
+            var nextItems = itemsToAdd.Take(itemCount).ToList();
+            var cnt = 0;
+            var errorCnt = 0;
+
+            var comparer = new BasicClassEqualityComparer();
+            while (itemsToAdd.Count > 0)
             {
                 try
                 {
-                    if (existingItems.Count(e => e.Id == item.Id) == 0)
+                    if (nextItems.Count > 0)
                     {
-                        session.Save(item);
+                        InsertItems(nextItems, factory);
+                        using (var session = factory.OpenSession())
+                        {
+                            //var dbItems = session.QueryOver<BaseClass>().List<BaseClass>();
+                            var dbItems = session.QueryOver<BaseClass>().Where(Restrictions.On<UserRole>(x => x.Id).IsIn(items.Select(i => i.Id).ToArray())).List<BaseClass>();
+
+                            itemsToAdd = items.Except(dbItems, comparer).ToList();
+                        }
+                    }
+                    else
+                    {
+                        cnt++;
                     }
                 }
-                catch (Exception exception)
+                catch (Exception error)
                 {
-                    unsavedList.Add(item);
-                    Console.WriteLine(exception?.Message);
-                    Console.WriteLine(exception?.InnerException?.Message);
+                    Console.WriteLine(error.InnerException?.Message);
+                    errorCnt++;
+                    cnt++;
+
+                    if (itemCount >= itemsToAdd.Count)
+                    {
+                        itemCount = itemsToAdd.Count / 2;
+                        itemCount = Math.Max(itemCount, 1);
+                    }
+
+                    if (errorCnt == 50)
+                    {
+                        itemCount--;
+                        errorCnt = 0;
+                        cnt = 0;
+
+                        using (var session = factory.OpenSession())
+                        {
+                            var dbItems = session.QueryOver<BaseClass>().Where(Restrictions.On<UserRole>(x => x.Id).IsIn(items.Select(i => i.Id).ToArray())).List<BaseClass>();
+
+                            itemsToAdd = items.Except(dbItems, comparer).ToList();
+                        }
+                    }
+                    if (itemCount < 0)
+                    {
+                        throw new Exception("Unable to restore all items. Trying again or contact support.");
+                    }
+                }
+
+                if ((itemCount * cnt) > itemsToAdd.Count)
+                {
+                    cnt = 0;
+
+                    var rnd = new Random();
+                    itemsToAdd = itemsToAdd.OrderBy(item => rnd.Next()).ToList(); //randomize the stuff
+                }
+                nextItems = itemsToAdd.Skip(itemCount * cnt).Take(itemCount).ToList();
+            }
+        }
+
+        private void InsertItems(IList<BaseClass> items, ISessionFactory factory, int count = 10)
+        {
+            var failedItems = new List<BaseClass>();
+            using (var session = factory.OpenStatelessSession())
+            {
+                session.SetBatchSize(items.Count);
+                foreach (var item in items)
+                {
+                    session.Insert(item);
                 }
             }
-
-            if (count < 0)
-            {
-                throw new Exception("Too many retries");
-            }
-
-            if (unsavedList.Count > 0)
-            {
-                SaveItemsToDb(existingItems, unsavedList, session, --count);
-            }
-
-            return true;
         }
     }
 }
