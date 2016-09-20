@@ -17,7 +17,6 @@ namespace WebsiteTemplate.Backend.SystemSettings
         private ApplicationSettingsCore AppSettings { get; set; }
         private DataService DataService { get; set; }
 
-
         public ModiffySystemSettings(DataService dataService, ApplicationSettingsCore appSettings)
         {
             DataService = dataService;
@@ -51,6 +50,8 @@ namespace WebsiteTemplate.Backend.SystemSettings
                 result.Add(new PasswordInput("EmailPassword", "Password", SystemSettings?.EmailPassword, "Mail Settings", true));
                 result.Add(new NumericInput<int>("EmailPort", "Port", SystemSettings?.EmailPort, "Mail Settings", true));
                 result.Add(new BooleanInput("EmailEnableSsl", "Enable Ssl", SystemSettings?.EmailEnableSsl, "Mail Settings", true));
+
+                result.Add(new StringInput("DateFormat", "Date Format", SystemSettings?.DateFormat, "Formats", true));
 
                 return result;
             }
@@ -92,6 +93,8 @@ namespace WebsiteTemplate.Backend.SystemSettings
                 var port = GetValue<int>("EmailPort");
                 var enableSsl = GetValue<bool>("EmailEnableSsl");
 
+                var dateFormat = GetValue("DateFormat");
+
                 using (var session = DataService.OpenSession())
                 {
                     var systemSettings = session.QueryOver<Models.SystemSettings>().List<Models.SystemSettings>().FirstOrDefault();
@@ -106,6 +109,8 @@ namespace WebsiteTemplate.Backend.SystemSettings
                     systemSettings.EmailPassword = Encryption.Encrypt(password, AppSettings.ApplicationPassPhrase);
                     systemSettings.EmailPort = port;
                     systemSettings.EmailEnableSsl = enableSsl;
+
+                    systemSettings.DateFormat = dateFormat;
 
                     DataService.SaveOrUpdate(session, systemSettings);
 

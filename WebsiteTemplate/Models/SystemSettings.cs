@@ -19,5 +19,7 @@ namespace WebsiteTemplate.Models
         public virtual int EmailPort { get; set; }
 
         public virtual bool EmailEnableSsl { get; set; }
+
+        public virtual string DateFormat { get; set; }
     }
 }

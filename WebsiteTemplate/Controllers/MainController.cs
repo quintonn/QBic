@@ -1,10 +1,12 @@
 ﻿using BasicAuthentication.Security;
 using Microsoft.Practices.Unity;
+using System.Linq;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Web.Http;
 using WebsiteTemplate.Backend.Processing;
 using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Controllers
@@ -15,12 +17,19 @@ namespace WebsiteTemplate.Controllers
         private IUnityContainer Container { get; set; }
         private ApplicationService ApplicationService { get; set; }
 
-        private static JsonSerializerSettings JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = "dd-MM-yyyy" };
+        private JsonSerializerSettings JSON_SETTINGS;
 
         public MainController(IUnityContainer container)
         {
             Container = container;
             ApplicationService = container.Resolve<ApplicationService>();
+
+            var dataService = container.Resolve<DataService>();
+            using (var session = dataService.OpenSession())
+            {
+                var appSettings = session.QueryOver<SystemSettings>().List<SystemSettings>().FirstOrDefault();
+                JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = appSettings.DateFormat };
+            }
         }
 
         [HttpGet]

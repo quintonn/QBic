@@ -15,7 +15,7 @@ namespace WebsiteTemplate.Backend.Processing
 {
     public abstract class CoreProcessorBase
     {
-        protected static JsonSerializerSettings JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = "dd-MM-yyyy" };
+        protected static JsonSerializerSettings JSON_SETTINGS;
         protected static ApplicationStartup ApplicationStartup { get; set; }
         protected static IUnityContainer Container { get; set; }
         protected static EventService EventService { get; set; }
@@ -37,6 +37,12 @@ namespace WebsiteTemplate.Backend.Processing
 
                 PopulateDefaultValues();
                 SetupDone = true;
+            }
+
+            using (var session = DataService.OpenSession())
+            {
+                var appSettings = session.QueryOver<Models.SystemSettings>().List<Models.SystemSettings>().FirstOrDefault();
+                JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = appSettings.DateFormat };
             }
 
         }

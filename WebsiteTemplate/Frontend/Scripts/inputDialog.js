@@ -456,7 +456,7 @@
         self.inputLabel = ko.observable(inputSetting.InputLabel);
         self.inputValue = ko.observable();
 
-        self.dateFormat = 'dd-mm-yy';
+        self.dateFormat = 'dd-mm-yy'; // Not the usual format. Specific format for datepicker
         
         if (inputSetting.InputType == 10) // Numeric
         {
