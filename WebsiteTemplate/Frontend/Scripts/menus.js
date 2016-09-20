@@ -46,6 +46,10 @@ function menuModel(id, name, eventId)
 
     self.menuClick = function ()
     {
+        if (self.eventId != "back" && self.eventId != null)
+        {
+            _applicationModel.closeNavBar();
+        }
         dialog.showBusyDialog("Processing...");
         if (self.eventId == "home")
         {

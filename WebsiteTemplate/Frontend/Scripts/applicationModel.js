@@ -22,6 +22,27 @@
         auth.logout();
     };
 
+    self.toggleNavBar = function ()
+    {
+        var x = document.getElementById("smallNavbar");
+        if (x.className.indexOf("w3-show") == -1)
+        {
+            x.className += " w3-show";
+        } else
+        {
+            x.className = x.className.replace(" w3-show", "");
+        }
+    };
+
+    self.closeNavBar = function ()
+    {
+        var x = document.getElementById("smallNavbar");
+        if (x.className.indexOf("w3-show") > -1)
+        {
+            x.className = x.className.replace(" w3-show", "");
+        }
+    };
+
     self.modalDialogs = ko.observableArray([]);
     self.addModalDialog = function (model)
     {

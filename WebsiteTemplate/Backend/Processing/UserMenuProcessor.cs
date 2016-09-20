@@ -56,7 +56,7 @@ namespace WebsiteTemplate.Backend.Processing
             menu.ParentMenu = null;
             var subMenus = session.CreateCriteria<Menu>()
                                   .CreateAlias("ParentMenu", "parent")
-                                  .Add(Restrictions.In("Event", events))
+                                  .Add(Restrictions.Or(Restrictions.In("Event", events), Restrictions.IsNull("Event")))
                                   .Add(Restrictions.Eq("parent.Id", menu.Id))
                                   .List<Menu>()
                                   .ToList();
