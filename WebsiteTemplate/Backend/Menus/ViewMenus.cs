@@ -103,6 +103,21 @@ namespace WebsiteTemplate.Backend.Menus
                 }
             }, MenuId);
 
+            columnConfig.AddHiddenColumn("Position");
+
+            columnConfig.AddButtonColumn("", "Id", "Up", EventNumber.IncrementMenuOrder,
+                new ShowHideColumnSetting()
+                {
+                    Display = ColumnDisplayType.Show,
+                    Conditions = new List<Condition>()
+                    {
+                        new Condition("Position", Comparison.GreaterThan, "0")
+                    }
+                });
+
+            columnConfig.AddButtonColumn("", "Id", "Down", EventNumber.DecrementMenuOrder);
+            //TODO: Would be good to hide the Down button for the last item.
+
             columnConfig.AddLinkColumn("", "Id", "Edit", EventNumber.EditMenu, null);
 
             columnConfig.AddButtonColumn("", "Id", "X",
@@ -119,21 +134,6 @@ namespace WebsiteTemplate.Backend.Menus
                     }
                 }
             );
-
-            columnConfig.AddHiddenColumn("Position");
-
-            columnConfig.AddButtonColumn("", "Id", "Up", EventNumber.IncrementMenuOrder,
-                new ShowHideColumnSetting()
-                {
-                    Display = ColumnDisplayType.Show,
-                    Conditions = new List<Condition>()
-                    {
-                        new Condition("Position", Comparison.GreaterThan, "0")
-                    }
-                });
-
-            columnConfig.AddButtonColumn("", "Id", "Down", EventNumber.DecrementMenuOrder);
-            //TODO: Would be good to hide the Down button for the last item.
         }
 
         public override void PerformAdditionalProcessingOnDataRetrieval(string data, bool obtainingDataCountOnly)
