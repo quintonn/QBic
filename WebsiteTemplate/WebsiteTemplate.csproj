@@ -165,6 +165,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Frontend\Pages\DetailsView.html" />
+    <Content Include="Frontend\Pages\ListView.html" />
     <Content Include="Frontend\Pages\PasswordResetRequest.html" />
     <Content Include="Utilities\Getting Started.txt" />
     <Content Include="Frontend\css\busyIndicator.css" />
@@ -246,6 +248,8 @@
     <Compile Include="Backend\Services\BackupService.cs" />
     <Compile Include="Backend\SystemSettings\ModiffySystemSettings.cs" />
     <Compile Include="Backend\TestItems\CauseChild.cs" />
+    <Compile Include="Backend\TestItems\TestListView.cs" />
+    <Compile Include="Backend\TestItems\TestListViewDetail.cs" />
     <Compile Include="Backend\TestItems\TestView.cs" />
     <Compile Include="Backend\TestItems\TestPdf.cs" />
     <Compile Include="Backend\UIProcessors\MenuProcessor.cs" />
@@ -301,6 +305,8 @@
     <Compile Include="Menus\InputItems\InputProcessingMethods.cs" />
     <Compile Include="Menus\InputItems\ModifyItemUsingInputProcessor.cs" />
     <Compile Include="Menus\LogoutEvent.cs" />
+    <Compile Include="Menus\ViewItems\ShowDetailView.cs" />
+    <Compile Include="Menus\ViewItems\ShowListView.cs" />
     <Compile Include="Menus\ViewItems\ShowViewUsingInputProcessor.cs" />
     <Compile Include="Models\AuditAction.cs" />
     <Compile Include="Models\AuditEvent.cs" />

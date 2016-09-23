@@ -119,8 +119,52 @@
                             });
                             break;
                         }
+                    case 14: // Show a list view
+
+                        var viewItems = _applicationModel.views();
+
+                        var existingModel = $.grep(viewItems, function (v, indx)
+                        {
+                            return v.id == item.Id;
+                        });
+                        if (existingModel.length == 0)
+                        {
+                            return views.showListView(item, false, item.Id).then(function (m)
+                            {
+                                _applicationModel.addView(m);
+                            });
+                        }
+                        else
+                        {
+                            _applicationModel.addView(existingModel[0]);
+
+                            existingModel[0].gotoPage(1);
+                            return Promise.resolve();
+                        }
+                    case 15: // Show detail view
+                        var viewItems = _applicationModel.views();
+
+                        var existingModel = $.grep(viewItems, function (v, indx)
+                        {
+                            return v.id == item.Id;
+                        });
+                        if (existingModel.length == 0)
+                        {
+                            return views.showDetailsView(item, false, item.Id).then(function (m)
+                            {
+                                _applicationModel.addView(m);
+                            });
+                        }
+                        else
+                        {
+                            _applicationModel.addView(existingModel[0]);
+
+                            existingModel[0].gotoPage(1);
+                            return Promise.resolve();
+                        }
                     default:
                         console.warn(item);
+                        dialog.closeBusyDialog();
                         return dialog.showMessage("Error", "Unknown action type: " + actionType + " for event " + eventId);
                 }
             }

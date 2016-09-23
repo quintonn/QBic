@@ -5,6 +5,67 @@
         return mainApp.makeWebCall("frontend/pages/Views.html?v=" + mainApp.version);
     };
 
+    views.showDetailsView = function (viewData, isEmbeddedView, id)
+    {
+        dialog.showBusyDialog('Loading data...');
+        return mainApp.makeWebCall("frontend/pages/DetailsView.html?v=" + mainApp.version).then(function (data)
+        {
+            data = data.replace("##view_id##", "view_" + id);
+
+            var model = new viewModel(viewData.Title, data, viewData, isEmbeddedView || false, id, viewData.ViewMessage);
+            model.detailIsHtml(viewData.DetailIsHtml);
+
+            processing.loadViewMenu(id, model, viewData.DataForGettingMenu);
+
+            var columns = viewData.Columns;
+
+            for (var i = 0; i < columns.length; i++)
+            {
+                var col = columns[i];
+                var colModel = new columnModel(i, col.ColumnLabel, col.ColumnType != 4);
+
+                model.columns.push(colModel);
+            }
+
+            model.addData(viewData.ViewData);
+
+            return dialog.closeBusyDialog().then(function ()
+            {
+                return Promise.resolve(model);
+            });
+        });
+    };
+
+    views.showListView = function (viewData, isEmbeddedView, id)
+    {
+        dialog.showBusyDialog('Loading data...');
+        return mainApp.makeWebCall("frontend/pages/ListView.html?v=" + mainApp.version).then(function (data)
+        {
+            data = data.replace("##view_id##", "view_" + id);
+
+            var model = new viewModel(viewData.Title, data, viewData, isEmbeddedView || false, id, viewData.ViewMessage);
+
+            processing.loadViewMenu(id, model, viewData.DataForGettingMenu);
+
+            var columns = viewData.Columns;
+
+            for (var i = 0; i < columns.length; i++)
+            {
+                var col = columns[i];
+                var colModel = new columnModel(i, col.ColumnLabel, col.ColumnType != 4);
+
+                model.columns.push(colModel);
+            }
+
+            model.addData(viewData.ViewData);
+
+            return dialog.closeBusyDialog().then(function ()
+            {
+                return Promise.resolve(model);
+            });
+        });
+    };
+
     views.showView = function (viewData, isEmbeddedView, id)
     {
         dialog.showBusyDialog('Loading data...');
@@ -96,6 +157,8 @@
         self.id = id;
 
         self.linesPerPage = ko.observable(settings.LinesPerPage);
+
+        self.detailIsHtml = ko.observable(false);
 
         self.isEmbeddedView = isEmbeddedView;
 
@@ -205,11 +268,9 @@
         {
             dialog.showBusyDialog("Processing...").then(function ()
             {
-                var cellItem = rowItem.cells()[colIndex];
-                //var data = self.settings.ViewData[rowIndex];
                 var data = rowItem.data;
                 var theColumn = self.settings.Columns[colIndex];
-
+                
                 var id = data[theColumn.KeyColumn];
 
                 var viewSettings =
@@ -359,7 +420,6 @@
             {
                 var col = columns[k];
                 var value = processing.getColumnValue(col, data);
-
                 var cellIsVisible = col.ColumnType != 4 && processing.cellIsVisible(col, data);
 
                 var cell = new cellModel(value, cellIsVisible, col.ColumnType);
