@@ -32,13 +32,18 @@ namespace WebsiteTemplate.Backend.Services
             // I think this covers everything
         }
 
-        public void AuditChange<T>(T item, AuditAction action, string entityName) where T : BaseClass
+        public void AuditChange<T>(T item, AuditAction action, string entityName, User user = null) where T : BaseClass
         {
-            //TODO: I think i can do something to only log if there has been a change (on the modification action).
-            //      I can either add IPropertyChanged interface on base class, or do property comparison here. (I prefer the first options)
-            var userTask = BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync();
-            userTask.Wait();
-            var user = userTask.Result as User;
+            if (user == null)
+            {
+                var userTask = BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync();
+                userTask.Wait();
+                user = userTask.Result as User;
+            }
+            if (user == null)
+            {
+                throw new Exception("Null user when trying to perform audit");
+            }
             //TODO: what if user is anonymous, null or system events???
             entityName = entityName.Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Last();
 

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using WebsiteTemplate.Mappings;
+using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.TestItems
 {

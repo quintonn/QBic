@@ -7,15 +7,6 @@ using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Mappings
 {
-    /// <summary>
-    /// This class is so we can use reflection to find only the dynamic classes.
-    /// This is used when dynamically mapping classes to NHibernate using FluentMapping.
-    /// </summary>
-    public class DynamicClass : BaseClass
-    {
-        internal static bool SetIdsToBeAssigned { get; set; } = false;
-    }
-
     public class DynamicMap<T> : ClassMap<T> where T : DynamicClass
     {
         public DynamicMap()
@@ -56,8 +47,8 @@ namespace WebsiteTemplate.Mappings
                 {
                     Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomSqlType("varbinary(max)").Length(int.MaxValue);
                 }
-                else {
-
+                else
+                {
                     Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable();
                 }
             }

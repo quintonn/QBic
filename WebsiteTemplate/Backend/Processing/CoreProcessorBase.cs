@@ -1,6 +1,7 @@
 ﻿using Microsoft.Practices.Unity;
 using Newtonsoft.Json;
 using NHibernate.Criterion;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace WebsiteTemplate.Backend.Processing
         protected static EventService EventService { get; set; }
         protected static DataService DataService { get; set; }
         protected static AuditService AuditService { get; set; }
+        protected static BackgroundService BackgroundService { get; set; }
 
         private static bool SetupDone = false;
 
@@ -34,9 +36,11 @@ namespace WebsiteTemplate.Backend.Processing
                 EventService = container.Resolve<EventService>();
                 DataService = container.Resolve<DataService>();
                 AuditService = container.Resolve<AuditService>();
+                BackgroundService = container.Resolve<BackgroundService>();
 
                 PopulateDefaultValues();
                 SetupDone = true;
+                BackgroundService.StartBackgroundJobs();
             }
 
             using (var session = DataService.OpenSession())
@@ -44,8 +48,8 @@ namespace WebsiteTemplate.Backend.Processing
                 var appSettings = session.QueryOver<Models.SystemSettings>().List<Models.SystemSettings>().FirstOrDefault();
                 JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = appSettings.DateFormat };
             }
-
         }
+
         private static void PopulateDefaultValues()
         {
             CreateInternalUsers();

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.BasicCrudItems;
 
@@ -12,6 +13,8 @@ namespace WebsiteTemplate.Backend.Services
     public class EventService
     {
         public static IDictionary<int, IEvent> EventList { get; set; }
+
+        public static IDictionary<int, BackgroundEvent> BackgroundEventList { get; set; }
 
         public IUnityContainer Container { get; set; }
 
@@ -22,6 +25,10 @@ namespace WebsiteTemplate.Backend.Services
             if (EventList == null)
             {
                 EventList = new Dictionary<int, IEvent>();
+            }
+            if (BackgroundEventList == null)
+            {
+                BackgroundEventList = new Dictionary<int, BackgroundEvent>();
             }
             PopulateEventList();
         }
@@ -129,9 +136,14 @@ namespace WebsiteTemplate.Backend.Services
                     {
                         //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
                         var instance = (IEvent)Container.Resolve(type);
-                        if (!EventList.ContainsKey(instance.GetId()))
+                        
+                        if (!(instance is BackgroundEvent) && !EventList.ContainsKey(instance.GetId()))
                         {
                             EventList.Add(instance.GetId(), instance);
+                        }
+                        else if (instance is BackgroundEvent && !BackgroundEventList.ContainsKey(instance.GetId()))
+                        {
+                            BackgroundEventList.Add(instance.GetId(), instance as BackgroundEvent);
                         }
                     }
                 }

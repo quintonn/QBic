@@ -18,5 +18,6 @@
         Logout = 13,
         ListView = 14,
         DetailView = 15,
+        BackgroundEvent = 16
     }
 }

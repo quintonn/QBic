@@ -3,15 +3,12 @@ using BasicAuthentication.Security;
 using BasicAuthentication.Startup;
 using Microsoft.Owin;
 using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.Configuration;
 using Owin;
 using System;
-using System.Linq;
-using System.Net.Http.Formatting;
 using System.Web.Http;
 using WebsiteTemplate.Data;
-using Microsoft.Practices.Unity.Configuration;
 using WebsiteTemplate.Utilities;
-using WebsiteTemplate.Backend.Services;
 
 namespace WebsiteTemplate
 {

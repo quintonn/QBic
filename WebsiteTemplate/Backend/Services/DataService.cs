@@ -17,14 +17,14 @@ namespace WebsiteTemplate.Backend.Services
             AuditService = auditService;
         }
 
-        public void SaveOrUpdate<T>(ISession session, T item) where T : BaseClass
+        public void SaveOrUpdate<T>(ISession session, T item, User user = null) where T : BaseClass
         {
             var action = String.IsNullOrWhiteSpace(item.Id) ? AuditAction.New : AuditAction.Modify;
 
             session.SaveOrUpdate(item);
             var entityName = session.GetEntityName(item);
 
-            AuditService.AuditChange(item, action, entityName);
+            AuditService.AuditChange(item, action, entityName, user);
         }
 
         public void TryDelete<T>(ISession session, T item) where T : BaseClass

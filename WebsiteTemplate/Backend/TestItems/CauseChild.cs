@@ -1,4 +1,4 @@
-﻿using WebsiteTemplate.Mappings;
+﻿using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.TestItems
 {
