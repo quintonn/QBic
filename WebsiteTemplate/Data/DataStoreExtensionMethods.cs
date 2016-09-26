@@ -34,6 +34,10 @@ namespace WebsiteTemplate.Data
                     var dynamicTypes = assembly.GetTypes().Where(myType => myType.IsClass /*&& !myType.IsAbstract */&& myType.IsSubclassOf(typeof(DynamicClass)));
                     types.AddRange(dynamicTypes);
                 }
+                catch (BadImageFormatException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
                 catch (ReflectionTypeLoadException ex)
                 {
                     Console.WriteLine(ex.Message);

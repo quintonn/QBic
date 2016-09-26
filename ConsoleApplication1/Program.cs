@@ -1,13 +1,5 @@
 ﻿using System;
-using System.CodeDom;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.Net;
 using System.Reflection;
-using System.Web.Services;
-using System.Web.Services.Description;
-using System.Xml;
-using System.Xml.Serialization;
 using WebsiteTemplate.Data;
 
 namespace ConsoleApplication1

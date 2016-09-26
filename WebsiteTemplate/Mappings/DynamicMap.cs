@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Mappings
@@ -45,7 +46,14 @@ namespace WebsiteTemplate.Mappings
 
                 if (properties.Where(p => p.Name == column).Single().PropertyType == typeof(byte[]))
                 {
-                    Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomSqlType("varbinary(max)").Length(int.MaxValue);
+                    if (DataStore.SetCustomSqlTypes == true)
+                    {
+                        Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomSqlType("varbinary(max)").Length(int.MaxValue);
+                    }
+                    else
+                    {
+                        Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().Length(int.MaxValue);
+                    }
                 }
                 else
                 {

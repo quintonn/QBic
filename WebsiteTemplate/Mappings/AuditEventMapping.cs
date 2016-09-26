@@ -1,5 +1,5 @@
 ﻿using FluentNHibernate.Mapping;
-using System.Collections.Generic;
+using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Mappings
@@ -21,12 +21,16 @@ namespace WebsiteTemplate.Mappings
                                    .Nullable();
             Map(x => x.ObjectId).Not.Nullable();
             Map(x => x.EntityName).Not.Nullable();
-            Map(x => x.OriginalObject).Nullable().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
-            Map(x => x.NewObject).Nullable().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
-
-            //HasMany<EventRoleAssociation>(FluentNHibernate.Reveal.Member<AuditEvent, IEnumerable<EventRoleAssociation>>("EventRoles"));
-
-            //HasMany<EventRoleAssociation>(x => x.EventRoles).KeyColumn("IdAuditEvent");
+            if (DataStore.SetCustomSqlTypes == true)
+            {
+                Map(x => x.OriginalObject).Nullable().CustomType("StringClob").CustomSqlType("nvarchar(max)").Length(int.MaxValue);
+                Map(x => x.NewObject).Nullable().CustomType("StringClob").CustomSqlType("nvarchar(max)").Length(int.MaxValue);
+            }
+            else
+            {
+                Map(x => x.OriginalObject).Nullable().Length(int.MaxValue);
+                Map(x => x.NewObject).Nullable().Length(int.MaxValue);
+            }
         }
     }
 }

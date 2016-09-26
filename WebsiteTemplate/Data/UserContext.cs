@@ -97,7 +97,7 @@ namespace WebsiteTemplate.Data
             {
                 //result = session.Query<User>().Where(u => u.Email == email).FirstOrDefault();
                 result = session.CreateCriteria<User>()
-                                .Add(Restrictions.Eq("Email", email))
+                                .Add(Restrictions.Eq("Email", email).IgnoreCase())
                                 .UniqueResult<User>();
                 session.Flush();
             }
@@ -126,7 +126,7 @@ namespace WebsiteTemplate.Data
             using (var session = DataStore.OpenSession())
             {
                 result = session.CreateCriteria<User>()
-                                .Add(Restrictions.Eq("UserName", name))
+                                .Add(Restrictions.Eq("UserName", name).IgnoreCase())
                                 .UniqueResult<User>();
             }
             return Task.FromResult(result);

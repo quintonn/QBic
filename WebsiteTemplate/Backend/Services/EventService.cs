@@ -65,6 +65,10 @@ namespace WebsiteTemplate.Backend.Services
                     }
 
                 }
+                catch (BadImageFormatException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
                 catch (ReflectionTypeLoadException ex)
                 {
                     Console.WriteLine(ex.Message);

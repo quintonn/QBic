@@ -1,10 +1,12 @@
 ﻿using FluentNHibernate.Cfg;
+using FluentNHibernate.Cfg.Db;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
 using System;
 using System.Configuration;
 using System.Diagnostics;
+using System.Web;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Backend.TestItems;
 using WebsiteTemplate.Models;
@@ -25,6 +27,8 @@ namespace WebsiteTemplate.Data
         private static DataStore _instance { get; set; }
 
         private ApplicationSettingsCore AppSettings { get; set; }
+
+        internal static bool SetCustomSqlTypes { get; set; }
 
         private DataStore(ApplicationSettingsCore appSettings)
         {
@@ -76,12 +80,23 @@ namespace WebsiteTemplate.Data
 
         public NHibernate.Cfg.Configuration CreateNewConfigurationUsingConnectionString(string connectionString)
         {
+            IPersistenceConfigurer configurer;
+            DataStore.SetCustomSqlTypes = true;
+            if (connectionString.Contains("##CurrentDirectory##"))
+            {
+                var currentDirectory = HttpRuntime.AppDomainAppPath;
+                connectionString = connectionString.Replace("##CurrentDirectory##", currentDirectory); // for my sqlite connectiontion string
+
+                configurer = FluentNHibernate.Cfg.Db.SQLiteConfiguration.Standard.ConnectionString(connectionString);
+                DataStore.SetCustomSqlTypes = false;
+            }
+            else
+            {
+                configurer = FluentNHibernate.Cfg.Db.MsSqlConfiguration.MsSql2012.ConnectionString(connectionString);
+            }
+
             var config = Fluently.Configure()
-              .Database(
-
-                FluentNHibernate.Cfg.Db.MsSqlConfiguration.MsSql2012.ConnectionString(connectionString)
-              )
-
+              .Database(configurer)
               .Mappings(m => m.FluentMappings.CustomAddFromAssemblyOf<User>().Conventions.Add<JoinedSubclassIdConvention>());
 
             config.ExposeConfiguration(x =>

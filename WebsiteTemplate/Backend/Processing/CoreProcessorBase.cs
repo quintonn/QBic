@@ -46,7 +46,14 @@ namespace WebsiteTemplate.Backend.Processing
             using (var session = DataService.OpenSession())
             {
                 var appSettings = session.QueryOver<Models.SystemSettings>().List<Models.SystemSettings>().FirstOrDefault();
-                JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = appSettings.DateFormat };
+                if (appSettings != null)
+                {
+                    JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = appSettings.DateFormat };
+                }
+                else
+                {
+                    JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = "yyyy-mm-dd" };
+                }
             }
         }
 

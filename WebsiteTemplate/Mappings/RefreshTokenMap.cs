@@ -1,5 +1,6 @@
 ﻿using BasicAuthentication.Security;
 using FluentNHibernate.Mapping;
+using WebsiteTemplate.Data;
 
 namespace WebsiteTemplate.Mappings
 {
@@ -14,7 +15,14 @@ namespace WebsiteTemplate.Mappings
             Map(x => x.ClientId).Not.Nullable().Length(50);
             Map(x => x.ExpiresUtc).Not.Nullable();
             Map(x => x.IssuedUtc).Not.Nullable();
-            Map(x => x.ProtectedTicket).Not.Nullable().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
+            if (DataStore.SetCustomSqlTypes == true)
+            {
+                Map(x => x.ProtectedTicket).Not.Nullable().CustomType("StringClob").CustomSqlType("nvarchar(max)").Length(int.MaxValue);
+            }
+            else
+            {
+                Map(x => x.ProtectedTicket).Not.Nullable().Length(int.MaxValue);
+            }
             Map(x => x.Subject).Not.Nullable().Length(50);
         }
     }

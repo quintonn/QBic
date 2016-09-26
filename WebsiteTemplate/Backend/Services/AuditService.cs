@@ -44,7 +44,7 @@ namespace WebsiteTemplate.Backend.Services
             {
                 throw new Exception("Null user when trying to perform audit");
             }
-            //TODO: what if user is anonymous, null or system events???
+
             entityName = entityName.Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Last();
 
             using (var session = DataStore.OpenSession())
