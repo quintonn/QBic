@@ -53,6 +53,8 @@ namespace WebsiteTemplate.Backend.SystemSettings
 
                 result.Add(new StringInput("DateFormat", "Date Format", SystemSettings?.DateFormat, "Formats", true));
 
+                result.Add(new StringInput("WebsiteUrl", "Website Base Url", SystemSettings?.WebsiteBaseUrl, "Website", true));
+
                 return result;
             }
         }
@@ -95,6 +97,8 @@ namespace WebsiteTemplate.Backend.SystemSettings
 
                 var dateFormat = GetValue("DateFormat");
 
+                var websiteBaseUrl = GetValue("WebsiteUrl");
+
                 using (var session = DataService.OpenSession())
                 {
                     var systemSettings = session.QueryOver<Models.SystemSettings>().List<Models.SystemSettings>().FirstOrDefault();
@@ -111,6 +115,8 @@ namespace WebsiteTemplate.Backend.SystemSettings
                     systemSettings.EmailEnableSsl = enableSsl;
 
                     systemSettings.DateFormat = dateFormat;
+
+                    SystemSettings.WebsiteBaseUrl = websiteBaseUrl;
 
                     DataService.SaveOrUpdate(session, systemSettings);
 

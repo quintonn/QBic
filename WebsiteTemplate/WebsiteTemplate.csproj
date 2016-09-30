@@ -240,11 +240,13 @@
     <Compile Include="Backend\AuditReport\CreateAuditReport.cs" />
     <Compile Include="Backend\Backups\CreateBackup.cs" />
     <Compile Include="Backend\Backups\RestoreBackup.cs" />
+    <Compile Include="Backend\KeepAlive\KeepAliveBackgroundEvent.cs" />
     <Compile Include="Backend\Menus\DecrementMenuOrder.cs" />
     <Compile Include="Backend\Menus\IncrementMenuOrder.cs" />
     <Compile Include="Backend\PasswordReset\ResetPassword.cs" />
     <Compile Include="Backend\Processing\InitializationProcessor.cs" />
     <Compile Include="Backend\Processing\InputProcessing\ProcessingResult.cs" />
+    <Compile Include="Backend\Processing\PingProcessor.cs" />
     <Compile Include="Backend\Services\BackgroundJob.cs" />
     <Compile Include="Backend\Services\BackgroundService.cs" />
     <Compile Include="Backend\Services\BackupService.cs" />

@@ -39,6 +39,16 @@ namespace WebsiteTemplate.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("systemPing")]
+        [AllowAnonymous]
+        [RequireHttps]
+        [DeflateCompression]// - not sure how to deflate
+        public async Task<IHttpActionResult> SystemPing()
+        {
+            return await Container.Resolve<PingProcessor>().Process(-1, Request);
+        }
+
         [HttpGet]
         [Route("initializeSystem")]
         [AllowAnonymous]

@@ -26,23 +26,27 @@ namespace WebsiteTemplate.Backend.Processing
 
         private static bool SetupDone = false;
 
+        private static object LockObject = new object();
+
         public CoreProcessorBase(IUnityContainer container)
         {
-            if (SetupDone == false)
+            lock(LockObject)
             {
-                Container = container;
+                if (SetupDone == false)
+                {
+                    Container = container;
 
-                ApplicationStartup = container.Resolve<ApplicationStartup>();
-                EventService = container.Resolve<EventService>();
-                DataService = container.Resolve<DataService>();
-                AuditService = container.Resolve<AuditService>();
-                BackgroundService = container.Resolve<BackgroundService>();
+                    ApplicationStartup = container.Resolve<ApplicationStartup>();
+                    EventService = container.Resolve<EventService>();
+                    DataService = container.Resolve<DataService>();
+                    AuditService = container.Resolve<AuditService>();
+                    BackgroundService = container.Resolve<BackgroundService>();
 
-                PopulateDefaultValues();
-                SetupDone = true;
-                BackgroundService.StartBackgroundJobs();
+                    PopulateDefaultValues();
+                    SetupDone = true;
+                    BackgroundService.StartBackgroundJobs();
+                }
             }
-
             using (var session = DataService.OpenSession())
             {
                 var appSettings = session.QueryOver<Models.SystemSettings>().List<Models.SystemSettings>().FirstOrDefault();

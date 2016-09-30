@@ -21,5 +21,7 @@ namespace WebsiteTemplate.Models
         public virtual bool EmailEnableSsl { get; set; }
 
         public virtual string DateFormat { get; set; }
+
+        public virtual string WebsiteBaseUrl { get; set; }
     }
 }
