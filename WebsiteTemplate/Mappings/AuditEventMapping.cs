@@ -23,8 +23,8 @@ namespace WebsiteTemplate.Mappings
             Map(x => x.EntityName).Not.Nullable();
             if (DataStore.SetCustomSqlTypes == true)
             {
-                Map(x => x.OriginalObject).Nullable().CustomType("StringClob").CustomSqlType("nvarchar(max)").Length(int.MaxValue);
-                Map(x => x.NewObject).Nullable().CustomType("StringClob").CustomSqlType("nvarchar(max)").Length(int.MaxValue);
+                Map(x => x.OriginalObject).Nullable().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
+                Map(x => x.NewObject).Nullable().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
             }
             else
             {

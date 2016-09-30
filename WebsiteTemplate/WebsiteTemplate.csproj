@@ -298,6 +298,7 @@
     <Compile Include="Controllers\RoleAuthorization.cs" />
     <Compile Include="Controllers\RoleBlockedAttribute.cs" />
     <Compile Include="Controllers\AcmeController.cs" />
+    <Compile Include="Data\BaseTypes\LongString.cs" />
     <Compile Include="Data\DataStoreExtensionMethods.cs" />
     <Compile Include="Data\JoinedSubclassIdConvention.cs" />
     <Compile Include="Data\SqlStatementInterceptor.cs" />

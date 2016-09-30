@@ -1,4 +1,5 @@
 ﻿using System;
+using WebsiteTemplate.Data.BaseTypes;
 
 namespace WebsiteTemplate.Models
 {
@@ -10,6 +11,6 @@ namespace WebsiteTemplate.Models
 
         public virtual string Status { get; set; }
 
-        public virtual string ExecutionInformation { get; set; }
+        public virtual LongString ExecutionInformation { get; set; }
     }
 }

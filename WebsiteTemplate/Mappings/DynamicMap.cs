@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using WebsiteTemplate.Data;
+using WebsiteTemplate.Data.BaseTypes;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Mappings
@@ -31,13 +32,13 @@ namespace WebsiteTemplate.Mappings
             var properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public)
                                                     .Where(p => p.GetMethod.IsVirtual);
 
-            var primitiveColumnsTo = properties.Where(p => IsPrimitive(p.PropertyType) == true).Select(p => p.Name).ToList();
+            var primitiveColumns = properties.Where(p => IsPrimitive(p.PropertyType) == true).Select(p => p.Name).ToList();
             var nonPrimitiveColumns = properties.Where(p => IsPrimitive(p.PropertyType) == false && IsGenericList(p.PropertyType) == false).ToList();
             var listColumns = properties.Where(p => IsPrimitive(p.PropertyType) == false && IsGenericList(p.PropertyType) == true).ToList();
 
             //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
 
-            foreach (var column in primitiveColumnsTo)
+            foreach (var column in primitiveColumns)
             {
                 if (column == "CanDelete" || column == "Id")
                 {
@@ -53,6 +54,17 @@ namespace WebsiteTemplate.Mappings
                     else
                     {
                         Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().Length(int.MaxValue);
+                    }
+                }
+                else if (properties.Where(p => p.Name == column).Single().PropertyType == typeof(LongString))
+                {
+                    if (DataStore.SetCustomSqlTypes == true)
+                    {
+                        Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomType<string>().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
+                    }
+                    else
+                    {
+                        Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomType<string>().Length(int.MaxValue);
                     }
                 }
                 else
@@ -112,7 +124,8 @@ namespace WebsiteTemplate.Mappings
                 typeof(double),
                 typeof(decimal),
                 typeof(DateTime),
-                typeof(DateTime?)
+                typeof(DateTime?),
+                typeof(LongString)
             }.Contains(t) || t.IsPrimitive || t.IsEnum;
         }
 
