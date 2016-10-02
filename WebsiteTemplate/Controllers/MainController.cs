@@ -23,6 +23,7 @@ namespace WebsiteTemplate.Controllers
         {
             Container = container;
             ApplicationService = container.Resolve<ApplicationService>();
+            var eventService = container.Resolve<EventService>(); // This is here to ensure EventService is initialize and it's constructor is called so that EventList is not empty
 
             var dataService = container.Resolve<DataService>();
             using (var session = dataService.OpenSession())
