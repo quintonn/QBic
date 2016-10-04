@@ -53,10 +53,10 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// <param name="linesPerPage">The number of lines that can be displayed per page.</param>
         /// <param name="filter">A value provided by the user in an attempt the filter the results.</param>
         /// <returns></returns>
-        public override IEnumerable GetData(string data, int currentPage, int linesPerPage, string filter)
+        public override IEnumerable GetData(GetDataSettings settings)
         {
-            PerformAdditionalProcessingOnDataRetrieval(data, false);
-            var results = ItemProcessor.RetrieveItemsWithFilter(currentPage, linesPerPage, filter, RetrieveAdditionalParametersForDataQuery(data));
+            PerformAdditionalProcessingOnDataRetrieval(settings.ViewData, false);
+            var results = ItemProcessor.RetrieveItemsWithFilter(settings, RetrieveAdditionalParametersForDataQuery(settings.ViewData));
             return MapResultsToCustomData(results);
         }
 
@@ -66,10 +66,10 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// <param name="data">Data passed to the view from any previous activities.</param>
         /// <param name="filter">A value provided by the user in an attempt the filter the results.</param>
         /// <returns></returns>
-        public override int GetDataCount(string data, string filter)
+        public override int GetDataCount(GetDataSettings settings)
         {
-            PerformAdditionalProcessingOnDataRetrieval(data, true);
-            return ItemProcessor.RetrieveItemCountWithFilter(filter, RetrieveAdditionalParametersForDataQuery(data));
+            PerformAdditionalProcessingOnDataRetrieval(settings.ViewData, true);
+            return ItemProcessor.RetrieveItemCountWithFilter(settings.Filter, RetrieveAdditionalParametersForDataQuery(settings.ViewData));
         }
     }
 }

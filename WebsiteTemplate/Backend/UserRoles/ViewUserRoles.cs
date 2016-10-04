@@ -46,14 +46,14 @@ namespace WebsiteTemplate.Backend.UserRoles
             );
         }
 
-        public override IEnumerable GetData(string data, int currentPage, int linesPerPage, string filter)
+        public override IEnumerable GetData(GetDataSettings settings)
         {
-            return UserRoleService.RetrieveUserRoles(currentPage, linesPerPage, filter);
+            return UserRoleService.RetrieveUserRoles(settings.CurrentPage, settings.LinesPerPage, settings.Filter);
         }
 
-        public override int GetDataCount(string data, string filter)
+        public override int GetDataCount(GetDataSettings settings)
         {
-            return UserRoleService.RetrieveUserRoleCount(filter);
+            return UserRoleService.RetrieveUserRoleCount(settings.Filter);
         }
 
         public override EventNumber GetId()

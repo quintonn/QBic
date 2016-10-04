@@ -5,6 +5,7 @@ using WebsiteTemplate.Models;
 using System.Linq;
 using WebsiteTemplate.Backend.Services;
 using System.Threading.Tasks;
+using WebsiteTemplate.Menus.ViewItems;
 
 namespace WebsiteTemplate.Backend.Processing.InputProcessing
 {
@@ -31,16 +32,16 @@ namespace WebsiteTemplate.Backend.Processing.InputProcessing
             }
         }
 
-        public override IList<T> RetrieveItemsWithFilter(int currentPage, int linesPerPage, string filter, IDictionary<string, object> additionalParameters)
+        public override IList<T> RetrieveItemsWithFilter(GetDataSettings settings, IDictionary<string, object> additionalParameters)
         {
             using (var session = DataService.OpenSession())
             {
                 var query = session.QueryOver<T>();
-                query = CreateQueryForRetrieval(query, filter, additionalParameters);
+                query = CreateQueryForRetrieval(query, settings.Filter, additionalParameters);
 
                 var results = query
-                      .Skip((currentPage - 1) * linesPerPage)
-                      .Take(linesPerPage)
+                      .Skip((settings.CurrentPage - 1) * settings.LinesPerPage)
+                      .Take(settings.LinesPerPage)
                       .List<T>()
                       .ToList();
                 return results;

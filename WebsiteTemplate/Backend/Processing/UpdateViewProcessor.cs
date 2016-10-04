@@ -108,15 +108,17 @@ namespace WebsiteTemplate.Backend.Processing
                 parentData = data;  // In case user modified parentData -> this smells??
             }
 
+            var viewDataSettings = new GetDataSettings(parentData, filter, currentPage, linesPerPage);
+
             if (totalLines == -1 || !String.IsNullOrWhiteSpace(filter))
             {
-                totalLines = action.GetDataCount(parentData, filter);
+                totalLines = action.GetDataCount(viewDataSettings);
             }
 
-            var list = action.GetData(parentData, currentPage, linesPerPage, filter);
+            var list = action.GetData(viewDataSettings).Cast<object>().ToList();
             action.ViewData = list;
 
-            totalLines = Math.Max(totalLines, list.Cast<object>().Count());
+            totalLines = Math.Max(totalLines, list.Count);
 
             action.CurrentPage = currentPage;
             action.LinesPerPage = linesPerPage == int.MaxValue ? -2 : linesPerPage;

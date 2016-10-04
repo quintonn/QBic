@@ -86,9 +86,11 @@ namespace WebsiteTemplate.Backend.Processing
                     parentData = data;  // In case user modified parentData -> this smells??
                 }
 
-                var totalLines = action.GetDataCount(parentData, String.Empty);
+                var viewDataSettings = new GetDataSettings(parentData, String.Empty, 1, 10);
 
-                var list = action.GetData(parentData, 1, 10, String.Empty);
+                var totalLines = action.GetDataCount(viewDataSettings);
+
+                var list = action.GetData(viewDataSettings); //TODO: Instead of calling this here, i should re-use what's in UpdateViewProcessor
                 action.ViewData = list;
 
                 totalLines = Math.Max(totalLines, list.Cast<object>().Count());

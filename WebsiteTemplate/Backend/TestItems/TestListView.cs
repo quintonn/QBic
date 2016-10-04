@@ -24,7 +24,7 @@ namespace WebsiteTemplate.Backend.TestItems
             }
         }
 
-        public override IEnumerable GetData(string data, int currentPage, int linesPerPage, string filter)
+        public override IEnumerable GetData(GetDataSettings settings)
         {
             var results = new List<object>();
 

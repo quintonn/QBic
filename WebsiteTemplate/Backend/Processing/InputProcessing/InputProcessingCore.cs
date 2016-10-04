@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.InputItems;
+using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Processing.InputProcessing
@@ -25,7 +26,7 @@ namespace WebsiteTemplate.Backend.Processing.InputProcessing
 
         public abstract int RetrieveItemCountWithFilter(string filter, IDictionary<string, object> additionalParameters);
 
-        public abstract IList<T> RetrieveItemsWithFilter(int currentPage, int linesPerPage, string filter, IDictionary<string, object> additionalParameters);
+        public abstract IList<T> RetrieveItemsWithFilter(GetDataSettings settings, IDictionary<string, object> additionalParameters);
 
         public abstract Task<ProcessingResult> SaveOrUpdate(string itemId);
 

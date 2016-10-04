@@ -314,6 +314,7 @@
     <Compile Include="Menus\InputItems\InputProcessingMethods.cs" />
     <Compile Include="Menus\InputItems\ModifyItemUsingInputProcessor.cs" />
     <Compile Include="Menus\LogoutEvent.cs" />
+    <Compile Include="Menus\ViewItems\GetDataSettings.cs" />
     <Compile Include="Menus\ViewItems\ShowDetailView.cs" />
     <Compile Include="Menus\ViewItems\ShowListView.cs" />
     <Compile Include="Menus\ViewItems\ShowViewUsingInputProcessor.cs" />

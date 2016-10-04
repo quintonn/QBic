@@ -34,7 +34,7 @@ namespace WebsiteTemplate.Backend.TestItems
             columnConfig.AddLinkColumn("", "Name", "Test Pdf", 555);
         }
 
-        public override IEnumerable GetData(string data, int currentPage, int linesPerPage, string filter)
+        public override IEnumerable GetData(GetDataSettings settings)
         {
             return new List<object>()
             {
@@ -45,7 +45,7 @@ namespace WebsiteTemplate.Backend.TestItems
             };
         }
 
-        public override int GetDataCount(string data, string filter)
+        public override int GetDataCount(GetDataSettings settings)
         {
             return 1;
         }

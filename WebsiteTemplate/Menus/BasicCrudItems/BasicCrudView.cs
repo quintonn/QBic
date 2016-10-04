@@ -70,19 +70,19 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             );
         }
 
-        public override IEnumerable GetData(string data, int currentPage, int linesPerPage, string filter)
+        public override IEnumerable GetData(GetDataSettings settings)
         {
             using (var session = Store.OpenSession())
             {
                 var result = session.QueryOver<T>()
-                                    .Skip((currentPage-1)*linesPerPage)
-                                    .Take(linesPerPage)
+                                    .Skip((settings.CurrentPage-1)*settings.LinesPerPage)
+                                    .Take(settings.LinesPerPage)
                                     .List<T>().ToList();
                 return result;
             }
         }
 
-        public override int GetDataCount(string data, string filter)
+        public override int GetDataCount(GetDataSettings settings)
         {
             using (var session = Store.OpenSession())
             {

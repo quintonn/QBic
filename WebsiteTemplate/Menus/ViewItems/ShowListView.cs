@@ -48,7 +48,7 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// <returns></returns>
         public abstract IList<string> GetDetailColumnNames();
 
-        public override int GetDataCount(string data, string filter)
+        public override int GetDataCount(GetDataSettings settings)
         {
             return 0; // don't think it matters
         }
