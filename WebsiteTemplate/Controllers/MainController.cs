@@ -19,6 +19,14 @@ namespace WebsiteTemplate.Controllers
 
         private JsonSerializerSettings JSON_SETTINGS;
 
+        [HttpGet]
+        [Route("{*path}")]
+        [AllowAnonymous]
+        public IHttpActionResult DynamicRouteTest(string path) // This can be for an IEvent to handle exposing "Custom APIs"
+        {
+            return Ok("hello there\n" + path);
+        }
+
         public MainController(IUnityContainer container)
         {
             Container = container;
