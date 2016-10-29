@@ -54,6 +54,9 @@ namespace WebsiteTemplate.Menus.BaseItems
         public static EventNumber ResetPassword = new EventNumber(1710);
 
         public static EventNumber KeepAliveBackgroundTask = new EventNumber(1720);
+        public static EventNumber ViewBackgroundErrors = new EventNumber(1721);
+        public static EventNumber ClearBackgroundErrors = new EventNumber(1722);
+        public static EventNumber ViewBackgroundStatusInfo = new EventNumber(1723);
 
         public static implicit operator EventNumber(int value)
         {

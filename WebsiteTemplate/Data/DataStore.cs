@@ -102,7 +102,7 @@ namespace WebsiteTemplate.Data
             config.ExposeConfiguration(x =>
             {
                 //x.SetInterceptor(new SqlStatementInterceptor());
-                x.Properties.Add("use_proxy_validator", "false");
+                x.Properties.Add("use_proxy_validator", "false"); // to ignore public/internal fields on model classes
             });
             var configuration = config.BuildConfiguration();
 

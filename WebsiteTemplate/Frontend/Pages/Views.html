@@ -20,9 +20,9 @@
     <div class="w3-section" style="overflow-x:auto; overflow-y: auto; ">
         <table class="w3-table w3-bordered w3-striped w3-border w3-hoverable " style="min-width:310px">
             <thead>
-                <tr class="w3-grey" >
+                <tr class="w3-grey">
                     <!-- ko foreach: columns -->
-                        <th data-bind="text: label, visible: visible"></th>
+                        <th data-bind="text: label, visible: visible, attr: {colspan: columnSpan}"></th>
                     <!-- /ko -->
                     <th></th>
                 </tr>
@@ -31,7 +31,7 @@
                 <!-- ko foreach: rows -->
                 <tr>
                     <!-- ko foreach: cells -->
-                        <td class="view-table-cell" data-bind="visible: showCell() == true || columnType() != 4" style="padding-bottom:2px" >
+                        <td class="view-table-cell" data-bind="visible: showCell() == true || columnType() != 4, attr: {colspan: columnSpan}" style="padding-bottom:2px" >
                             <!--  ko if:  columnType() == 0 ||  columnType() == 4 || columnType() == 1 -->
                             <!--  String || Hidden || Boolean  -->
                             <div data-bind="visible: showCell, text: value, attr: { title: value }" class="view-table-cell-div"></div>

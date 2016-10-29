@@ -22,7 +22,7 @@
             for (var i = 0; i < columns.length; i++)
             {
                 var col = columns[i];
-                var colModel = new columnModel(i, col.ColumnLabel, col.ColumnType != 4);
+                var colModel = new columnModel(i, col.ColumnLabel, col.ColumnType != 4, col.ColumnSpan);
 
                 model.columns.push(colModel);
             }
@@ -52,7 +52,7 @@
             for (var i = 0; i < columns.length; i++)
             {
                 var col = columns[i];
-                var colModel = new columnModel(i, col.ColumnLabel, col.ColumnType != 4);
+                var colModel = new columnModel(i, col.ColumnLabel, col.ColumnType != 4, col.ColumnSpan);
 
                 model.columns.push(colModel);
             }
@@ -82,7 +82,7 @@
             for (var i = 0; i < columns.length; i++)
             {
                 var col = columns[i];
-                var colModel = new columnModel(i, col.ColumnLabel, col.ColumnType != 4);
+                var colModel = new columnModel(i, col.ColumnLabel, col.ColumnType != 4, col.ColumnSpan);
                 
                 model.columns.push(colModel);
             }
@@ -96,12 +96,13 @@
         });
     };
 
-    function columnModel(id, label, visible)
+    function columnModel(id, label, visible, colSpan)
     {
         var self = this;
         self.id = id;
         self.label = ko.observable(label);
         self.visible = ko.observable(visible);
+        self.columnSpan = ko.observable(colSpan || 1);
     }
 
     views.viewMenuModel = function(label, eventId, menuParams, viewParams, includeDataInView)
@@ -114,7 +115,7 @@
         self.includeDataInView = includeDataInView;
     }
 
-    function cellModel(value, cellIsVisible, columnType)
+    function cellModel(value, cellIsVisible, columnType, columnSpan)
     {
         var self = this;
         self.value = ko.observable(value);
@@ -122,6 +123,8 @@
         self.showCell = ko.observable(cellIsVisible);
 
         self.columnType = ko.observable(columnType);
+
+        self.columnSpan = ko.observable(columnSpan || 1);
 
         self.dateValue = ko.computed(function ()
         {
@@ -422,7 +425,7 @@
                 var value = processing.getColumnValue(col, data);
                 var cellIsVisible = col.ColumnType != 4 && processing.cellIsVisible(col, data);
 
-                var cell = new cellModel(value, cellIsVisible, col.ColumnType);
+                var cell = new cellModel(value, cellIsVisible, col.ColumnType, col.ColumnSpan);
                 rowItem.cells.push(cell);
             }
             self.rows.push(rowItem);

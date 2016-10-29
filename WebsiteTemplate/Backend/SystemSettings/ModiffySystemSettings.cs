@@ -116,7 +116,7 @@ namespace WebsiteTemplate.Backend.SystemSettings
 
                     systemSettings.DateFormat = dateFormat;
 
-                    SystemSettings.WebsiteBaseUrl = websiteBaseUrl;
+                    systemSettings.WebsiteBaseUrl = websiteBaseUrl;
 
                     DataService.SaveOrUpdate(session, systemSettings);
 

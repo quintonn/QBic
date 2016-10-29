@@ -2,12 +2,19 @@
 {
     public abstract class ViewColumn
     {
-        public ViewColumn(string columnLabel, string columnName)
+        public ViewColumn(string columnLabel, string columnName, int columnSpan = 1)
         {
             ColumnLabel = columnLabel;
             ColumnName = columnName;
+            ColumnSpan = columnSpan;
             ColumnSetting = null;
         }
+
+        /// <summary>
+        /// This will set how many cells/columns this item will spread across in the view. 
+        /// This is for items with lots of info.
+        /// </summary>
+        public int ColumnSpan { get; set; }
 
         /// <summary>
         /// This will be column heading/label in the view

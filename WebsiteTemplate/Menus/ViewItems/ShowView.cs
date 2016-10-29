@@ -98,7 +98,10 @@ namespace WebsiteTemplate.Menus.ViewItems
         /// </summary>
         //public abstract IList<object> OtherSettings { get; }
 
-        public abstract IList<MenuItem> GetViewMenu(Dictionary<string, string> dataForMenu);
+        public virtual IList<MenuItem> GetViewMenu(Dictionary<string, string> dataForMenu)
+        {
+            return new List<MenuItem>();
+        }
 
         public IList<MenuItem> ViewMenu { get; set; }
 

@@ -1,13 +1,13 @@
 ﻿using BasicAuthentication.Security;
 using Microsoft.Practices.Unity;
-using System.Linq;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using WebsiteTemplate.Backend.Processing;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Models;
-using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -20,7 +20,7 @@ namespace WebsiteTemplate.Controllers
         private JsonSerializerSettings JSON_SETTINGS;
 
         [HttpGet]
-        [Route("{*path}")]
+        [Route("custom/{*path}")]
         [AllowAnonymous]
         public IHttpActionResult DynamicRouteTest(string path) // This can be for an IEvent to handle exposing "Custom APIs"
         {

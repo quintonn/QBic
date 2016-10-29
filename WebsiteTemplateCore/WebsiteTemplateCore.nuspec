@@ -16,11 +16,12 @@
 		<tags>Website Template Core</tags>
 		<dependencies> 
 			<group>
-				<dependency id="BasicAuthentication" version="0.0.5790.38917"  />
+				<dependency id="BasicAuthentication" version="0.0.6131.32769"  />
+				<dependency id="CommonServiceLocator" version="1.3"  />
+				<dependency id="DocumentGenerator" version="0.0.6096.22270"  />
 				<dependency id="FluentNHibernate" version="2.0.3.0"  />
-				<dependency id="DocumentGenerator" version="0.0.6093.24154" />
-				<dependency id="Iesi.Collections" version="4.0.1.4000"  />
-				<dependency id="MarkerMetro.Unity.Ionic.Zlib" version="2.0.0.14" />
+				<dependency id="Iesi.Collections" version="4.0.0.4000"  />
+				<dependency id="MarkerMetro.Unity.Ionic.Zlib" version="2.0.0.14"  />
 				<dependency id="Microsoft.AspNet.Cors" version="5.2.3"  />
 				<dependency id="Microsoft.AspNet.Identity.Core" version="2.2.1"  />
 				<dependency id="Microsoft.AspNet.Identity.Owin" version="2.2.1"  />
@@ -33,20 +34,20 @@
 				<dependency id="Microsoft.Owin.Security" version="3.0.1"  />
 				<dependency id="Microsoft.Owin.Security.Cookies" version="3.0.1"  />
 				<dependency id="Microsoft.Owin.Security.OAuth" version="3.0.1"  />
-				<dependency id="Newtonsoft.Json" version="7.0.1"  />
-				<dependency id="NHibernate" version="4.0.4.4000"  />
+				<dependency id="Newtonsoft.Json" version="9.0.1"  />
+				<dependency id="NHibernate" version="4.0.0.4000"  />
 				<dependency id="Owin" version="1.0"  />
-				<dependency id="Unity" version="4.0.1" />
-				<dependency id="PDFsharp-MigraDoc-GDI" version="1.32.4334.0" />
+				<dependency id="PDFsharp-MigraDoc-GDI" version="1.32.4334.0"  />
+				<dependency id="Unity" version="4.0.1"  />
 			</group>
 		</dependencies>
 	</metadata>  
 	<files>
-	    <file src="Frontend\**\*.*" target="content\Frontend" />
+		<file src="Frontend\**\*.*" target="content\Frontend" />
 		<file src="Index.html" target="content" />
 		<file src="bin\WebsiteTemplate.dll" target="lib\net461" />
-	    <!--<file src="D:\Projects\WebsiteTemplate\WebsiteTemplate\Frontend\Scripts\*.*" exclude="**\*.js" />-->
-	    <!--<file src="D:\Projects\WebsiteTemplate\WebsiteTemplate\Frontend\Scripts\*.js" exclude="D:\Projects\WebsiteTemplate\WebsiteTemplate\Frontend\Scripts\*.js" />-->
+		<!--<file src="D:\Projects\WebsiteTemplate\WebsiteTemplate\Frontend\Scripts\*.*" exclude="**\*.js" />-->
+		<!--<file src="D:\Projects\WebsiteTemplate\WebsiteTemplate\Frontend\Scripts\*.js" exclude="D:\Projects\WebsiteTemplate\WebsiteTemplate\Frontend\Scripts\*.js" />-->
 		<!--<file src="D:\Projects\WebsiteTemplate\WebsiteTemplate\frontend\webFiles\*.*" target="content/Frontend/webFiles" />-->
 		<!--<file src="D:\Projects\WebsiteTemplate\WebsiteTemplate\Scripts\*.min.js" target="content/Scripts" /> -->
 		<!-- Exclude these files -->

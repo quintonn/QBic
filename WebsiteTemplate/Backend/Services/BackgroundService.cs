@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Web;
+using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Services
@@ -12,9 +13,22 @@ namespace WebsiteTemplate.Backend.Services
     {
         private DataService DataService { get; set; }
 
+        internal static List<string> Errors { get; set; }
+        internal static List<string> StatusInfo { get; set; }
+
+        private static object Locker = new object();
+
+        internal static void AddError(string action, Exception error)
+        {
+            Errors.Add(string.Format("Error while performing {0}\n{1}\n{2}", action, error.Message, error.StackTrace));
+        }
+
         static BackgroundService()
         {
             Setup();
+            Errors = new List<string>();
+            StatusInfo = new List<string>();
+            BackgroundThreads = new List<Thread>();
         }
 
         public BackgroundService(DataService dataService)
@@ -27,45 +41,22 @@ namespace WebsiteTemplate.Backend.Services
             SystemUser = await CoreAuthenticationEngine.UserManager.FindByNameAsync("System") as User;
         }
 
-        private static Thread BackgroundThread { get; set; }
+        private static List<Thread> BackgroundThreads { get; set; }
         private static List<BackgroundJob> BackgroundJobs { get; set; }
         private static User SystemUser { get; set; }
-
-        private List<BackgroundJobResult> RunBackgroundTasks()
+        private void SaveBackgroundJobStatus(BackgroundJobResult jobResult)
         {
-            var list = new List<BackgroundJobResult>();
-            foreach (var job in BackgroundJobs.Where(b => b.WillRunNext == true))
+            try
             {
-                var result = new BackgroundJobResult()
+                using (var session = DataService.OpenSession())
                 {
-                    EventNumber = job.Event.GetEventId(),
-                    DateTimeRunUTC = DateTime.UtcNow
-                };
-                job.LastRunTime = DateTime.Now;
-                try
-                {
-                    job.Event.DoWork();
-                    result.Status = "Success";
+                    DataService.SaveOrUpdate(session, jobResult, SystemUser);
+                    session.Flush();
                 }
-                catch (Exception e)
-                {
-                    result.Status = "Error";
-                    result.ExecutionInformation = e.Message + "\n" + e.StackTrace;
-                }
-                list.Add(result);
             }
-            return list;
-        }
-
-        private void SaveBackgroundJobStatus(List<BackgroundJobResult> list)
-        {
-            using (var session = DataService.OpenSession())
+            catch (Exception e)
             {
-                foreach (var item in list)
-                {
-                    DataService.SaveOrUpdate(session, item, SystemUser);
-                }
-                session.Flush();
+                BackgroundService.AddError("Saving background job status", e);
             }
         }
 
@@ -86,66 +77,97 @@ namespace WebsiteTemplate.Backend.Services
                     }
                 }
             }
-            /*Parallel.ForEach(BackgroundJobs, (job) =>*/
-            foreach (var job in BackgroundJobs)
-            {
-                job.NextRunTime = job.Event.CalculateNextRunTime(job.LastRunTime);
-            }
         }
 
-        private void BackgroundWork()
+        private void BackgroundWork(object jobObject)
+        {
+            var job = (BackgroundJob)jobObject;
+            var firstTime = true;
+            try
+            {
+                while (true)
+                {
+                    if (firstTime && job.Event.RunImmediatelyFirstTime)
+                    {
+                        firstTime = false;
+                    }
+                    else
+                    {
+                        /* First calculate the amount of time to wait before doing work */
+                        job.NextRunTime = job.Event.CalculateNextRunTime(job.LastRunTime);
+                        var sleepTime = job.NextRunTime.Subtract(DateTime.Now);
+                        Thread.Sleep(sleepTime);
+                    }
+
+                    var result = new BackgroundJobResult()
+                    {
+                        EventNumber = job.Event.GetEventId(),
+                        DateTimeRunUTC = DateTime.UtcNow
+                    };
+                    job.LastRunTime = DateTime.Now;
+                    try
+                    {
+                        job.Event.DoWork();
+                        result.Status = "Success";
+                    }
+                    catch (Exception e)
+                    {
+                        result.Status = "Error";
+                        result.ExecutionInformation = e.Message + "\n" + e.StackTrace;
+                        //TODO: Log this in file and in a way to display on screen. Maybe i can  do both in 1
+                    }
+                    AddToStatusInfo(String.Format("Ran background process {0} at {1}: {2} -> {3}", job.Event.Description, ((DateTime)job.LastRunTime).ToLongTimeString(), result.Status, result.ExecutionInformation));
+                    
+                    SaveBackgroundJobStatus(result);
+                }
+            }
+            catch (Exception error)
+            {
+                BackgroundService.AddError("Doing BackgroundWork", error);
+            }
+        }
+        public async void StartBackgroundJobs()
         {
             if (BackgroundJobs == null)
             {
                 InitializeBackgroundJobs();
             }
-
-            while (true)
+            foreach (var backgroundJob in BackgroundJobs)
             {
-                var list = RunBackgroundTasks();
-
-                SaveBackgroundJobStatus(list);
-
-                var currentTime = DateTime.Now;
-
-                // Calculate next time to run for completed or past jobs.
-                foreach (var job in BackgroundJobs.Where(b => b.WillRunNext == true || b.NextRunTime < currentTime))
-                {
-                    job.WillRunNext = false;
-                    job.NextRunTime = job.Event.CalculateNextRunTime(job.LastRunTime);
-                }
-
-                // Find soonest next job to run
-                var nextTime = currentTime.AddDays(1000);
-                foreach (var job in BackgroundJobs)
-                {
-                    if (job.NextRunTime < nextTime && job.NextRunTime > currentTime)
-                    {
-                        nextTime = job.NextRunTime;
-                    }
-                }
-                foreach (var job in BackgroundJobs.Where(j => j.NextRunTime == nextTime))
-                {
-                    job.WillRunNext = true;
-                }
-
-                // Sleep until next soonest job is scheduled to run.
-                var sleepTime = nextTime.Subtract(DateTime.Now);
-
-                Thread.Sleep(sleepTime);
+                var thread = new Thread(new ParameterizedThreadStart(BackgroundWork));
+                BackgroundThreads.Add(thread);
+                thread.Start(backgroundJob);
             }
+            //BackgroundThread = new Thread(new ThreadStart(BackgroundWork));
+            //BackgroundThread.Start();
         }
-        public async void StartBackgroundJobs()
+
+        private static void AddToStatusInfo(string statusInfo)
         {
-            BackgroundThread = new Thread(new ThreadStart(BackgroundWork));
-            BackgroundThread.Start();
+            lock(Locker)
+            {
+                StatusInfo.Add(statusInfo);
+            }
         }
 
         public void Dispose()
         {
-            if (BackgroundThread != null && BackgroundThread.IsAlive)
+            try
             {
-                BackgroundThread.Abort();
+                if (BackgroundThreads != null)
+                {
+                    foreach (var t in BackgroundThreads)
+                    {
+                        if (t.IsAlive)
+                        {
+                            t.Abort();
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                BackgroundService.AddError("dispose of background service", e);
             }
         }
     }

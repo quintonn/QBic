@@ -2,8 +2,8 @@
 {
     public class StringColumn : ViewColumn
     {
-        public StringColumn(string columnLabel, string columnName)
-            : base(columnLabel, columnName)
+        public StringColumn(string columnLabel, string columnName, int columnSpan = 1)
+            : base(columnLabel, columnName, columnSpan)
         {
         }
 
