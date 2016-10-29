@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Web;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Controllers;
@@ -64,6 +66,12 @@ namespace WebsiteTemplate.Backend.KeepAlive
                     wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded; charset=UTF-8";
 
                     var internalSecret = "";
+
+                    // The following code can be used to ignore invalid certificates, but it should not be used in production
+                    //ServicePointManager.ServerCertificateValidationCallback = delegate (object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+                    //{
+                    //    return true;
+                    //};
 
                     var bytes = wc.UploadData(url, XXXUtils.GetBytes(internalSecret));
                     //bytes = CompressionHelper.InflateByte(bytes);

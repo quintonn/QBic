@@ -39,6 +39,15 @@ namespace WebsiteTemplate.Backend.UIProcessors
                                        .Add(Restrictions.Eq("user.Id", itemId))
                                        .List<UserRoleAssociation>()
                                        .ToList();
+            var auditEvents = session.CreateCriteria<AuditEvent>()
+                                     .CreateAlias("User", "user")
+                                     .Add(Restrictions.Eq("user.Id", itemId))
+                                     .List<AuditEvent>()
+                                     .ToList();
+            auditEvents.ForEach(a =>
+            {
+                DataService.TryDelete(session, a);
+            });
             userRoles.ForEach(u =>
             {
                 DataService.TryDelete(session, u);
