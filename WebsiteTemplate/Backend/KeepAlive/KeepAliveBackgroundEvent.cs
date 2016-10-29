@@ -33,6 +33,14 @@ namespace WebsiteTemplate.Backend.KeepAlive
             return DateTime.Now.AddMinutes(10);
         }
 
+        public override bool RunImmediatelyFirstTime
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public override void DoWork()
         {
             var url = String.Empty;

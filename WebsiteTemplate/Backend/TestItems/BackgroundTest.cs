@@ -29,5 +29,13 @@ namespace WebsiteTemplate.Backend.TestItems
         {
             return 325;
         }
+
+        public override bool RunImmediatelyFirstTime
+        {
+            get
+            {
+                return false;
+            }
+        }
     }
 }

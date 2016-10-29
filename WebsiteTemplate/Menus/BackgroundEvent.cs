@@ -36,5 +36,7 @@ namespace WebsiteTemplate.Menus
 
         public abstract DateTime CalculateNextRunTime(DateTime? lastRunTime);
 
+        public abstract bool RunImmediatelyFirstTime { get; }
+
     }
 }
