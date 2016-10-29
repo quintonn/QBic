@@ -147,7 +147,7 @@ namespace WebsiteTemplate.Backend.Services
         {
             lock(Locker)
             {
-                var date = ((DateTime)job.LastRunTime);
+                var date = DateTime.Now;
                 var timePart = date.ToShortDateString() + "  " + date.ToLongTimeString();
                 StatusInfo.Add(timePart + "\t" + statusInfo);
             }
