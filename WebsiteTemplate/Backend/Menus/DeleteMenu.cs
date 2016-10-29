@@ -20,6 +20,13 @@ namespace WebsiteTemplate.Backend.Menus
                 return "Deletes a menu";
             }
         }
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public override EventNumber ViewToShowAfterModify
         {

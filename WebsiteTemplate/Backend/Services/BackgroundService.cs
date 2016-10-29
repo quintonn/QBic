@@ -96,6 +96,7 @@ namespace WebsiteTemplate.Backend.Services
                         /* First calculate the amount of time to wait before doing work */
                         job.NextRunTime = job.Event.CalculateNextRunTime(job.LastRunTime);
                         var sleepTime = job.NextRunTime.Subtract(DateTime.Now);
+                        AddToStatusInfo(String.Format("Background process {0} is going to sleep for {1} days, {2} hours, {3} minutes and {4} seconds", job.Event.Description, sleepTime.Days, sleepTime.Hours, sleepTime.Minutes, sleepTime.Seconds));
                         Thread.Sleep(sleepTime);
                     }
 

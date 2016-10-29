@@ -25,13 +25,7 @@ namespace WebsiteTemplate.Menus.BaseItems
             }
         }
 
-        public virtual bool AllowInMenu
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public abstract bool AllowInMenu { get; }
 
         /// <summary>
         /// Returns data to be passed from the front end when the user actions an event

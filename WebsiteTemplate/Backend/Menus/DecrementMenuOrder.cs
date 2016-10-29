@@ -26,6 +26,13 @@ namespace WebsiteTemplate.Backend.Menus
                 return "Decrement Menu Order";
             }
         }
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public override EventNumber GetId()
         {

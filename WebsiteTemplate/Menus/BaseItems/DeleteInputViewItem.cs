@@ -17,6 +17,13 @@ namespace WebsiteTemplate.Menus.BaseItems
         {
 
         }
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public DeleteInputViewItem(int rowId)
         {

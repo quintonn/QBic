@@ -27,6 +27,13 @@ namespace WebsiteTemplate.Menus
                 return EventType.ShowMessage;
             }
         }
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public string ConfirmationMessage { get; set; }
 

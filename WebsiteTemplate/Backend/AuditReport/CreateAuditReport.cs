@@ -2,14 +2,11 @@
 using DocumentGenerator.Settings;
 using DocumentGenerator.Styles;
 using MigraDoc.DocumentObjectModel;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NHibernate.Criterion;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
@@ -97,6 +94,13 @@ namespace WebsiteTemplate.Backend.AuditReport
         public override EventNumber GetId()
         {
             return EventNumber.CreateAuditReport;
+        }
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return true;
+            }
         }
     }
 }

@@ -24,7 +24,13 @@ namespace WebsiteTemplate.Backend.PasswordReset
             UserService = userService;
             AppSettings = appSettings;
         }
-
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return false;
+            }
+        }
         public override string Description
         {
             get

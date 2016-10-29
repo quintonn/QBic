@@ -32,5 +32,12 @@ namespace WebsiteTemplate.Backend.Users
         {
             return EventNumber.DeleteUser;
         }
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return false;
+            }
+        }
     }
 }

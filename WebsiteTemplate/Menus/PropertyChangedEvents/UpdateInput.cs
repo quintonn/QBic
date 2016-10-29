@@ -23,6 +23,13 @@ namespace WebsiteTemplate.Menus.PropertyChangedEvents
                 return "Update Input";
             }
         }
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public override EventNumber GetId()
         {

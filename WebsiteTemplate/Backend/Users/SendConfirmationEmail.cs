@@ -15,6 +15,13 @@ namespace WebsiteTemplate.Backend.Users
         {
             UserService = service;
         }
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public override EventNumber GetId()
         {

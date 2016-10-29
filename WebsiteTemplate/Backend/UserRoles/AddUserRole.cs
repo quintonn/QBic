@@ -23,5 +23,12 @@ namespace WebsiteTemplate.Backend.UserRoles
         {
             return EventNumber.AddUserRole;
         }
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return true;
+            }
+        }
     }
 }

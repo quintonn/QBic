@@ -9,6 +9,13 @@ namespace WebsiteTemplate.Menus.BaseItems
         {
             RowId = -1;
         }
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public UpdateInputView(InputViewUpdateType updateType)
             : this()

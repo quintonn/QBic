@@ -64,5 +64,12 @@ namespace WebsiteTemplate.Backend.TestItems
 
             return result;
         }
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return false;
+            }
+        }
     }
 }

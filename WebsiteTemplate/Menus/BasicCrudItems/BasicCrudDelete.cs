@@ -15,6 +15,13 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                 return "Deletes a " + ItemName;
             }
         }
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         private DataService DataService { get; set; }
 

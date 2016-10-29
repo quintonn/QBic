@@ -14,6 +14,13 @@ namespace WebsiteTemplate.Menus
         {
             
         }
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public ExecuteAction(int eventNumber, string parametersToPass = null)
         {

@@ -53,6 +53,10 @@ namespace WebsiteTemplate.Backend.KeepAlive
 
             if (!String.IsNullOrWhiteSpace(url))
             {
+                if (url.EndsWith("/"))
+                {
+                    url = url.Substring(0, url.Length - 1);
+                }
                 url = url + "/api/v1/systemPing";
                 using (var wc = new WebClient())
                 {

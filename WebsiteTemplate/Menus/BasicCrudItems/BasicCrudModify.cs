@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
-using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
@@ -17,6 +16,13 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
         public BasicCrudModify(DataService dataService)
         {
             DataService = dataService;
+        }
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return false;
+            }
         }
 
         private T Item { get; set; } = null;

@@ -13,6 +13,13 @@ namespace WebsiteTemplate.Menus
                 return EventType.Logout;
             }
         }
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public override bool RequiresAuthorization
         {

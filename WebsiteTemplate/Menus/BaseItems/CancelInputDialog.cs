@@ -22,5 +22,12 @@
                 return EventType.CancelInputDialog;
             }
         }
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return false;
+            }
+        }
     }
 }

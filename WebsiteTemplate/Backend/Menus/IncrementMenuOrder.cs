@@ -18,6 +18,13 @@ namespace WebsiteTemplate.Backend.Menus
         {
             DataService = dataService;
         }
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public override string Description
         {

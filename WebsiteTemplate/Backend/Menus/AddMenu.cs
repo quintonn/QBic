@@ -16,5 +16,13 @@ namespace WebsiteTemplate.Backend.Menus
         {
             return EventNumber.AddMenu;
         }
+
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return true;
+            }
+        }
     }
 }

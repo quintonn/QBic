@@ -20,6 +20,13 @@ namespace WebsiteTemplate.Menus.PropertyChangedEvents
                 return "Update data source combo box source";
             }
         }
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public override EventType ActionType
         {

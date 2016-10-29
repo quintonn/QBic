@@ -32,5 +32,12 @@ namespace WebsiteTemplate.Backend.UserRoles
         {
             return EventNumber.DeleteUserRole;
         }
+        public override bool AllowInMenu
+        {
+            get
+            {
+                return false;
+            }
+        }
     }
 }
