@@ -117,32 +117,46 @@ namespace WebsiteTemplate.Backend.Services
                 body += GetCurrentUrl() + "?anonAction=" + ((int)EventNumber.ResetPassword) + "&params=" + HttpUtility.UrlEncode(parameters);
 
                 var mailMessage = new MailMessage(settings.EmailFromAddress, user.Email, "Password Reset", body);
+                mailMessage.From = new MailAddress("admin@q10hub.com", "Admin");
 
                 var sendEmailTask = Task.Run(() =>
                 {
                     try
                     {
-                        var smtpClient = new SmtpClient(settings.EmailHost, settings.EmailPort);
+                        var smtpClient = new SmtpClient();
+                        smtpClient.Host = settings.EmailHost;
+                        smtpClient.Port = settings.EmailPort;
 
                         var password = Encryption.Decrypt(settings.EmailPassword, ApplicationSettings.ApplicationPassPhrase);
                         smtpClient.Credentials = new System.Net.NetworkCredential(settings.EmailUserName, password);
                         smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
                         smtpClient.EnableSsl = settings.EmailEnableSsl;
+                        smtpClient.UseDefaultCredentials = true;
 
                         smtpClient.Send(mailMessage);
+
+                        EmailStatus = "Email sent successfully";
                     }
                     catch (Exception e)
                     {
                         var message = e.Message + "\n" + e.ToString();
                         //return message;
+                        EmailStatus = message;
                     }
                 });
+                sendEmailTask.Wait();
+            }
+            else
+            {
+                return "No user found";
             }
 
             await Task.Delay(1000); // To prevent it being too obvious that a username/email address exists or does not.
-
+            return EmailStatus;
             return "If a user with username or email address exists then a password reset link will be sent to the user's registered email address.";
         }
+
+        private static string EmailStatus { get; set; }
 
         public async Task<string> SendAcccountFonfirmationEmail(string userId, string userName, string emailAddress)
         {
