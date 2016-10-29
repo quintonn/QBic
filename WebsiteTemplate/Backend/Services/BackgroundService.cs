@@ -96,7 +96,7 @@ namespace WebsiteTemplate.Backend.Services
                         /* First calculate the amount of time to wait before doing work */
                         job.NextRunTime = job.Event.CalculateNextRunTime(job.LastRunTime);
                         var sleepTime = job.NextRunTime.Subtract(DateTime.Now);
-                        AddToStatusInfo(String.Format("Background process {0} is going to sleep for {1} days, {2} hours, {3} minutes and {4} seconds", job.Event.Description, sleepTime.Days, sleepTime.Hours, sleepTime.Minutes, sleepTime.Seconds));
+                        AddToStatusInfo(String.Format("Background process {0} is going to sleep for {1} days, {2} hours, {3} minutes and {4} seconds", job.Event.Description, sleepTime.Days, sleepTime.Hours, sleepTime.Minutes, sleepTime.Seconds), job);
                         Thread.Sleep(sleepTime);
                     }
 
@@ -117,7 +117,7 @@ namespace WebsiteTemplate.Backend.Services
                         result.ExecutionInformation = e.Message + "\n" + e.StackTrace;
                         //TODO: Log this in file and in a way to display on screen. Maybe i can  do both in 1
                     }
-                    AddToStatusInfo(String.Format("Ran background process {0} at {1}: {2} -> {3}", job.Event.Description, ((DateTime)job.LastRunTime).ToLongTimeString(), result.Status, result.ExecutionInformation));
+                    AddToStatusInfo(String.Format("Ran background process {0} : {1} -> {2}", job.Event.Description, result.Status, result.ExecutionInformation), job);
                     
                     SaveBackgroundJobStatus(result);
                 }
@@ -143,11 +143,13 @@ namespace WebsiteTemplate.Backend.Services
             //BackgroundThread.Start();
         }
 
-        private static void AddToStatusInfo(string statusInfo)
+        private static void AddToStatusInfo(string statusInfo, BackgroundJob job)
         {
             lock(Locker)
             {
-                StatusInfo.Add(statusInfo);
+                var date = ((DateTime)job.LastRunTime);
+                var timePart = date.ToShortDateString() + "  " + date.ToLongTimeString();
+                StatusInfo.Add(timePart + "\t" + statusInfo);
             }
         }
 
