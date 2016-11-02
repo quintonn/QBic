@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Web;
-using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Services

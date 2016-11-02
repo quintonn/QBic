@@ -1,7 +1,6 @@
 ﻿using BasicAuthentication.Security;
 using Microsoft.Practices.Unity;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -153,6 +152,16 @@ namespace WebsiteTemplate.Controllers
         public async Task<IHttpActionResult> GetUserMenu()
         {
             return await Container.Resolve<UserMenuProcessor>().Process(-1, Request);
+        }
+
+        [HttpPost]
+        [Route("performBackup")]
+        [RequireHttps]
+        //[Authorize] //Not sure if we can have authorization. should  be possible
+        [DeflateCompression]
+        public async Task<IHttpActionResult> PerformBackup()
+        {
+            return await Container.Resolve<BackupProcessor>().Process(-1, Request);
         }
     }
 }

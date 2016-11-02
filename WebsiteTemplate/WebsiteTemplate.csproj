@@ -41,12 +41,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicAuthentication, Version=0.0.6146.34623, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BasicAuthentication.0.0.6146.34623\lib\net461\BasicAuthentication.dll</HintPath>
+    <Reference Include="BasicAuthentication, Version=0.0.6148.19344, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicAuthentication.0.0.6148.19344\lib\net461\BasicAuthentication.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DocumentGenerator, Version=0.0.6096.22270, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DocumentGenerator.0.0.6096.22270\lib\net46\DocumentGenerator.dll</HintPath>
+    <Reference Include="DocumentGenerator, Version=0.0.6148.19418, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentGenerator.0.0.6148.19418\lib\net46\DocumentGenerator.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FluentNHibernate, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -319,6 +319,7 @@
     <Compile Include="Backend\Menus\DecrementMenuOrder.cs" />
     <Compile Include="Backend\Menus\IncrementMenuOrder.cs" />
     <Compile Include="Backend\PasswordReset\ResetPassword.cs" />
+    <Compile Include="Backend\Processing\BackupProcessor.cs" />
     <Compile Include="Backend\Processing\InitializationProcessor.cs" />
     <Compile Include="Backend\Processing\InputProcessing\ProcessingResult.cs" />
     <Compile Include="Backend\Processing\PingProcessor.cs" />
@@ -329,6 +330,7 @@
     <Compile Include="Backend\TestItems\BackgroundTest.cs" />
     <Compile Include="Backend\TestItems\CauseChild.cs" />
     <Compile Include="Backend\BackgroundInfo\ClearBackgroundErrors.cs" />
+    <Compile Include="Backend\TestItems\TestBackupProcessor.cs" />
     <Compile Include="Backend\TestItems\TestListView.cs" />
     <Compile Include="Backend\TestItems\TestListViewDetail.cs" />
     <Compile Include="Backend\TestItems\TestView.cs" />
@@ -512,7 +514,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>54138</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://q10pc/WebsiteTemplate</IISUrl>
+          <IISUrl>https://localhost/WebsiteTemplate</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
