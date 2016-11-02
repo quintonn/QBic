@@ -19,14 +19,19 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
             columnConfig.AddStringColumn("Status", "Status", 3);
+            columnConfig.AddHiddenColumn("Id");
+            columnConfig.AddLinkColumn("", "Id", "Detail", EventNumber.ViewBackgroundDetail, parametersToPass: "Status"); parameters not passing
         }
 
         public override IEnumerable GetData(GetDataSettings settings)
         {
-            return BackgroundService.StatusInfo.Select(s => new
+            var cnt = 0;
+            var result = BackgroundService.StatusInfo.Select(s => new
             {
-                Status = s
-            });
+                Status = s,
+                Id = cnt++
+            }).ToList();
+            return result; ;
         }
 
         public override int GetDataCount(GetDataSettings settings)
