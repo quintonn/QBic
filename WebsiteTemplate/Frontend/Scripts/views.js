@@ -316,7 +316,7 @@
                 }
                 else
                 {
-                    dialog.closeBusyDialog.then(function ()
+                    dialog.closeBusyDialog().then(function ()
                     {
                         dialog.showMessage("Error", "Unknown action type " + theColumn.Event.ActionType);
                     });

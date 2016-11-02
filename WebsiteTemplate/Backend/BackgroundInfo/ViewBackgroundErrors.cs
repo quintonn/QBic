@@ -21,14 +21,18 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
 
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
-            columnConfig.AddStringColumn("Error", "Error");
+            columnConfig.AddStringColumn("Error", "Error", 3);
+            columnConfig.AddHiddenColumn("Id");
+            columnConfig.AddLinkColumn("", "Id", "Detail", EventNumber.ViewBackgroundDetail, parametersToPass: "Errors");
         }
 
         public override IEnumerable GetData(GetDataSettings settings)
         {
+            var cnt = 0;
             return BackgroundService.Errors.Select(e => new
             {
-                Error = e
+                Error = e,
+                Id = cnt++
             });
         }
 
