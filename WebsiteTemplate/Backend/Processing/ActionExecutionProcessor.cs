@@ -126,6 +126,11 @@ namespace WebsiteTemplate.Backend.Processing
                     processedFormData.Add("ViewData", viewData);
                 }
 
+                if (!String.IsNullOrWhiteSpace(parameters))
+                {
+                    processedFormData.Add("ViewParameters", parameters);
+                }
+
                 (eventItem as DoSomething).InputData = processedFormData;
                 (eventItem as DoSomething).DataService = DataService;
                 var doResult = await (eventItem as DoSomething).ProcessAction();

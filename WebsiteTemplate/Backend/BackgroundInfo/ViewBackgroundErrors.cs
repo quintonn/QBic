@@ -6,6 +6,7 @@ using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.BackgroundInfo
 {
@@ -23,7 +24,9 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
         {
             columnConfig.AddStringColumn("Error", "Error", 3);
             columnConfig.AddHiddenColumn("Id");
-            columnConfig.AddLinkColumn("", "Id", "Detail", EventNumber.ViewBackgroundDetail, parametersToPass: "Errors");
+            var json = new JsonHelper();
+            json.Add("type", "errors");
+            columnConfig.AddLinkColumn("", "Id", "Detail", EventNumber.ViewBackgroundDetail, parametersToPass: json.ToString());
         }
 
         public override IEnumerable GetData(GetDataSettings settings)

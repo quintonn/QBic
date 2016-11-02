@@ -158,7 +158,7 @@ namespace WebsiteTemplate.Controllers
         [Route("performBackup")]
         [RequireHttps]
         //[Authorize] //Not sure if we can have authorization. should  be possible
-        [DeflateCompression]
+        //[DeflateCompression]
         public async Task<IHttpActionResult> PerformBackup()
         {
             return await Container.Resolve<BackupProcessor>().Process(-1, Request);

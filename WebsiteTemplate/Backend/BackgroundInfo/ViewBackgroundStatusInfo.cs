@@ -3,6 +3,7 @@ using System.Linq;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.BackgroundInfo
 {
@@ -20,7 +21,9 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
         {
             columnConfig.AddStringColumn("Status", "Status", 3);
             columnConfig.AddHiddenColumn("Id");
-            columnConfig.AddLinkColumn("", "Id", "Detail", EventNumber.ViewBackgroundDetail, parametersToPass: "Status"); parameters not passing
+            var json = new JsonHelper();
+            json.Add("type", "status");
+            columnConfig.AddLinkColumn("", "Id", "Detail", EventNumber.ViewBackgroundDetail, parametersToPass: json.ToString()); //parameters not passing
         }
 
         public override IEnumerable GetData(GetDataSettings settings)

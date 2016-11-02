@@ -285,6 +285,9 @@
 
                 var params = theColumn.ParametersToPass || {};
 
+                console.log('params to pass:');
+                console.log(params);
+
                 params["ViewId"] = self.id;
                 params["RowId"] = rowItem.id;
 

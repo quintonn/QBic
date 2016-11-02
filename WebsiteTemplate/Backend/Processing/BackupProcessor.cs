@@ -19,8 +19,8 @@ namespace WebsiteTemplate.Backend.Processing
 
         public override async Task<byte[]> ProcessEvent(int eventId)
         {
-            //var originalData = GetRequestData();
-            
+            var originalData = GetRequestData();
+            var jData = JsonHelper.Parse(originalData);
             //var jsonString = Encryption.Decrypt(originalData, AppSettings.ApplicationPassPhrase);
             //var json = JsonHelper.Parse(jsonString);
             

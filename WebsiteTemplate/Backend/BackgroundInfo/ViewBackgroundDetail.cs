@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.BackgroundInfo
 {
@@ -31,11 +32,28 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
 
         public override async Task<IList<IEvent>> ProcessAction()
         {
-            var x = InputData;
+            var parameters = InputData["ViewParameters"]?.ToString();
+            var json = JsonHelper.Parse(parameters);
+            var type = json.GetValue("type");
             var id = GetValue<int>("Id");
+
+            string message;
+            if (type == "status")
+            {
+                message = BackgroundService.StatusInfo[id];
+            }
+            else if (type == "errors")
+            {
+                message = BackgroundService.Errors[id];
+            }
+            else
+            {
+                message = "UNKOWN TYPE";
+            }
+
             var result = new List<IEvent>()
             {
-                new ShowMessage(BackgroundService.StatusInfo[id])
+                new ShowMessage(message)
             };
 
             return result;
