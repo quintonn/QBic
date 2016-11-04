@@ -78,7 +78,8 @@
             processing.loadViewMenu(id, model, viewData.DataForGettingMenu);
             
             var columns = viewData.Columns;
-
+            console.log(columns);
+            console.log(viewData);
             for (var i = 0; i < columns.length; i++)
             {
                 var col = columns[i];

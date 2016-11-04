@@ -21,6 +21,8 @@
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,12 +43,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicAuthentication, Version=0.0.6148.19344, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BasicAuthentication.0.0.6148.19344\lib\net461\BasicAuthentication.dll</HintPath>
+    <Reference Include="BasicAuthentication, Version=0.0.6146.34623, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicAuthentication.0.0.6146.34623\lib\net461\BasicAuthentication.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DocumentGenerator, Version=0.0.6148.19418, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DocumentGenerator.0.0.6148.19418\lib\net46\DocumentGenerator.dll</HintPath>
+    <Reference Include="DocumentGenerator, Version=0.0.6096.22270, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentGenerator.0.0.6096.22270\lib\net46\DocumentGenerator.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FluentNHibernate, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -204,6 +206,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.SQLite, Version=1.0.103.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.103\lib\net46\System.Data.SQLite.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
@@ -332,6 +338,8 @@
     <Compile Include="Backend\TestItems\CauseChild.cs" />
     <Compile Include="Backend\BackgroundInfo\ClearBackgroundErrors.cs" />
     <Compile Include="Backend\TestItems\TestBackupProcessor.cs" />
+    <Compile Include="Backend\TestItems\TestInputView.cs" />
+    <Compile Include="Backend\TestItems\TestInputViewInput.cs" />
     <Compile Include="Backend\TestItems\TestListView.cs" />
     <Compile Include="Backend\TestItems\TestListViewDetail.cs" />
     <Compile Include="Backend\TestItems\TestView.cs" />
@@ -531,6 +539,13 @@
   <PropertyGroup>
     <PreBuildEvent>rem ..\..\BuildHelper\bin\Debug\BuildHelper.exe</PreBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.103\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.103\build\net46\System.Data.SQLite.Core.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.103\build\net46\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.103\build\net46\System.Data.SQLite.Core.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

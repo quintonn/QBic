@@ -5,6 +5,9 @@ using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
 using System;
 using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.Web;
 using WebsiteTemplate.Backend.Services;
@@ -97,6 +100,7 @@ namespace WebsiteTemplate.Data
 
             var config = Fluently.Configure()
               .Database(configurer)
+              
               .Mappings(m => m.FluentMappings.CustomAddFromAssemblyOf<User>().Conventions.Add<JoinedSubclassIdConvention>());
 
             config.ExposeConfiguration(x =>
@@ -117,9 +121,29 @@ namespace WebsiteTemplate.Data
             new SchemaUpdate(Configuration).Execute(true, true);
         }
 
+        static IDbConnection Connection { get; set; }
+        static object locker = new object();
         public ISession OpenSession()
         {
-            return Store.OpenSession();
+            lock (locker)
+            {
+                if (Connection == null)
+                {
+                    var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
+                    if (connectionString.Contains("##CurrentDirectory##"))
+                    {
+                        var currentDirectory = HttpRuntime.AppDomainAppPath;
+                        connectionString = connectionString.Replace("##CurrentDirectory##", currentDirectory);
+                        Connection = new SQLiteConnection(connectionString);
+                    }
+                    else
+                    {
+                        Connection = new System.Data.SqlClient.SqlConnection(connectionString);
+                    }
+                    Connection.Open();
+                }
+            }
+            return Store.OpenSession(Connection);
         }
     }
 }
