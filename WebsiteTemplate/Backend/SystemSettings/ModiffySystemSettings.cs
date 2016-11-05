@@ -38,25 +38,22 @@ namespace WebsiteTemplate.Backend.SystemSettings
             }
         }
 
-        public override IList<InputField> InputFields
+        public override IList<InputField> GetInputFields()
         {
-            get
-            {
-                var result = new List<InputField>();
+            var result = new List<InputField>();
 
-                result.Add(new StringInput("EmailFromAddress", "From Email", SystemSettings?.EmailFromAddress, "Mail Settings", true));
-                result.Add(new StringInput("EmailHost", "Email Host", SystemSettings?.EmailHost, "Mail Settings", true));
-                result.Add(new StringInput("EmailUserName", "Username", SystemSettings?.EmailUserName, "Mail Settings", true));
-                result.Add(new PasswordInput("EmailPassword", "Password", SystemSettings?.EmailPassword, "Mail Settings", true));
-                result.Add(new NumericInput<int>("EmailPort", "Port", SystemSettings?.EmailPort, "Mail Settings", true));
-                result.Add(new BooleanInput("EmailEnableSsl", "Enable Ssl", SystemSettings?.EmailEnableSsl, "Mail Settings", true));
+            result.Add(new StringInput("EmailFromAddress", "From Email", SystemSettings?.EmailFromAddress, "Mail Settings", true));
+            result.Add(new StringInput("EmailHost", "Email Host", SystemSettings?.EmailHost, "Mail Settings", true));
+            result.Add(new StringInput("EmailUserName", "Username", SystemSettings?.EmailUserName, "Mail Settings", true));
+            result.Add(new PasswordInput("EmailPassword", "Password", SystemSettings?.EmailPassword, "Mail Settings", true));
+            result.Add(new NumericInput<int>("EmailPort", "Port", SystemSettings?.EmailPort, "Mail Settings", true));
+            result.Add(new BooleanInput("EmailEnableSsl", "Enable Ssl", SystemSettings?.EmailEnableSsl, "Mail Settings", true));
 
-                result.Add(new StringInput("DateFormat", "Date Format", SystemSettings?.DateFormat, "Formats", true));
+            result.Add(new StringInput("DateFormat", "Date Format", SystemSettings?.DateFormat, "Formats", true));
 
-                result.Add(new StringInput("WebsiteUrl", "Website Base Url", SystemSettings?.WebsiteBaseUrl, "Website", true));
+            result.Add(new StringInput("WebsiteUrl", "Website Base Url", SystemSettings?.WebsiteBaseUrl, "Website", true));
 
-                return result;
-            }
+            return result;
         }
 
         public override async Task<InitializeResult> Initialize(string data)

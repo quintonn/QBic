@@ -342,6 +342,7 @@
     <Compile Include="Backend\TestItems\TestInputViewInput.cs" />
     <Compile Include="Backend\TestItems\TestListView.cs" />
     <Compile Include="Backend\TestItems\TestListViewDetail.cs" />
+    <Compile Include="Backend\TestItems\TestReadBackup.cs" />
     <Compile Include="Backend\TestItems\TestView.cs" />
     <Compile Include="Backend\TestItems\TestPdf.cs" />
     <Compile Include="Backend\BackgroundInfo\ViewBackgroundErrors.cs" />

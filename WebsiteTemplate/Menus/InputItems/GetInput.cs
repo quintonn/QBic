@@ -17,7 +17,9 @@ namespace WebsiteTemplate.Menus.InputItems
             }
         }
 
-        public abstract IList<InputField> InputFields { get; }
+        public abstract IList<InputField> GetInputFields();
+
+        public IList<InputField> InputFields { get; internal set; }
 
         /// <summary>
         /// Returns the title that will be displayed for this input screen.

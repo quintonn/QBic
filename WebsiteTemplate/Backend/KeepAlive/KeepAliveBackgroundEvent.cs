@@ -60,6 +60,8 @@ namespace WebsiteTemplate.Backend.KeepAlive
                     url = url.Substring(0, url.Length - 1);
                 }
                 url = url + "/api/v1/systemPing";
+                //TODO: remove later
+                ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
                 using (var wc = new WebClient())
                 {
                     wc.Headers[HttpRequestHeader.AcceptEncoding] = "gzip, deflate, br";

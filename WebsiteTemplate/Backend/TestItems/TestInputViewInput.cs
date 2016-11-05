@@ -27,18 +27,15 @@ namespace WebsiteTemplate.Backend.TestItems
             }
         }
 
-        public override IList<InputField> InputFields
+        public override IList<InputField> GetInputFields()
         {
-            get
-            {
-                var result = new List<InputField>();
+            var result = new List<InputField>();
 
-                result.Add(new StringInput("Name", "Name"));
+            result.Add(new StringInput("Name", "Name"));
 
-                result.Add(new ViewInput("Items", "Items", new TestInputView()));
+            result.Add(new ViewInput("Items", "Items", new TestInputView()));
 
-                return result;
-            }
+            return result;
         }
 
         public override EventNumber GetId()

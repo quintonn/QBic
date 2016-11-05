@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using WebsiteTemplate.Mappings;
-
-namespace WebsiteTemplate.Models
+﻿namespace WebsiteTemplate.Models
 {
     public class SystemSettings : DynamicClass
     {

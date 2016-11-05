@@ -1,6 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -22,18 +24,41 @@ namespace WebsiteTemplate.Controllers
             {
                 throw new ArgumentNullException("MimeType", "FileInfo.MimeType cannot be empty. This is returned by types of OpenFile");
             }
-            var base64 = String.Empty;
+            var response = new HttpResponseMessage();
+
             if (FileInfo.Data == null || FileInfo.Data.Length == 0)
             {
-                //throw new ArgumentNullException("FileInfo.Data", "FileInfo.Data cannot be null or empty. This is returned by types of OpenFile");
+                throw new ArgumentNullException("FileInfo.Data", "FileInfo.Data cannot be null or empty. This is returned by types of OpenFile");
             }
-            else
+            else if (FileInfo.MimeType != "application/octet-stream")
             {
-                base64 = Convert.ToBase64String(FileInfo.Data);
+                var base64 = Convert.ToBase64String(FileInfo.Data); //data too big
+                response.Content = new StringContent(base64);
+                //response.Headers.Add("IsBase64", "yes");
             }
-            var response = new HttpResponseMessage();
-            response.Content = new StringContent(base64);
-            
+            else // zipped content
+            {
+                using (var contentStream = new MemoryStream())
+                using (var stream = new MemoryStream(FileInfo.Data))
+                using (var cs = new CryptoStream(contentStream, new ToBase64Transform(), CryptoStreamMode.Write))
+                {
+                    stream.CopyTo(cs);
+                    contentStream.Position = 0;
+
+                    var streamReader = new StreamReader(contentStream);
+                    var tmp = streamReader.ReadToEnd();
+
+                    var tmpBytes = Convert.FromBase64String(tmp);
+                    //var content = streamReader.ReadToEnd();
+                    //response.Content = new StreamContent(contentStream);
+
+                    response.Content = new ByteArrayContent(contentStream.GetBuffer());
+                    //response.Content = new StringContent(streamReader.ReadToEnd());
+                }
+
+                File.WriteAllBytes(@"D:\Projects\WebsiteTemplate\WebsiteTemplate\Data\shouldbe.zip", FileInfo.Data);
+            }
+
             response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("inline");   /// Tells the browser to try and display the file instead of downloading it.
 
             response.Content.Headers.ContentType = new MediaTypeHeaderValue(FileInfo.MimeType);

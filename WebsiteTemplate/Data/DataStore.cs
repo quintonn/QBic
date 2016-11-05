@@ -123,6 +123,12 @@ namespace WebsiteTemplate.Data
 
         static IDbConnection Connection { get; set; }
         static object locker = new object();
+
+        public static void KillConnection()
+        {
+            Connection.Close();
+            Connection = null;
+        }
         public ISession OpenSession()
         {
             lock (locker)

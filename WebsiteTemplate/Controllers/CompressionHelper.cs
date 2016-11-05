@@ -20,7 +20,7 @@ namespace WebsiteTemplate.Controllers
 
             using (var output = new MemoryStream())
             {
-                using (var compressor = new Ionic.Zlib.DeflateStream(output, Ionic.Zlib.CompressionMode.Compress, compressionLevel))
+                using (var compressor = new DeflateStream(output, CompressionMode.Compress, compressionLevel))
                 {
                     compressor.Write(data, 0, data.Length);
                 }
@@ -29,7 +29,7 @@ namespace WebsiteTemplate.Controllers
             }
         }
 
-        public static byte[] InflateByte(byte[] data)
+        public static byte[] InflateByte(byte[] data, CompressionLevel compressionLevel = CompressionLevel.BestSpeed)
         {
             if (data == null)
             {
@@ -38,7 +38,7 @@ namespace WebsiteTemplate.Controllers
 
             using (var output = new MemoryStream())
             {
-                using (var compressor = new Ionic.Zlib.DeflateStream(output, CompressionMode.Decompress))
+                using (var compressor = new DeflateStream(output, CompressionMode.Decompress, compressionLevel))
                 {
                     compressor.Write(data, 0, data.Length);
                 }

@@ -78,8 +78,7 @@
             processing.loadViewMenu(id, model, viewData.DataForGettingMenu);
             
             var columns = viewData.Columns;
-            console.log(columns);
-            console.log(viewData);
+            
             for (var i = 0; i < columns.length; i++)
             {
                 var col = columns[i];
@@ -286,9 +285,6 @@
 
                 var params = theColumn.ParametersToPass || {};
 
-                console.log('params to pass:');
-                console.log(params);
-
                 params["ViewId"] = self.id;
                 params["RowId"] = rowItem.id;
 
@@ -422,7 +418,7 @@
         {
             var rowItem = new rowModel(data, rowId);
             var columns = self.settings.Columns;
-
+            
             for (var k = 0; k < columns.length; k++)
             {
                 var col = columns[k];

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
@@ -8,6 +9,12 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
         public override string GetApplicationName()
         {
             return "Website Template";
+        }
+
+        public override void ConfigureSiteSpecificTypes(Dictionary<int, Type> systemTypes)
+        {
+            Console.WriteLine("");
+
         }
 
         public override string ApplicationPassPhrase

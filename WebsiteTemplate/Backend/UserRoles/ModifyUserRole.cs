@@ -34,31 +34,27 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
         }
 
-        public override IList<InputField> InputFields
+        public override IList<InputField> GetInputFields()
         {
-            get
+            var list = new List<InputField>();
+
+            list.Add(new StringInput("Name", "Name", DataItem?.Name, mandatory: true));
+            list.Add(new StringInput("Description", "Description", DataItem?.Description, mandatory: true));
+
+            var existingItems = UserRoleService.RetrieveEventRoleAssociationsForUserRole(DataItem?.Id);
+            var listSelection = new ListSelectionInput("Events", "Allowed Events", existingItems)
             {
-                var list = new List<InputField>();
+                AvailableItemsLabel = "List of Events:",
+                SelectedItemsLabel = "Chosen Events:",
+                ListSource = UserRoleService.GetListOfEvents()
+            };
 
-                list.Add(new StringInput("Name", "Name", DataItem?.Name, mandatory: true));
-                list.Add(new StringInput("Description", "Description", DataItem?.Description, mandatory: true));
+            list.Add(listSelection);
 
-                var existingItems = UserRoleService.RetrieveEventRoleAssociationsForUserRole(DataItem?.Id);
-                var listSelection = new ListSelectionInput("Events", "Allowed Events", existingItems)
-                {
-                    AvailableItemsLabel = "List of Events:",
-                    SelectedItemsLabel = "Chosen Events:",
-                    ListSource = UserRoleService.GetListOfEvents()
-                };
+            list.Add(new HiddenInput("Id", DataItem?.Id));
 
-                list.Add(listSelection);
-
-                list.Add(new HiddenInput("Id", DataItem?.Id));
-
-                return list;
-            }
+            return list;
         }
-
         public override async Task<ProcessingResult> ValidateInputs()
         {
             var name = GetValue<string>("Name");

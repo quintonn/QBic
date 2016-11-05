@@ -49,7 +49,7 @@ namespace WebsiteTemplate.Backend.Processing
             var processedFormData = new Dictionary<string, object>();
 
             await eventItem.Initialize(formData); //TODO: Do i need to call this here???? WHY!! If it's a must, maybe i should pass a flag that it's not the real initialize.
-            foreach (var inputField in eventItem.InputFields)
+            foreach (var inputField in eventItem.GetInputFields())
             {
                 var value = inputField.GetValue(jsonData.GetValue<JToken>(inputField.InputName));
                 processedFormData.Add(inputField.InputName, value);

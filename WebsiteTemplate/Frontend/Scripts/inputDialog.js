@@ -619,6 +619,7 @@
                                 return function (e)
                                 {
                                     fileData = e.target.result;
+                                    console.log(fileData);
                                     fileData = window.btoa(fileData);  // base 64 encode
                                     var filename = theFile.name;
                                     var parts = filename.split('.');
@@ -641,6 +642,7 @@
                                 };
                             })(file);
                             reader.readAsBinaryString(file);
+                            //reader.readAsDataURL(file);
                         }).catch(function (err)
                         {
                             console.error(err);

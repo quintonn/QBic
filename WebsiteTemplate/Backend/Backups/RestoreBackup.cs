@@ -28,14 +28,11 @@ namespace WebsiteTemplate.Backend.Backups
             }
         }
 
-        public override IList<InputField> InputFields
+        public override IList<InputField> GetInputFields()
         {
-            get
-            {
-                var results = new List<InputField>();
-                results.Add(new FileInput("BackupFile", "Backup File", mandatory: true));
-                return results;
-            }
+            var results = new List<InputField>();
+            results.Add(new FileInput("BackupFile", "Backup File", mandatory: true));
+            return results;
         }
 
         public override EventNumber GetId()

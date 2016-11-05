@@ -21,7 +21,7 @@ namespace WebsiteTemplate.Backend.Processing
 
         public async override Task<Event> ProcessEvent(int eventId)
         {
-            var user = GetLoggedInUser();
+            var user = await GetLoggedInUser();
             var originalData = GetRequestData();
 
             var json = JsonHelper.Parse(originalData);
@@ -114,6 +114,9 @@ namespace WebsiteTemplate.Backend.Processing
             {
                 totalLines = action.GetDataCount(viewDataSettings);
             }
+
+            var allowedMenus = GetAllowedEventsForUser(user.Id);
+            action.Columns = action.DoConfigureColumns(allowedMenus);
 
             var list = action.GetData(viewDataSettings).Cast<object>().ToList();
             action.ViewData = list;

@@ -36,26 +36,22 @@ namespace WebsiteTemplate.Backend.AuditReport
             UserService = userService;
         }
 
-        public override IList<InputField> InputFields
+        public override IList<InputField> GetInputFields()
         {
-            get
+            var list = new List<InputField>();
+
+            list.Add(new DateInput("FromDate", "From Date", DateTime.Now.Date, null, true));
+            list.Add(new DateInput("ToDate", "To Date", DateTime.Now.Date, null, true));
+
+            var users = UserService.RetrieveUsers(0, int.MaxValue, String.Empty).ToDictionary(u => u.Id, u => (object)u.UserName);
+            var listSelection = new ListSelectionInput("Users", "Users")
             {
-                var list = new List<InputField>();
+                ListSource = users
+            };
+            list.Add(listSelection);
 
-                list.Add(new DateInput("FromDate", "From Date", DateTime.Now.Date, null, true));
-                list.Add(new DateInput("ToDate", "To Date", DateTime.Now.Date, null, true));
-
-                var users = UserService.RetrieveUsers(0, int.MaxValue, String.Empty).ToDictionary(u => u.Id, u => (object)u.UserName);
-                var listSelection = new ListSelectionInput("Users", "Users")
-                {
-                    ListSource = users
-                };
-                list.Add(listSelection);
-
-                return list;
-            }
+            return list;
         }
-
         public override EventNumber GetId()
         {
             return EventNumber.AuditReportFilter;

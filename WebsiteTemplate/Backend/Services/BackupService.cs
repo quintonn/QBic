@@ -1,14 +1,21 @@
-﻿using NHibernate;
+﻿using BasicAuthentication.Security;
+using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Tool.hbm2ddl;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
+using System.Web;
+using WebsiteTemplate.Backend.TestItems;
 using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Mappings;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
+//using Microsoft.SqlServer.Smo;
 
 namespace WebsiteTemplate.Backend.Services
 {
@@ -27,23 +34,173 @@ namespace WebsiteTemplate.Backend.Services
 
     public class BackupService
     {
-        private DataService DataService { get; set; }
+        private static Dictionary<int, Type> SystemTypes { get; set; }
 
-        public BackupService(DataService dataService)
+        private DataService DataService { get; set; }
+        private ApplicationSettingsCore AppSettings { get; set; }
+
+        public BackupService(DataService dataService, ApplicationSettingsCore appSettings)
         {
             DataService = dataService;
+            AppSettings = appSettings;
+
+            if (SystemTypes == null)
+            {
+                SystemTypes = new Dictionary<int, Type>();
+                SystemTypes.Add(1, typeof(AuditEvent));
+                SystemTypes.Add(2, typeof(UserRoleAssociation));
+                SystemTypes.Add(3, typeof(EventRoleAssociation));
+                SystemTypes.Add(4, typeof(Menu));
+                SystemTypes.Add(5, typeof(UserRole));
+                SystemTypes.Add(6, typeof(User));
+                SystemTypes.Add(7, typeof(BackgroundJobResult));
+                SystemTypes.Add(8, typeof(CauseChild));
+                SystemTypes.Add(9, typeof(SuperCause));
+                SystemTypes.Add(10, typeof(Models.SystemSettings));
+
+                AppSettings.ConfigureSiteSpecificTypes(SystemTypes);
+            }
         }
 
         public byte[] CreateBackupOfAllData()
         {
+            var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
+            if (connectionString.Contains("##CurrentDirectory##"))
+            {
+                var currentDirectory = HttpRuntime.AppDomainAppPath;
+                var filePath = currentDirectory + "\\Data\\appData.db";
+
+                byte[] data;
+                //var r = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                DataStore.KillConnection();
+                //CaffGeek solution
+                using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var streamReader = new BinaryReader(fileStream))
+                {
+                    data = new byte[fileStream.Length];
+                    streamReader.Read(data, 0, (int)fileStream.Length);
+                }
+
+                //return data;
+                var bytes = CompressionHelper.DeflateByte(data, Ionic.Zlib.CompressionLevel.BestCompression);
+                return bytes;
+            }
+
+            //Microsoft.SqlServer.Management.Smo;
+
             using (var session = DataService.OpenSession())
             {
-                var allData = session.QueryOver<BaseClass>().List<BaseClass>().ToList();
+                byte[] bytes;
+                using (var output = new MemoryStream())
+                {
+                    using (var compressor = new Ionic.Zlib.DeflateStream(output, Ionic.Zlib.CompressionMode.Compress, Ionic.Zlib.CompressionLevel.BestCompression))
+                    {
+                        var ids = SystemTypes.Keys.ToList().OrderBy(i => i);
+                        foreach (var id in ids)
+                        {
+                            var type = SystemTypes[id];
 
-                var json = JsonHelper.SerializeObject(allData, false, true);
+                            var createCriteriaMethodInfo = typeof(ISession).GetMethods().FirstOrDefault(m => m.Name == "CreateCriteria"
+                                                            && m.GetParameters().Count() == 0);
+                            var createCriteriaMethod = createCriteriaMethodInfo.MakeGenericMethod(type);
+                            var count = (createCriteriaMethod.Invoke(session, null) as ICriteria)
+                                        .SetProjection(Projections.Count(Projections.Id()))
+                                        .List<int>()
+                                        .Sum();
 
-                var bytes = CompressionHelper.DeflateByte(XXXUtils.GetBytes(json), Ionic.Zlib.CompressionLevel.BestCompression);
+                            //     var count = session
+                            //.CreateCriteria<BaseClass>()
+                            //.SetProjection(Projections.Count(Projections.Id()))
+                            //.List<int>()
+                            //.Sum();
+                            var added = 0;
 
+                            while (added != count)
+                            {
+                                var nextLoad = 100;
+
+                                var queryOverMethodInfo = typeof(ISession).GetMethods().FirstOrDefault(m => m.Name == "QueryOver"
+                                                                && m.GetParameters().Count() == 0);
+                                var queryOverMethod = queryOverMethodInfo.MakeGenericMethod(type);
+
+                                var genericType = typeof(IQueryOver<>);
+                                Type[] typeArgs = { type };
+
+                                var queryOver = queryOverMethod.Invoke(session, null);
+                                //var returnValue = res as IQueryOver<User>;
+                                //returnValue.Skip(added).Take(nextLoad).List().ToList();
+
+                                var gType = genericType.MakeGenericType(typeArgs);
+
+                                var skip = gType.GetMethod("Skip");
+                                queryOver = skip.Invoke(queryOver, new object[] { added });
+
+                                var take = gType.GetMethod("Take");
+                                queryOver = take.Invoke(queryOver, new object[] { nextLoad });
+
+                                var list = gType.GetMethods().FirstOrDefault(m => m.Name == "List"
+                                                                && m.GetParameters().Count() == 0);
+
+                                var enumerableItems = list.Invoke(queryOver, null) as IEnumerable;
+                                var items = enumerableItems.OfType<BaseClass>().ToList();
+
+                                //var items = session.QueryOver<BaseClass>().Skip(added).Take(nextLoad).List<BaseClass>().ToList();
+                                var json = JsonHelper.SerializeObject(items, false, true);
+                                var data = XXXUtils.GetBytes(json);
+                                compressor.Write(data, 0, data.Length);
+
+                                added += items.Count;
+                            }
+                        }
+
+
+
+                        //while (added != count)
+                        //{
+                        //    var nextLoad = 100;
+
+                        //    var method = typeof(ISession).GetMethods().FirstOrDefault(m => m.Name == "QueryOver"
+                        //                                    && m.GetParameters().Count() == 0);
+                        //    var generic = method.MakeGenericMethod(typeof(User));
+
+                        //    var genericType = typeof(IQueryOver<>);
+                        //    Type[] typeArgs = { typeof(User) };
+
+                        //    var res = generic.Invoke(session, null);
+                        //    var returnValue = res as IQueryOver<User>;
+                        //    returnValue.Skip(added).Take(nextLoad).List().ToList();
+
+                        //    var gType = genericType.MakeGenericType(typeArgs);
+
+                        //    var skip = gType.GetMethod("Skip");
+                        //    res = skip.Invoke(res, new object[] { 0 });
+
+                        //    var take = gType.GetMethod("Take");
+                        //    res = take.Invoke(res, new object[] { 10 });
+
+                        //    var list = gType.GetMethods().FirstOrDefault(m => m.Name == "List"
+                        //                                    && m.GetParameters().Count() == 0);
+                        //    var tmpItems = list.Invoke(res, null);
+
+
+                        //    var items = session.QueryOver<BaseClass>().Skip(added).Take(nextLoad).List<BaseClass>().ToList();
+                        //    var json = JsonHelper.SerializeObject(items, false, true);
+                        //    var data = XXXUtils.GetBytes(json);
+                        //    compressor.Write(data, 0, data.Length);
+
+                        //    added += items.Count;
+                        //}
+                    }
+
+                    bytes = output.ToArray();
+                }
+                //var allData = session.QueryOver<BaseClass>().List<BaseClass>().ToList();
+
+                //var json = JsonHelper.SerializeObject(allData, false, true);
+
+                //var bytes = CompressionHelper.DeflateByte(XXXUtils.GetBytes(json), Ionic.Zlib.CompressionLevel.BestCompression);
+                var tmp = XXXUtils.GetString(bytes);
+                var tmpBytes = CompressionHelper.InflateByte(bytes, Ionic.Zlib.CompressionLevel.BestCompression);
                 return bytes;
             }
         }

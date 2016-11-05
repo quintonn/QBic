@@ -37,30 +37,27 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
-        public override IList<InputField> InputFields
+        public override IList<InputField> GetInputFields()
         {
-            get
+            var list = new List<InputField>();
+
+            list.Add(new StringInput("Name", "Menu Name", DataItem.Name, null, true));
+            list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", DataItem.Event == null && IsNew == false));
+
+            list.Add(new ComboBoxInput("Event", "Menu Action", DataItem.Event?.ToString(), null, true)
             {
-                var list = new List<InputField>();
-
-                list.Add(new StringInput("Name", "Menu Name", DataItem.Name, null, true));
-                list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", DataItem.Event == null && IsNew == false));
-
-                list.Add(new ComboBoxInput("Event", "Menu Action", DataItem.Event?.ToString(), null, true)
-                    {
-                        ListItems = MenuService.GetEventList(),
-                        VisibilityConditions = new List<Condition>()
+                ListItems = MenuService.GetEventList(),
+                VisibilityConditions = new List<Condition>()
                         {
                             new Condition("HasSubmenus", Comparison.Equals, "false")
                         }
-                    });
+            });
 
-                list.Add(new HiddenInput("ParentMenuId", ParentMenuId));
-                list.Add(new HiddenInput("Id", DataItem?.Id));
+            list.Add(new HiddenInput("ParentMenuId", ParentMenuId));
+            list.Add(new HiddenInput("Id", DataItem?.Id));
 
 
-                return list;
-            }
+            return list;
         }
 
         private string ParentMenuId { get; set; }

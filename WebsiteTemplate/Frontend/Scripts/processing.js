@@ -178,6 +178,90 @@
         });
     };
 
+    processing.toBlob = function (data, datatype)
+    {
+        var out;
+
+        try
+        {
+            console.log('aaaa');
+            out = new Blob([data], { type: datatype });
+        }
+        catch (e)
+        {
+            window.BlobBuilder = window.BlobBuilder ||
+                    window.WebKitBlobBuilder ||
+                    window.MozBlobBuilder ||
+                    window.MSBlobBuilder;
+
+            if (e.name == 'TypeError' && window.BlobBuilder)
+            {
+                var bb = new BlobBuilder();
+                bb.append(data);
+                out = bb.getBlob(datatype);
+                console.log('bbbb');
+            }
+            else if (e.name == "InvalidStateError")
+            {
+                // InvalidStateError (tested on FF13 WinXP)
+                out = new Blob([data], { type: datatype });
+                console.log('cccc');
+            }
+            else
+            {
+                // We're screwed, blob constructor unsupported entirely   
+                console.debug("Error", e);
+            }
+        }
+        return out;
+    };
+
+    processing.parseFile = function (file, callback)
+    {
+        var fileSize = file.size;
+        var chunkSize = 64 * 1024; // bytes
+        var offset = 0;
+        var self = this; // we need a reference to the current object
+        var chunkReaderBlock = null;
+        console.log('inside parsing');
+        var readEventHandler = function (evt)
+        {
+            console.log('readEventHandler');
+            if (evt.target.error == null)
+            {
+                console.log('pp');
+                offset += evt.target.result.length;
+                callback(evt.target.result); // callback for handling read chunk
+            } else
+            {
+                console.log('qqq');
+                console.log("Read error: " + evt.target.error);
+                return;
+            }
+            if (offset >= fileSize)
+            {
+                console.log('sss');
+                console.log("Done reading file");
+                return;
+            }
+
+            // of to the next chunk
+            chunkReaderBlock(offset, chunkSize, file);
+        }
+
+        chunkReaderBlock = function (_offset, length, _file)
+        {
+            console.log('chunk');
+            var r = new FileReader();
+            var blob = _file.slice(_offset, length + _offset);
+            r.onload = readEventHandler;
+            r.readAsText(blob);
+        }
+
+        // now let's start the read with the first block
+        chunkReaderBlock(offset, chunkSize, file);
+    };
+
     processing.showOrDownloadFile = function (item)
     {
         dialog.showBusyDialog("Downloading file...");
@@ -186,24 +270,55 @@
         return mainApp.makeWebCall(url, "POST", item.RequestData, ["content-type", "FileName"]).then(function (resp)
         {
             dialog.closeBusyDialog();
+            
             var dataUrl = "data:" + resp['content-type'] + ";base64," + resp.data;
             var filename = resp['FileName'];
-            
+            var l = resp.data.length;
+            console.log('length: ' + l);
             if (processing.supportsBlob() == true)
             {
-                var blobData = processing.base64ToBlob(resp.data, resp['content-type']);
+                var blobData = resp.Data;
 
                 if (window.navigator.msSaveOrOpenBlob)
                 {
-                    window.navigator.msSaveOrOpenBlob(blobData, filename);
+                    console.log('111');
+                    var blobObject;
+                    if (window.BlobBuilder)
+                    {
+                        var bb = new BlobBuilder();
+                        bb.append(resp.Data);
+                        blobObject = bb.getBlob(resp['content-type']);
+                    }
+                    else
+                    {
+                        blobObject = new Blob([resp.data], { type: resp['content-type'] });
+                    }
+                    window.navigator.msSaveOrOpenBlob(blobObject, filename);
                 }
                 else
                 {
-                    var blobUrl = (window.webkitURL || window.URL).createObjectURL(blobData);
+                    console.log('222');
+                    var blob = processing.toBlob(resp.data, resp['content-type']);
 
+                    var fileReader = new FileReader();
+                    fileReader.onload = function (evt)
+                    {
+                        // Read out file contents as a Data URL
+                        var result = evt.target.result;
+                        console.log(result);
+                        var newWin = window.open(result, "_blank");
+                        if (!newWin || newWin.closed || typeof newWin.closed == 'undefined')
+                        {
+                            dialog.showMessage("Info", "The content was blocked by your browser. Look in the top-right corner to allow popups on this site or to view the file this time only.");
+                        }
+                    };
+                    // Load blob as Data URL
+                    fileReader.readAsDataURL(blob);
+                    //fileReader.readAsArrayBuffer(blob);
+
+                    var blobUrl = window.URL.createObjectURL(blob);
                     var a = document.createElement('a');
                     a.style = "display: none";
-                    
                     a.href = blobUrl;
                     a.download = filename;
                     document.body.appendChild(a);

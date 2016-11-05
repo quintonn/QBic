@@ -39,20 +39,17 @@ namespace WebsiteTemplate.Backend.PasswordReset
             }
         }
 
-        public override IList<InputField> InputFields
+        public override IList<InputField> GetInputFields()
         {
-            get
-            {
-                var result = new List<InputField>();
+            var result = new List<InputField>();
 
-                result.Add(new PasswordInput("NewPassword", "New Password", mandatory: true));
-                result.Add(new PasswordInput("ConfirmPassword", "Confirm Password", mandatory: true));
+            result.Add(new PasswordInput("NewPassword", "New Password", mandatory: true));
+            result.Add(new PasswordInput("ConfirmPassword", "Confirm Password", mandatory: true));
 
-                result.Add(new HiddenInput("UserId", UserId));
-                result.Add(new HiddenInput("PassToken", PasswordToken));
+            result.Add(new HiddenInput("UserId", UserId));
+            result.Add(new HiddenInput("PassToken", PasswordToken));
 
-                return result;
-            }
+            return result;
         }
 
         public override EventNumber GetId()

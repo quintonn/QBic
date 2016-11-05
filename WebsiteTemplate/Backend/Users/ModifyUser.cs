@@ -37,46 +37,43 @@ namespace WebsiteTemplate.Backend.Users
             }
         }
 
-        public override IList<InputField> InputFields
+        public override IList<InputField> GetInputFields()
         {
-            get
+            var list = new List<InputField>();
+
+            list.Add(new StringInput("UserName", "User Name", DataItem?.UserName, mandatory: true));
+            list.Add(new StringInput("Email", "Email", DataItem?.Email));
+            if (IsNew)
             {
-                var list = new List<InputField>();
-
-                list.Add(new StringInput("UserName", "User Name", DataItem?.UserName, mandatory: true));
-                list.Add(new StringInput("Email", "Email", DataItem?.Email));
-                if (IsNew)
-                {
-                    list.Add(new PasswordInput("Password", "Password"));
-                    list.Add(new PasswordInput("ConfirmPassword", "Confirm Password"));
-                }
-
-                var items = UserService.GetUserRoles()
-                                       .OrderBy(u => u.Description)
-                                       .ToDictionary(u => u.Id, u => (object)u.Description);
-
-                var existingItems = new List<string>();
-                if (!IsNew)
-                {
-                    existingItems = UserService.RetrieveUserRoleAssocationsForUserId(DataItem?.Id)
-                                               .OrderBy(u => u.UserRole.Description)
-                                               .Select(u => u.UserRole.Id)
-                                               .ToList();
-                }
-
-                var listSelection = new ListSelectionInput("UserRoles", "User Roles", existingItems)
-                {
-                    AvailableItemsLabel = "List of User Roles:",
-                    SelectedItemsLabel = "Chosen User Roles:",
-                    ListSource = items
-                };
-
-                list.Add(listSelection);
-
-                list.Add(new HiddenInput("Id", DataItem?.Id));
-
-                return list;
+                list.Add(new PasswordInput("Password", "Password"));
+                list.Add(new PasswordInput("ConfirmPassword", "Confirm Password"));
             }
+
+            var items = UserService.GetUserRoles()
+                                   .OrderBy(u => u.Description)
+                                   .ToDictionary(u => u.Id, u => (object)u.Description);
+
+            var existingItems = new List<string>();
+            if (!IsNew)
+            {
+                existingItems = UserService.RetrieveUserRoleAssocationsForUserId(DataItem?.Id)
+                                           .OrderBy(u => u.UserRole.Description)
+                                           .Select(u => u.UserRole.Id)
+                                           .ToList();
+            }
+
+            var listSelection = new ListSelectionInput("UserRoles", "User Roles", existingItems)
+            {
+                AvailableItemsLabel = "List of User Roles:",
+                SelectedItemsLabel = "Chosen User Roles:",
+                ListSource = items
+            };
+
+            list.Add(listSelection);
+
+            list.Add(new HiddenInput("Id", DataItem?.Id));
+
+            return list;
         }
 
         public override EventNumber ViewToShowAfterModify

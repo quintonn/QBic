@@ -42,48 +42,45 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             }
         }
 
-        public override IList<InputField> InputFields
+        public override IList<InputField> GetInputFields()
         {
-            get
+            var list = new List<InputField>();
+
+            foreach (var input in InputProperties)
             {
-                var list = new List<InputField>();
+                var property = typeof(T).GetProperty(input.Key);
+                var baseType = property.PropertyType;
 
-                foreach (var input in InputProperties)
+                object defaultValue = null;
+                if (!IsNew && Item != null)
                 {
-                    var property = typeof(T).GetProperty(input.Key);
-                    var baseType = property.PropertyType;
-
-                    object defaultValue = null;
-                    if (!IsNew && Item != null)
-                    {
-                        defaultValue = property.GetValue(Item);
-                    }
-
-                    if (baseType == typeof(String))
-                    {
-                        list.Add(new StringInput(input.Key, input.Value, defaultValue));
-                    }
-                    else if (baseType == typeof(DateTime))
-                    {
-                        list.Add(new DateInput(input.Key, input.Value, defaultValue));
-                    }
-                    else if (baseType == typeof(bool))
-                    {
-                        list.Add(new BooleanInput(input.Key, input.Value, defaultValue));
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-
+                    defaultValue = property.GetValue(Item);
                 }
 
-                list.Add(new HiddenInput("IsNew", IsNew));
-                list.Add(new HiddenInput("Id", Item?.Id));
+                if (baseType == typeof(String))
+                {
+                    list.Add(new StringInput(input.Key, input.Value, defaultValue));
+                }
+                else if (baseType == typeof(DateTime))
+                {
+                    list.Add(new DateInput(input.Key, input.Value, defaultValue));
+                }
+                else if (baseType == typeof(bool))
+                {
+                    list.Add(new BooleanInput(input.Key, input.Value, defaultValue));
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
 
-
-                return list;
             }
+
+            list.Add(new HiddenInput("IsNew", IsNew));
+            list.Add(new HiddenInput("Id", Item?.Id));
+
+
+            return list;
         }
 
         public override EventNumber GetId()

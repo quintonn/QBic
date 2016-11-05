@@ -1,6 +1,5 @@
-﻿using Microsoft.Practices.Unity;
-using System;
-using WebsiteTemplate.Backend.Services;
+﻿using System;
+using System.Collections.Generic;
 
 namespace WebsiteTemplate.Utilities
 {
@@ -13,5 +12,11 @@ namespace WebsiteTemplate.Utilities
         public abstract Type GetApplicationStartupType { get; }
 
         public abstract string SystemEmailAddress { get; }
+
+        /// <summary>
+        /// Configure the site specific <see cref="WebsiteTemplate.Models.BaseClass"/> classes for backup processing.
+        /// </summary>
+        /// <param name="systemTypes"></param>
+        public abstract void ConfigureSiteSpecificTypes(Dictionary<int, Type> systemTypes);
     }
 }
