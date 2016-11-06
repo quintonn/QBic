@@ -41,8 +41,13 @@ namespace WebsiteTemplate.Backend.Backups
         public override async Task<FileInfo> GetFileInfo(string data)
         {
             var result = new FileInfo();
-
-            result.Data = BackupService.CreateBackupOfAllData();
+            var x = 0;
+            var backupType = Processing.BackupType.Unknown;
+            if (x == 10)
+            {
+                backupType = Processing.BackupType.SqlFullBackup;
+            }
+            result.Data = BackupService.CreateBackupOfAllData(backupType);
 
             //var tmpBytes = Controllers.CompressionHelper.InflateByte(result.Data);
             //var tmpString = Utilities.XXXUtils.GetString(tmpBytes);

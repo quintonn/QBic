@@ -1,4 +1,4 @@
-﻿using BasicAuthentication.Security;
+﻿using Microsoft.SqlServer.Management.Smo;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Tool.hbm2ddl;
@@ -6,16 +6,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Web;
+using WebsiteTemplate.Backend.Processing;
 using WebsiteTemplate.Backend.TestItems;
 using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Data;
-using WebsiteTemplate.Mappings;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
-//using Microsoft.SqlServer.Smo;
 
 namespace WebsiteTemplate.Backend.Services
 {
@@ -54,7 +54,7 @@ namespace WebsiteTemplate.Backend.Services
                 SystemTypes.Add(3, typeof(EventRoleAssociation));
                 SystemTypes.Add(4, typeof(Menu));
                 SystemTypes.Add(5, typeof(UserRole));
-                SystemTypes.Add(6, typeof(User));
+                SystemTypes.Add(6, typeof(Models.User));
                 SystemTypes.Add(7, typeof(BackgroundJobResult));
                 SystemTypes.Add(8, typeof(CauseChild));
                 SystemTypes.Add(9, typeof(SuperCause));
@@ -64,7 +64,7 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        public byte[] CreateBackupOfAllData()
+        public byte[] CreateBackupOfAllData(BackupType backupType = BackupType.Unknown)
         {
             var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
             if (connectionString.Contains("##CurrentDirectory##"))
@@ -78,9 +78,14 @@ namespace WebsiteTemplate.Backend.Services
                 var bytes = CompressionHelper.DeflateByte(data, Ionic.Zlib.CompressionLevel.BestCompression);
                 return bytes;
             }
+            else  if (backupType == BackupType.SqlFullBackup)
+            {
+                var bytes = CreateSqlBackup(connectionString);
+                bytes = CompressionHelper.DeflateByte(bytes, Ionic.Zlib.CompressionLevel.BestCompression);
+                return bytes;
+            }
 
-            //Microsoft.SqlServer.Management.Smo;
-
+            #region JSON Backup
             using (var session = DataService.OpenSession())
             {
                 byte[] bytes;
@@ -144,6 +149,59 @@ namespace WebsiteTemplate.Backend.Services
 
                 return bytes;
             }
+            #endregion
+        }
+
+        private byte[] CreateSqlBackup(string connectionString)
+        {
+            var currentDirectory = HttpRuntime.AppDomainAppPath;
+            var tempFolder = currentDirectory + "Temp";
+            if (!Directory.Exists(tempFolder))
+            {
+                Directory.CreateDirectory(tempFolder);
+            }
+            var srv = new Server();
+            var cnt = srv.Databases.Count;
+
+            var conString = new SqlConnectionStringBuilder(connectionString);
+            var db = srv.Databases[conString.InitialCatalog];
+
+            var bk = new Backup();
+            bk.Action = BackupActionType.Database;
+            bk.BackupSetDescription = "Website Template backup";
+            bk.BackupSetName = "WebsiteTempbackup";
+            bk.Database = conString.InitialCatalog;
+
+            // Declare a BackupDeviceItem by supplying the backup device file name in the constructor, and the type of device is a file.   
+            //var bdi = default(BackupDeviceItem);
+            var filePath = tempFolder + @"\backup_Test.bak";
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            var bdi = new BackupDeviceItem(filePath, DeviceType.File);
+
+            // Add the device to the Backup object.   
+            bk.Devices.Add(bdi);
+            // Set the Incremental property to False to specify that this is a full database backup.   
+            bk.Incremental = false;
+
+            // Set the expiration date.   
+            bk.ExpirationDate = new DateTime(2020, 10, 5);
+
+            // Specify that the log must be truncated after the backup is complete.   
+            bk.LogTruncation = BackupTruncateLogType.NoTruncate;
+
+            // Run SqlBackup to perform the full database backup on the instance of SQL Server.   
+            bk.SqlBackup(srv);
+
+            // Backup is done
+
+            // Remove the backup device from the Backup object.   
+            bk.Devices.Remove(bdi);
+
+            var bytes = File.ReadAllBytes(filePath);
+            return bytes;
         }
 
         public void CreateNewDatabaseSchema(string connectionString)
@@ -177,7 +235,7 @@ namespace WebsiteTemplate.Backend.Services
 
             var comparer = new BasicClassEqualityComparer();
 
-            var users = items.Where(i => i is User).ToList();
+            var users = items.Where(i => i is Models.User).ToList();
             var userRoles = items.Where(i => i is UserRole).ToList();
             var eventRoleItems = items.Where(i => i is EventRoleAssociation).ToList();
             var auditEvents = items.Where(i => i is AuditEvent).ToList();
@@ -298,7 +356,7 @@ namespace WebsiteTemplate.Backend.Services
 
                 var comparer = new BasicClassEqualityComparer();
 
-                var users = items.Where(i => i is User).ToList();
+                var users = items.Where(i => i is Models.User).ToList();
                 var eventRoleItems = items.Where(i => i is EventRoleAssociation).ToList();
                 var auditEvents = items.Where(i => i is AuditEvent).ToList();
                 var otherItems = items.Except(users, comparer).Except(eventRoleItems, comparer).Except(auditEvents, comparer).ToList();

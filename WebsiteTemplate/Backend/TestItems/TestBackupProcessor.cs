@@ -84,6 +84,9 @@ namespace WebsiteTemplate.Backend.TestItems
                         
                         // Don't do anything, just save the file somewhere
                         break;
+                    case BackupType.SqlFullBackup:
+                        // Don't do anything, just save the file somewhere
+                        break;
                     default:
                         return new List<IEvent>()
                         {

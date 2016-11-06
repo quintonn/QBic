@@ -1,4 +1,5 @@
 ﻿using Microsoft.Practices.Unity;
+using System;
 using System.Configuration;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
@@ -24,10 +25,17 @@ namespace WebsiteTemplate.Backend.Processing
             var jData = JsonHelper.Parse(originalData);
             //var jsonString = Encryption.Decrypt(originalData, AppSettings.ApplicationPassPhrase);
             //var json = JsonHelper.Parse(jsonString);
-            
+
+            var requestBackupTypeString = System.Web.HttpContext.Current.Request.Headers[BackupService.BACKUP_HEADER_KEY];
+            var requestBackupType = BackupType.Unknown;
+            if (!String.IsNullOrWhiteSpace(requestBackupTypeString))
+            {
+                requestBackupType = (BackupType)Enum.Parse(typeof(BackupType), requestBackupTypeString);
+            }
+
             //Todo: decrypt data and check for a certain value to confirm this request is legit
 
-            var result = BackupService.CreateBackupOfAllData();
+            var result = BackupService.CreateBackupOfAllData(requestBackupType);
 
             var backupType = BackupType.Unknown;
             var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
@@ -35,6 +43,10 @@ namespace WebsiteTemplate.Backend.Processing
             if (connectionString.Contains("##CurrentDirectory##"))
             {
                 backupType = BackupType.SQLiteFile;
+            }
+            else if (requestBackupType == BackupType.SqlFullBackup)
+            {
+                backupType = requestBackupType;
             }
             else
             {

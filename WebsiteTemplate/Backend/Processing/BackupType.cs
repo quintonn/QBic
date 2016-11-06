@@ -4,6 +4,7 @@
     {
         Unknown = 0,
         SQLiteFile = 1,
-        JsonData = 2
+        JsonData = 2,
+        SqlFullBackup = 3
     }
 }

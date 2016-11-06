@@ -30,12 +30,11 @@ namespace WebsiteTemplate.Controllers
             {
                 throw new ArgumentNullException("FileInfo.Data", "FileInfo.Data cannot be null or empty. This is returned by types of OpenFile");
             }
-            else if (FileInfo.MimeType != "application/octet-stream")
-            {
-                var base64 = Convert.ToBase64String(FileInfo.Data); //data too big
-                response.Content = new StringContent(base64);
-                //response.Headers.Add("IsBase64", "yes");
-            }
+            //else if (FileInfo.MimeType != "application/octet-stream")
+            //{
+            //    var base64 = Convert.ToBase64String(FileInfo.Data); //data too big
+            //    response.Content = new StringContent(base64);
+            //}
             else // zipped content
             {
                 using (var contentStream = new MemoryStream())
@@ -55,8 +54,6 @@ namespace WebsiteTemplate.Controllers
                     response.Content = new ByteArrayContent(contentStream.GetBuffer());
                     //response.Content = new StringContent(streamReader.ReadToEnd());
                 }
-
-                //File.WriteAllBytes(@"D:\Projects\WebsiteTemplate\WebsiteTemplate\Data\shouldbe.zip", FileInfo.Data);
             }
 
             response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("inline");   /// Tells the browser to try and display the file instead of downloading it.
