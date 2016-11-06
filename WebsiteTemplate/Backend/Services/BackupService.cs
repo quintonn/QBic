@@ -39,6 +39,8 @@ namespace WebsiteTemplate.Backend.Services
         private DataService DataService { get; set; }
         private ApplicationSettingsCore AppSettings { get; set; }
 
+        public static readonly string BACKUP_HEADER_KEY = "BackupType";
+
         public BackupService(DataService dataService, ApplicationSettingsCore appSettings)
         {
             DataService = dataService;
@@ -69,19 +71,10 @@ namespace WebsiteTemplate.Backend.Services
             {
                 var currentDirectory = HttpRuntime.AppDomainAppPath;
                 var filePath = currentDirectory + "\\Data\\appData.db";
-
-                byte[] data;
-                //var r = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 DataStore.KillConnection();
-                //CaffGeek solution
-                using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
-                using (var streamReader = new BinaryReader(fileStream))
-                {
-                    data = new byte[fileStream.Length];
-                    streamReader.Read(data, 0, (int)fileStream.Length);
-                }
 
-                //return data;
+                var data = File.ReadAllBytes(filePath);
+
                 var bytes = CompressionHelper.DeflateByte(data, Ionic.Zlib.CompressionLevel.BestCompression);
                 return bytes;
             }
@@ -108,11 +101,6 @@ namespace WebsiteTemplate.Backend.Services
                                         .List<int>()
                                         .Sum();
 
-                            //     var count = session
-                            //.CreateCriteria<BaseClass>()
-                            //.SetProjection(Projections.Count(Projections.Id()))
-                            //.List<int>()
-                            //.Sum();
                             var added = 0;
 
                             while (added != count)
@@ -127,8 +115,6 @@ namespace WebsiteTemplate.Backend.Services
                                 Type[] typeArgs = { type };
 
                                 var queryOver = queryOverMethod.Invoke(session, null);
-                                //var returnValue = res as IQueryOver<User>;
-                                //returnValue.Skip(added).Take(nextLoad).List().ToList();
 
                                 var gType = genericType.MakeGenericType(typeArgs);
 
@@ -144,7 +130,6 @@ namespace WebsiteTemplate.Backend.Services
                                 var enumerableItems = list.Invoke(queryOver, null) as IEnumerable;
                                 var items = enumerableItems.OfType<BaseClass>().ToList();
 
-                                //var items = session.QueryOver<BaseClass>().Skip(added).Take(nextLoad).List<BaseClass>().ToList();
                                 var json = JsonHelper.SerializeObject(items, false, true);
                                 var data = XXXUtils.GetBytes(json);
                                 compressor.Write(data, 0, data.Length);
@@ -152,55 +137,11 @@ namespace WebsiteTemplate.Backend.Services
                                 added += items.Count;
                             }
                         }
-
-
-
-                        //while (added != count)
-                        //{
-                        //    var nextLoad = 100;
-
-                        //    var method = typeof(ISession).GetMethods().FirstOrDefault(m => m.Name == "QueryOver"
-                        //                                    && m.GetParameters().Count() == 0);
-                        //    var generic = method.MakeGenericMethod(typeof(User));
-
-                        //    var genericType = typeof(IQueryOver<>);
-                        //    Type[] typeArgs = { typeof(User) };
-
-                        //    var res = generic.Invoke(session, null);
-                        //    var returnValue = res as IQueryOver<User>;
-                        //    returnValue.Skip(added).Take(nextLoad).List().ToList();
-
-                        //    var gType = genericType.MakeGenericType(typeArgs);
-
-                        //    var skip = gType.GetMethod("Skip");
-                        //    res = skip.Invoke(res, new object[] { 0 });
-
-                        //    var take = gType.GetMethod("Take");
-                        //    res = take.Invoke(res, new object[] { 10 });
-
-                        //    var list = gType.GetMethods().FirstOrDefault(m => m.Name == "List"
-                        //                                    && m.GetParameters().Count() == 0);
-                        //    var tmpItems = list.Invoke(res, null);
-
-
-                        //    var items = session.QueryOver<BaseClass>().Skip(added).Take(nextLoad).List<BaseClass>().ToList();
-                        //    var json = JsonHelper.SerializeObject(items, false, true);
-                        //    var data = XXXUtils.GetBytes(json);
-                        //    compressor.Write(data, 0, data.Length);
-
-                        //    added += items.Count;
-                        //}
                     }
 
                     bytes = output.ToArray();
                 }
-                //var allData = session.QueryOver<BaseClass>().List<BaseClass>().ToList();
 
-                //var json = JsonHelper.SerializeObject(allData, false, true);
-
-                //var bytes = CompressionHelper.DeflateByte(XXXUtils.GetBytes(json), Ionic.Zlib.CompressionLevel.BestCompression);
-                var tmp = XXXUtils.GetString(bytes);
-                var tmpBytes = CompressionHelper.InflateByte(bytes, Ionic.Zlib.CompressionLevel.BestCompression);
                 return bytes;
             }
         }

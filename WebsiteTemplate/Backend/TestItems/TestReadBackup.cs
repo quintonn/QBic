@@ -50,67 +50,38 @@ namespace WebsiteTemplate.Backend.TestItems
         public override async Task<IList<IEvent>> ProcessAction(int actionNumber)
         {
             var result = new List<IEvent>();
+            
+            if (actionNumber != 0)
+            {
+                result.Add(new CancelInputDialog());
+                return result;
+            }
 
             var file = GetValue<WebsiteTemplate.Menus.InputItems.FileInfo>("File");
             var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
+
+            var bytes = file.Data;
+            var base64 = XXXUtils.GetString(bytes);
+            base64 = base64.Replace("data:;base64,", "").Replace("\0", "");
+            bytes = Convert.FromBase64String(base64);
+
+            bytes = CompressionHelper.InflateByte(bytes, Ionic.Zlib.CompressionLevel.BestCompression);
+
             if (connectionString.Contains("##CurrentDirectory##"))
             {
-                var bytes = file.Data;
-
-                var base64 = XXXUtils.GetString(bytes);
-                base64 = base64.Replace("data:;base64,", "");
-                bytes = Convert.FromBase64String(base64);
-
-                string decodedString = Encoding.UTF8.GetString(bytes);
-                bytes = Convert.FromBase64String(decodedString);
-
-                try
-                {
-                    bytes = CompressionHelper.InflateByte(bytes, Ionic.Zlib.CompressionLevel.BestCompression);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-                //bytes = CompressionHelper.InflateByte(bytes);
-
-                File.WriteAllBytes(@"D:\Projects\WebsiteTemplate\WebsiteTemplate\Data\restore.db", bytes);
+                var currentDirectory = HttpRuntime.AppDomainAppPath;
+                var filePath = currentDirectory + "\\Data\\appData_test.db";
+                File.WriteAllBytes(filePath, bytes);
+                
                 result.Add(new ShowMessage("Done"));
             }
             else
             {
-                var bytes = file.Data;
-
-                var base64 = XXXUtils.GetString(bytes);
-                base64 = base64.Replace("data:;base64,", "");
-                //bytes = Convert.FromBase64String(base64);
-
-                bytes = XXXUtils.GetBytes(base64);
-                string decodedString = Encoding.UTF8.GetString(bytes);
-
-                //base64 = base64.Replace('+', '-').Replace('/', '_');
-                base64 = base64.Replace("\0", "");
-                bytes = Convert.FromBase64String(base64);
-
-                try
-                {
-                    bytes = CompressionHelper.InflateByte(bytes, Ionic.Zlib.CompressionLevel.BestCompression);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-
                 var json = XXXUtils.GetString(bytes);
 
                 json = "[" + json + "]";
-                var jsonSettings = new JsonSerializerSettings()
-                {
-                    TypeNameHandling = TypeNameHandling.All
-                };
                 json = json.Replace("}{", "},{");
-                //var tmp = JsonConvert.DeserializeObject(json, jsonSettings);
-                
+
                 var itemsList = JsonHelper.DeserializeObject<List<BaseClass>[]>(json, true);
                 var items = itemsList.SelectMany(i => i).ToList();
                 Console.WriteLine(items.Count());

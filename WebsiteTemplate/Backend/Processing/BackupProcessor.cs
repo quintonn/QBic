@@ -1,4 +1,5 @@
 ﻿using Microsoft.Practices.Unity;
+using System.Configuration;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Utilities;
@@ -27,6 +28,20 @@ namespace WebsiteTemplate.Backend.Processing
             //Todo: decrypt data and check for a certain value to confirm this request is legit
 
             var result = BackupService.CreateBackupOfAllData();
+
+            var backupType = BackupType.Unknown;
+            var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
+
+            if (connectionString.Contains("##CurrentDirectory##"))
+            {
+                backupType = BackupType.SQLiteFile;
+            }
+            else
+            {
+                backupType = BackupType.JsonData;
+            }
+
+            System.Web.HttpContext.Current.Response.Headers.Add(BackupService.BACKUP_HEADER_KEY, backupType.ToString());
 
             return result;
         }

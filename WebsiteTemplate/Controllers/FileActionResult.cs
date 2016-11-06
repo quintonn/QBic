@@ -56,7 +56,7 @@ namespace WebsiteTemplate.Controllers
                     //response.Content = new StringContent(streamReader.ReadToEnd());
                 }
 
-                File.WriteAllBytes(@"D:\Projects\WebsiteTemplate\WebsiteTemplate\Data\shouldbe.zip", FileInfo.Data);
+                //File.WriteAllBytes(@"D:\Projects\WebsiteTemplate\WebsiteTemplate\Data\shouldbe.zip", FileInfo.Data);
             }
 
             response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("inline");   /// Tells the browser to try and display the file instead of downloading it.

@@ -216,52 +216,6 @@
         return out;
     };
 
-    processing.parseFile = function (file, callback)
-    {
-        var fileSize = file.size;
-        var chunkSize = 64 * 1024; // bytes
-        var offset = 0;
-        var self = this; // we need a reference to the current object
-        var chunkReaderBlock = null;
-        console.log('inside parsing');
-        var readEventHandler = function (evt)
-        {
-            console.log('readEventHandler');
-            if (evt.target.error == null)
-            {
-                console.log('pp');
-                offset += evt.target.result.length;
-                callback(evt.target.result); // callback for handling read chunk
-            } else
-            {
-                console.log('qqq');
-                console.log("Read error: " + evt.target.error);
-                return;
-            }
-            if (offset >= fileSize)
-            {
-                console.log('sss');
-                console.log("Done reading file");
-                return;
-            }
-
-            // of to the next chunk
-            chunkReaderBlock(offset, chunkSize, file);
-        }
-
-        chunkReaderBlock = function (_offset, length, _file)
-        {
-            console.log('chunk');
-            var r = new FileReader();
-            var blob = _file.slice(_offset, length + _offset);
-            r.onload = readEventHandler;
-            r.readAsText(blob);
-        }
-
-        // now let's start the read with the first block
-        chunkReaderBlock(offset, chunkSize, file);
-    };
-
     processing.showOrDownloadFile = function (item)
     {
         dialog.showBusyDialog("Downloading file...");
@@ -281,7 +235,6 @@
 
                 if (window.navigator.msSaveOrOpenBlob)
                 {
-                    console.log('111');
                     var blobObject;
                     if (window.BlobBuilder)
                     {
@@ -297,24 +250,22 @@
                 }
                 else
                 {
-                    console.log('222');
                     var blob = processing.toBlob(resp.data, resp['content-type']);
 
-                    var fileReader = new FileReader();
-                    fileReader.onload = function (evt)
-                    {
-                        // Read out file contents as a Data URL
-                        var result = evt.target.result;
-                        console.log(result);
-                        var newWin = window.open(result, "_blank");
-                        if (!newWin || newWin.closed || typeof newWin.closed == 'undefined')
-                        {
-                            dialog.showMessage("Info", "The content was blocked by your browser. Look in the top-right corner to allow popups on this site or to view the file this time only.");
-                        }
-                    };
-                    // Load blob as Data URL
-                    fileReader.readAsDataURL(blob);
-                    //fileReader.readAsArrayBuffer(blob);
+                    //var fileReader = new FileReader();
+                    //fileReader.onload = function (evt)
+                    //{
+                    //    // Read out file contents as a Data URL
+                    //    var result = evt.target.result;
+                    //    console.log(result);
+                    //    var newWin = window.open(result, "_blank");
+                    //    if (!newWin || newWin.closed || typeof newWin.closed == 'undefined')
+                    //    {
+                    //        dialog.showMessage("Info", "The content was blocked by your browser. Look in the top-right corner to allow popups on this site or to view the file this time only.");
+                    //    }
+                    //};
+                    //// Load blob as Data URL
+                    //fileReader.readAsDataURL(blob);
 
                     var blobUrl = window.URL.createObjectURL(blob);
                     var a = document.createElement('a');
