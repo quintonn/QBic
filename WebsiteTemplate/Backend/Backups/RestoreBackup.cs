@@ -63,8 +63,9 @@ namespace WebsiteTemplate.Backend.Backups
 
                 var mainConnectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
 
-                BackupService.RemoveExistingData(mainConnectionString);
-                BackupService.RestoreBackupOfAllData(backupFile.Data, mainConnectionString);
+                //BackupService.RemoveExistingData(mainConnectionString);
+                //BackupService.RestoreBackupOfAllData(backupFile.Data, mainConnectionString);
+                BackupService.RestoreSqlDatabase(backupFile.Data, mainConnectionString);
 
                 return new List<IEvent>()
                 {

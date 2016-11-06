@@ -1,4 +1,5 @@
-﻿using Microsoft.SqlServer.Management.Smo;
+﻿using Microsoft.SqlServer.Management.Common;
+using Microsoft.SqlServer.Management.Smo;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Tool.hbm2ddl;
@@ -6,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -385,6 +387,114 @@ namespace WebsiteTemplate.Backend.Services
             {
                 DynamicClass.SetIdsToBeAssigned = false; // Change it back
             }
+        }
+
+        public void RestoreSqlDatabase(byte[] data, string connectionString)
+        {
+            var currentDirectory = HttpRuntime.AppDomainAppPath;
+            var tempFolder = currentDirectory + "Temp";
+            if (!Directory.Exists(tempFolder))
+            {
+                Directory.CreateDirectory(tempFolder);
+            }
+            
+            var dbName = "QTest";
+
+            var srv = new Server();
+
+            //var db = new Database(srv, dbName);
+            //db.Create();
+
+            var cnt = srv.Databases.Count;
+
+            var conString = new SqlConnectionStringBuilder(connectionString);
+            //var db = srv.Databases[conString.InitialCatalog];
+
+            var restore = new Restore();
+            
+            // Set the NoRecovery property to true, so the transactions are not recovered.   
+            restore.NoRecovery = true;
+
+            var filePath = tempFolder + "\\" + Guid.NewGuid().ToString();
+
+            var base64 = XXXUtils.GetString(data);
+            base64 = base64.Replace("data:;base64,", "").Replace("\0", "");
+            var bytes = Convert.FromBase64String(base64);
+            bytes = CompressionHelper.InflateByte(bytes, Ionic.Zlib.CompressionLevel.BestCompression);
+            File.WriteAllBytes(filePath, bytes);
+
+            var bdi = new BackupDeviceItem(filePath, DeviceType.File);
+            restore.Devices.Add(bdi);
+            //restore.Devices.AddDevice(filePath, DeviceType.File);
+            
+            //var files = restore.ReadFileList(srv);
+            var groups = restore.DatabaseFileGroups;
+            var x = restore.RelocateFiles;
+
+            //var bdi = new BackupDeviceItem(filePath, DeviceType.File);
+            // Add the device that contains the full database backup to the Restore object.   
+            //rs.Devices.Add(bdi);
+            // Specify the database name.   
+
+            restore.Action = RestoreActionType.Database;
+
+            restore.Database = dbName;
+
+            var RelDBF = new RelocateFile();
+            var relLOG = new RelocateFile();
+
+            //var dataTable = rs.ReadFileList(srv);
+
+            //RelDBF.LogicalFileName = dbName;// getRealLogicalName(dataTable, false);
+            //relLOG.LogicalFileName = dbName + "_log"; // getRealLogicalName(dataTable, true);
+            RelDBF.LogicalFileName = "WebsiteTemplate";
+            relLOG.LogicalFileName = "WebsiteTemplate_log"; // getRealLogicalName(dataTable, true);
+
+            RelDBF.PhysicalFileName = srv.Databases[0].FileGroups[0].Files[0].FileName.Replace(srv.Databases[0].Name, dbName);
+            relLOG.PhysicalFileName = srv.Databases[0].LogFiles[0].FileName.Replace(srv.Databases[0].Name, dbName);
+
+            //restore.RelocateFiles.Add(relLOG);
+            //restore.RelocateFiles.Add(RelDBF);
+
+            restore.RelocateFiles.Add(new RelocateFile(RelDBF.LogicalFileName, RelDBF.PhysicalFileName));
+            restore.RelocateFiles.Add(new RelocateFile(relLOG.LogicalFileName, relLOG.PhysicalFileName));
+
+            restore.ReplaceDatabase = true;
+            restore.NoRecovery = false;
+            // Restore the full database backup with no recovery.   
+            restore.SqlRestore(srv);
+
+            // Restore done
+
+            // reacquire a reference to the database  
+            //db = srv.Databases["AdventureWorks2012"];
+
+            // Remove the device from the Restore object.  
+            restore.Devices.RemoveAt(0);
+
+            // Set the NoRecovery property to False.   
+            restore.NoRecovery = false;
+        }
+
+        private static string getRealLogicalName(DataTable dt, bool isLogFile)
+        {
+            var realName = "";
+
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                if (isLogFile == true && dt.Rows[i]["Type"].ToString() == "L")
+                {
+                    realName = dt.Rows[i]["LogicalName"].ToString();
+                    break;
+                }
+                else if (isLogFile == false && dt.Rows[i]["Type"].ToString() == "D")
+                {
+                    realName = dt.Rows[i]["LogicalName"].ToString();
+                    break;
+                }
+            }
+
+            return realName;
         }
 
         private void Insert(IList<BaseClass> items, ISessionFactory factory, int count = 10)
