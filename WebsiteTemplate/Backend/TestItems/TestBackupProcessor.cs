@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -56,19 +57,21 @@ namespace WebsiteTemplate.Backend.TestItems
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
+                client.DefaultRequestHeaders.Add(BackupService.BACKUP_HEADER_KEY, BackupType.JsonData.ToString());
+
                 var resp = await client.PostAsJsonAsync(url, bytes);
                 var backupTypeString = resp.Headers.GetValues(BackupService.BACKUP_HEADER_KEY).FirstOrDefault();
                 var backupType = (BackupType)Enum.Parse(typeof(BackupType), backupTypeString);
 
+                var stringContent = await resp.Content.ReadAsStringAsync();
+                stringContent = stringContent.Substring(1, stringContent.Length - 2);
+
+                var data = Convert.FromBase64String(stringContent);
+                var responseData = CompressionHelper.InflateByte(data);
+
                 switch (backupType)
                 {
                     case BackupType.JsonData:
-                        var stringContent = await resp.Content.ReadAsStringAsync();
-                        stringContent = stringContent.Substring(1, stringContent.Length - 2);
-
-                        var data = Convert.FromBase64String(stringContent);
-                        var responseData = CompressionHelper.InflateByte(data);
-
                         var itemsString = XXXUtils.GetString(responseData);
 
                         itemsString = "[" + itemsString + "]";
@@ -85,6 +88,7 @@ namespace WebsiteTemplate.Backend.TestItems
                         // Don't do anything, just save the file somewhere
                         break;
                     case BackupType.SqlFullBackup:
+                        //File.WriteAllBytes("path", responseData);
                         // Don't do anything, just save the file somewhere
                         break;
                     default:
