@@ -66,6 +66,34 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
+        private List<BaseClass> GetItems(Type type, ISession session, int skip = 0, int take = int.MaxValue)
+        {
+            var queryOverMethodInfo = typeof(ISession).GetMethods().FirstOrDefault(m => m.Name == "QueryOver"
+                                                                && m.GetParameters().Count() == 0);
+            var queryOverMethod = queryOverMethodInfo.MakeGenericMethod(type);
+
+            var genericType = typeof(IQueryOver<>);
+            Type[] typeArgs = { type };
+
+            var queryOver = queryOverMethod.Invoke(session, null);
+
+            var gType = genericType.MakeGenericType(typeArgs);
+
+            var skipMethod = gType.GetMethod("Skip");
+            queryOver = skipMethod.Invoke(queryOver, new object[] { skip });
+
+            var takeMethod = gType.GetMethod("Take");
+            queryOver = takeMethod.Invoke(queryOver, new object[] { take });
+
+            var list = gType.GetMethods().FirstOrDefault(m => m.Name == "List"
+                                            && m.GetParameters().Count() == 0);
+
+            var enumerableItems = list.Invoke(queryOver, null) as IEnumerable;
+            var items = enumerableItems.OfType<BaseClass>().ToList();
+
+            return items;
+        }
+
         public byte[] CreateBackupOfAllData(BackupType backupType = BackupType.Unknown)
         {
             var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
@@ -114,28 +142,7 @@ namespace WebsiteTemplate.Backend.Services
                             {
                                 var nextLoad = 100;
 
-                                var queryOverMethodInfo = typeof(ISession).GetMethods().FirstOrDefault(m => m.Name == "QueryOver"
-                                                                && m.GetParameters().Count() == 0);
-                                var queryOverMethod = queryOverMethodInfo.MakeGenericMethod(type);
-
-                                var genericType = typeof(IQueryOver<>);
-                                Type[] typeArgs = { type };
-
-                                var queryOver = queryOverMethod.Invoke(session, null);
-
-                                var gType = genericType.MakeGenericType(typeArgs);
-
-                                var skip = gType.GetMethod("Skip");
-                                queryOver = skip.Invoke(queryOver, new object[] { added });
-
-                                var take = gType.GetMethod("Take");
-                                queryOver = take.Invoke(queryOver, new object[] { nextLoad });
-
-                                var list = gType.GetMethods().FirstOrDefault(m => m.Name == "List"
-                                                                && m.GetParameters().Count() == 0);
-
-                                var enumerableItems = list.Invoke(queryOver, null) as IEnumerable;
-                                var items = enumerableItems.OfType<BaseClass>().ToList();
+                                var items = GetItems(type, session, added, nextLoad);
 
                                 var json = JsonHelper.SerializeObject(items, false, true);
                                 var data = XXXUtils.GetBytes(json);
@@ -227,31 +234,44 @@ namespace WebsiteTemplate.Backend.Services
             var config = store.CreateNewConfigurationUsingConnectionString(connectionString);
             var factory = config.BuildSessionFactory();
 
-            IList<BaseClass> items = null;
-            using (var session = factory.OpenSession())
-            {
-                items = session.QueryOver<BaseClass>().List<BaseClass>();
-            }
+            //IList<BaseClass> items = null;
+            //using (var session = factory.OpenSession())
+            //{
+            //    items = session.QueryOver<BaseClass>().List<BaseClass>();
+            //}
 
             //Delete(dbItems, factory);
 
             var comparer = new BasicClassEqualityComparer();
 
-            var users = items.Where(i => i is Models.User).ToList();
-            var userRoles = items.Where(i => i is UserRole).ToList();
-            var eventRoleItems = items.Where(i => i is EventRoleAssociation).ToList();
-            var auditEvents = items.Where(i => i is AuditEvent).ToList();
-            var otherItems = items.Except(users, comparer)
-                                  .Except(userRoles, comparer)
-                                  .Except(eventRoleItems, comparer)
-                                  .Except(auditEvents, comparer)
-                                  .ToList();
+            var ids = SystemTypes.Keys.ToList().OrderBy(i => i);
 
-            Delete(otherItems, factory);
-            Delete(eventRoleItems, factory);
-            Delete(auditEvents, factory);
-            Delete(userRoles, factory);
-            Delete(users, factory);
+            foreach (var id in ids)
+            {
+                var type = SystemTypes[id];
+                List<BaseClass> items;
+                using (var session = DataService.OpenSession())
+                {
+                    items = GetItems(type, session);
+                }
+                Delete(items, factory);
+            }
+
+            //    var users = items.Where(i => i is Models.User).ToList();
+            //var userRoles = items.Where(i => i is UserRole).ToList();
+            //var eventRoleItems = items.Where(i => i is EventRoleAssociation).ToList();
+            //var auditEvents = items.Where(i => i is AuditEvent).ToList();
+            //var otherItems = items.Except(users, comparer)
+            //                      .Except(userRoles, comparer)
+            //                      .Except(eventRoleItems, comparer)
+            //                      .Except(auditEvents, comparer)
+            //                      .ToList();
+
+            //Delete(otherItems, factory);
+            //Delete(eventRoleItems, factory);
+            //Delete(auditEvents, factory);
+            //Delete(userRoles, factory);
+            //Delete(users, factory);
 
             using (var session = factory.OpenSession())
             {
@@ -389,7 +409,7 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        public void RestoreSqlDatabase(byte[] data, string connectionString)
+        public void RestoreSqlDatabase(byte[] data, string connectionString, string databaseName, bool overrideExistingDatabase)
         {
             var currentDirectory = HttpRuntime.AppDomainAppPath;
             var tempFolder = currentDirectory + "Temp";
@@ -397,83 +417,96 @@ namespace WebsiteTemplate.Backend.Services
             {
                 Directory.CreateDirectory(tempFolder);
             }
-            
-            var dbName = "QTest";
-
-            var srv = new Server();
-
-            //var db = new Database(srv, dbName);
-            //db.Create();
-
-            var cnt = srv.Databases.Count;
-
-            var conString = new SqlConnectionStringBuilder(connectionString);
-            //var db = srv.Databases[conString.InitialCatalog];
-
-            var restore = new Restore();
-            
-            // Set the NoRecovery property to true, so the transactions are not recovered.   
-            restore.NoRecovery = true;
-
             var filePath = tempFolder + "\\" + Guid.NewGuid().ToString();
 
-            var base64 = XXXUtils.GetString(data);
-            base64 = base64.Replace("data:;base64,", "").Replace("\0", "");
-            var bytes = Convert.FromBase64String(base64);
-            bytes = CompressionHelper.InflateByte(bytes, Ionic.Zlib.CompressionLevel.BestCompression);
-            File.WriteAllBytes(filePath, bytes);
+            var dbName = databaseName;
 
-            var bdi = new BackupDeviceItem(filePath, DeviceType.File);
-            restore.Devices.Add(bdi);
-            //restore.Devices.AddDevice(filePath, DeviceType.File);
-            
-            //var files = restore.ReadFileList(srv);
-            var groups = restore.DatabaseFileGroups;
-            var x = restore.RelocateFiles;
+            DataStore.KillConnection();
 
-            //var bdi = new BackupDeviceItem(filePath, DeviceType.File);
-            // Add the device that contains the full database backup to the Restore object.   
-            //rs.Devices.Add(bdi);
-            // Specify the database name.   
+            var connection = new SqlConnectionStringBuilder(connectionString);
+            if (connection.InitialCatalog == dbName)
+            {
+                overrideExistingDatabase = true;
+            }
+            if (overrideExistingDatabase == true)
+            {
+                dbName = connection.InitialCatalog;
+            }
+            connection.InitialCatalog = "master";
+            var tmp = connection.ToString();
 
-            restore.Action = RestoreActionType.Database;
+            using (var sqlConnection = new SqlConnection(tmp))
+            {
+                var serverConnection = new ServerConnection(sqlConnection);
+                sqlConnection.Open();
+                if (overrideExistingDatabase == true)
+                {
+                    using (var sqlcommand = new SqlCommand("ALTER DATABASE " + dbName + " SET Single_User WITH Rollback IMMEDIATE", sqlConnection))
+                    {
+                        sqlcommand.ExecuteNonQuery();
+                    }
+                }
+                try
+                {
+                    var server = new Server(serverConnection);
+                    var restore = new Restore();
 
-            restore.Database = dbName;
+                    var base64 = XXXUtils.GetString(data);
+                    base64 = base64.Replace("data:;base64,", "").Replace("\0", "");
+                    var bytes = Convert.FromBase64String(base64);
+                    bytes = CompressionHelper.InflateByte(bytes, Ionic.Zlib.CompressionLevel.BestCompression);
+                    File.WriteAllBytes(filePath, bytes);
 
-            var RelDBF = new RelocateFile();
-            var relLOG = new RelocateFile();
+                    restore.Devices.AddDevice(filePath, DeviceType.File);
 
-            //var dataTable = rs.ReadFileList(srv);
+                    // Specify the database name.   
+                    restore.Action = RestoreActionType.Database;
 
-            //RelDBF.LogicalFileName = dbName;// getRealLogicalName(dataTable, false);
-            //relLOG.LogicalFileName = dbName + "_log"; // getRealLogicalName(dataTable, true);
-            RelDBF.LogicalFileName = "WebsiteTemplate";
-            relLOG.LogicalFileName = "WebsiteTemplate_log"; // getRealLogicalName(dataTable, true);
+                    var dbFile = new RelocateFile();
+                    var logFile = new RelocateFile();
 
-            RelDBF.PhysicalFileName = srv.Databases[0].FileGroups[0].Files[0].FileName.Replace(srv.Databases[0].Name, dbName);
-            relLOG.PhysicalFileName = srv.Databases[0].LogFiles[0].FileName.Replace(srv.Databases[0].Name, dbName);
+                    var dataTable = restore.ReadFileList(server);
 
-            //restore.RelocateFiles.Add(relLOG);
-            //restore.RelocateFiles.Add(RelDBF);
+                    restore.Database = dbName;
 
-            restore.RelocateFiles.Add(new RelocateFile(RelDBF.LogicalFileName, RelDBF.PhysicalFileName));
-            restore.RelocateFiles.Add(new RelocateFile(relLOG.LogicalFileName, relLOG.PhysicalFileName));
+                    if (overrideExistingDatabase == false)
+                    {
+                        dbFile.LogicalFileName = getRealLogicalName(dataTable, false);
+                        logFile.LogicalFileName = getRealLogicalName(dataTable, true);
 
-            restore.ReplaceDatabase = true;
-            restore.NoRecovery = false;
-            // Restore the full database backup with no recovery.   
-            restore.SqlRestore(srv);
+                        dbFile.PhysicalFileName = server.Databases[0].FileGroups[0].Files[0].FileName.Replace(server.Databases[0].Name, databaseName);
+                        logFile.PhysicalFileName = server.Databases[0].LogFiles[0].FileName.Replace(server.Databases[0].Name, databaseName);
 
-            // Restore done
+                        restore.RelocateFiles.Add(dbFile);
+                        restore.RelocateFiles.Add(logFile);
+                    }
 
-            // reacquire a reference to the database  
-            //db = srv.Databases["AdventureWorks2012"];
+                    restore.ReplaceDatabase = true;
+                    restore.NoRecovery = false;
+                    // Restore the full database backup with no recovery.   
+                    restore.SqlRestore(server);
 
-            // Remove the device from the Restore object.  
-            restore.Devices.RemoveAt(0);
+                    // Restore done
 
-            // Set the NoRecovery property to False.   
-            restore.NoRecovery = false;
+                    // Remove the device from the Restore object.  
+                    restore.Devices.RemoveAt(0);
+
+                    // Set the NoRecovery property to False.   
+
+                }
+                finally
+                {
+                    if (overrideExistingDatabase == true)
+                    {
+                        using (var sqlcommand = new SqlCommand("ALTER DATABASE [" + dbName + "] SET Multi_User", sqlConnection))
+                        {
+                            sqlcommand.ExecuteNonQuery();
+                        }
+                    }
+                }
+
+                sqlConnection.Close();
+            }
         }
 
         private static string getRealLogicalName(DataTable dt, bool isLogFile)

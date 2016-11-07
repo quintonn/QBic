@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Web;
+using WebsiteTemplate.Backend.Processing;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
@@ -32,6 +33,10 @@ namespace WebsiteTemplate.Backend.Backups
         {
             var results = new List<InputField>();
             results.Add(new FileInput("BackupFile", "Backup File", mandatory: true));
+            results.Add(new EnumComboBoxInput<BackupType>("BackupType", "Backup Type", false, x => x.Key != BackupType.Unknown, x => x.Value)
+            {
+                Mandatory = true
+            });
             return results;
         }
 
@@ -60,12 +65,23 @@ namespace WebsiteTemplate.Backend.Backups
             else if (actionNumber == 0)
             {
                 var backupFile = GetValue<FileInfo>("BackupFile");
+                var backupType = GetValue<BackupType>("BackupType");
 
                 var mainConnectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
 
-                //BackupService.RemoveExistingData(mainConnectionString);
-                //BackupService.RestoreBackupOfAllData(backupFile.Data, mainConnectionString);
-                BackupService.RestoreSqlDatabase(backupFile.Data, mainConnectionString);
+                if (backupType == BackupType.JsonData)
+                {
+                    BackupService.RemoveExistingData(mainConnectionString);
+                    BackupService.RestoreBackupOfAllData(backupFile.Data, mainConnectionString);
+                }
+                else if (backupType == BackupType.SqlFullBackup)
+                {
+                    BackupService.RestoreSqlDatabase(backupFile.Data, mainConnectionString, "WebtestQ", false);
+                }
+                else if (backupType == BackupType.SQLiteFile)
+                {
+
+                }
 
                 return new List<IEvent>()
                 {
