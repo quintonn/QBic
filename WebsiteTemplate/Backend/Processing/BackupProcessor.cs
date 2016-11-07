@@ -3,11 +3,13 @@ using System;
 using System.Configuration;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Controllers;
+using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Processing
 {
-    public class BackupProcessor : CoreProcessor<byte[]>
+    public class BackupProcessor : CoreProcessor<FileActionResult>
     {
         public BackupProcessor(IUnityContainer container)
             : base(container)
@@ -19,7 +21,7 @@ namespace WebsiteTemplate.Backend.Processing
         private BackupService BackupService { get; set; }
         private ApplicationSettingsCore AppSettings { get; set; }
 
-        public override async Task<byte[]> ProcessEvent(int eventId)
+        public override async Task<FileActionResult> ProcessEvent(int eventId)
         {
             var originalData = GetRequestData();
             var jData = JsonHelper.Parse(originalData);
@@ -55,7 +57,10 @@ namespace WebsiteTemplate.Backend.Processing
 
             System.Web.HttpContext.Current.Response.Headers.Add(BackupService.BACKUP_HEADER_KEY, backupType.ToString());
 
-            return result;
+            var fileInfo = new FileInfo();
+            fileInfo.Data = result;
+            fileInfo.MimeType = "application/octet-stream";
+            return new FileActionResult(fileInfo);
         }
     }
 }

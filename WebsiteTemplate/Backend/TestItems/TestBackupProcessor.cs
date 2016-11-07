@@ -63,8 +63,12 @@ namespace WebsiteTemplate.Backend.TestItems
                 var backupTypeString = resp.Headers.GetValues(BackupService.BACKUP_HEADER_KEY).FirstOrDefault();
                 var backupType = (BackupType)Enum.Parse(typeof(BackupType), backupTypeString);
 
+                //var byteContent = await resp.Content.ReadAsByteArrayAsync();
+                //var byteString = XXXUtils.GetString(byteContent);
+
                 var stringContent = await resp.Content.ReadAsStringAsync();
-                stringContent = stringContent.Substring(1, stringContent.Length - 2);
+                //stringContent = stringContent.Substring(1, stringContent.Length - 2);
+                stringContent = stringContent.Replace("\0", "");
 
                 var data = Convert.FromBase64String(stringContent);
                 var responseData = CompressionHelper.InflateByte(data);
@@ -82,13 +86,15 @@ namespace WebsiteTemplate.Backend.TestItems
                         break;
                     case BackupType.SQLiteFile:
                         //var currentDirectory = HttpRuntime.AppDomainAppPath;
-                        //var filePath = currentDirectory + "\\Data\\appData_test.db";
-                        //File.WriteAllBytes(filePath, bytes);
-                        
+                        //var filePath = currentDirectory + "\\Backups\\????.db";
+                        //File.WriteAllBytes(filePath, responseData);
+
                         // Don't do anything, just save the file somewhere
                         break;
                     case BackupType.SqlFullBackup:
-                        //File.WriteAllBytes("path", responseData);
+                        //var currentDirectory = HttpRuntime.AppDomainAppPath;
+                        //var filePath = currentDirectory + "\\Backups\\????.bak";
+                        //File.WriteAllBytes(filePath, responseData);
                         // Don't do anything, just save the file somewhere
                         break;
                     default:
