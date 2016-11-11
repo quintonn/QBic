@@ -3,7 +3,7 @@ bin/*
 obj/Debug/*
 *.suo
 *.nupkg
-packages/**
+packages/*
 ImplementationTest/css/*
 ImplementationTest/Pages/*
 ImplementationTest/Scripts/*
