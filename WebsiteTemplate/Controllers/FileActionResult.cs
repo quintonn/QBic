@@ -37,22 +37,16 @@ namespace WebsiteTemplate.Controllers
             //}
             else // zipped content
             {
+                //response.Content = new ByteArrayContent(FileInfo.Data);
                 using (var contentStream = new MemoryStream())
                 using (var stream = new MemoryStream(FileInfo.Data))
                 using (var cs = new CryptoStream(contentStream, new ToBase64Transform(), CryptoStreamMode.Write))
                 {
+                    FileInfo.Data = null;
                     stream.CopyTo(cs);
                     contentStream.Position = 0;
 
-                    var streamReader = new StreamReader(contentStream);
-                    var tmp = streamReader.ReadToEnd();
-
-                    var tmpBytes = Convert.FromBase64String(tmp);
-                    //var content = streamReader.ReadToEnd();
-                    //response.Content = new StreamContent(contentStream);
-
                     response.Content = new ByteArrayContent(contentStream.GetBuffer());
-                    //response.Content = new StringContent(streamReader.ReadToEnd());
                 }
             }
 

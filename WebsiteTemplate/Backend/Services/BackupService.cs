@@ -100,7 +100,9 @@ namespace WebsiteTemplate.Backend.Services
             if (connectionString.Contains("##CurrentDirectory##"))
             {
                 var currentDirectory = HttpRuntime.AppDomainAppPath;
-                var filePath = currentDirectory + "\\Data\\appData.db";
+                var path = connectionString.Split(";".ToCharArray()).First();
+                path = path.Split("\\".ToCharArray()).Last();
+                var filePath = currentDirectory + "\\Data\\" + path;
                 DataStore.KillConnection();
 
                 var data = File.ReadAllBytes(filePath);

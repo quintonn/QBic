@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -43,6 +45,16 @@ namespace WebsiteTemplate.Backend.Backups
             var result = new FileInfo();
             var x = 0;
             var backupType = Processing.BackupType.Unknown;
+            try
+            {
+                var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
+                var conString = new SqlConnectionStringBuilder(connectionString);
+                backupType = Processing.BackupType.SqlFullBackup;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
             if (x == 10)
             {
                 backupType = Processing.BackupType.SqlFullBackup;
