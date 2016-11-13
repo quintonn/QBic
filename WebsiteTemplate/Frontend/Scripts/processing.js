@@ -223,11 +223,16 @@
         url = url.replace("//", "/");
         url = url + "?token=" + auth.accessToken;
         
-        var newWin = window.open(url, "_blank");
-        if (!newWin || newWin.closed || typeof newWin.closed == 'undefined')
-        {
-            dialog.showMessage("Info", "The content was blocked by your browser. Look in the top-right corner to allow popups on this site or to view the file this time only.");
-        }
+        var link = document.createElement('a');
+        link.download = item.FileName;
+        link.href = url;
+        link.click();
+        
+        //var newWin = window.open(url, "_blank");
+        //if (!newWin || newWin.closed || typeof newWin.closed == 'undefined')
+        //{
+        //    dialog.showMessage("Info", "The content was blocked by your browser. Look in the top-right corner to allow popups on this site or to view the file this time only.");
+        //}
 
         return dialog.closeBusyDialog();
 

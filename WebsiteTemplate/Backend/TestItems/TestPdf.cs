@@ -38,6 +38,11 @@ namespace WebsiteTemplate.Backend.TestItems
             }
         }
 
+        public override string GetFileNameAndExtension()
+        {
+            return "Test.pdf";
+        }
+
         public override async Task<FileInfo> GetFileInfo(string data)
         {
             var result = new FileInfo();

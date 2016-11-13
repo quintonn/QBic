@@ -73,6 +73,11 @@ namespace WebsiteTemplate.Backend.Backups
             return result;
         }
 
+        public override string GetFileNameAndExtension()
+        {
+            return "Backup-" + DateTime.UtcNow.ToString("dd-MM-yyyy") + ".dat";
+        }
+
         public override EventNumber GetId()
         {
             return EventNumber.CreateBackup;

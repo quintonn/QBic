@@ -91,6 +91,11 @@ namespace WebsiteTemplate.Backend.AuditReport
             return result;
         }
 
+        public override string GetFileNameAndExtension()
+        {
+            return "Audit report.pdf";
+        }
+
         public override EventNumber GetId()
         {
             return EventNumber.CreateAuditReport;

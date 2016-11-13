@@ -41,6 +41,11 @@ namespace WebsiteTemplate.Backend.TestItems
             return result;
         }
 
+        public override string GetFileNameAndExtension()
+        {
+            return "backup_test.bak";
+        }
+
         public override EventNumber GetId()
         {
             return 8382;
