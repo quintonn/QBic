@@ -30,11 +30,12 @@ namespace WebsiteTemplate.Controllers
             {
                 throw new ArgumentNullException("FileInfo.Data", "FileInfo.Data cannot be null or empty. This is returned by types of OpenFile");
             }
-            //else if (FileInfo.MimeType != "application/octet-stream")
-            //{
-            //    var base64 = Convert.ToBase64String(FileInfo.Data); //data too big
-            //    response.Content = new StringContent(base64);
-            //}
+            else if (FileInfo.MimeType != "application/octet-stream")
+            {
+                //var base64 = Convert.ToBase64String(FileInfo.Data); //data too big
+                //response.Content = new StringContent(base64);
+                response.Content = new ByteArrayContent(FileInfo.Data);
+            }
             else // zipped content
             {
                 //response.Content = new ByteArrayContent(FileInfo.Data);

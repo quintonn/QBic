@@ -221,76 +221,86 @@
         dialog.showBusyDialog("Downloading file...");
         var url = mainApp.apiURL + item.DataUrl;
         url = url.replace("//", "/");
-        return mainApp.makeWebCall(url, "POST", item.RequestData, ["content-type", "FileName"]).then(function (resp)
+        url = url + "?token=" + auth.accessToken;
+        
+        var newWin = window.open(url, "_blank");
+        if (!newWin || newWin.closed || typeof newWin.closed == 'undefined')
         {
-            dialog.closeBusyDialog();
+            dialog.showMessage("Info", "The content was blocked by your browser. Look in the top-right corner to allow popups on this site or to view the file this time only.");
+        }
+
+        return dialog.closeBusyDialog();
+
+        //return mainApp.makeWebCall(url, "POST", item.RequestData, ["content-type", "FileName"]).then(function (resp)
+        //{
+        //    dialog.closeBusyDialog();
             
-            var dataUrl = "data:" + resp['content-type'] + ";base64," + resp.data;
-            var filename = resp['FileName'];
-            var l = resp.data.length;
-            console.log('length: ' + l);
-            if (processing.supportsBlob() == true)
-            {
-                var blobData = resp.Data;
+        //    var dataUrl = "data:" + resp['content-type'] + ";base64," + resp.data;
+        //    var filename = resp['FileName'];
+        //    var l = resp.data.length;
+        //    console.log('length: ' + l);
+        //    if (processing.supportsBlob() == true)
+        //    {
+        //        var blobData = resp.Data;
 
-                if (window.navigator.msSaveOrOpenBlob)
-                {
-                    var blobObject;
-                    if (window.BlobBuilder)
-                    {
-                        var bb = new BlobBuilder();
-                        bb.append(resp.Data);
-                        blobObject = bb.getBlob(resp['content-type']);
-                    }
-                    else
-                    {
-                        blobObject = new Blob([resp.data], { type: resp['content-type'] });
-                    }
-                    window.navigator.msSaveOrOpenBlob(blobObject, filename);
-                }
-                else
-                {
-                    var blob = processing.toBlob(resp.data, resp['content-type']);
+        //        if (window.navigator.msSaveOrOpenBlob)
+        //        {
+        //            var blobObject;
+        //            if (window.BlobBuilder)
+        //            {
+        //                var bb = new BlobBuilder();
+        //                bb.append(resp.Data);
+        //                blobObject = bb.getBlob(resp['content-type']);
+        //            }
+        //            else
+        //            {
+        //                blobObject = new Blob([resp.data], { type: resp['content-type'] });
+        //            }
+        //            window.navigator.msSaveOrOpenBlob(blobObject, filename);
+        //        }
+        //        else
+        //        {
+        //            var blob = processing.toBlob(resp.data, resp['content-type']);
 
-                    //var fileReader = new FileReader();
-                    //fileReader.onload = function (evt)
-                    //{
-                    //    // Read out file contents as a Data URL
-                    //    var result = evt.target.result;
-                    //    console.log(result);
-                    //    var newWin = window.open(result, "_blank");
-                    //    if (!newWin || newWin.closed || typeof newWin.closed == 'undefined')
-                    //    {
-                    //        dialog.showMessage("Info", "The content was blocked by your browser. Look in the top-right corner to allow popups on this site or to view the file this time only.");
-                    //    }
-                    //};
-                    //// Load blob as Data URL
-                    //fileReader.readAsDataURL(blob);
+        //            //var fileReader = new FileReader();
+        //            //fileReader.onload = function (evt)
+        //            //{
+        //            //    // Read out file contents as a Data URL
+        //            //    var result = evt.target.result;
+        //            //    console.log(result);
+        //            //    var newWin = window.open(result, "_blank");
+        //            //    if (!newWin || newWin.closed || typeof newWin.closed == 'undefined')
+        //            //    {
+        //            //        dialog.showMessage("Info", "The content was blocked by your browser. Look in the top-right corner to allow popups on this site or to view the file this time only.");
+        //            //    }
+        //            //};
+        //            //// Load blob as Data URL
+        //            //fileReader.readAsDataURL(blob);
 
-                    var blobUrl = window.URL.createObjectURL(blob);
-                    var a = document.createElement('a');
-                    a.style = "display: none";
-                    a.href = blobUrl;
-                    a.download = filename;
-                    document.body.appendChild(a);
-                    a.click();
-                    setTimeout(function ()
-                    {
-                        document.body.removeChild(a);
-                        (window.webkitURL || window.URL).revokeObjectURL(blobUrl);
-                    }, 100);
-                }
-            }
-            else
-            {
-                // Try using data url
-                var newWin = window.open(dataUrl, "_blank");
-                if (!newWin || newWin.closed || typeof newWin.closed == 'undefined')
-                {
-                    dialog.showMessage("Info", "The content was blocked by your browser. Look in the top-right corner to allow popups on this site or to view the file this time only.");
-                }
-            }
-        }).catch(dialog.closeBusyDialog);
+        //            var blobUrl = window.URL.createObjectURL(blob);
+        //            var a = document.createElement('a');
+        //            a.style = "display: none";
+        //            a.href = blobUrl;
+        //            a.download = filename;
+        //            document.body.appendChild(a);
+        //            a.click();
+        //            setTimeout(function ()
+        //            {
+        //                document.body.removeChild(a);
+        //                (window.webkitURL || window.URL).revokeObjectURL(blobUrl);
+        //            }, 100);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        // Try using data url
+        //        var newWin = window.open(dataUrl, "_blank");
+        //        if (!newWin || newWin.closed || typeof newWin.closed == 'undefined')
+        //        {
+        //            dialog.showMessage("Info", "The content was blocked by your browser. Look in the top-right corner to allow popups on this site or to view the file this time only.");
+        //        }
+        //    }
+        //}).catch(dialog.closeBusyDialog);
     };
 
     processing.supportsBlob = function ()

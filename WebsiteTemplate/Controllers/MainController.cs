@@ -104,10 +104,10 @@ namespace WebsiteTemplate.Controllers
         }
 
 
-        [HttpPost]
+        [HttpGet]
         [Route("GetFile/{*eventId}")]
         [RequireHttps]
-        [ConditionalAuthorize]
+        [Authorize]
         //[DeflateCompression] // Converts data to json which doesn't work for files
         public async Task<IHttpActionResult> GetFile(int eventId)
         {
