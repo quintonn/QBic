@@ -21,6 +21,14 @@ namespace WebsiteTemplate.Menus
             }
         }
 
+        public string RequestData
+        {
+            get
+            {
+                return Data;
+            }
+        }
+
         public string FileName
         {
             get
@@ -29,13 +37,6 @@ namespace WebsiteTemplate.Menus
             }
         }
 
-        public string RequestData
-        {
-            get
-            {
-                return Data;
-            }
-        }
 
         public abstract string GetFileNameAndExtension();
 

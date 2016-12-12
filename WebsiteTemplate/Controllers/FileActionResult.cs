@@ -38,20 +38,38 @@ namespace WebsiteTemplate.Controllers
             }
             else // zipped content
             {
-                //response.Content = new ByteArrayContent(FileInfo.Data);
-                using (var contentStream = new MemoryStream())
-                using (var stream = new MemoryStream(FileInfo.Data))
-                using (var cs = new CryptoStream(contentStream, new ToBase64Transform(), CryptoStreamMode.Write))
+                response.Content = new PushStreamContent(async (stream, content, context) =>
                 {
-                    FileInfo.Data = null;
-                    stream.CopyTo(cs);
-                    contentStream.Position = 0;
+                    try
+                    {
+                        var bufferSize = 65536;
+                        var length = FileInfo.Size;
+                        var bytesDone = 0;
 
-                    response.Content = new ByteArrayContent(contentStream.GetBuffer());
-                }
+                        while (length > 0)
+                        {
+                            var bytesToSend = Math.Min(bufferSize, FileInfo.Size - bytesDone);
+                            await stream.WriteAsync(FileInfo.Data, bytesDone, bytesToSend);
+                            length -= bytesToSend;
+                            bytesDone += bytesToSend;
+                        }
+                    }
+                    catch (Exception ee)
+                    {
+                        //Console.WriteLine(ee.Message);
+                        throw;
+                    }
+                    finally
+                    {
+                        stream.Close();
+                    }
+                });
             }
 
-            response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("inline");   /// Tells the browser to try and display the file instead of downloading it.
+            response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("inline") /// Tells the browser to try and display the file instead of downloading it.
+            {
+                FileName = FileInfo.GetFullFileName()
+            };
 
             response.Content.Headers.ContentType = new MediaTypeHeaderValue(FileInfo.MimeType);
 

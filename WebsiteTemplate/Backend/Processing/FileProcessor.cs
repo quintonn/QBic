@@ -22,6 +22,10 @@ namespace WebsiteTemplate.Backend.Processing
         public async override Task<FileActionResult> ProcessEvent(int eventId)
         {
             var data = GetRequestData();
+            if (String.IsNullOrWhiteSpace(data))
+            {
+                data = HttpContext.Current.Request.Params["requestData"];
+            }
 
             if (!EventList.ContainsKey(eventId))
             {
