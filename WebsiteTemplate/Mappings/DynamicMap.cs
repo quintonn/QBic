@@ -60,11 +60,11 @@ namespace WebsiteTemplate.Mappings
                 {
                     if (DataStore.SetCustomSqlTypes == true)
                     {
-                        Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomType<string>().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
+                        Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomType<LongString>().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
                     }
                     else
                     {
-                        Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomType<string>().Length(int.MaxValue);
+                        Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomType<LongString>().Length(int.MaxValue);
                     }
                 }
                 else

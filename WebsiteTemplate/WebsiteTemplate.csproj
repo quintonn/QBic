@@ -341,6 +341,7 @@
     <Compile Include="Backend\TestItems\BackgroundTest.cs" />
     <Compile Include="Backend\TestItems\CauseChild.cs" />
     <Compile Include="Backend\BackgroundInfo\ClearBackgroundErrors.cs" />
+    <Compile Include="Backend\TestItems\CauseChildMenuItem.cs" />
     <Compile Include="Backend\TestItems\TestBackupProcessor.cs" />
     <Compile Include="Backend\TestItems\TestInputView.cs" />
     <Compile Include="Backend\TestItems\TestInputViewInput.cs" />

@@ -30,6 +30,8 @@ namespace WebsiteTemplate.Backend.TestItems
             var res = new Dictionary<string, string>();
             res.Add("SuperName", "Name");
             res.Add("SuperOk", "Ok");
+            res.Add("LongName", "Long Name");
+            //res.Add("SuperChild", "Child");
             return res;
         }
 
@@ -38,6 +40,8 @@ namespace WebsiteTemplate.Backend.TestItems
             var res = new Dictionary<string, string>();
             res.Add("SuperName", "Name");
             res.Add("SuperOk", "Ok");
+            res.Add("LongName", "Long Name");
+            //res.Add("SuperChild", "Child");
             return res;
         }
     }

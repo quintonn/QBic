@@ -62,6 +62,10 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                 {
                     list.Add(new StringInput(input.Key, input.Value, defaultValue));
                 }
+                else if (baseType == typeof(int))
+                {
+                    list.Add(new NumericInput<int>(input.Key, input.Value, defaultValue));
+                }
                 else if (baseType == typeof(DateTime))
                 {
                     list.Add(new DateInput(input.Key, input.Value, defaultValue));
@@ -76,6 +80,21 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                     {
                         MultiLineText = true
                     });
+                }
+                else if (baseType.IsSubclassOf(typeof(DynamicClass)))
+                {
+                    var type = typeof(DataSourceComboBoxInput<>);
+                    //new DataSourceComboBoxInput<DynamicClass>(input.Key, input.Value, x => x.Id, x => x.ToString(), defaultValue);
+                    var comboType = type.MakeGenericType(baseType);
+                    Func<DynamicClass, string> keyFunc = x => x.Id;
+                    Func<dynamic, object> valueFunc = x => x.ToString();
+                    var ctor = comboType.GetConstructors()[0];
+                    var item = ctor.Invoke(new object[] { input.Key, input.Value, keyFunc, valueFunc, defaultValue, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing });
+                    var comboInstance = item as InputField;
+                    //var enumInstance = Activator.CreateInstance(comboType, input.Key, input.Value, keyFunc, valueFunc, defaultValue) as InputField;
+                    list.Add(comboInstance);
+                    //var enumInstance = enumComboType.GetConstructors()[0].Invoke(enumComboType, input.Key, input.Value);
+                    //list.Add(new EnumComboBoxInput<string>(input.Key, input.Value));
                 }
                 else
                 {

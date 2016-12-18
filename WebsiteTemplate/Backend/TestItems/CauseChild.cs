@@ -9,5 +9,10 @@ namespace WebsiteTemplate.Backend.TestItems
         public virtual int SomeInt { get; set; }
 
         public virtual SuperCause SuperCause { get; set; }
+
+        //public override string ToString()
+        //{
+        //    return ChildName;
+        //}
     }
 }
