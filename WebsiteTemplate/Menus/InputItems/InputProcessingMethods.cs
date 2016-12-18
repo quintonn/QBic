@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System.Globalization;
 using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
@@ -37,7 +37,8 @@ namespace WebsiteTemplate.Menus.InputItems
         public static DateTime? GetDateFromString(string dateString, DateTime? defaultValue = null)
         {
             DateTime result;
-            if (DateTime.TryParse(dateString, out result))
+            //if (DateTime.TryParse(dateString, out result))
+            if (TryParseDate(dateString, out result))
             {
                 return result;
             }
@@ -77,7 +78,9 @@ namespace WebsiteTemplate.Menus.InputItems
                 {
                     var tempValue = inputData[propertyName];
                     DateTime date;
-                    if (DateTime.TryParse(tempValue?.ToString(), out date))
+                    
+                    //if (DateTime.TryParse(tempValue?.ToString(), out date))
+                    if (TryParseDate(tempValue?.ToString(), out date))
                     {
                         value = date;
                     }
@@ -150,6 +153,11 @@ namespace WebsiteTemplate.Menus.InputItems
                 var result = session.Get<T>(id);
                 return result;
             }
+        }
+
+        private static bool TryParseDate(string dateValue, out DateTime result)
+        {
+            return DateTime.TryParseExact(dateValue, XXXUtils.GetDateFormat(), System.Globalization.CultureInfo.InvariantCulture, DateTimeStyles.None, out result);
         }
     }
 }

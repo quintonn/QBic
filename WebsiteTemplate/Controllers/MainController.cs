@@ -1,12 +1,14 @@
 ﻿using BasicAuthentication.Security;
 using Microsoft.Practices.Unity;
 using Newtonsoft.Json;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using WebsiteTemplate.Backend.Processing;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -33,12 +35,17 @@ namespace WebsiteTemplate.Controllers
             var eventService = container.Resolve<EventService>(); // This is here to ensure EventService is initialize and it's constructor is called so that EventList is not empty
 
             var dataService = container.Resolve<DataService>();
+            
             using (var session = dataService.OpenSession())
             {
                 var appSettings = session.QueryOver<SystemSettings>().List<SystemSettings>().FirstOrDefault();
                 if (appSettings != null)
                 {
                     JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = appSettings.DateFormat };
+                    if (String.IsNullOrWhiteSpace(XXXUtils.DateFormat))
+                    {
+                        XXXUtils.DateFormat = appSettings.DateFormat;
+                    }
                 }
                 else
                 {

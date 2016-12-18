@@ -88,5 +88,12 @@ namespace WebsiteTemplate.Utilities
 
             smtpClient.Send(mailMessage);
         }
+
+        internal static string DateFormat { get; set; }
+
+        public static string GetDateFormat()
+        {
+            return DateFormat;
+        }
     }
 }
