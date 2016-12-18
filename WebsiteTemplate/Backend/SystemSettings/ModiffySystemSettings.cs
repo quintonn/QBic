@@ -44,8 +44,8 @@ namespace WebsiteTemplate.Backend.SystemSettings
 
             result.Add(new StringInput("EmailFromAddress", "From Email", SystemSettings?.EmailFromAddress, "Mail Settings", true));
             result.Add(new StringInput("EmailHost", "Email Host", SystemSettings?.EmailHost, "Mail Settings", true));
-            result.Add(new StringInput("EmailUserName", "Username", SystemSettings?.EmailUserName, "Mail Settings", true));
-            result.Add(new PasswordInput("EmailPassword", "Password", SystemSettings?.EmailPassword, "Mail Settings", true));
+            result.Add(new StringInput("EmailUserName", "Username", SystemSettings?.EmailUserName, "Mail Settings", false));
+            result.Add(new PasswordInput("EmailPassword", "Password", SystemSettings?.EmailPassword, "Mail Settings", false));
             result.Add(new NumericInput<int>("EmailPort", "Port", SystemSettings?.EmailPort, "Mail Settings", true));
             result.Add(new BooleanInput("EmailEnableSsl", "Enable Ssl", SystemSettings?.EmailEnableSsl, "Mail Settings", true));
 
