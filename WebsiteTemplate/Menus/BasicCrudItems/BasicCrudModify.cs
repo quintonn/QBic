@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Data.BaseTypes;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
@@ -68,6 +69,13 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                 else if (baseType == typeof(bool))
                 {
                     list.Add(new BooleanInput(input.Key, input.Value, defaultValue));
+                }
+                else if (baseType == typeof(LongString))
+                {
+                    list.Add(new StringInput(input.Key, input.Value, defaultValue)
+                    {
+                        MultiLineText = true
+                    });
                 }
                 else
                 {
@@ -155,7 +163,14 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                     foreach (var value in inputs)
                     {
                         var prop = typeof(T).GetProperty(value.Key);
-                        prop.SetValue(item, value.Value);
+                        if (prop.PropertyType == typeof(LongString))
+                        {
+                            prop.SetValue(item, new LongString(value.Value?.ToString()));
+                        }
+                        else
+                        {
+                            prop.SetValue(item, value.Value);
+                        }
                     }
 
                     DataService.SaveOrUpdate(session, item);
