@@ -46,7 +46,12 @@ namespace WebsiteTemplate.Menus.ViewItems
             {
                 return true;
             }
+            
             var eventNumber = col.Event == null ? col.EventNumber : col.Event.GetEventId();
+            if (col.Event != null && col.Event is UserConfirmation)
+            {
+                eventNumber = (col.Event as UserConfirmation).OnConfirmationUIAction;
+            }
             return allowedEvents.Contains(eventNumber);
         }
 
