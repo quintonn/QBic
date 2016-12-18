@@ -44,7 +44,10 @@ namespace WebsiteTemplate.Backend.Processing
                 {
                     m.ParentMenu = null;
                     AddSubMenu(m, session, events);
-                    results.Add(m);
+                    if (m.SubMenus.Count > 0)
+                    {
+                        results.Add(m);
+                    }
                 });
             }
 
