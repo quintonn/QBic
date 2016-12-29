@@ -31,6 +31,7 @@ namespace WebsiteTemplate.Backend.TestItems
             res.Add("SuperName", "Name");
             res.Add("SuperOk", "Ok");
             res.Add("LongName", "Long Name");
+            res.Add("SuperDate", "Date");
             //res.Add("SuperChild", "Child");
             return res;
         }
@@ -41,6 +42,7 @@ namespace WebsiteTemplate.Backend.TestItems
             res.Add("SuperName", "Name");
             res.Add("SuperOk", "Ok");
             res.Add("LongName", "Long Name");
+            res.Add("SuperDate", "Date");
             //res.Add("SuperChild", "Child");
             return res;
         }
