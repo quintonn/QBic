@@ -74,14 +74,14 @@
     <div class="w3-container w3-blue w3-center w3-hide-small w3-top" data-bind="template: { name: 'largeHeadingTemplate'}">
     </div>
 
-    <div class="w3-container w3-blue w3-center w3-hide-small" data-bind="template: { name: 'largeHeadingTemplate'}" >
-    </div>
+    <!--<div class="w3-container w3-blue w3-center w3-hide-small" data-bind="template: { name: 'largeHeadingTemplate'}" >
+    </div>-->
 
     <div class="w3-container w3-blue w3-center w3-hide-large w3-hide-medium w3-top" data-bind="template: { name: 'smallHeadingTemplate'}" >
     </div>
 
-    <div class="w3-container w3-blue w3-center w3-hide-large w3-hide-medium " data-bind="template: { name: 'smallHeadingTemplate'}">
-    </div>
+    <!--<div class="w3-container w3-blue w3-center w3-hide-large w3-hide-medium " data-bind="template: { name: 'smallHeadingTemplate'}">
+    </div>-->
 
     <div data-bind="foreach: modalDialogs">
         <div class="w3-modal " style="display:block">
@@ -101,7 +101,10 @@
             </p>
         </div>
     </div>
-
+    <div class="w3-hide-small" style="height:126.563px; color:white; background-color:white">
+    </div>
+    <div class="w3-hide-large w3-hide-medium" style="height:43.2813px; color:white; background-color:white">
+    </div>
     <div data-bind="foreach: currentView">  
         <div class="w3-container" > <!-- The extra container is to make the view nicely padded -->
             <div class="w3-container" data-bind="html: html">
