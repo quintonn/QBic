@@ -66,7 +66,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                 {
                     list.Add(new NumericInput<int>(input.Key, input.Value, defaultValue));
                 }
-                else if (baseType == typeof(DateTime))
+                else if (baseType == typeof(DateTime) || baseType == typeof(DateTime?))
                 {
                     list.Add(new DateInput(input.Key, input.Value, defaultValue));
                 }
