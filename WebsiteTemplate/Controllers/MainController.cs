@@ -170,5 +170,28 @@ namespace WebsiteTemplate.Controllers
         {
             return await Container.Resolve<BackupProcessor>().Process(-1, Request);
         }
+
+        [HttpPost]
+        [Route("setAcmeChallenge")]
+        [RequireHttps]
+        //[Authorize] //Not sure if we can have authorization. should  be possible
+        public async Task<IHttpActionResult> SetAcmeChallenge()
+        {
+            string requestData;
+            using (var stream = System.Web.HttpContext.Current.Request.InputStream)
+            using (var mem = new System.IO.MemoryStream())
+            {
+                stream.CopyTo(mem);
+                requestData = System.Text.Encoding.UTF8.GetString(mem.ToArray());
+            }
+
+            var jData = JsonHelper.Parse(requestData);
+
+            var acmeValue = jData.GetValue("acme");
+
+            AcmeController.ChallengeResponse = acmeValue;
+
+            return Json("success");
+        }
     }
 }
