@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
+using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.BackgroundInfo
@@ -35,21 +37,29 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
             var parameters = InputData["ViewParameters"]?.ToString();
             var json = JsonHelper.Parse(parameters);
             var type = json.GetValue("type");
-            var id = GetValue<int>("Id");
+            var id = GetValue("Id");
 
-            string message;
+            BackgroundInformation info;
+
             if (type == "status")
             {
-                message = BackgroundService.StatusInfo[id];
+                info = BackgroundService.StatusInfo.Where(s => s.Id == id).Single();
             }
             else if (type == "errors")
             {
-                message = BackgroundService.Errors[id];
+                info = BackgroundService.Errors.Where(s => s.Id == id).Single();
             }
             else
             {
-                message = "UNKOWN TYPE";
+                return new List<IEvent>()
+                {
+                    new ShowMessage("Unknown background info type: " + type)
+                };
             }
+
+            var message = info.DateTimeUTC.ToShortDateString() + " " + info.DateTimeUTC.ToLongTimeString() + "<br/>" +
+                          info.Task + "<br/>" +
+                          info.Information;
 
             var result = new List<IEvent>()
             {

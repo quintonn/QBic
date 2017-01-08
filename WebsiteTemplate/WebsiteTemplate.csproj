@@ -413,6 +413,7 @@
     <Compile Include="Menus\ViewItems\ShowViewUsingInputProcessor.cs" />
     <Compile Include="Models\AuditAction.cs" />
     <Compile Include="Models\AuditEvent.cs" />
+    <Compile Include="Models\BackgroundInformation.cs" />
     <Compile Include="Models\BackgroundJobResult.cs" />
     <Compile Include="Models\DynamicClass.cs" />
     <Compile Include="Models\SystemSettings.cs" />

@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
-using System.Web;
 using WebsiteTemplate.Backend.Services;
-using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Utilities;
@@ -32,7 +27,7 @@ namespace WebsiteTemplate.Backend.KeepAlive
 
         public override DateTime CalculateNextRunTime(DateTime? lastRunTime)
         {
-            return DateTime.Now.AddMinutes(10);
+            return DateTime.Now.AddMinutes(5);
         }
 
         public override bool RunImmediatelyFirstTime

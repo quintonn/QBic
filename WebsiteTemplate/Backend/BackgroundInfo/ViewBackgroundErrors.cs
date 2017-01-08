@@ -22,7 +22,10 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
 
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
+            columnConfig.AddStringColumn("Date", "Date");
+            columnConfig.AddStringColumn("Task", "Task");
             columnConfig.AddStringColumn("Error", "Error", 3);
+            columnConfig.AddHiddenColumn("Id");
             columnConfig.AddHiddenColumn("Id");
             var json = new JsonHelper();
             json.Add("type", "errors");
@@ -31,12 +34,27 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
 
         public override IEnumerable GetData(GetDataSettings settings)
         {
-            var cnt = 0;
-            return BackgroundService.Errors.Select(e => new
+            var info = BackgroundService.Errors.OrderByDescending(s => s.DateTimeUTC).Skip((settings.CurrentPage - 1) * settings.LinesPerPage)
+                           .Take(settings.LinesPerPage)
+                           .ToList();
+            var result = info.Select(s => new
             {
-                Error = e,
-                Id = cnt++
-            });
+                Date = s.DateTimeUTC.ToShortDateString() + " " + s.DateTimeUTC.ToLongTimeString(),
+                Task = s.Task,
+                Error = s.Information,
+                Id = s.Id
+            }).ToList();
+            return result;
+
+            //var cnt = 0;
+            //return BackgroundService.Errors
+            //          .Skip((settings.CurrentPage - 1) * settings.LinesPerPage)
+            //          .Take(settings.LinesPerPage)
+            //          .Select(e => new
+            //            {
+            //                Error = e,
+            //                Id = cnt++
+            //            });
         }
 
         public override int GetDataCount(GetDataSettings settings)

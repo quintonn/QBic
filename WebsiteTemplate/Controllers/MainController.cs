@@ -185,13 +185,13 @@ namespace WebsiteTemplate.Controllers
                 requestData = System.Text.Encoding.UTF8.GetString(mem.ToArray());
             }
 
-            var jData = JsonHelper.Parse(requestData);
-
-            var acmeValue = jData.GetValue("acme");
+            //var jData = JsonHelper.Parse(requestData);
+            //var acmeValue = jData.GetValue("acme");
+            var acmeValue = requestData.Split("=".ToCharArray()).Last();
 
             AcmeController.ChallengeResponse = acmeValue;
 
-            return Json("success");
+            return Json("success: " + acmeValue);
         }
     }
 }

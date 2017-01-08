@@ -450,10 +450,12 @@
         var colVal = condition.ColumnValue;
 
         var compareResult = true;
-
+        console.log("actualValue = " + actualValue);
+        console.log("colVal = " + colVal);
         switch (comparison)
         {
             case 0: // Equals
+                console.log(actualValue == colVal);
                 return actualValue == colVal;
             case 1: // Not Equals
                 return actualValue != colVal;

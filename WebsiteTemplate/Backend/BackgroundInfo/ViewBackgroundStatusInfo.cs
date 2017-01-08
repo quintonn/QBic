@@ -19,6 +19,8 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
 
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
+            columnConfig.AddStringColumn("Date", "Date");
+            columnConfig.AddStringColumn("Task", "Task");
             columnConfig.AddStringColumn("Status", "Status", 3);
             columnConfig.AddHiddenColumn("Id");
             var json = new JsonHelper();
@@ -28,13 +30,17 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
 
         public override IEnumerable GetData(GetDataSettings settings)
         {
-            var cnt = 0;
-            var result = BackgroundService.StatusInfo.Select(s => new
+            var info = BackgroundService.StatusInfo.OrderByDescending(s => s.DateTimeUTC).Skip((settings.CurrentPage - 1) * settings.LinesPerPage)
+                           .Take(settings.LinesPerPage)
+                           .ToList();
+            var result = info.Select(s => new
             {
-                Status = s,
-                Id = cnt++
+                Date = s.DateTimeUTC.ToShortDateString() + " " + s.DateTimeUTC.ToLongTimeString(),
+                Task = s.Task,
+                Status = s.Information,
+                Id = s.Id
             }).ToList();
-            return result; ;
+            return result;
         }
 
         public override int GetDataCount(GetDataSettings settings)
