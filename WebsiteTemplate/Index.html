@@ -53,17 +53,17 @@
 
     <script type="text/html" id="smallHeadingTemplate">
         <ul class="w3-navbar w3-large w3-blue w3-left-align">
-            <li class="w3-hide-medium w3-hide-large w3-blue w3-opennav w3-right">
+            <li class="w3-hide-medium w3-blue w3-opennav w3-left">
                 <a href="javascript:void(0);" data-bind="click: toggleNavBar">☰</a>
             </li>
             <li><a href="#" data-bind="text: applicationName, click: menuContainer().home().menuClick"></a></li>
         </ul>
 
-        <span id="smallNavbar" class="w3-hide w3-hide-large w3-hide-medium w3-top" >
+        <span id="smallNavbar" class="w3-hide " >
             <nav class="w3-sidenav w3-left-align w3-large w3-blue" >
-                <a class="w3-large w3-right" data-bind="click: toggleNavBar">&times;</a>
-                <a class="w3-small" data-bind="text: menuContainer().home().name, click: menuContainer().home().menuClick"></a>
-                <a class="w3-small" data-bind="text: menuContainer().back().name, click: menuContainer().back().menuClick, visible: menuContainer().currentParent() != null"></a>
+                <a class="w3-large w3-right" href="#" data-bind="click: toggleNavBar">&times;</a>
+                <a class="w3-small" href="#" data-bind="text: menuContainer().home().name, click: menuContainer().home().menuClick"></a>
+                <a class="w3-small" href="#" data-bind="text: menuContainer().back().name, click: menuContainer().back().menuClick, visible: menuContainer().currentParent() != null"></a>
                 <!-- ko foreach: menuContainer().currentMenuList -->
                     <a href="#" class="w3-small" data-bind="text: name, click: menuClick"></a>
                 <!-- /ko -->
@@ -71,13 +71,13 @@
         </span>
     </script>
 
-    <div class="w3-container w3-blue w3-center w3-hide-small w3-top" data-bind="template: { name: 'largeHeadingTemplate'}">
+    <div class="w3-container w3-blue w3-center w3-hide w3-top" data-bind="template: { name: 'largeHeadingTemplate'}">
     </div>
 
     <!--<div class="w3-container w3-blue w3-center w3-hide-small" data-bind="template: { name: 'largeHeadingTemplate'}" >
     </div>-->
 
-    <div class="w3-container w3-blue w3-center w3-hide-large w3-hide-medium w3-top" data-bind="template: { name: 'smallHeadingTemplate'}" >
+    <div class="w3-container w3-blue w3-center w3-top" data-bind="template: { name: 'smallHeadingTemplate'}" >
     </div>
 
     <!--<div class="w3-container w3-blue w3-center w3-hide-large w3-hide-medium " data-bind="template: { name: 'smallHeadingTemplate'}">
@@ -88,7 +88,7 @@
             <div class="w3-modal-content" data-bind="html: html, attr: { id: 'modalDlg_' + myid() }"></div>
         </div>
     </div>
-
+    
     <div data-bind="foreach: busyContainers">
         <div class="w3-modal w3-blue" style="display:block">
             <p>
@@ -101,10 +101,9 @@
             </p>
         </div>
     </div>
-    <div class="w3-hide-small" style="height:126.563px; color:white; background-color:white">
+    <div class="" style="height:43px; color:white; background-color:white">
     </div>
-    <div class="w3-hide-large w3-hide-medium" style="height:43.2813px; color:white; background-color:white">
-    </div>
+   
     <div data-bind="foreach: currentView">  
         <div class="w3-container" > <!-- The extra container is to make the view nicely padded -->
             <div class="w3-container" data-bind="html: html">
