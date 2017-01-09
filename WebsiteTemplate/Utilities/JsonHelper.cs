@@ -196,7 +196,15 @@ namespace WebsiteTemplate.Utilities
 
         public static T DeserializeObject<T>(string value)
         {
-            return JsonConvert.DeserializeObject<T>(value);
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(value);
+            }
+            catch (JsonReaderException exception)
+            {
+                Console.WriteLine(exception.Message);
+                return default(T);
+            }
         }
 
         public static T DeserializeObject<T>(string value, bool includeTypeInfo = false)

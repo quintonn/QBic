@@ -122,8 +122,15 @@ namespace WebsiteTemplate.Backend.Processing
                 {
                     var viewData = String.Empty;
                     var tmpData = JsonHelper.Parse(data);
-                    viewData = tmpData.GetValue("ViewData");
-                    processedFormData.Add("ViewData", viewData);
+                    if (!String.IsNullOrWhiteSpace(tmpData?.ToString()))
+                    {
+                        viewData = tmpData.GetValue("ViewData");
+                        processedFormData.Add("ViewData", viewData);
+                    }
+                    else
+                    {
+                        processedFormData.Add("ViewData", data);
+                    }
                 }
 
                 if (!String.IsNullOrWhiteSpace(parameters))
