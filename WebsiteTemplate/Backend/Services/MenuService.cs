@@ -45,8 +45,8 @@ namespace WebsiteTemplate.Backend.Services
         public Dictionary<string, object> GetEventList()
         {
             return EventService.EventList.Where(e => e.Value.ActionType != EventType.InputDataView)
-                                           .Where(m => !String.IsNullOrWhiteSpace(m.Value.Description))
                                            .Where(m => m.Value.AllowInMenu == true)
+                                           .Where(m => !String.IsNullOrWhiteSpace(m.Value.Description))
                                            .OrderBy(m => m.Value.Description)
                                            .ToDictionary(m => m.Key.ToString(), m => (object)m.Value.Description);
         }
