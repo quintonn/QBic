@@ -53,31 +53,39 @@
 
     <script type="text/html" id="smallHeadingTemplate">
         <ul class="w3-navbar w3-large w3-blue w3-left-align">
-            <li class="w3-hide-medium w3-blue w3-opennav w3-left">
+            <li class="w3-blue w3-opennav">
                 <a href="javascript:void(0);" data-bind="click: toggleNavBar">☰</a>
             </li>
-            <li><a href="#" data-bind="text: applicationName, click: menuContainer().home().menuClick"></a></li>
+            <li>
+                <a href="javascript:void(0);" data-bind="text: applicationName, click: menuContainer().home().menuClick"></a>
+            </li>            
+            <li class="w3-right">
+                <a href="javascript:void(0);" data-bind="click: logoutClick">Logout</a>
+            </li>
+            <li class="w3-right">
+                <a href="javascript:void(0);" data-bind="text: user().name"></a>
+            </li>
         </ul>
 
-        <span id="smallNavbar" class="w3-hide " >
-            <nav class="w3-sidenav w3-left-align w3-large w3-blue" >
+        <span id="smallNavbar" class="w3-hide ">
+            <nav class="w3-sidenav w3-left-align w3-large w3-blue">
                 <a class="w3-large w3-right" href="#" data-bind="click: toggleNavBar">&times;</a>
                 <a class="w3-small" href="#" data-bind="text: menuContainer().home().name, click: menuContainer().home().menuClick"></a>
                 <a class="w3-small" href="#" data-bind="text: menuContainer().back().name, click: menuContainer().back().menuClick, visible: menuContainer().currentParent() != null"></a>
                 <!-- ko foreach: menuContainer().currentMenuList -->
-                    <a href="#" class="w3-small" data-bind="text: name, click: menuClick"></a>
+                <a href="#" class="w3-small" data-bind="text: name, click: menuClick"></a>
                 <!-- /ko -->
             </nav>
         </span>
-    </script>
+</script>
 
-    <div class="w3-container w3-blue w3-center w3-hide w3-top" data-bind="template: { name: 'largeHeadingTemplate'}">
+    <div class="w3-container w3-blue w3-center w3-hide-small w3-top" data-bind="template: { name: 'largeHeadingTemplate'}">
     </div>
 
     <!--<div class="w3-container w3-blue w3-center w3-hide-small" data-bind="template: { name: 'largeHeadingTemplate'}" >
     </div>-->
 
-    <div class="w3-container w3-blue w3-center w3-top" data-bind="template: { name: 'smallHeadingTemplate'}" >
+    <div class="w3-container w3-blue w3-center w3-top w3-hide-medium w3-hide-large" data-bind="template: { name: 'smallHeadingTemplate'}" >
     </div>
 
     <!--<div class="w3-container w3-blue w3-center w3-hide-large w3-hide-medium " data-bind="template: { name: 'smallHeadingTemplate'}">
@@ -101,7 +109,10 @@
             </p>
         </div>
     </div>
-    <div class="" style="height:43px; color:white; background-color:white">
+    
+    <div class="w3-hide-large w3-hide-medium" style="height:43px; color:white; background-color:white">
+    </div>
+    <div class="w3-hide-small" style="height:126.023px; color:white; background-color:white">
     </div>
    
     <div data-bind="foreach: currentView">  
