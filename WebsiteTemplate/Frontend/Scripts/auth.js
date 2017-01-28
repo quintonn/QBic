@@ -56,6 +56,7 @@
 
     auth.performTokenRefresh = function ()
     {
+        console.log('performing token refresh');
         //dialog.showBusyDialog("Refreshing token..."); // Todo: Maybe don't show this
         var url = mainApp.apiURL + "token";
 
@@ -80,11 +81,13 @@
                     data: data
                 }).done(function (resp)
                 {
-                    console.log('successfully got new refresh token');
-                    console.log(resp);
+                    console.warn('successfully got new refresh token');
+                    console.warn(resp);
                     auth.handleLoginSuccess(resp).then(dialog.closeBusyDialog).then(resolve);
                 }).fail(function(error)
                 {
+                    console.warn('unable to refresh token');
+                    console.warn(error);
                     reject(error);
                 });
         });

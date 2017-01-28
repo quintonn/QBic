@@ -24,7 +24,7 @@ namespace WebsiteTemplate
             {
                 AccessControlAllowOrigin = "*",
                 AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30), //Access token expires after 30min
-                RefreshTokenExpireTimeSpan = TimeSpan.FromMinutes(120), //Refresh token expires after 2 hours
+                RefreshTokenExpireTimeSpan = TimeSpan.FromDays(2), //Refresh token expires after 2 days
                 AllowInsecureHttp = false,
                 TokenEndpointPath = new PathString("/api/v1/token"), //path is actually now /api/v1/token
                 UserContext = Container.Resolve<UserContext>()
