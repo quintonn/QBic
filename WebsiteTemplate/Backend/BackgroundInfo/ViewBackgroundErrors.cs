@@ -15,7 +15,7 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
         {
             get
             {
-                return "View background errors";
+                return "Background Errors";
             }
         }
 

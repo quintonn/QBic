@@ -34,7 +34,8 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
             BackgroundService.StatusInfo.Clear();
             return new List<IEvent>()
             {
-                new ShowMessage("Info cleared")
+                new ShowMessage("Info cleared"),
+                new ExecuteAction(EventNumber.ViewBackgroundStatusInfo)
             };
         }
     }

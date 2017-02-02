@@ -321,6 +321,7 @@
   <ItemGroup>
     <Compile Include="Backend\AuditReport\AuditReportFilter.cs" />
     <Compile Include="Backend\AuditReport\CreateAuditReport.cs" />
+    <Compile Include="Backend\BackgroundInfo\ClearBackgroundStatusInfo.cs" />
     <Compile Include="Backend\BackgroundInfo\ViewBackgroundDetail.cs" />
     <Compile Include="Backend\BackgroundInfo\ViewBackgroundStatusInfo.cs" />
     <Compile Include="Backend\Backups\CreateBackup.cs" />

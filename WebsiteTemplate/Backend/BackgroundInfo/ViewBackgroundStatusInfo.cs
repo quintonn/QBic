@@ -15,7 +15,7 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
         {
             get
             {
-                return "Background status info";
+                return "Background Info";
             }
         }
 

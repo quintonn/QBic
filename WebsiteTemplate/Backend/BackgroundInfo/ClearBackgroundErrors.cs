@@ -34,7 +34,8 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
             BackgroundService.Errors.Clear();
             return new List<IEvent>()
             {
-                new ShowMessage("Errors cleared")
+                new ShowMessage("Errors cleared"),
+                new ExecuteAction(EventNumber.ViewBackgroundErrors)
             };
         }
     }
