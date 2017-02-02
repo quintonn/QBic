@@ -58,6 +58,7 @@ namespace WebsiteTemplate.Menus.BaseItems
         public static EventNumber ClearBackgroundErrors = new EventNumber(1722);
         public static EventNumber ViewBackgroundStatusInfo = new EventNumber(1723);
         public static EventNumber ViewBackgroundDetail = new EventNumber(1724);
+        public static EventNumber ClearBackgroundStatusInfo = new EventNumber(1725);
 
         public static implicit operator EventNumber(int value)
         {

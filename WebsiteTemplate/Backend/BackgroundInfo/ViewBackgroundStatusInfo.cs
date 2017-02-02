@@ -1,6 +1,8 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Utilities;
@@ -59,6 +61,15 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
             {
                 return true;
             }
+        }
+
+        public override IList<MenuItem> GetViewMenu(Dictionary<string, string> dataForMenu)
+        {
+            var result = new List<MenuItem>();
+
+            result.Add(new MenuItem("Clear", EventNumber.ClearBackgroundStatusInfo));
+
+            return result;
         }
     }
 }
