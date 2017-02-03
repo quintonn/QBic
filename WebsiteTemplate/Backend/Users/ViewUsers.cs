@@ -82,9 +82,9 @@ namespace WebsiteTemplate.Backend.Users
         /// Override this method to display a message below the list of data on a view.
         /// </summary>
         /// <returns></returns>
-        public override string GetViewMessage()
-        {
-            return "TODO: Ability to sort items";
-        }
+        //public override string GetViewMessage()
+        //{
+        //    return "TODO: Ability to sort items";
+        //}
     }
 }

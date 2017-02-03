@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Services
@@ -138,6 +139,21 @@ namespace WebsiteTemplate.Backend.Services
                 BackgroundService.AddError("Doing BackgroundWork", error);
             }
         }
+
+        //public static Task Delay(double milliseconds)
+        //{
+        //    var tcs = new TaskCompletionSource<bool>();
+        //    System.Timers.Timer timer = new System.Timers.Timer();
+        //    timer.Elapsed += (obj, args) =>
+        //    {
+        //        tcs.TrySetResult(true);
+        //    };
+        //    timer.Interval = milliseconds;
+        //    timer.AutoReset = false;
+        //    timer.Start();
+        //    return tcs.Task;
+        //}
+
         public async void StartBackgroundJobs()
         {
             AddToStatusInfo("Background jobs", "Starting background jobs 1");
