@@ -185,7 +185,7 @@ namespace WebsiteTemplate.Backend.Services
             Errors.Add(new BackgroundInformation(action, String.Format("Error:\n{0}\n{1}", error.Message, error.StackTrace)));
         }
 
-        private static void AddToStatusInfo(string task, string statusInfo)
+        internal static void AddToStatusInfo(string task, string statusInfo)
         {
             lock(Locker)
             {

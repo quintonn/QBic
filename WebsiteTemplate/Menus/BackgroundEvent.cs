@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Menus
@@ -38,5 +36,14 @@ namespace WebsiteTemplate.Menus
 
         public abstract bool RunImmediatelyFirstTime { get; }
 
+        public void AddBackgroundInfo(string info)
+        {
+            BackgroundService.AddToStatusInfo(this.Description, info);
+        }
+
+        public void AddBackgroundError(string error)
+        {
+            BackgroundService.AddError(Description, new Exception(error));
+        }
     }
 }
