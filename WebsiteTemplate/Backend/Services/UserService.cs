@@ -132,18 +132,6 @@ namespace WebsiteTemplate.Backend.Services
 
                         smtpClient.Send(mailMessage);
 
-                        //var smtpClient = new SmtpClient();
-                        //smtpClient.Host = settings.EmailHost;
-                        //smtpClient.Port = settings.EmailPort;
-
-                        //var password = Encryption.Decrypt(settings.EmailPassword, ApplicationSettings.ApplicationPassPhrase);
-                        //smtpClient.Credentials = new System.Net.NetworkCredential(settings.EmailUserName, password);
-                        //smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                        //smtpClient.EnableSsl = settings.EmailEnableSsl;
-                        ////smtpClient.UseDefaultCredentials = true;
-
-                        //smtpClient.Send(mailMessage);
-
                         EmailStatus = "Email sent successfully";
                     }
                     catch (Exception e)
