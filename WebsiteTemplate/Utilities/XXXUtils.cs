@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 using System.Web;
 using WebsiteTemplate.Menus.ViewItems;
+using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Utilities
 {
@@ -94,6 +96,49 @@ namespace WebsiteTemplate.Utilities
         public static string GetDateFormat()
         {
             return DateFormat;
+        }
+
+        public static List<Type> GetAllBaseClassTypes()
+        {
+            var baseTypes = Assembly.GetAssembly(typeof(Models.User)).GetTypes().Where(t => t.IsClass && t.IsSubclassOf(typeof(BaseClass)) && t.IsAbstract == false).ToList();
+            var siteTypes = Assembly.GetCallingAssembly().GetTypes().Where(t => t.IsClass && t.IsSubclassOf(typeof(BaseClass))).ToList();
+
+            var allTypes = baseTypes.Union(siteTypes).ToList();
+
+            var result = new List<Type>();
+
+            foreach (var type in allTypes)
+            {
+                ProcessType(type, result);
+            }
+            
+            return result;
+        }
+
+        private static void ProcessType(Type type, List<Type> sortedTypes)
+        {
+            /* Only process BaseClass classes and don't repeat any */
+            if (!type.IsSubclassOf(typeof(BaseClass)) || sortedTypes.Contains(type))
+            {
+                return;
+            }
+
+            /* Classes to explicitly ignore */
+            if (type == typeof(DynamicClass))
+            {
+                return;
+            }
+
+            var properties = type.GetProperties().Where(p => p.PropertyType.IsClass && 
+                                                             p.PropertyType.IsSubclassOf(typeof(BaseClass)) && 
+                                                             p.PropertyType != type).ToList();
+            foreach (var property in properties)
+            {
+                var pType = property.PropertyType;
+                ProcessType(pType, sortedTypes);
+            }
+
+            sortedTypes.Add(type);
         }
     }
 }

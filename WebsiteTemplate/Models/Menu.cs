@@ -2,7 +2,7 @@
 
 namespace WebsiteTemplate.Models
 {
-    public class Menu: BaseClass
+    public class Menu : BaseClass
     {
         public virtual string Name { get; set; }
 

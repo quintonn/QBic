@@ -33,10 +33,10 @@ namespace WebsiteTemplate.Backend.Backups
         {
             var results = new List<InputField>();
             results.Add(new FileInput("BackupFile", "Backup File", mandatory: true));
-            results.Add(new EnumComboBoxInput<BackupType>("BackupType", "Backup Type", false, x => x.Key != BackupType.Unknown, x => x.Value)
-            {
-                Mandatory = true
-            });
+            //results.Add(new EnumComboBoxInput<BackupType>("BackupType", "Backup Type", false, x => x.Key != BackupType.Unknown, x => x.Value)
+            //{
+            //    Mandatory = true
+            //});
             return results;
         }
 
@@ -65,14 +65,23 @@ namespace WebsiteTemplate.Backend.Backups
             else if (actionNumber == 0)
             {
                 var backupFile = GetValue<FileInfo>("BackupFile");
-                var backupType = GetValue<BackupType>("BackupType");
+                //var backupType = GetValue<BackupType>("BackupType");
+                var backupType = BackupType.JsonData;
 
                 var mainConnectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
-
+                var success = false;
                 if (backupType == BackupType.JsonData)
                 {
-                    BackupService.RemoveExistingData(mainConnectionString);
-                    BackupService.RestoreBackupOfAllData(backupFile.Data, mainConnectionString);
+                    using (var scope = new TransactionScope())
+                    {
+                        BackupService.RemoveExistingData(mainConnectionString);
+                        success = BackupService.RestoreBackupOfAllData(backupFile.Data, mainConnectionString);
+
+                        if (success == true)
+                        {
+                            scope.Complete();
+                        }
+                    }
                 }
                 else if (backupType == BackupType.SqlFullBackup)
                 {
@@ -86,7 +95,7 @@ namespace WebsiteTemplate.Backend.Backups
                 return new List<IEvent>()
                 {
                     //new CancelInputDialog(),
-                    new ShowMessage("Backup restored successfully.")
+                    new ShowMessage(success ? "Backup restored successfully." : "Backup unsuccessful")
                 };
             }
             return new List<IEvent>();

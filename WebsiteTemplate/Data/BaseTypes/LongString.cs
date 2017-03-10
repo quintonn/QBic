@@ -15,7 +15,7 @@ namespace WebsiteTemplate.Data.BaseTypes
     /// </summary>
     public class LongString : IUserType
     {
-        private string Base { get; set; }
+        internal string Base { get; set; }
 
         public LongString()
             : this(String.Empty)

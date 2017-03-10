@@ -11,11 +11,12 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using WebsiteTemplate.Backend.Processing;
-using WebsiteTemplate.Backend.TestItems;
 using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Data;
+using WebsiteTemplate.Data.BaseTypes;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
@@ -47,23 +48,54 @@ namespace WebsiteTemplate.Backend.Services
         {
             DataService = dataService;
             AppSettings = appSettings;
-
+            
             if (SystemTypes == null)
             {
                 SystemTypes = new Dictionary<int, Type>();
-                SystemTypes.Add(1, typeof(AuditEvent));
-                SystemTypes.Add(2, typeof(UserRoleAssociation));
-                SystemTypes.Add(3, typeof(EventRoleAssociation));
-                SystemTypes.Add(4, typeof(Menu));
-                SystemTypes.Add(5, typeof(UserRole));
-                SystemTypes.Add(6, typeof(Models.User));
-                SystemTypes.Add(7, typeof(BackgroundJobResult));
-                SystemTypes.Add(8, typeof(CauseChild));
-                SystemTypes.Add(9, typeof(SuperCause));
-                SystemTypes.Add(10, typeof(Models.SystemSettings));
+                var cnt = 1;
 
-                AppSettings.ConfigureSiteSpecificTypes(SystemTypes);
+                var types = XXXUtils.GetAllBaseClassTypes();
+                foreach (var type in types)
+                {
+                    SystemTypes.Add(cnt++, type);
+                }
             }
+        }
+
+        private int GetCount(Type type, ISession session)
+        {
+            var queryOverMethodInfo = typeof(ISession).GetMethods().FirstOrDefault(m => m.Name == "QueryOver"
+                                                                && m.GetParameters().Count() == 0);
+            var queryOverMethod = queryOverMethodInfo.MakeGenericMethod(type);
+
+            var genericType = typeof(IQueryOver<>);
+            Type[] typeArgs = { type };
+
+            var genericType1 = typeof(IQueryOver<,>);
+            Type[] typeArgs1 = { type, type };
+
+            var queryOver = queryOverMethod.Invoke(session, null);
+
+            var gType = genericType.MakeGenericType(typeArgs);
+            var gType1 = genericType1.MakeGenericType(typeArgs1);
+
+            var selectMethod = gType1.GetMethods().Where(m => m.Name == "Select").Last();
+            var parameters = new IProjection[] { Projections.RowCount() };
+            queryOver = selectMethod.Invoke(queryOver, new object[] { parameters });
+
+            var futureValueMethodInfo = gType.GetMethods().Where(m => m.Name == "FutureValue").Last();
+            var futureValueMethod = futureValueMethodInfo.MakeGenericMethod(typeof(int));
+
+            var futureValue = futureValueMethod.Invoke(queryOver, null) as IFutureValue<int>;
+
+            var count = futureValue.Value;
+
+            return count;
+
+            var countx = session.QueryOver<BaseClass>()
+                                .Select(Projections.RowCount())
+                                .FutureValue<int>()
+                                .Value;
         }
 
         private List<BaseClass> GetItems(Type type, ISession session, int skip = 0, int take = int.MaxValue)
@@ -152,6 +184,9 @@ namespace WebsiteTemplate.Backend.Services
 
                                 added += items.Count;
                             }
+
+                            //TODO: Add ability to add site specific items to backups, eg. PDF files etc etc. ?? 
+                            //      OR NOT ??
                         }
                     }
 
@@ -232,9 +267,9 @@ namespace WebsiteTemplate.Backend.Services
 
         public void RemoveExistingData(string connectionString)
         {
-            var store = DataStore.GetInstance(null);
-            var config = store.CreateNewConfigurationUsingConnectionString(connectionString);
-            var factory = config.BuildSessionFactory();
+            //var store = DataStore.GetInstance(null);
+            //var config = store.CreateNewConfigurationUsingConnectionString(connectionString);
+            //var factory = config.BuildSessionFactory();
 
             //IList<BaseClass> items = null;
             //using (var session = factory.OpenSession())
@@ -244,9 +279,9 @@ namespace WebsiteTemplate.Backend.Services
 
             //Delete(dbItems, factory);
 
-            var comparer = new BasicClassEqualityComparer();
+            //var comparer = new BasicClassEqualityComparer();
 
-            var ids = SystemTypes.Keys.ToList().OrderBy(i => i);
+            var ids = SystemTypes.Keys.ToList().OrderBy(i => i).Reverse().ToList();
 
             foreach (var id in ids)
             {
@@ -255,8 +290,9 @@ namespace WebsiteTemplate.Backend.Services
                 using (var session = DataService.OpenSession())
                 {
                     items = GetItems(type, session);
+                    Delete(items, session, type);
+                    session.Flush();
                 }
-                Delete(items, factory);
             }
 
             //    var users = items.Where(i => i is Models.User).ToList();
@@ -275,7 +311,7 @@ namespace WebsiteTemplate.Backend.Services
             //Delete(userRoles, factory);
             //Delete(users, factory);
 
-            using (var session = factory.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var count = session
                         .CreateCriteria<BaseClass>()
@@ -291,7 +327,84 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        private void Delete(IList<BaseClass> items, ISessionFactory factory, int count = 10)
+        private void Delete(IList<BaseClass> items, ISession session, Type type)
+        {
+            var sameTypeProperties = type.GetProperties().Where(p => p.PropertyType == type).ToList();
+            if (sameTypeProperties.Count > 0)
+            {
+                var itemIds = items.Select(i => i.Id).ToList();
+                var deletedItems = new List<string>();
+                while (deletedItems.Count < items.Count)
+                {
+                    foreach (var prop in sameTypeProperties)
+                    {
+                        var itemsToDelete = items.Where(i => ShouldDeleteItem(i, prop, items, deletedItems) == true).ToList();
+                        DeleteItems(itemsToDelete, session);
+                        deletedItems.AddRange(itemsToDelete.Select(i => i.Id));
+                    }
+                }
+            }
+            else
+            {
+                DeleteItems(items, session);
+            }
+        }
+
+        private bool ShouldDeleteItem(BaseClass item, PropertyInfo propertyInfo, IList<BaseClass> allItems, List<string> deletedItems)
+        {
+            if (deletedItems.Contains(item.Id))
+            {
+                return false;
+            }
+            var itemsToCheck = allItems.Where(a => a.Id != item.Id && !deletedItems.Contains(a.Id)).ToList();
+            var otherItemsWithThisAsChild = itemsToCheck.Where(i => IsChildOf(i, propertyInfo, item.Id)).ToList();
+
+            return otherItemsWithThisAsChild.Count == 0;
+        }
+
+        private bool ShouldAddItem(BaseClass item, PropertyInfo propertyInfo, IList<BaseClass> allItems, List<string> addedItems)
+        {
+            if (addedItems.Contains(item.Id))
+            {
+                return false;
+            }
+
+            var sameTypeProperty = propertyInfo.GetValue(item) as BaseClass;
+            if (sameTypeProperty == null)
+            {
+                return true;
+            }
+
+            if (addedItems.Contains(sameTypeProperty.Id))
+            {
+                return true;
+            }
+
+            return false;
+
+            //var itemsToCheck = allItems.Where(a => a.Id != item.Id && !addedItems.Contains(a.Id)).ToList();
+            //var otherItemsWithThisAsChild = itemsToCheck.Where(i => IsChildOf(i, propertyInfo, item.Id)).ToList();
+
+            //return otherItemsWithThisAsChild.Count == 0;
+        }
+
+        private bool IsChildOf(BaseClass item, PropertyInfo prop, string itemId)
+        {
+            var value = prop.GetValue(item) as BaseClass;
+            if (value == null)
+            {
+                return false;
+            }
+
+            if (value.Id == itemId)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private void Delete_Old(IList<BaseClass> items, ISessionFactory factory, int count = 10)
         {
             var itemCount = Math.Max(100, items.Count / 2);
             var itemsToDelete = items;
@@ -304,7 +417,7 @@ namespace WebsiteTemplate.Backend.Services
                 {
                     if (nextItems.Count > 0)
                     {
-                        DeleteItems(nextItems, factory);
+                        //DeleteItems(nextItems, factory);
                         using (var session = factory.OpenSession())
                         {
                             var dbItems = session.QueryOver<BaseClass>().Where(Restrictions.On<UserRole>(x => x.Id).IsIn(items.Select(i => i.Id).ToArray())).List<BaseClass>();
@@ -348,10 +461,10 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        private void DeleteItems(IList<BaseClass> items, ISessionFactory factory, int count = 10)
+        private void DeleteItems(IList<BaseClass> items, ISession session, int count = 10)
         {
             var failedItems = new List<BaseClass>();
-            using (var session = factory.OpenStatelessSession())
+            //using (var session = factory.OpenStatelessSession())
             {
                 session.SetBatchSize(items.Count);
                 foreach (var item in items)
@@ -361,12 +474,15 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        public void RestoreBackupOfAllData(byte[] data, string connectionString)
+        public bool RestoreBackupOfAllData(byte[] data, string connectionString)
         {
             var tmpBytes = CompressionHelper.InflateByte(data);
             var tmpString = XXXUtils.GetString(tmpBytes);
 
-            var items = JsonHelper.DeserializeObject<List<BaseClass>>(tmpString, true);
+            tmpString = "[" + tmpString + "]";
+            tmpString = tmpString.Replace("}{", "},{");
+
+            var items = JsonHelper.DeserializeObject<List<BaseClass>[]>(tmpString, true).SelectMany(x => x.ToList()).ToList();
 
             //CreateNewDatabaseSchema(connectionString); //Not sure if this should be an explicit call or not.
 
@@ -374,21 +490,50 @@ namespace WebsiteTemplate.Backend.Services
             {
                 DynamicClass.SetIdsToBeAssigned = true;
                 var store = DataStore.GetInstance(null);
-                //var connectionString = "Integrated Security=SSPI;Persist Security Info=False;Data Source=localhost;Initial Catalog=WebsiteTemplate";
+                ////var connectionString = "Integrated Security=SSPI;Persist Security Info=False;Data Source=localhost;Initial Catalog=WebsiteTemplate";
                 var config = store.CreateNewConfigurationUsingConnectionString(connectionString);
                 var factory = config.BuildSessionFactory();
 
-                var comparer = new BasicClassEqualityComparer();
+                //var comparer = new BasicClassEqualityComparer();
 
-                var users = items.Where(i => i is Models.User).ToList();
-                var eventRoleItems = items.Where(i => i is EventRoleAssociation).ToList();
-                var auditEvents = items.Where(i => i is AuditEvent).ToList();
-                var otherItems = items.Except(users, comparer).Except(eventRoleItems, comparer).Except(auditEvents, comparer).ToList();
+                //var users = items.Where(i => i is Models.User).ToList();
+                //var eventRoleItems = items.Where(i => i is EventRoleAssociation).ToList();
+                //var auditEvents = items.Where(i => i is AuditEvent).ToList();
+                //var otherItems = items.Except(users, comparer).Except(eventRoleItems, comparer).Except(auditEvents, comparer).ToList();
 
-                Insert(users, factory);
-                Insert(otherItems, factory);
-                Insert(eventRoleItems, factory);
-                Insert(auditEvents, factory);
+                var ids = SystemTypes.Keys.ToList().OrderBy(i => i).ToList();
+
+
+                //using (var session = DataService.OpenSession())
+                using (var session = factory.OpenSession())
+                {
+                    foreach (var id in ids)
+                    {
+                        var type = SystemTypes[id];
+                        var sameTypeProperties = type.GetProperties().Where(p => p.PropertyType == type).ToList();
+                        if (sameTypeProperties.Count > 0)
+                        {
+                            var totalItemsToAdd = items.Where(i => i.GetType() == type).ToList();
+
+                            var addedItems = new List<string>();
+                            while (addedItems.Count < totalItemsToAdd.Count)
+                            {
+                                foreach (var prop in sameTypeProperties)
+                                {
+                                    var itemsToAdd = totalItemsToAdd.Where(i => ShouldAddItem(i, prop, totalItemsToAdd, addedItems) == true).ToList();
+                                    InsertItems(itemsToAdd, factory, type);
+                                    addedItems.AddRange(itemsToAdd.Select(i => i.Id));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var itemsToAdd = items.Where(i => i.GetType() == type).ToList();
+                            InsertItems(itemsToAdd, factory, type);
+                        }
+                    }
+                    //session.Flush();
+                }
 
                 using (var session = factory.OpenSession())
                 {
@@ -399,9 +544,25 @@ namespace WebsiteTemplate.Backend.Services
                             )
                             .List<int>()
                             .Sum();
+
+                    //var total = 0;
+                    //foreach (var type in SystemTypes)
+                    //{
+                    //    var cnt = GetCount(type.Value, session);
+                    //    total += cnt;
+                    //}
+
+
+                    //var count = session.QueryOver<BaseClass>()
+                    //            .Select(Projections.RowCount())
+                    //            .FutureValue<int>()
+                    //            .Value;
+
                     if (count != items.Count)
+                    //if (total != items.Count)
                     {
-                        throw new Exception("Not all items were restored. Contact support");
+                        //throw new Exception("Not all items were restored. Contact support");
+                        return false;
                     }
                 }
             }
@@ -409,6 +570,8 @@ namespace WebsiteTemplate.Backend.Services
             {
                 DynamicClass.SetIdsToBeAssigned = false; // Change it back
             }
+
+            return true;
         }
 
         public void RestoreSqlDatabase(byte[] data, string connectionString, string databaseName, bool overrideExistingDatabase)
@@ -532,85 +695,27 @@ namespace WebsiteTemplate.Backend.Services
             return realName;
         }
 
-        private void Insert(IList<BaseClass> items, ISessionFactory factory, int count = 10)
-        {
-            var itemCount = Math.Max(100, items.Count / 2);
-            var itemsToAdd = items;
-            var nextItems = itemsToAdd.Take(itemCount).ToList();
-            var cnt = 0;
-            var errorCnt = 0;
-
-            var comparer = new BasicClassEqualityComparer();
-            while (itemsToAdd.Count > 0)
-            {
-                try
-                {
-                    if (nextItems.Count > 0)
-                    {
-                        InsertItems(nextItems, factory);
-                        using (var session = factory.OpenSession())
-                        {
-                            //var dbItems = session.QueryOver<BaseClass>().List<BaseClass>();
-                            var dbItems = session.QueryOver<BaseClass>().Where(Restrictions.On<UserRole>(x => x.Id).IsIn(items.Select(i => i.Id).ToArray())).List<BaseClass>();
-
-                            itemsToAdd = items.Except(dbItems, comparer).ToList();
-                        }
-                    }
-                    else
-                    {
-                        cnt++;
-                    }
-                }
-                catch (Exception error)
-                {
-                    Console.WriteLine(error.InnerException?.Message);
-                    errorCnt++;
-                    cnt++;
-
-                    if (itemCount >= itemsToAdd.Count)
-                    {
-                        itemCount = itemsToAdd.Count / 2;
-                        itemCount = Math.Max(itemCount, 1);
-                    }
-
-                    if (errorCnt == 50)
-                    {
-                        itemCount--;
-                        errorCnt = 0;
-                        cnt = 0;
-
-                        using (var session = factory.OpenSession())
-                        {
-                            var dbItems = session.QueryOver<BaseClass>().Where(Restrictions.On<UserRole>(x => x.Id).IsIn(items.Select(i => i.Id).ToArray())).List<BaseClass>();
-
-                            itemsToAdd = items.Except(dbItems, comparer).ToList();
-                        }
-                    }
-                    if (itemCount < 0)
-                    {
-                        throw new Exception("Unable to restore all items. Trying again or contact support.");
-                    }
-                }
-
-                if ((itemCount * cnt) > itemsToAdd.Count)
-                {
-                    cnt = 0;
-
-                    var rnd = new Random();
-                    itemsToAdd = itemsToAdd.OrderBy(item => rnd.Next()).ToList(); //randomize the stuff
-                }
-                nextItems = itemsToAdd.Skip(itemCount * cnt).Take(itemCount).ToList();
-            }
-        }
-
-        private void InsertItems(IList<BaseClass> items, ISessionFactory factory, int count = 10)
+        private void InsertItems(IList<BaseClass> items, ISessionFactory factory, Type type)
         {
             var failedItems = new List<BaseClass>();
+            var longStringProperties = type.GetProperties().Where(p => p.PropertyType == typeof(LongString)).ToList();
+            var hasLongStringProperty = longStringProperties.Count() > 0;
             using (var session = factory.OpenStatelessSession())
             {
                 session.SetBatchSize(items.Count);
                 foreach (var item in items)
                 {
+                    if (hasLongStringProperty)
+                    {
+                        foreach (var prop in longStringProperties)
+                        {
+                            var value = prop.GetValue(item);
+                            if (value == null || (value as LongString).Base ==  null)
+                            {
+                                prop.SetValue(item, new LongString(String.Empty));
+                            }
+                        }
+                    }
                     session.Insert(item);
                 }
             }

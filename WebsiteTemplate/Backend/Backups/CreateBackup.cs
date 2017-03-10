@@ -49,7 +49,8 @@ namespace WebsiteTemplate.Backend.Backups
             {
                 var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
                 var conString = new SqlConnectionStringBuilder(connectionString);
-                backupType = Processing.BackupType.SqlFullBackup;
+                //backupType = Processing.BackupType.SqlFullBackup;
+                backupType = Processing.BackupType.JsonData;
             }
             catch (Exception e)
             {
