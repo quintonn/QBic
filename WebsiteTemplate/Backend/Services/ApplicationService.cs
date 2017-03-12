@@ -30,6 +30,14 @@ namespace WebsiteTemplate.Backend.Services
         public async Task<object> InitializeSession()
         {
             var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync() as User;
+            if (user == null)
+            {
+                return new
+                {
+                    User = "",
+                    Id = -1
+                };
+            }
             var json = new
             {
                 User = user.UserName,
