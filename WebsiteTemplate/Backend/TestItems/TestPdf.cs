@@ -6,6 +6,7 @@ using MigraDoc.DocumentObjectModel;
 using System;
 using System.Globalization;
 using System.Threading.Tasks;
+using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
@@ -61,7 +62,7 @@ namespace WebsiteTemplate.Backend.TestItems
                 document.AddRowUsingParams("Jack", "Black");
             }
 
-            var userTask = BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync();
+            var userTask = BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync(Container.Resolve<UserContext>());
             userTask.Wait();
             var user = userTask.Result as User;
             var formats = DateTime.Now.GetDateTimeFormats();

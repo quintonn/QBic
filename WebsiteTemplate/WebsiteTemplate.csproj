@@ -43,8 +43,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicAuthentication, Version=0.0.6161.22152, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BasicAuthentication.0.0.6161.22152\lib\net461\BasicAuthentication.dll</HintPath>
+    <Reference Include="BasicAuthentication, Version=0.0.6289.36793, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicAuthentication.0.0.6289.36793\lib\net461\BasicAuthentication.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="DocumentGenerator, Version=0.0.6159.25178, Culture=neutral, processorArchitecture=MSIL">
@@ -398,6 +398,7 @@
     <Compile Include="Data\DataStoreExtensionMethods.cs" />
     <Compile Include="Data\JoinedSubclassIdConvention.cs" />
     <Compile Include="Data\SqlStatementInterceptor.cs" />
+    <Compile Include="Data\UserContextBase.cs" />
     <Compile Include="Mappings\AuditEventMapping.cs" />
     <Compile Include="Menus\BackgroundEvent.cs" />
     <Compile Include="Menus\BaseItems\IEvent.cs" />
@@ -418,7 +419,9 @@
     <Compile Include="Models\BackgroundJobResult.cs" />
     <Compile Include="Models\DynamicClass.cs" />
     <Compile Include="Models\SystemSettings.cs" />
+    <Compile Include="Models\UserBase.cs" />
     <Compile Include="SiteSpecific\DefaultsForTest\DefaultStartup.cs" />
+    <Compile Include="SiteSpecific\DefaultsForTest\DefaultUserManager.cs" />
     <Compile Include="Utilities\ApplicationStartup.cs" />
     <Compile Include="Utilities\Encryption.cs" />
     <Compile Include="Utilities\JsonArray.cs" />

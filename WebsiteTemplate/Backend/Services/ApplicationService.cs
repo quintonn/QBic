@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using BasicAuthentication.Users;
+using System.Threading.Tasks;
+using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
@@ -7,10 +9,12 @@ namespace WebsiteTemplate.Backend.Services
     public class ApplicationService
     {
         private static ApplicationSettingsCore ApplicationSettings { get; set; }
+        private UserContext UserContext { get; set; }
 
-        public ApplicationService(ApplicationSettingsCore applicationSettings)
+        public ApplicationService(ApplicationSettingsCore applicationSettings, UserContext userContext)
         {
             ApplicationSettings = applicationSettings;
+            UserContext = userContext;
         }
 
         
@@ -29,7 +33,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public async Task<object> InitializeSession()
         {
-            var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync() as User;
+            var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync(UserContext) as User;
             if (user == null)
             {
                 return new

@@ -7,14 +7,17 @@ using System.Reflection;
 using System.Web;
 using WebsiteTemplate.Mappings;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Data
 {
     public static class DataStoreExtensionMethods
     {
-        public static FluentMappingsContainer CustomAddFromAssemblyOf<T>(this FluentMappingsContainer mappings)
+        public static FluentMappingsContainer CustomAddFromAssemblyOf<T>(this FluentMappingsContainer mappings, ApplicationSettingsCore appSettings)
         {
-            var container = mappings.AddFromAssemblyOf<User>();
+            //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
+            var currentAssembly = Assembly.GetAssembly(appSettings.GetType());
+            var container = mappings.AddFromAssemblyOf<User>().AddFromAssembly(currentAssembly);
 
             var curDir = HttpRuntime.AppDomainAppPath;
             var dlls = Directory.GetFiles(curDir, "*.dll", SearchOption.AllDirectories);

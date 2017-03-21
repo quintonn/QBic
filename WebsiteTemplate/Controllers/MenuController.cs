@@ -11,6 +11,7 @@ using System.Web.Http;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.SiteSpecific.DefaultsForTest;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Controllers
@@ -22,11 +23,13 @@ namespace WebsiteTemplate.Controllers
         private DataService DataService { get; set; }
 
         private UserService UserService { get; set; }
+        private DefaultUserManager UserManager { get; set; }
 
-        public MenuController(DataService dataService, UserService userService)
+        public MenuController(DataService dataService, UserService userService, DefaultUserManager userManager)
         {
             DataService = dataService;
             UserService = userService;
+            UserManager = userManager;
         }
 
         private string GetCurrentUrl()
@@ -76,7 +79,7 @@ namespace WebsiteTemplate.Controllers
                 var queryString = this.Request.GetQueryNameValuePairs();
                 var userId = queryString.Single(q => q.Key == "userId").Value;
                 var emailToken = queryString.Single(q => q.Key == "token").Value;
-                var verifyToken = await CoreAuthenticationEngine.UserManager.ConfirmEmailAsync(userId, emailToken);
+                var verifyToken = await UserManager.ConfirmEmailAsync(userId, emailToken);
                 
                 if (verifyToken.Succeeded)
                 {

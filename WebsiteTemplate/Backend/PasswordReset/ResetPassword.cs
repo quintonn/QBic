@@ -8,6 +8,7 @@ using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
+using WebsiteTemplate.SiteSpecific.DefaultsForTest;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.PasswordReset
@@ -16,13 +17,15 @@ namespace WebsiteTemplate.Backend.PasswordReset
     {
         private UserService UserService { get; set; }
         private ApplicationSettingsCore AppSettings { get; set; }
+        private DefaultUserManager UserManager { get; set; }
         private string UserId { get; set; }
         private string PasswordToken { get; set; }
 
-        public ResetPassword(UserService userService, ApplicationSettingsCore appSettings)
+        public ResetPassword(UserService userService, ApplicationSettingsCore appSettings, DefaultUserManager userManager)
         {
             UserService = userService;
             AppSettings = appSettings;
+            UserManager = userManager;
         }
         public override bool AllowInMenu
         {
@@ -109,7 +112,7 @@ namespace WebsiteTemplate.Backend.PasswordReset
 
                 XXXUtils.SetCurrentUser("System");
 
-                var verifyTokenResult = await CoreAuthenticationEngine.UserManager.VerifyUserTokenAsync(userId, "ResetPassword", passwordToken);
+                var verifyTokenResult = await UserManager.VerifyUserTokenAsync(userId, "ResetPassword", passwordToken);
                 if (verifyTokenResult == false)
                 {
                     //TODO: This does not actually do what i expected. The tokens never expire. wtf?!  -- ok, got them to expire after 6 hours, still. wtf
@@ -120,7 +123,7 @@ namespace WebsiteTemplate.Backend.PasswordReset
                     };
                 }
 
-                var idResult = await CoreAuthenticationEngine.UserManager.ResetPasswordAsync(userId, passwordToken, newPassword);
+                var idResult = await UserManager.ResetPasswordAsync(userId, passwordToken, newPassword);
                 if (idResult.Succeeded == false)
                 {
                     var errorMessage = "Unable to create user:\n" + String.Join("\n", idResult.Errors);

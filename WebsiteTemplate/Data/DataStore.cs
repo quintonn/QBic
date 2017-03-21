@@ -6,12 +6,8 @@ using NHibernate.Tool.hbm2ddl;
 using System;
 using System.Configuration;
 using System.Data;
-using System.Data.SqlClient;
 using System.Data.SQLite;
-using System.Diagnostics;
 using System.Web;
-using WebsiteTemplate.Backend.Services;
-using WebsiteTemplate.Backend.TestItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
@@ -101,7 +97,7 @@ namespace WebsiteTemplate.Data
             var config = Fluently.Configure()
               .Database(configurer)
               
-              .Mappings(m => m.FluentMappings.CustomAddFromAssemblyOf<User>().Conventions.Add<JoinedSubclassIdConvention>());
+              .Mappings(m => m.FluentMappings.CustomAddFromAssemblyOf<User>(AppSettings).Conventions.Add<JoinedSubclassIdConvention>());
 
             config.ExposeConfiguration(x =>
             {

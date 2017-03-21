@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BasicAuthentication.Users;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using WebsiteTemplate.Data;
@@ -10,9 +11,11 @@ namespace WebsiteTemplate.Backend.Services
     public class AuditService
     {
         private DataStore DataStore { get; set; }
-        public AuditService(DataStore dataStore)
+        private UserContext UserContext { get; set; }
+        public AuditService(DataStore dataStore, UserContext userContext)
         {
             DataStore = dataStore;
+            UserContext = userContext;
         }
 
         public async Task LogUserEvent(int eventId)
@@ -36,7 +39,7 @@ namespace WebsiteTemplate.Backend.Services
         {
             if (user == null)
             {
-                var userTask = BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync();
+                var userTask = BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync(UserContext);
                 userTask.Wait();
                 user = userTask.Result as User;
             }

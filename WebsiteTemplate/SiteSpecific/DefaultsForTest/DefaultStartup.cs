@@ -1,5 +1,4 @@
-﻿using BasicAuthentication.Users;
-using Microsoft.Practices.Unity;
+﻿using Microsoft.Practices.Unity;
 using NHibernate.Criterion;
 using System;
 using System.Linq;
@@ -13,15 +12,18 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
     public class DefaultStartup : ApplicationStartup
     {
         private EventService EventService { get; set; }
-        public DefaultStartup(EventService eventService, DataService dataService)
+        private DefaultUserManager UserManager { get; set;  }
+
+        public DefaultStartup(EventService eventService, DataService dataService, DefaultUserManager userManager)
             : base(dataService)
         {
             EventService = eventService;
+            UserManager = userManager;
         }
 
         public override void RegisterUnityContainers(IUnityContainer container)
         {
-
+            //UserManager = container.Resolve<DefaultUserManager>();
         }
 
         public override void SetupDefaults()
@@ -39,7 +41,8 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
                         EmailConfirmed = true,
                         UserName = "Admin",
                     };
-                    var result = CoreAuthenticationEngine.UserManager.CreateAsync(adminUser, "password");
+                    
+                    var result = UserManager.CreateAsync(adminUser, "password");
                     result.Wait();
 
                     if (!result.Result.Succeeded)

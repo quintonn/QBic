@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.Unity;
+using System;
 using System.Linq;
 using System.Net;
 using WebsiteTemplate.Backend.Services;
@@ -12,7 +13,8 @@ namespace WebsiteTemplate.Backend.KeepAlive
     {
         private DataService DataService { get; set; }
 
-        public KeepAliveBackgroundEvent(DataService dataService)
+        public KeepAliveBackgroundEvent(DataService dataService, IUnityContainer container)
+            :base(container)
         {
             DataService = dataService;
         }

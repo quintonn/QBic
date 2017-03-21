@@ -1,4 +1,5 @@
-﻿using DocumentGenerator.DocumentTypes;
+﻿using BasicAuthentication.Users;
+using DocumentGenerator.DocumentTypes;
 using DocumentGenerator.Settings;
 using DocumentGenerator.Styles;
 using MigraDoc.DocumentObjectModel;
@@ -8,6 +9,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
@@ -28,11 +30,13 @@ namespace WebsiteTemplate.Backend.AuditReport
 
         private StyleSetup StyleSetup { get; set; }
         private DataService DataService { get; set; }
+        private UserContext UserContext { get; set; }
 
-        public CreateAuditReport(StyleSetup styleSetup, DataService dataService)
+        public CreateAuditReport(StyleSetup styleSetup, DataService dataService, UserContext userContext)
         {
             StyleSetup = styleSetup;
             DataService = dataService;
+            UserContext = userContext;
         }
 
         public override async Task<FileInfo> GetFileInfo(string data)
@@ -47,7 +51,7 @@ namespace WebsiteTemplate.Backend.AuditReport
             var document = new BasicTableLayoutDocument(StyleSetup, new DocumentSettings(DocumentType.Pdf, Orientation.Landscape));
             document.SetDocumentTitle("Audit Report: from " + fromDate.ToShortDateString() + " to " + toDate.ToShortDateString()); //TODO: need a subheading in report
 
-            var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync();
+            var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync(UserContext);
 
             var footer = "Printed by " + user.UserName + " on " + System.DateTime.Now.ToString("yyyy-MM-dd");
             document.SetDocumentFooter(footer);

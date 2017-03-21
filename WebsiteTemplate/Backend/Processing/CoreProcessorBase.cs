@@ -1,13 +1,13 @@
 ﻿using Microsoft.Practices.Unity;
 using Newtonsoft.Json;
 using NHibernate.Criterion;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
@@ -23,6 +23,8 @@ namespace WebsiteTemplate.Backend.Processing
         protected static DataService DataService { get; set; }
         protected static AuditService AuditService { get; set; }
         protected static BackgroundService BackgroundService { get; set; }
+
+        protected static UserContext UserContext { get; set; }
 
         private static bool SetupDone = false;
 
@@ -41,6 +43,7 @@ namespace WebsiteTemplate.Backend.Processing
                     DataService = container.Resolve<DataService>();
                     AuditService = container.Resolve<AuditService>();
                     BackgroundService = container.Resolve<BackgroundService>();
+                    UserContext = container.Resolve<UserContext>();
 
                     PopulateDefaultValues();
                     SetupDone = true;
@@ -132,7 +135,7 @@ namespace WebsiteTemplate.Backend.Processing
 
         protected async Task<User> GetLoggedInUser()
         {
-            var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync() as User;
+            var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync(UserContext) as User;
             return user;
         }
     }

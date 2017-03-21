@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
+using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.BackgroundInfo
 {
@@ -33,7 +34,16 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
 
         public override async Task<IList<IEvent>> ProcessAction()
         {
-            BackgroundService.Errors.Clear();
+            //BackgroundService.Errors.Clear();
+            using (var session = DataService.OpenSession())
+            {
+                var items = session.QueryOver<BackgroundInformation>().Where(Restrictions.On<BackgroundInformation>(x => x.Information).IsLike("Error:", MatchMode.Start)).List().ToList();
+                foreach (var item in items)
+                {
+                    session.Delete(item);
+                }
+                session.Flush();
+            }
             return new List<IEvent>()
             {
                 new ShowMessage("Errors cleared"),

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Practices.Unity;
+using Owin;
+using System;
 using System.Collections.Generic;
 
 namespace WebsiteTemplate.Utilities
@@ -18,5 +20,10 @@ namespace WebsiteTemplate.Utilities
         /// </summary>
         /// <param name="systemTypes"></param>
         public abstract void ConfigureSiteSpecificTypes(Dictionary<int, Type> systemTypes);
+
+        public virtual void PerformAdditionalStartupConfiguration(IAppBuilder app, IUnityContainer container)
+        {
+
+        }
     }
 }

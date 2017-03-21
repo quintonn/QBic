@@ -2,6 +2,7 @@
 using BasicAuthentication.Security;
 using BasicAuthentication.Startup;
 using Microsoft.Owin;
+using Microsoft.Owin.Security.DataProtection;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
 using Owin;
@@ -20,21 +21,26 @@ namespace WebsiteTemplate
             //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
             var myApp = app;
 
+            var appSettings = Container.Resolve<ApplicationSettingsCore>();
+
             var options = new UserAuthenticationOptions()
             {
                 AccessControlAllowOrigin = "*",
                 AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30), //Access token expires after 30min
                 RefreshTokenExpireTimeSpan = TimeSpan.FromDays(2), //Refresh token expires after 2 days
                 AllowInsecureHttp = false,
-                TokenEndpointPath = new PathString("/api/v1/token"), //path is actually now /api/v1/token
+                TokenEndpointPath = new PathString("/api/v1/token"),
                 UserContext = Container.Resolve<UserContext>()
             };
 
             myApp.UseBasicUserTokenAuthentication(options);
+            
+            appSettings.PerformAdditionalStartupConfiguration(app, Container);
+
             myApp.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
         }
 
-        public void Register(HttpConfiguration config)
+        public void Register(HttpConfiguration config, IAppBuilder app)
         {
             //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
             config.MapHttpAttributeRoutes();
@@ -46,6 +52,8 @@ namespace WebsiteTemplate
             Container.RegisterInstance(DataStore.GetInstance(appSettings));
 
             Container.RegisterType(typeof(ApplicationStartup), appSettings.GetApplicationStartupType);
+
+            Container.RegisterInstance(app.GetDataProtectionProvider());
 
             var appStartup = Container.Resolve<ApplicationStartup>();
             appStartup.RegisterUnityContainers(Container);

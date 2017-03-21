@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Web;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.SiteSpecific.DefaultsForTest;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Services
@@ -20,10 +21,13 @@ namespace WebsiteTemplate.Backend.Services
         private DataService DataService { get; set; }
         private ApplicationSettingsCore ApplicationSettings { get; set; }
 
-        public UserService(DataService dataService, ApplicationSettingsCore appSettings)
+        private DefaultUserManager UserManager { get; set; }
+
+        public UserService(DataService dataService, ApplicationSettingsCore appSettings, DefaultUserManager userManager)
         {
             DataService = dataService;
             ApplicationSettings = appSettings;
+            UserManager = userManager;
         }
 
         public List<UserRole> GetUserRoles()
@@ -44,7 +48,7 @@ namespace WebsiteTemplate.Backend.Services
 
             using (var session = DataService.OpenSession())
             {
-                var result = await CoreAuthenticationEngine.UserManager.CreateAsync(user, password);
+                var result = await UserManager.CreateAsync(user, password);
 
                 if (!result.Succeeded)
                 {
@@ -91,16 +95,16 @@ namespace WebsiteTemplate.Backend.Services
                 throw new Exception("No system settings have been setup.");
             }
 
-            var user = await CoreAuthenticationEngine.UserManager.FindByNameAsync(userNameOrEmail) as User;
+            var user = await UserManager.FindByNameAsync(userNameOrEmail) as User;
 
             if (user == null)
             {
-                user = await CoreAuthenticationEngine.UserManager.FindByEmailAsync(userNameOrEmail) as User;
+                user = await UserManager.FindByEmailAsync(userNameOrEmail) as User;
             }
 
             if (user != null)
             {
-                var passwordResetLink = await CoreAuthenticationEngine.UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var passwordResetLink = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
 
                 var myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
 
@@ -168,7 +172,7 @@ namespace WebsiteTemplate.Backend.Services
                 throw new Exception("No system settings have been setup.");
             }
 
-            var emailToken = CoreAuthenticationEngine.UserManager.GenerateEmailConfirmationTokenAsync(userId).Result;
+            var emailToken = UserManager.GenerateEmailConfirmationTokenAsync(userId).Result;
 
             var myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
 
