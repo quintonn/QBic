@@ -41,20 +41,25 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
 
             BackgroundInformation info;
 
-            if (type == "status")
+            using (var session = DataService.OpenSession())
             {
-                info = BackgroundService.StatusInfo.Where(s => s.Id == id).Single();
-            }
-            else if (type == "errors")
-            {
-                info = BackgroundService.Errors.Where(s => s.Id == id).Single();
-            }
-            else
-            {
-                return new List<IEvent>()
-                {
-                    new ShowMessage("Unknown background info type: " + type)
-                };
+                info = session.Get<BackgroundInformation>(id);
+
+                //if (type == "status")
+                //{
+                //    //info = BackgroundService.StatusInfo.Where(s => s.Id == id).Single();
+                //}
+                //else if (type == "errors")
+                //{
+                //    //info = BackgroundService.Errors.Where(s => s.Id == id).Single();
+                //}
+                //else
+                //{
+                //    return new List<IEvent>()
+                //{
+                //    new ShowMessage("Unknown background info type: " + type)
+                //};
+                //}
             }
 
             var message = info.DateTimeUTC.ToShortDateString() + " " + info.DateTimeUTC.ToLongTimeString() + "<br/>" +

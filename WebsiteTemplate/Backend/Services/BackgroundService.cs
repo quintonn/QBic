@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Services
@@ -11,40 +12,38 @@ namespace WebsiteTemplate.Backend.Services
     public class BackgroundService : IDisposable
     {
         private DataService DataService { get; set; }
-
-        internal static List<BackgroundInformation> Errors { get; set; }
-        internal static List<BackgroundInformation> StatusInfo { get; set; }
+        private UserContext UserContext { get; set; }
 
         private static object Locker = new object();
 
         static BackgroundService()
         {
-            StatusInfo = new List<BackgroundInformation>();
-            StatusInfo.Add(new BackgroundInformation("Initialization", "Background Service Static Constructor"));
-            Setup();
-            Errors = new List<BackgroundInformation>();
-            
             BackgroundThreads = new List<Thread>();
-            StatusInfo.Add(new BackgroundInformation("Initialization", "Background Service Static Constructor end"));
         }
 
-        public BackgroundService(DataService dataService)
+        public BackgroundService(DataService dataService, UserContext userContext)
         {
             DataService = dataService;
-            StatusInfo.Add(new BackgroundInformation("Initialization", "Background Service Public Constructor"));
+            UserContext = userContext;
+
+            if (SystemUser == null)
+            {
+                Setup();
+                AddBackgroundError("Initialization", new Exception("Test"));
+            }
+            
+            AddBackgroundInformation("Initialization", "Background Service Public Constructor");
         }
 
-        private static async void Setup()
+        private async void Setup()
         {
-            StatusInfo.Add(new BackgroundInformation("Setup", "Background Service Setup"));
-            SystemUser = await CoreAuthenticationEngine.UserManager.FindByNameAsync("System") as User;
-            StatusInfo.Add(new BackgroundInformation("Setup", "Background Service Setup End"));
+            SystemUser = await UserContext.FindUserByNameAsync("System");
         }
 
         private static List<Thread> BackgroundThreads { get; set; }
         private static List<BackgroundJob> BackgroundJobs { get; set; }
         private static User SystemUser { get; set; }
-        private void SaveBackgroundJobStatus(BackgroundJobResult jobResult)
+        private void SaveBackgroundJobResult(BackgroundJobResult jobResult)
         {
             try
             {
@@ -56,18 +55,18 @@ namespace WebsiteTemplate.Backend.Services
             }
             catch (Exception e)
             {
-                BackgroundService.AddError("Saving background job status", e);
+                AddBackgroundError("Saving background job status", e);
             }
         }
 
         private void InitializeBackgroundJobs()
         {
-            AddToStatusInfo("Background jobs", "Initialize background jobs 1.");
+            AddBackgroundInformation("Background jobs", "Initialize background jobs 1.");
             BackgroundJobs = EventService.BackgroundEventList.Select(b => new BackgroundJob()
             {
                 Event = b.Value,
             }).ToList();
-            AddToStatusInfo("Background jobs", "Initialize background jobs 2.");
+            AddBackgroundInformation("Background jobs", "Initialize background jobs 2.");
             using (var session = DataService.OpenSession())
             {
                 foreach (var job in BackgroundJobs)
@@ -82,16 +81,16 @@ namespace WebsiteTemplate.Backend.Services
                     }
                     catch (Exception e)
                     {
-                        AddError("error in initializing background jobs: "+job.Event.Description, e);
+                        AddBackgroundError("error in initializing background jobs: "+job.Event.Description, e);
                     }
                 }
             }
-            AddToStatusInfo("Background jobs", "Initialize background jobs 10.");
+            AddBackgroundInformation("Background jobs", "Initialize background jobs 10.");
         }
 
         private void BackgroundWork(object jobObject)
         {
-            AddToStatusInfo("Background jobs", "Background work 1");
+            AddBackgroundInformation("Background jobs", "Background work 1");
             var job = (BackgroundJob)jobObject;
             var firstTime = true;
             try
@@ -107,7 +106,7 @@ namespace WebsiteTemplate.Backend.Services
                         /* First calculate the amount of time to wait before doing work */
                         job.NextRunTime = job.Event.CalculateNextRunTime(job.LastRunTime);
                         var sleepTime = job.NextRunTime.Subtract(DateTime.Now);
-                        AddToStatusInfo(job.Event.Description, String.Format("Background process {0} is going to sleep for {1} days, {2} hours, {3} minutes and {4} seconds", job.Event.Description, sleepTime.Days, sleepTime.Hours, sleepTime.Minutes, sleepTime.Seconds));
+                        AddBackgroundInformation(job.Event.Description, String.Format("Background process {0} is going to sleep for {1} days, {2} hours, {3} minutes and {4} seconds", job.Event.Description, sleepTime.Days, sleepTime.Hours, sleepTime.Minutes, sleepTime.Seconds));
                         Thread.Sleep(sleepTime);
                     }
 
@@ -126,37 +125,23 @@ namespace WebsiteTemplate.Backend.Services
                     {
                         result.Status = "Error";
                         result.ExecutionInformation = e.Message + "\n" + e.StackTrace;
-                        AddError(job.Event.Description, e);
+                        AddBackgroundError(job.Event.Description, e);
                         //TODO: Log this in file and in a way to display on screen. Maybe i can  do both in 1
                     }
-                    AddToStatusInfo(job.Event.Description, String.Format("Ran background process {0} : {1} -> {2}", job.Event.Description, result.Status, result.ExecutionInformation));
+                    AddBackgroundInformation(job.Event.Description, String.Format("Ran background process {0} : {1} -> {2}", job.Event.Description, result.Status, result.ExecutionInformation));
                     
-                    SaveBackgroundJobStatus(result);
+                    SaveBackgroundJobResult(result);
                 }
             }
             catch (Exception error)
             {
-                BackgroundService.AddError("Doing BackgroundWork", error);
+                AddBackgroundError("Doing BackgroundWork", error);
             }
         }
 
-        //public static Task Delay(double milliseconds)
-        //{
-        //    var tcs = new TaskCompletionSource<bool>();
-        //    System.Timers.Timer timer = new System.Timers.Timer();
-        //    timer.Elapsed += (obj, args) =>
-        //    {
-        //        tcs.TrySetResult(true);
-        //    };
-        //    timer.Interval = milliseconds;
-        //    timer.AutoReset = false;
-        //    timer.Start();
-        //    return tcs.Task;
-        //}
-
         public async void StartBackgroundJobs()
         {
-            AddToStatusInfo("Background jobs", "Starting background jobs 1");
+            AddBackgroundInformation("Background jobs", "Starting background jobs 1");
             if (BackgroundJobs == null)
             {
                 try
@@ -165,40 +150,38 @@ namespace WebsiteTemplate.Backend.Services
                 }
                 catch (Exception e)
                 {
-                    AddError("Starting error", e);
+                    AddBackgroundError("Starting error", e);
                 }
             }
-            AddToStatusInfo("Background jobs", "Starting background jobs 2");
+            AddBackgroundInformation("Background jobs", "Starting background jobs 2");
             foreach (var backgroundJob in BackgroundJobs)
             {
                 var thread = new Thread(new ParameterizedThreadStart(BackgroundWork));
                 BackgroundThreads.Add(thread);
                 thread.Start(backgroundJob);
             }
-            AddToStatusInfo("Background jobs", "Starting background jobs 10");
-            //BackgroundThread = new Thread(new ThreadStart(BackgroundWork));
-            //BackgroundThread.Start();
+            AddBackgroundInformation("Background jobs", "Starting background jobs 10");
         }
 
-        internal static void AddError(string action, Exception error)
+        internal void AddBackgroundError(string action, Exception error)
         {
-            Errors.Add(new BackgroundInformation(action, String.Format("Error:\n{0}\n{1}", error.Message, error.StackTrace)));
-        }
-
-        internal static void AddToStatusInfo(string task, string statusInfo)
-        {
-            lock(Locker)
+            var item = new BackgroundInformation(action, String.Format("Error:\n{0}\n{1}", error.Message, error.StackTrace));
+            using (var session = DataService.OpenSession())
             {
-                try
+                session.Save(item);
+                session.Flush();
+            }
+        }
+
+        internal void AddBackgroundInformation(string task, string statusInfo)
+        {
+            lock (Locker)
+            {
+                var item = new BackgroundInformation(task, statusInfo);
+                using (var session = DataService.OpenSession())
                 {
-                    //var date = DateTime.Now;
-                    //var timePart = date.ToShortDateString() + "  " + date.ToLongTimeString();
-                    StatusInfo.Add(new BackgroundInformation(task, statusInfo));
-                    //StatusInfo.Add(timePart + "\t" + statusInfo);
-                }
-                catch (Exception e)
-                {
-                    StatusInfo.Add(new BackgroundInformation(task, "Error:\n" + e.Message));
+                    session.Save(item);
+                    session.Flush();
                 }
             }
         }
@@ -220,7 +203,7 @@ namespace WebsiteTemplate.Backend.Services
             }
             catch (Exception e)
             {
-                BackgroundService.AddError("dispose of background service", e);
+                AddBackgroundError("dispose of background service", e);
             }
         }
     }
