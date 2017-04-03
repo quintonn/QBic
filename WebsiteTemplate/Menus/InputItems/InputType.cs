@@ -13,5 +13,6 @@
         View = 8,
         File = 9,
         Numeric = 10,
+        Label = 11,
     }
 }

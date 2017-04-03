@@ -43,8 +43,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicAuthentication, Version=0.0.6289.36793, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BasicAuthentication.0.0.6289.36793\lib\net461\BasicAuthentication.dll</HintPath>
+    <Reference Include="BasicAuthentication, Version=0.0.6299.26278, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicAuthentication.1.0.0\lib\net461\BasicAuthentication.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="DocumentGenerator, Version=0.0.6159.25178, Culture=neutral, processorArchitecture=MSIL">
@@ -407,6 +407,7 @@
     <Compile Include="Menus\BasicCrudItems\IBasicCrudView.cs" />
     <Compile Include="Menus\InputItems\DeleteItemUsingInputProcessor.cs" />
     <Compile Include="Menus\InputItems\InputProcessingMethods.cs" />
+    <Compile Include="Menus\InputItems\LabelInput.cs" />
     <Compile Include="Menus\InputItems\ModifyItemUsingInputProcessor.cs" />
     <Compile Include="Menus\LogoutEvent.cs" />
     <Compile Include="Menus\ViewItems\GetDataSettings.cs" />

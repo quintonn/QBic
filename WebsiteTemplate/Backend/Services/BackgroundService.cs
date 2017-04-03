@@ -29,10 +29,10 @@ namespace WebsiteTemplate.Backend.Services
             if (SystemUser == null)
             {
                 Setup();
-                AddBackgroundError("Initialization", new Exception("Test"));
+                //AddBackgroundError("Initialization", new Exception("Test"));
             }
             
-            AddBackgroundInformation("Initialization", "Background Service Public Constructor");
+            //AddBackgroundInformation("Initialization", "Background Service Public Constructor");
         }
 
         private async void Setup()
@@ -136,6 +136,7 @@ namespace WebsiteTemplate.Backend.Services
             catch (Exception error)
             {
                 AddBackgroundError("Doing BackgroundWork", error);
+                BackgroundWork(jobObject);
             }
         }
 

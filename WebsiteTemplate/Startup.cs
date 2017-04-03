@@ -43,7 +43,7 @@ namespace WebsiteTemplate
         public void Register(HttpConfiguration config, IAppBuilder app)
         {
             //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
-            config.MapHttpAttributeRoutes();
+            //config.MapHttpAttributeRoutes();
 
             Container = new UnityContainer();
             Container.LoadConfiguration();

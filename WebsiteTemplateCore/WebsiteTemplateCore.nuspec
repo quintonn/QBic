@@ -16,7 +16,7 @@
 		<tags>Website Template Core</tags>
 		<dependencies> 
 			<group>
-				<dependency id="BasicAuthentication" version="0.0.6131.32769"  />
+				<dependency id="BasicAuthentication" version="1.0.0"  />
 				<dependency id="CommonServiceLocator" version="1.3"  />
 				<dependency id="DocumentGenerator" version="0.0.6096.22270"  />
 				<dependency id="FluentNHibernate" version="2.0.3.0"  />

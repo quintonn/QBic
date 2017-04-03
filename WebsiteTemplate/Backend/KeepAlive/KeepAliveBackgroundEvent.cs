@@ -29,7 +29,8 @@ namespace WebsiteTemplate.Backend.KeepAlive
 
         public override DateTime CalculateNextRunTime(DateTime? lastRunTime)
         {
-            return DateTime.Now.AddMinutes(2);
+            //return DateTime.Now.AddMinutes(2);
+            return DateTime.Now.AddMinutes(60);
         }
 
         public override bool RunImmediatelyFirstTime

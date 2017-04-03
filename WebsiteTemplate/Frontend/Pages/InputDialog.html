@@ -37,7 +37,7 @@
 
 <script type="text/html" id="inputRowTemplate">
     <div data-bind="visible: visible" class="w3-row">
-        <!-- ko if: inputType != 8 && inputType != 5 -->
+        <!-- ko if: inputType != 8 && inputType != 5 && inputType != 11 -->
         <div class="w3-col " style="width:200px"><b class="w3-label w3-small" data-bind="text:inputLabel"></b></div>
         <!-- /ko -->
 
@@ -119,7 +119,12 @@
                 <input id="spinner1" type="text" class="w3-input" data-bind="spinner: { value: inputValue, step: Step }, hasFocus: $index() == 0, event: { change: propertyChanged}" placeholder="Enter numeric value..." style="margin:0" />
                 <label class="w3-label w3-padding-small" data-bind="text: inputValue() == null ? 'Invalid number entered' : '', css : inputValue() == null ? 'w3-red' : '' "></label>
                 <!-- /ko -->
-            
         </div>
+
+        <!-- ko if: inputType == 11 -->
+        <div class="w3-col w3-center">
+            <b class="w3-label" data-bind="text:inputLabel"></b>
+        </div>
+        <!-- /ko -->
     </div>    
 </script>
