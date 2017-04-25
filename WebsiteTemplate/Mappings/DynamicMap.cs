@@ -30,7 +30,7 @@ namespace WebsiteTemplate.Mappings
 
 
             var properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                                                    .Where(p => p.GetMethod.IsVirtual);
+                                                    .Where(p => p.GetMethod.IsVirtual && !p.GetMethod.IsAbstract);
 
             var primitiveColumns = properties.Where(p => IsPrimitive(p.PropertyType) == true).Select(p => p.Name).ToList();
             var nonPrimitiveColumns = properties.Where(p => IsPrimitive(p.PropertyType) == false && IsGenericList(p.PropertyType) == false).ToList();
