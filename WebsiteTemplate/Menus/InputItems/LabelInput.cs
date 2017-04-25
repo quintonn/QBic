@@ -4,8 +4,8 @@ namespace WebsiteTemplate.Menus.InputItems
 {
     public class LabelInput : InputField
     {
-        public LabelInput(string name, string label, string tabName = null)
-            : base(name, label, label, tabName, false)
+        public LabelInput(string name, string label, string value, string tabName = null)
+            : base(name, label, value, tabName, false)
         {
         }
 

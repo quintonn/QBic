@@ -100,7 +100,7 @@
                             inp.setInputValue(inpValue);
                         });
                         break;
-                    case 11: // VIew File
+                    case 11: // View File
                         return processing.showOrDownloadFile(item);
                     case 12: //UpdateInput
                         var inputName = item.InputName;
