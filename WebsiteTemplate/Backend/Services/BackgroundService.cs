@@ -1,9 +1,11 @@
 ﻿using BasicAuthentication.Users;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
 
@@ -135,7 +137,12 @@ namespace WebsiteTemplate.Backend.Services
             }
             catch (Exception error)
             {
+                if (error is ThreadAbortException)
+                {
+                    throw;
+                }
                 AddBackgroundError("Doing BackgroundWork", error);
+                Thread.Sleep(TimeSpan.FromSeconds(1));
                 BackgroundWork(jobObject);
             }
         }
@@ -164,13 +171,36 @@ namespace WebsiteTemplate.Backend.Services
             AddBackgroundInformation("Background jobs", "Starting background jobs 10");
         }
 
-        internal void AddBackgroundError(string action, Exception error)
+        private void WrappedBackgroundWork(object parameter)
+        {
+            try
+            {
+                BackgroundWork(parameter);
+            }
+            catch (ThreadAbortException exception)
+            {
+                AddBackgroundError("Thread aborted", exception, false);
+            }
+        }
+
+        internal void AddBackgroundError(string action, Exception error, bool logInDatabase = true)
         {
             var item = new BackgroundInformation(action, String.Format("Error:\n{0}\n{1}", error.Message, error.StackTrace));
-            using (var session = DataService.OpenSession())
+            var currentDirectory = HttpRuntime.AppDomainAppPath;
+            var logs = currentDirectory + "\\Logs\\";
+            if (!Directory.Exists(logs))
             {
-                session.Save(item);
-                session.Flush();
+                Directory.CreateDirectory(logs);
+            }
+            var path = logs + action + "_" + Guid.NewGuid().ToString();
+            File.WriteAllText(path, item.Information + "\n" + error.StackTrace);
+            if (logInDatabase == true)
+            {
+                using (var session = DataService.OpenSession())
+                {
+                    session.Save(item);
+                    session.Flush();
+                }
             }
         }
 
