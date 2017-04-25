@@ -59,6 +59,12 @@ namespace WebsiteTemplate.Menus
 
         }
 
+        public UserConfirmation(string confirmationMessage, int confirmationAction)
+            : this(confirmationMessage, "Yes", "No")
+        {
+            OnConfirmationUIAction = confirmationAction;
+        }
+
         public UserConfirmation(string confirmationMessage, string confirmationButtonText)
             :this(confirmationMessage, confirmationButtonText, "No")
         {
