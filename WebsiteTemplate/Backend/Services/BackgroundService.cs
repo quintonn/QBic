@@ -1,10 +1,8 @@
-﻿using BasicAuthentication.Users;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Web;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
@@ -17,10 +15,12 @@ namespace WebsiteTemplate.Backend.Services
         private UserContext UserContext { get; set; }
 
         private static object Locker = new object();
+        private static bool Started { get; set; }
 
         static BackgroundService()
         {
             BackgroundThreads = new List<Thread>();
+            Started = false;
         }
 
         public BackgroundService(DataService dataService, UserContext userContext)
@@ -28,7 +28,7 @@ namespace WebsiteTemplate.Backend.Services
             DataService = dataService;
             UserContext = userContext;
 
-            if (SystemUser == null)
+            if (Started == false)
             {
                 Setup();
                 //AddBackgroundError("Initialization", new Exception("Test"));
@@ -40,6 +40,7 @@ namespace WebsiteTemplate.Backend.Services
         private async void Setup()
         {
             SystemUser = await UserContext.FindUserByNameAsync("System");
+            Started = true;
         }
 
         private static List<Thread> BackgroundThreads { get; set; }
@@ -125,9 +126,10 @@ namespace WebsiteTemplate.Backend.Services
                     }
                     catch (Exception e)
                     {
-                        result.Status = "Error";
-                        result.ExecutionInformation = e.Message + "\n" + e.StackTrace;
-                        AddBackgroundError(job.Event.Description, e);
+                        //result.Status = "Error";
+                        //result.ExecutionInformation = e.Message + "\n" + e.StackTrace;
+                        //AddBackgroundError(job.Event.Description, e);
+                        throw;
                         //TODO: Log this in file and in a way to display on screen. Maybe i can  do both in 1
                     }
                     AddBackgroundInformation(job.Event.Description, String.Format("Ran background process {0} : {1} -> {2}", job.Event.Description, result.Status, result.ExecutionInformation));
@@ -137,13 +139,25 @@ namespace WebsiteTemplate.Backend.Services
             }
             catch (Exception error)
             {
-                if (error is ThreadAbortException)
-                {
-                    throw;
-                }
                 AddBackgroundError("Doing BackgroundWork", error);
-                Thread.Sleep(TimeSpan.FromSeconds(1));
-                BackgroundWork(jobObject);
+
+                ///if (error is ThreadAbortException)
+                {
+                    //Thread.CurrentThread.Abort();
+                    var index = BackgroundThreads.IndexOf(Thread.CurrentThread);
+                    if (index > -1)
+                    {
+                        var backgroundJob = BackgroundJobs[index];
+                        var thread = new Thread(new ParameterizedThreadStart(BackgroundWork));
+                        BackgroundThreads.Add(thread);
+                        thread.Start(backgroundJob);
+
+                        BackgroundThreads[index] = thread;
+                    }
+                }
+                
+                //Thread.Sleep(TimeSpan.FromSeconds(1));
+                //BackgroundWork(jobObject);
             }
         }
 
@@ -171,17 +185,17 @@ namespace WebsiteTemplate.Backend.Services
             AddBackgroundInformation("Background jobs", "Starting background jobs 10");
         }
 
-        private void WrappedBackgroundWork(object parameter)
-        {
-            try
-            {
-                BackgroundWork(parameter);
-            }
-            catch (ThreadAbortException exception)
-            {
-                AddBackgroundError("Thread aborted", exception, false);
-            }
-        }
+        //private void WrappedBackgroundWork(object parameter)
+        //{
+        //    try
+        //    {
+        //        BackgroundWork(parameter);
+        //    }
+        //    catch (ThreadAbortException exception)
+        //    {
+        //        AddBackgroundError("Thread aborted", exception, false);
+        //    }
+        //}
 
         internal void AddBackgroundError(string action, Exception error, bool logInDatabase = true)
         {
@@ -221,6 +235,7 @@ namespace WebsiteTemplate.Backend.Services
         {
             try
             {
+                Started = false;
                 if (BackgroundThreads != null)
                 {
                     foreach (var t in BackgroundThreads)

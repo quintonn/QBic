@@ -327,6 +327,7 @@
     <Compile Include="Backend\Backups\CreateBackup.cs" />
     <Compile Include="Backend\Backups\RestoreBackup.cs" />
     <Compile Include="Backend\KeepAlive\KeepAliveBackgroundEvent.cs" />
+    <Compile Include="Backend\KeepAlive\TestBackgroundError.cs" />
     <Compile Include="Backend\Menus\DecrementMenuOrder.cs" />
     <Compile Include="Backend\Menus\IncrementMenuOrder.cs" />
     <Compile Include="Backend\PasswordReset\ResetPassword.cs" />
@@ -344,6 +345,8 @@
     <Compile Include="Backend\BackgroundInfo\ClearBackgroundErrors.cs" />
     <Compile Include="Backend\TestItems\CauseChildMenuItem.cs" />
     <Compile Include="Backend\TestItems\TestBackupProcessor.cs" />
+    <Compile Include="Backend\TestItems\TestClassA.cs" />
+    <Compile Include="Backend\TestItems\TestClassB.cs" />
     <Compile Include="Backend\TestItems\TestInputView.cs" />
     <Compile Include="Backend\TestItems\TestInputViewInput.cs" />
     <Compile Include="Backend\TestItems\TestLargeFile.cs" />
@@ -410,6 +413,9 @@
     <Compile Include="Menus\InputItems\LabelInput.cs" />
     <Compile Include="Menus\InputItems\ModifyItemUsingInputProcessor.cs" />
     <Compile Include="Menus\LogoutEvent.cs" />
+    <Compile Include="Menus\ViewItems\CoreItems\CoreAction.cs" />
+    <Compile Include="Menus\ViewItems\CoreItems\CoreView.cs" />
+    <Compile Include="Menus\ViewItems\CoreItems\CoreModify.cs" />
     <Compile Include="Menus\ViewItems\GetDataSettings.cs" />
     <Compile Include="Menus\ViewItems\ShowDetailView.cs" />
     <Compile Include="Menus\ViewItems\ShowListView.cs" />
@@ -425,6 +431,7 @@
     <Compile Include="SiteSpecific\DefaultsForTest\DefaultUserManager.cs" />
     <Compile Include="Utilities\ApplicationStartup.cs" />
     <Compile Include="Utilities\Encryption.cs" />
+    <Compile Include="Utilities\GlobalExceptionMiddleware.cs" />
     <Compile Include="Utilities\JsonArray.cs" />
     <Compile Include="Utilities\JsonHelper.cs" />
     <Compile Include="Utilities\UnityDependencyResolver.cs" />

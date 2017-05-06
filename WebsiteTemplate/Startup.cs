@@ -42,6 +42,8 @@ namespace WebsiteTemplate
 
         public void Register(HttpConfiguration config, IAppBuilder app)
         {
+            app.Use<GlobalExceptionMiddleware>("X", "Q", 10);
+
             //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
             //config.MapHttpAttributeRoutes();
 

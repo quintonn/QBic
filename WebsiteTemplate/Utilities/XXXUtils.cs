@@ -26,6 +26,19 @@ namespace WebsiteTemplate.Utilities
             return Encoding.UTF8.GetString(bytes);
         }
 
+        public static bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         [DllImport("urlmon.dll", CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = false)]
         static extern int FindMimeFromData(IntPtr pBC,
                                             [MarshalAs(UnmanagedType.LPWStr)] string pwzUrl,

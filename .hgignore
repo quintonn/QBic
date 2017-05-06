@@ -14,3 +14,4 @@ hg/*
 WebsiteTemplateCore/FrontEnd/*
 WebsiteTemplateCore/Index.html
 WebsiteTemplate/Temp/*
+WebsiteTemplate/Logs/*
