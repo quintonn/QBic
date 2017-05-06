@@ -31,7 +31,7 @@ namespace WebsiteTemplate.Backend.KeepAlive
         public override DateTime CalculateNextRunTime(DateTime? lastRunTime)
         {
             //return DateTime.Now.AddMinutes(0.5);
-            return DateTime.Now.AddDays(100);
+            return DateTime.Now.AddDays(10);
         }
 
         public override void DoWork()

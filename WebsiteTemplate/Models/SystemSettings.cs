@@ -17,5 +17,10 @@
         public virtual string DateFormat { get; set; }
 
         public virtual string WebsiteBaseUrl { get; set; }
+
+        public SystemSettings()
+        {
+            DateFormat = "dd-MM-yyyy";
+        }
     }
 }

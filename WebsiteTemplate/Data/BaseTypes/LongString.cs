@@ -118,7 +118,7 @@ namespace WebsiteTemplate.Data.BaseTypes
             }
             else
             {
-                var newValue = (LongString)value;
+                var newValue = new LongString(value as string);
                 ((IDataParameter)cmd.Parameters[index]).Value = (string)newValue;
             }
         }
