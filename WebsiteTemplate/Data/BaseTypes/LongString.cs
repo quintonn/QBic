@@ -1,10 +1,9 @@
-﻿using NHibernate.UserTypes;
-using System;
-using NHibernate.SqlTypes;
-using System.Data;
+﻿using Newtonsoft.Json;
 using NHibernate;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using NHibernate.SqlTypes;
+using NHibernate.UserTypes;
+using System;
+using System.Data;
 
 namespace WebsiteTemplate.Data.BaseTypes
 {
@@ -118,8 +117,7 @@ namespace WebsiteTemplate.Data.BaseTypes
             }
             else
             {
-                var newValue = new LongString(value as string);
-                ((IDataParameter)cmd.Parameters[index]).Value = (string)newValue;
+                ((IDataParameter)cmd.Parameters[index]).Value = value?.ToString();
             }
         }
 

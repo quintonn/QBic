@@ -185,18 +185,6 @@ namespace WebsiteTemplate.Backend.Services
             AddBackgroundInformation("Background jobs", "Starting background jobs 10");
         }
 
-        //private void WrappedBackgroundWork(object parameter)
-        //{
-        //    try
-        //    {
-        //        BackgroundWork(parameter);
-        //    }
-        //    catch (ThreadAbortException exception)
-        //    {
-        //        AddBackgroundError("Thread aborted", exception, false);
-        //    }
-        //}
-
         internal void AddBackgroundError(string action, Exception error, bool logInDatabase = true)
         {
             var item = new BackgroundInformation(action, String.Format("Error:\n{0}\n{1}", error.Message, error.StackTrace));
