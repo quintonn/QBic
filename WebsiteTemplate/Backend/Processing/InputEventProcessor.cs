@@ -48,13 +48,9 @@ namespace WebsiteTemplate.Backend.Processing
 
             var processedFormData = new Dictionary<string, object>();
 
-            await eventItem.Initialize(formData); //TODO: Do i need to call this here???? WHY!! If it's a must, maybe i should pass a flag that it's not the real initialize.
+            //await eventItem.Initialize(formData); //TODO: Do i need to call this here???? WHY!! If it's a must, maybe i should pass a flag that it's not the real initialize.
             foreach (var inputField in eventItem.GetInputFields())
             {
-                if (inputField is FileInput)
-                {
-                    Console.WriteLine("XX");
-                }
                 var value = inputField.GetValue(jsonData.GetValue<JToken>(inputField.InputName));
                 processedFormData.Add(inputField.InputName, value);
             }
