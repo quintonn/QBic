@@ -73,6 +73,7 @@ namespace WebsiteTemplate.Mappings
 
                 References(tmp)
                            .Not.Nullable()
+                           .NotFound.Ignore()
                            .LazyLoad(Laziness.False);
             }
         }

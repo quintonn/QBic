@@ -8,10 +8,13 @@ namespace WebsiteTemplate.Mappings
     {
         public AuditEventMapping()
         {
-            Table("AuditEvents");
+            Table("AuditEvent");
 
             References(x => x.User).Column("IdUser")
-                           .Not.Nullable()
+                           //.Not.Nullable()
+                           //.Cascade.Delete()
+                           .Nullable()
+                           .NotFound.Ignore()
                            .LazyLoad(Laziness.False);
 
             Map(x => x.AuditEventDateTimeUTC).Not.Nullable();

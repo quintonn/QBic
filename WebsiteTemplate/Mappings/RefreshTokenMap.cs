@@ -8,7 +8,7 @@ namespace WebsiteTemplate.Mappings
     {
         public RefreshTokenMap()
         {
-            Table("RefreshTokens");
+            Table("RefreshToken");
 
             Id(x => x.Id).GeneratedBy.Assigned();
 

@@ -1,6 +1,5 @@
 ﻿using FluentNHibernate.Mapping;
 using WebsiteTemplate.Models;
-using WebsiteTemplate.SiteSpecific;
 
 namespace WebsiteTemplate.Mappings
 {
@@ -8,14 +7,16 @@ namespace WebsiteTemplate.Mappings
     {
         public UserRoleAssociationMap()
         {
-            Table("UserRoleAssociations");
+            Table("UserRoleAssociation");
 
             References(x => x.User).Column("IdUser")
                            .Not.Nullable()
+                           .NotFound.Ignore()
                            .LazyLoad(Laziness.False);
 
             References(x => x.UserRole).Column("IdUserRole")
                            .Not.Nullable()
+                           .NotFound.Ignore()
                            .LazyLoad(Laziness.False);
             //Map(x => x.UserRole)
             //  .CustomType<UserRoleEnum>()

@@ -54,7 +54,7 @@ namespace WebsiteTemplate.Backend.Services
                 SystemTypes = new Dictionary<int, Type>();
                 var cnt = 1;
 
-                var types = XXXUtils.GetAllBaseClassTypes();
+                var types = XXXUtils.GetAllBaseClassTypes(appSettings.GetApplicationStartupType);
                 foreach (var type in types)
                 {
                     SystemTypes.Add(cnt++, type);
@@ -128,26 +128,26 @@ namespace WebsiteTemplate.Backend.Services
 
         public byte[] CreateBackupOfAllData(BackupType backupType = BackupType.Unknown)
         {
-            var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
-            if (connectionString.Contains("##CurrentDirectory##"))
-            {
-                var currentDirectory = HttpRuntime.AppDomainAppPath;
-                var path = connectionString.Split(";".ToCharArray()).First();
-                path = path.Split("\\".ToCharArray()).Last();
-                var filePath = currentDirectory + "\\Data\\" + path;
-                DataStore.KillConnection();
+            //var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
+            //if (connectionString.Contains("##CurrentDirectory##"))
+            //{
+            //    var currentDirectory = HttpRuntime.AppDomainAppPath;
+            //    var path = connectionString.Split(";".ToCharArray()).First();
+            //    path = path.Split("\\".ToCharArray()).Last();
+            //    var filePath = currentDirectory + "\\Data\\" + path;
+            //    DataStore.KillConnection();
 
-                var data = File.ReadAllBytes(filePath);
+            //    var data = File.ReadAllBytes(filePath);
 
-                var bytes = CompressionHelper.DeflateByte(data, Ionic.Zlib.CompressionLevel.BestCompression);
-                return bytes;
-            }
-            else  if (backupType == BackupType.SqlFullBackup)
-            {
-                var bytes = CreateSqlBackup(connectionString);
-                bytes = CompressionHelper.DeflateByte(bytes, Ionic.Zlib.CompressionLevel.BestCompression);
-                return bytes;
-            }
+            //    var bytes = CompressionHelper.DeflateByte(data, Ionic.Zlib.CompressionLevel.BestCompression);
+            //    return bytes;
+            //}
+            //else  if (backupType == BackupType.SqlFullBackup)
+            //{
+            //    var bytes = CreateSqlBackup(connectionString);
+            //    bytes = CompressionHelper.DeflateByte(bytes, Ionic.Zlib.CompressionLevel.BestCompression);
+            //    return bytes;
+            //}
 
             #region JSON Backup
             using (var session = DataService.OpenSession())
@@ -339,14 +339,14 @@ namespace WebsiteTemplate.Backend.Services
                     foreach (var prop in sameTypeProperties)
                     {
                         var itemsToDelete = items.Where(i => ShouldDeleteItem(i, prop, items, deletedItems) == true).ToList();
-                        DeleteItems(itemsToDelete, session);
+                        DeleteItems(itemsToDelete, type, session);
                         deletedItems.AddRange(itemsToDelete.Select(i => i.Id));
                     }
                 }
             }
             else
             {
-                DeleteItems(items, session);
+                DeleteItems(items, type, session);
             }
         }
 
@@ -461,17 +461,30 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        private void DeleteItems(IList<BaseClass> items, ISession session, int count = 10)
+        private void DeleteItems<T>(IList<T> items, Type dataType, ISession session, int count = 10) where T : BaseClass
         {
-            var failedItems = new List<BaseClass>();
-            //using (var session = factory.OpenStatelessSession())
+            var tableName = DataStore.GetInstance(null).GetTableName(dataType);
+            if (tableName == "Users")
             {
-                session.SetBatchSize(items.Count);
-                foreach (var item in items)
-                {
-                    session.Delete(item);
-                }
+                tableName = "User";
             }
+            if (items.Count > 0)
+            {
+                session.Delete(String.Format("From {0} Tbl", tableName));
+            }
+            //else if (items.Count > 0)
+            //{
+            //    //session.SetBatchSize(items.Count);
+            //    var cnt = 0;
+            //    foreach (var item in items)
+            //    {
+            //        session.Delete(item);
+            //        if (cnt++ % 10 == 0)
+            //        {
+            //            session.Flush();
+            //        }
+            //    }
+            //}
         }
 
         public bool RestoreBackupOfAllData(byte[] data, string connectionString)
@@ -490,6 +503,7 @@ namespace WebsiteTemplate.Backend.Services
             {
                 DynamicClass.SetIdsToBeAssigned = true;
                 var store = DataStore.GetInstance(null);
+                store.CloseSession();
                 ////var connectionString = "Integrated Security=SSPI;Persist Security Info=False;Data Source=localhost;Initial Catalog=WebsiteTemplate";
                 var config = store.CreateNewConfigurationUsingConnectionString(connectionString);
                 var factory = config.BuildSessionFactory();
@@ -503,6 +517,7 @@ namespace WebsiteTemplate.Backend.Services
 
                 var ids = SystemTypes.Keys.ToList().OrderBy(i => i).ToList();
 
+                var tmp = int.Parse("10");
 
                 //using (var session = DataService.OpenSession())
                 using (var session = factory.OpenSession())
@@ -510,6 +525,12 @@ namespace WebsiteTemplate.Backend.Services
                     foreach (var id in ids)
                     {
                         var type = SystemTypes[id];
+
+                        if (tmp == 100)
+                        {
+                            continue;
+                        }
+                        
                         var sameTypeProperties = type.GetProperties().Where(p => p.PropertyType == type).ToList();
                         if (sameTypeProperties.Count > 0)
                         {
@@ -531,6 +552,7 @@ namespace WebsiteTemplate.Backend.Services
                             var itemsToAdd = items.Where(i => i.GetType() == type).ToList();
                             InsertItems(itemsToAdd, factory, type);
                         }
+                        session.Flush();
                     }
                     //session.Flush();
                 }
@@ -700,9 +722,11 @@ namespace WebsiteTemplate.Backend.Services
             var failedItems = new List<BaseClass>();
             var longStringProperties = type.GetProperties().Where(p => p.PropertyType == typeof(LongString)).ToList();
             var hasLongStringProperty = longStringProperties.Count() > 0;
-            using (var session = factory.OpenStatelessSession())
+            //using (var session = factory.OpenStatelessSession())
+            using (var session = factory.OpenSession())
             {
-                session.SetBatchSize(items.Count);
+                //session.SetBatchSize(items.Count);
+                var cnt = 0;
                 foreach (var item in items)
                 {
                     if (hasLongStringProperty)
@@ -710,14 +734,20 @@ namespace WebsiteTemplate.Backend.Services
                         foreach (var prop in longStringProperties)
                         {
                             var value = prop.GetValue(item);
-                            if (value == null || (value as LongString).Base ==  null)
+                            if (value == null || (value as LongString).Base == null)
                             {
                                 prop.SetValue(item, new LongString(String.Empty));
                             }
                         }
                     }
-                    session.Insert(item);
+                    //session.Insert(item);
+                    session.Save(item);
+                    if (cnt++ % 10 == 0)
+                    {
+                        session.Flush();
+                    }
                 }
+                session.Flush();
             }
         }
     }

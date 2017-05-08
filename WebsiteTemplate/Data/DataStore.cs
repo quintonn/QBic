@@ -4,6 +4,7 @@ using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SQLite;
@@ -47,6 +48,24 @@ namespace WebsiteTemplate.Data
         private static ISessionFactory Store;
         private static NHibernate.Cfg.Configuration Configuration;
 
+        public string GetTableName(Type type)
+        {
+            var tableName = Configuration.GetClassMapping(type).Table.Name;// .GetClassMetadata(typeof(T)) as NHibernate.Persister.Entity.AbstractEntityPersister;
+            return tableName;
+            //string table = metadata.TableName;
+
+            //using (ISession session = sessionFactory.OpenSession())
+            //{
+            //    using (var transaction = session.BeginTransaction())
+            //    {
+            //        string deleteAll = string.Format("DELETE FROM \"{0}\"", table);
+            //        session.CreateSQLQuery(deleteAll).ExecuteUpdate();
+
+            //        transaction.Commit();
+            //    }
+            //}
+        }
+
         //static DataStore()
         private void init()
         {
@@ -86,13 +105,14 @@ namespace WebsiteTemplate.Data
                 var currentDirectory = HttpRuntime.AppDomainAppPath;
                 connectionString = connectionString.Replace("##CurrentDirectory##", currentDirectory); // for my sqlite connectiontion string
 
-                configurer = FluentNHibernate.Cfg.Db.SQLiteConfiguration.Standard.ConnectionString(connectionString);
+                configurer = FluentNHibernate.Cfg.Db.SQLiteConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
                 DataStore.SetCustomSqlTypes = false;
             }
             else
             {
-                configurer = FluentNHibernate.Cfg.Db.MsSqlConfiguration.MsSql2012.ConnectionString(connectionString);
+                configurer = FluentNHibernate.Cfg.Db.MsSqlConfiguration.MsSql2012.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
             }
+
 
             var config = Fluently.Configure()
               .Database(configurer)
@@ -103,6 +123,11 @@ namespace WebsiteTemplate.Data
             {
                 //x.SetInterceptor(new SqlStatementInterceptor());
                 x.Properties.Add("use_proxy_validator", "false"); // to ignore public/internal fields on model classes
+                //x.DataBaseIntegration(prop =>
+                //{
+                //    prop.BatchSize = 50;
+                //    prop.Batcher<NHibernate.AdoNet.MySqlClientBatchingBatcherFactory>();
+                //});
             });
             var configuration = config.BuildConfiguration();
 
@@ -146,6 +171,11 @@ namespace WebsiteTemplate.Data
                 }
             }
             return Store.OpenSession(Connection);
+        }
+
+        public void CloseSession()
+        {
+            KillConnection();
         }
     }
 }

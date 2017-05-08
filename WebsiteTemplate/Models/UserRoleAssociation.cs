@@ -1,6 +1,4 @@
-﻿using WebsiteTemplate.SiteSpecific;
-
-namespace WebsiteTemplate.Models
+﻿namespace WebsiteTemplate.Models
 {
     public class UserRoleAssociation : BaseClass
     {

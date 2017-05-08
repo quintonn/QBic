@@ -8,7 +8,7 @@ namespace WebsiteTemplate.Mappings
     {
         public MenuMap()
         {
-            Table("Menus");
+            Table("Menu");
 
             References(x => x.ParentMenu).Column("IdParentMenu")
                            .Nullable()

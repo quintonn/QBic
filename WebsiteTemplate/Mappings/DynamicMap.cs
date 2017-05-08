@@ -84,6 +84,7 @@ namespace WebsiteTemplate.Mappings
                            //.Not.Nullable()
                            .Nullable()
                            .Cascade.None()
+                           .NotFound.Ignore()
                            .LazyLoad(Laziness.False);
             }
 
