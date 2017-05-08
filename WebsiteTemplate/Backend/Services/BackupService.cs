@@ -38,6 +38,7 @@ namespace WebsiteTemplate.Backend.Services
     public class BackupService
     {
         private static Dictionary<int, Type> SystemTypes { get; set; }
+        public static bool BusyWithBackups { get; set; } = false;
 
         private DataService DataService { get; set; }
         private ApplicationSettingsCore AppSettings { get; set; }
@@ -126,7 +127,7 @@ namespace WebsiteTemplate.Backend.Services
             return items;
         }
 
-        public byte[] CreateBackupOfAllData(BackupType backupType = BackupType.Unknown)
+        public byte[] CreateBackupOfAllData()
         {
             //var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
             //if (connectionString.Contains("##CurrentDirectory##"))

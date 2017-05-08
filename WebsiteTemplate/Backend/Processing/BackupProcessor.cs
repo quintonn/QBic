@@ -29,33 +29,12 @@ namespace WebsiteTemplate.Backend.Processing
             //var json = JsonHelper.Parse(jsonString);
 
             var requestBackupTypeString = System.Web.HttpContext.Current.Request.Headers[BackupService.BACKUP_HEADER_KEY];
-            var requestBackupType = BackupType.Unknown;
-            if (!String.IsNullOrWhiteSpace(requestBackupTypeString))
-            {
-                requestBackupType = (BackupType)Enum.Parse(typeof(BackupType), requestBackupTypeString);
-            }
-
+            
             //Todo: decrypt data and check for a certain value to confirm this request is legit
 
-            var result = BackupService.CreateBackupOfAllData(requestBackupType);
+            var result = BackupService.CreateBackupOfAllData();
 
-            var backupType = BackupType.Unknown;
-            var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
-
-            if (connectionString.Contains("##CurrentDirectory##"))
-            {
-                backupType = BackupType.SQLiteFile;
-            }
-            else if (requestBackupType == BackupType.SqlFullBackup)
-            {
-                backupType = requestBackupType;
-            }
-            else
-            {
-                backupType = BackupType.JsonData;
-            }
-
-            System.Web.HttpContext.Current.Response.Headers.Add(BackupService.BACKUP_HEADER_KEY, backupType.ToString());
+            //System.Web.HttpContext.Current.Response.Headers.Add(BackupService.BACKUP_HEADER_KEY, backupType.ToString());
 
             var fileInfo = new FileInfo();
             fileInfo.Data = result;

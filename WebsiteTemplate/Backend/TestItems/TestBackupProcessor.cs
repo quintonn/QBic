@@ -57,12 +57,8 @@ namespace WebsiteTemplate.Backend.TestItems
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                client.DefaultRequestHeaders.Add(BackupService.BACKUP_HEADER_KEY, BackupType.JsonData.ToString());
-
                 var resp = await client.PostAsJsonAsync(url, bytes);
                 var backupTypeString = resp.Headers.GetValues(BackupService.BACKUP_HEADER_KEY).FirstOrDefault();
-                var backupType = (BackupType)Enum.Parse(typeof(BackupType), backupTypeString);
-
                 //var byteContent = await resp.Content.ReadAsByteArrayAsync();
                 //var byteString = XXXUtils.GetString(byteContent);
 
@@ -73,38 +69,13 @@ namespace WebsiteTemplate.Backend.TestItems
                 var data = Convert.FromBase64String(stringContent);
                 var responseData = CompressionHelper.InflateByte(data);
 
-                switch (backupType)
-                {
-                    case BackupType.JsonData:
-                        var itemsString = XXXUtils.GetString(responseData);
+                var itemsString = XXXUtils.GetString(responseData);
 
-                        itemsString = "[" + itemsString + "]";
-                        itemsString = itemsString.Replace("}{", "},{");
-                        var itemsList = JsonHelper.DeserializeObject<List<BaseClass>[]>(itemsString, true);
-                        var items = itemsList.SelectMany(i => i).ToList();
-                        Console.WriteLine(items.Count);
-                        break;
-                    case BackupType.SQLiteFile:
-                        //var currentDirectory = HttpRuntime.AppDomainAppPath;
-                        //var filePath = currentDirectory + "\\Backups\\????.db";
-                        //File.WriteAllBytes(filePath, responseData);
-
-                        // Don't do anything, just save the file somewhere
-                        break;
-                    case BackupType.SqlFullBackup:
-                        //var currentDirectory = HttpRuntime.AppDomainAppPath;
-                        //var filePath = currentDirectory + "\\Backups\\????.bak";
-                        //File.WriteAllBytes(filePath, responseData);
-                        // Don't do anything, just save the file somewhere
-                        break;
-                    default:
-                        return new List<IEvent>()
-                        {
-                            new ShowMessage("Unknown backup type detected: " + backupType.ToString())
-                        };
-                }
-
-                
+                itemsString = "[" + itemsString + "]";
+                itemsString = itemsString.Replace("}{", "},{");
+                var itemsList = JsonHelper.DeserializeObject<List<BaseClass>[]>(itemsString, true);
+                var items = itemsList.SelectMany(i => i).ToList();
+                Console.WriteLine(items.Count);
             }
 
             return new List<IEvent>()

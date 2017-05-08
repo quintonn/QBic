@@ -332,7 +332,6 @@
     <Compile Include="Backend\Menus\IncrementMenuOrder.cs" />
     <Compile Include="Backend\PasswordReset\ResetPassword.cs" />
     <Compile Include="Backend\Processing\BackupProcessor.cs" />
-    <Compile Include="Backend\Processing\BackupType.cs" />
     <Compile Include="Backend\Processing\InitializationProcessor.cs" />
     <Compile Include="Backend\Processing\InputProcessing\ProcessingResult.cs" />
     <Compile Include="Backend\Processing\PingProcessor.cs" />

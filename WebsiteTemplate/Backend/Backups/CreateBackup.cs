@@ -44,23 +44,8 @@ namespace WebsiteTemplate.Backend.Backups
         {
             var result = new FileInfo();
             var x = 0;
-            var backupType = Processing.BackupType.Unknown;
-            try
-            {
-                var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
-                var conString = new SqlConnectionStringBuilder(connectionString);
-                //backupType = Processing.BackupType.SqlFullBackup;
-                backupType = Processing.BackupType.JsonData;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            if (x == 10)
-            {
-                backupType = Processing.BackupType.SqlFullBackup;
-            }
-            result.Data = BackupService.CreateBackupOfAllData(backupType);
+            
+            result.Data = BackupService.CreateBackupOfAllData();
 
             //var tmpBytes = Controllers.CompressionHelper.InflateByte(result.Data);
             //var tmpString = Utilities.XXXUtils.GetString(tmpBytes);

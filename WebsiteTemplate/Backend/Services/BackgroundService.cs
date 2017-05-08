@@ -31,10 +31,7 @@ namespace WebsiteTemplate.Backend.Services
             if (Started == false)
             {
                 Setup();
-                //AddBackgroundError("Initialization", new Exception("Test"));
             }
-            
-            //AddBackgroundInformation("Initialization", "Background Service Public Constructor");
         }
 
         private async void Setup()
@@ -121,6 +118,10 @@ namespace WebsiteTemplate.Backend.Services
                     job.LastRunTime = DateTime.Now;
                     try
                     {
+                        if (BackupService.BusyWithBackups == true)
+                        {
+                            continue;
+                        }
                         job.Event.DoWork();
                         result.Status = "Success";
                     }
@@ -187,6 +188,10 @@ namespace WebsiteTemplate.Backend.Services
 
         internal void AddBackgroundError(string action, Exception error, bool logInDatabase = true)
         {
+            if (BackupService.BusyWithBackups == true)
+            {
+                return;
+            }
             var item = new BackgroundInformation(action, String.Format("Error:\n{0}\n{1}", error.Message, error.StackTrace));
             var currentDirectory = HttpRuntime.AppDomainAppPath;
             var logs = currentDirectory + "\\Logs\\";
@@ -208,6 +213,10 @@ namespace WebsiteTemplate.Backend.Services
 
         internal void AddBackgroundInformation(string task, string statusInfo)
         {
+            if (BackupService.BusyWithBackups == true)
+            {
+                return;
+            }
             lock (Locker)
             {
                 var item = new BackgroundInformation(task, statusInfo);

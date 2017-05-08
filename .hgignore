@@ -15,3 +15,4 @@ WebsiteTemplateCore/FrontEnd/*
 WebsiteTemplateCore/Index.html
 WebsiteTemplate/Temp/*
 WebsiteTemplate/Logs/*
+WebsiteTemplate/Data/*.db

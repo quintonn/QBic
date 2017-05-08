@@ -33,10 +33,6 @@ namespace WebsiteTemplate.Backend.Backups
         {
             var results = new List<InputField>();
             results.Add(new FileInput("BackupFile", "Backup File", mandatory: true));
-            //results.Add(new EnumComboBoxInput<BackupType>("BackupType", "Backup Type", false, x => x.Key != BackupType.Unknown, x => x.Value)
-            //{
-            //    Mandatory = true
-            //});
             return results;
         }
 
@@ -65,31 +61,26 @@ namespace WebsiteTemplate.Backend.Backups
             else if (actionNumber == 0)
             {
                 var backupFile = GetValue<FileInfo>("BackupFile");
-                //var backupType = GetValue<BackupType>("BackupType");
-                var backupType = BackupType.JsonData;
 
                 var mainConnectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
                 var success = false;
-                if (backupType == BackupType.JsonData)
+                //using (var scope = new TransactionScope())
                 {
-                    using (var scope = new TransactionScope())
+                    try
                     {
+                        BackupService.BusyWithBackups = true;
                         BackupService.RemoveExistingData(mainConnectionString);
                         success = BackupService.RestoreBackupOfAllData(backupFile.Data, mainConnectionString);
 
                         if (success == true)
                         {
-                            scope.Complete();
+                            //scope.Complete();
                         }
                     }
-                }
-                else if (backupType == BackupType.SqlFullBackup)
-                {
-                    BackupService.RestoreSqlDatabase(backupFile.Data, mainConnectionString, "WebtestQ", false);
-                }
-                else if (backupType == BackupType.SQLiteFile)
-                {
-
+                    finally
+                    {
+                        BackupService.BusyWithBackups = false;
+                    }
                 }
 
                 return new List<IEvent>()
