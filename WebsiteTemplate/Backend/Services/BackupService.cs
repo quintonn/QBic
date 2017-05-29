@@ -588,6 +588,8 @@ namespace WebsiteTemplate.Backend.Services
                         return false;
                     }
                 }
+                factory.Close();
+                factory = null;
             }
             finally
             {

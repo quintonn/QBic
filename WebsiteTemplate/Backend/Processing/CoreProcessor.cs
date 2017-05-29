@@ -21,7 +21,7 @@ namespace WebsiteTemplate.Backend.Processing
         }
         public abstract Task<T> ProcessEvent(int eventId);
 
-        internal async Task<IHttpActionResult> Process(int eventId, HttpRequestMessage requestMessage)
+        public async Task<IHttpActionResult> Process(int eventId, HttpRequestMessage requestMessage)
         {
             JsonResult<T> jsonResult;
             try

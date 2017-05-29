@@ -15,7 +15,7 @@ namespace WebsiteTemplate.Backend.Services
         private UserContext UserContext { get; set; }
 
         private static object Locker = new object();
-        private static bool Started { get; set; }
+        public static bool Started { get; set; }
 
         static BackgroundService()
         {
@@ -141,6 +141,9 @@ namespace WebsiteTemplate.Backend.Services
             catch (Exception error)
             {
                 AddBackgroundError("Doing BackgroundWork", error);
+
+                // Try fix background stopping
+                Started = false;
 
                 ///if (error is ThreadAbortException)
                 {
