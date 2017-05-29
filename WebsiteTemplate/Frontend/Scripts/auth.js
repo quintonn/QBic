@@ -2,9 +2,11 @@
 {
     auth.accessToken = "";
     auth.refreshToken = "";
+    auth.lastTokenRefresh = ""; /* The date a new refresh token was last obtained */
 
     var accessTokenName = "";
     var refreshTokenName = "";
+    var lastTokenRefreshName = "";
 
     auth.initialize = function ()
     {
@@ -12,8 +14,33 @@
         {
             accessTokenName = _applicationModel.applicationName() + "_accessToken";
             refreshTokenName = _applicationModel.applicationName() + "_refreshToken";
+            lastTokenRefreshName = _applicationModel.applicationName() + "_lastTokenRefresh";
             auth.accessToken = localStorage.getItem(accessTokenName);
             auth.refreshToken = localStorage.getItem(refreshTokenName);
+            auth.lastTokenRefresh = localStorage.getItem(lastTokenRefreshName);
+
+            /* Get new refresh token once per day */
+            var lastRefreshDate = auth.lastTokenRefresh || "";
+            //console.log('last refresh date = ', lastRefreshDate);
+            if (lastRefreshDate == null || lastRefreshDate.length == 0)
+            {
+                lastRefreshDate = JSON.stringify(new Date());
+            }
+            lastRefreshDate = new Date(JSON.parse(lastRefreshDate));
+            //console.log('last refresh date = ', lastRefreshDate);
+
+            var today = new Date();
+            //console.log('today: ', today);
+            if (lastRefreshDate.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0))
+            {
+                console.log('last refresh was before today');
+                auth.performTokenRefresh().then(resolve);
+            }
+            else
+            {
+                //console.log('last refresh was today');
+            }
+
             resolve();
         });
     }
@@ -27,6 +54,7 @@
 
         localStorage.setItem(accessTokenName, auth.accessToken);
         localStorage.setItem(refreshTokenName, auth.refreshToken);
+        localStorage.setItem(lastTokenRefreshName, JSON.stringify(new Date()));
 
         return Promise.resolve();
     }
@@ -83,6 +111,7 @@
                 {
                     console.warn('successfully got new refresh token');
                     console.warn(resp);
+                    localStorage.setItem(lastTokenRefreshName, JSON.stringify(new Date()));
                     auth.handleLoginSuccess(resp).then(dialog.closeBusyDialog).then(resolve);
                 }).fail(function(error)
                 {

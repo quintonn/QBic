@@ -47,6 +47,7 @@ $(document).ready(function ()
                    {
                        dialog.closeBusyDialog();
 
+                       console.error(err);
                        if (err.indexOf('AnonAction:') > -1)
                        {
                            var anonymousAction = mainApp.getParameterByName('anonAction');
