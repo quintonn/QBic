@@ -351,6 +351,7 @@
     <Compile Include="Backend\TestItems\TestLargeFile.cs" />
     <Compile Include="Backend\TestItems\TestListView.cs" />
     <Compile Include="Backend\TestItems\TestListViewDetail.cs" />
+    <Compile Include="Backend\TestItems\TestPropertyChangedEvents.cs" />
     <Compile Include="Backend\TestItems\TestReadBackup.cs" />
     <Compile Include="Backend\TestItems\TestView.cs" />
     <Compile Include="Backend\TestItems\TestPdf.cs" />
@@ -412,6 +413,7 @@
     <Compile Include="Menus\InputItems\LabelInput.cs" />
     <Compile Include="Menus\InputItems\ModifyItemUsingInputProcessor.cs" />
     <Compile Include="Menus\LogoutEvent.cs" />
+    <Compile Include="Menus\PropertyChangedEvents\UpdateInputVisibility.cs" />
     <Compile Include="Menus\ViewItems\CoreItems\CoreAction.cs" />
     <Compile Include="Menus\ViewItems\CoreItems\CoreView.cs" />
     <Compile Include="Menus\ViewItems\CoreItems\CoreModify.cs" />
@@ -476,7 +478,7 @@
     <Compile Include="Menus\InputItems\ViewInput.cs" />
     <Compile Include="Menus\MenuItem.cs" />
     <Compile Include="Menus\OpenFile.cs" />
-    <Compile Include="Menus\PropertyChangedEvents\UpdateDataSourceComboBoxSource.cs" />
+    <Compile Include="Menus\PropertyChangedEvents\UpdateComboBoxSource.cs" />
     <Compile Include="Menus\PropertyChangedEvents\UpdateInput.cs" />
     <Compile Include="Menus\ShowMessage.cs" />
     <Compile Include="Menus\UserConfirmation.cs" />
