@@ -9,5 +9,7 @@
                 return 10;
             }
         }
+
+        public virtual byte[] FileData { get; set; }
     }
 }

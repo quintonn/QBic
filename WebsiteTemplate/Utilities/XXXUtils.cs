@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 using System.Web;
+using WebsiteTemplate.Data.BaseTypes;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
 
@@ -153,6 +154,31 @@ namespace WebsiteTemplate.Utilities
             }
 
             sortedTypes.Add(type);
+        }
+
+        internal static bool IsPrimitive(Type t)
+        {
+            // TODO: put any type here that you consider as primitive as I didn't
+            // quite understand what your definition of primitive type is
+            return new[] {
+                typeof(string),
+                typeof(char),
+                typeof(byte),
+                typeof(System.Byte[]),
+                typeof(sbyte),
+                typeof(ushort),
+                typeof(short),
+                typeof(uint),
+                typeof(int),
+                typeof(ulong),
+                typeof(long),
+                typeof(float),
+                typeof(double),
+                typeof(decimal),
+                typeof(DateTime),
+                typeof(DateTime?),
+                typeof(LongString)
+            }.Contains(t) || t.IsPrimitive || t.IsEnum;
         }
     }
 }

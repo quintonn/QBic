@@ -105,29 +105,9 @@ namespace WebsiteTemplate.Mappings
             }
         }
 
-        private static bool IsPrimitive(Type t)
+        internal static bool IsPrimitive(Type t)
         {
-            // TODO: put any type here that you consider as primitive as I didn't
-            // quite understand what your definition of primitive type is
-            return new[] {
-                typeof(string),
-                typeof(char),
-                typeof(byte),
-                typeof(System.Byte[]),
-                typeof(sbyte),
-                typeof(ushort),
-                typeof(short),
-                typeof(uint),
-                typeof(int),
-                typeof(ulong),
-                typeof(long),
-                typeof(float),
-                typeof(double),
-                typeof(decimal),
-                typeof(DateTime),
-                typeof(DateTime?),
-                typeof(LongString)
-            }.Contains(t) || t.IsPrimitive || t.IsEnum;
+            return Utilities.XXXUtils.IsPrimitive(t);
         }
 
         private bool IsGenericList(Type type)

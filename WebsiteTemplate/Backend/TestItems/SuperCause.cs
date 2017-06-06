@@ -17,6 +17,8 @@ namespace WebsiteTemplate.Backend.TestItems
 
         public virtual ISet<CauseChild> CauseChildren { get; set; }
 
+        public virtual byte[] FileData { get; set; }
+
         //public virtual CauseChild SuperChild { get; set; }
 
         public SuperCause()
