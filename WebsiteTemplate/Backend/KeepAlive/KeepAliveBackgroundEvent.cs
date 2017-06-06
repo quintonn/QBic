@@ -9,17 +9,17 @@ using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.KeepAlive
 {
-    public class KeepAliveBackgroundEvent : BackgroundEvent
+    public class KeepAliveBackgroundEvent //: BackgroundEvent
     {
         private DataService DataService { get; set; }
 
         public KeepAliveBackgroundEvent(DataService dataService, IUnityContainer container)
-            :base(container)
+            //:base(container)
         {
             DataService = dataService;
         }
 
-        public override string Description
+        public /*override*/ string Description
         {
             get
             {
@@ -27,13 +27,13 @@ namespace WebsiteTemplate.Backend.KeepAlive
             }
         }
 
-        public override DateTime CalculateNextRunTime(DateTime? lastRunTime)
+        public /*override*/ DateTime CalculateNextRunTime(DateTime? lastRunTime)
         {
             //return DateTime.Now.AddMinutes(2);
             return DateTime.Now.AddMinutes(60);
         }
 
-        public override bool RunImmediatelyFirstTime
+        public /*override*/ bool RunImmediatelyFirstTime
         {
             get
             {
@@ -41,7 +41,7 @@ namespace WebsiteTemplate.Backend.KeepAlive
             }
         }
 
-        public override void DoWork()
+        public /*override*/ void DoWork()
         {
             var url = String.Empty;
 
@@ -83,7 +83,7 @@ namespace WebsiteTemplate.Backend.KeepAlive
             }
         }
 
-        public override EventNumber GetId()
+        public /*override*/ EventNumber GetId()
         {
             return EventNumber.KeepAliveBackgroundTask;
         }
