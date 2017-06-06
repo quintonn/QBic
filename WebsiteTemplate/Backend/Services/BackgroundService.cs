@@ -195,7 +195,12 @@ namespace WebsiteTemplate.Backend.Services
             {
                 return;
             }
-            var item = new BackgroundInformation(action, String.Format("Error:\n{0}\n{1}", error.Message, error.StackTrace));
+
+            //Need to do something about thread being aborted exception
+
+            var stackTrace = new System.Diagnostics.StackTrace();
+            var stack = stackTrace.GetFrame(1).GetMethod().Name;
+            var item = new BackgroundInformation(action, String.Format("Error:\n{0}\n{1}\n{2}\n{3}", error.Message, error.StackTrace, stack, stackTrace));
             var currentDirectory = HttpRuntime.AppDomainAppPath;
             var logs = currentDirectory + "\\Logs\\";
             if (!Directory.Exists(logs))
@@ -204,6 +209,12 @@ namespace WebsiteTemplate.Backend.Services
             }
             var path = logs + action + "_" + Guid.NewGuid().ToString();
             File.WriteAllText(path, item.Information + "\n" + error.StackTrace);
+
+            if (error is ThreadAbortException)
+            {
+                return;
+            }
+
             if (logInDatabase == true)
             {
                 using (var session = DataService.OpenSession())
