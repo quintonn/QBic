@@ -1,6 +1,7 @@
 ﻿using NHibernate;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
 using WebsiteTemplate.Backend.Services;
@@ -41,6 +42,11 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
                 result.Add(new HiddenInput(item, InputParameters[item]));
             }
             result.AddRange(InputFields());
+
+            if (result.Count(r => r.InputName == "Id") == 0)
+            {
+                result.Add(new HiddenInput("Id", Item?.Id));
+            }
             return result;
         }
 
@@ -50,7 +56,7 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
         }
 
         public abstract string EntityName { get; }
-        protected Dictionary<string, string> InputParameters { get; set; }
+        protected Dictionary<string, string> InputParameters { get; set; } = new Dictionary<string, string>();
 
         public override string Description
         {

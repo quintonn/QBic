@@ -49,6 +49,7 @@ namespace WebsiteTemplate.Backend.Processing
             var processedFormData = new Dictionary<string, object>();
 
             //await eventItem.Initialize(formData); //TODO: Do i need to call this here???? WHY!! If it's a must, maybe i should pass a flag that it's not the real initialize.
+            //TODO: One instance where this causes errors is if an input screen is open and I rebuild the back-end, then clicking cancel results in error.
             foreach (var inputField in eventItem.GetInputFields())
             {
                 var value = inputField.GetValue(jsonData.GetValue<JToken>(inputField.InputName));
