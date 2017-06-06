@@ -6,7 +6,7 @@ using WebsiteTemplate.Menus.InputItems;
 
 namespace WebsiteTemplate.Menus.PropertyChangedEvents
 {
-    public class UpdateDataSourceComboBoxSource : Event
+    public class UpdateComboBoxSource : Event
     {
         public string InputName { get; set; }
 
@@ -32,17 +32,17 @@ namespace WebsiteTemplate.Menus.PropertyChangedEvents
         {
             get
             {
-                return EventType.UpdateDataSourceComboBox;
+                return EventType.UpdateComboBox;
             }
         }
 
         [InjectionConstructor]
-        public UpdateDataSourceComboBoxSource()
+        public UpdateComboBoxSource()
         {
 
         }
 
-        public UpdateDataSourceComboBoxSource(string inputName, Dictionary<string, object> listItems)
+        public UpdateComboBoxSource(string inputName, Dictionary<string, object> listItems)
         {
             InputName = inputName;
             ListItems = listItems;

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using NHibernate.Util;
+using System.Linq.Expressions;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
@@ -21,6 +23,13 @@ namespace WebsiteTemplate.Menus.InputItems
                 throw new ArgumentException("T must be an enumerated type (enum)");
             }
 
+            UpdateList(whereClause, orderByClause, addBlankValue);
+        }
+
+        public void UpdateList(Func<KeyValuePair<T, string>, bool> whereClause = null,
+                               Func<KeyValuePair<T, string>, object> orderByClause = null,
+                               bool addBlankValue = false)
+        {
             var enumValues = Enum.GetValues(typeof(T)).Cast<T>().ToList();
             var items = enumValues.ToDictionary(e => (T)e, e => e.ToString()).ToList();
 
@@ -44,6 +53,10 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public override object GetValue(JToken jsonToken)
         {
+            if (jsonToken == null)
+            {
+                return Enum.GetValues(typeof(T)).First();
+            }
             var result = (T)Enum.Parse(typeof(T), jsonToken?.ToString());
             return result;
         }

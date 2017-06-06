@@ -162,6 +162,10 @@
                             existingModel[0].gotoPage(1);
                             return Promise.resolve();
                         }
+                    case 17: // Update input visibility
+                        var inputName = item.InputName;
+                        var isVisibile = item.InputIsVisible;
+                        return inputDialog.updateInputVisibility(inputName, isVisibile);
                     default:
                         console.warn(item);
                         dialog.closeBusyDialog();

@@ -42,6 +42,7 @@ namespace WebsiteTemplate.Menus.BaseItems
         public static EventNumber DeleteInputViewItem = new EventNumber(1601);
         public static EventNumber UpdateDataSourceComboBox = new EventNumber(1602);
         public static EventNumber UpdateInput = new EventNumber(1603);
+        public static EventNumber UpdateInputVisibility = new EventNumber(1604);
 
         public static EventNumber AuditReportFilter = new EventNumber(1610);
         public static EventNumber CreateAuditReport = new EventNumber(1611);

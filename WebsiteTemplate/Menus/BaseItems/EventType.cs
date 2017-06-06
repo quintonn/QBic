@@ -12,12 +12,13 @@
         InputDataView = 7,
         UpdateInputView = 8,
         DeleteInputViewItem = 9,
-        UpdateDataSourceComboBox = 10,
+        UpdateComboBox = 10,
         ViewFile = 11,
         UpdateInput = 12,
         Logout = 13,
         ListView = 14,
         DetailView = 15,
-        BackgroundEvent = 16
+        BackgroundEvent = 16,
+        UpdateInputVisibility = 17
     }
 }

@@ -143,6 +143,24 @@
         });
     }
 
+    inputDialog.updateInputVisibility = function (inputName, isVisible)
+    {
+        var modals = _applicationModel.modalDialogs();
+        var dialogModel = modals[modals.length - 1];
+
+        var inputDlgModel = dialogModel.model;
+
+        var inputFldModel = inputDlgModel.findInputModelWithName(inputName);
+        if (inputFldModel == null)
+        {
+            return dialog.showMessage("Error", "Unexpected error, no input found with name " + inputName);
+        }
+
+        inputFldModel.visible(isVisible);
+
+        return Promise.resolve();
+    }
+
     inputDialog.updateInput = function (inputName, inputValue)
     {
         var modals = _applicationModel.modalDialogs();
