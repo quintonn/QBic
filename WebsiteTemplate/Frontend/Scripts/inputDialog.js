@@ -775,14 +775,6 @@
         }
     }
 
-    function listSourceItemModel(isSelected, displayValue, itemValue)
-    {
-        var self = this;
-        self.selected = ko.observable(isSelected);
-        self.label = ko.observable(displayValue);
-        self.value = itemValue;
-    }
-
     function optionModel(displayText, value)
     {
         var self = this;
@@ -800,3 +792,12 @@
     }
 
 }(window.inputDialog = window.inputDialog || {}, jQuery));
+
+
+function listSourceItemModel(isSelected, displayValue, itemValue)
+{
+    var self = this;
+    self.selected = ko.observable(isSelected);
+    self.label = ko.observable(displayValue);
+    self.value = itemValue;
+}

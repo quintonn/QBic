@@ -21,7 +21,7 @@ namespace WebsiteTemplate.Menus.InputItems
         public override object GetValue(JToken jsonToken)
         {
             var boolString = "false";
-            if (jsonToken != null)
+            if (!String.IsNullOrWhiteSpace(jsonToken?.ToString()))
             {
                 boolString = jsonToken.ToString();
             }

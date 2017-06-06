@@ -62,6 +62,15 @@ namespace WebsiteTemplate.Backend.TestItems
                 }
             });
 
+            result.Add(new ListSelectionInput("List", "List", null, null, false)
+            {
+                ListSource = new Dictionary<string, object>()
+                {
+                    {  "1", "Item 1" },
+                    { "2", "Item 2" }
+                }
+            });
+
             return result;
         }
         
@@ -80,6 +89,15 @@ namespace WebsiteTemplate.Backend.TestItems
 
                     var list = combo.ListItems;
                     result.Add(new UpdateComboBoxSource("Comparison", list));
+
+
+                    var listInput = InputFields.Where(i => i.InputName == "List").Single() as ListSelectionInput;
+                    listInput.ListSource = new Dictionary<string, object>()
+                    {
+                        { "x", "ITem XXX" }
+                    };
+                    var tmp = listInput.ListSource;
+                    result.Add(new UpdateComboBoxSource("List", tmp));
                 }
             }
             else if (propertyName == "User")

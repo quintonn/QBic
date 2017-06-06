@@ -1,5 +1,6 @@
 ﻿/// <reference path="mainApplication.js" />
 /// <reference path="views.js" />
+/// <reference path="inputDialog.js" />
 
 (function (processing, $, undefined)
 {
@@ -91,12 +92,28 @@
                             return model.deleteRow(rowId);
                         }
                     case 10: // UpdateDataSourceComboBox
+                        
                         var dlgs = _applicationModel.modalDialogs();
                         var inputDlg = dlgs[dlgs.length - 1].model;
                         var inp = inputDlg.findInputModelWithName(item.InputName);
                         return inp.getInputValue().then(function (inpValue)
                         {
-                            inp.listItems(item.ListItems);
+                            if (inp.inputType == 5) // List Selection
+                            {
+                                var defaultList = inpValue || [];
+
+                                var listSource = item.ListItems
+                                listSource = $.map(listSource, function (item)
+                                {
+                                    var selected = defaultList.indexOf(item.Key) > -1;
+                                    return new listSourceItemModel(selected, item.Value, item.Key);
+                                });
+                                inp.listSource(listSource);
+                            }
+                            else
+                            {
+                                inp.listItems(item.ListItems);
+                            }
                             inp.setInputValue(inpValue);
                         });
                         break;
