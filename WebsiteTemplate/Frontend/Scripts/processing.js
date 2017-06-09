@@ -109,12 +109,13 @@
                                     return new listSourceItemModel(selected, item.Value, item.Key);
                                 });
                                 inp.listSource(listSource);
+                                inp.selectAll(inp.isAllListSelected());
                             }
                             else
                             {
                                 inp.listItems(item.ListItems);
+                                inp.setInputValue(inpValue);
                             }
-                            inp.setInputValue(inpValue);
                         });
                         break;
                     case 11: // View File

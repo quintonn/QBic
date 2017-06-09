@@ -44,7 +44,7 @@ namespace WebsiteTemplate.Backend.TestItems
                 RaisePropertyChangedEvent = true
             });
 
-            result.Add(new EnumComboBoxInput<FilterComparison>("Comparison", "Comparison", false, null, null, null, null)
+            result.Add(new EnumComboBoxInput<FilterComparison>("Comparison", "Comparison", false, null, null, FilterComparison.Contains.ToString(), null)
             {
                 Mandatory = true
             });

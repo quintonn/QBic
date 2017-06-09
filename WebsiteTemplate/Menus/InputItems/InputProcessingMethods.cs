@@ -86,7 +86,7 @@ namespace WebsiteTemplate.Menus.InputItems
                     }
                     else if (typeof(T) == typeof(DateTime))
                     {
-                        throw new Exception(String.Format("Unable to process the value '{0}' as date.", tempValue));
+                        throw new Exception(String.Format("Unable to process the value '{0}' as date. Make sure system date format is set in settings.", tempValue));
                         //value = new DateTime(1900, 01, 01); ///TODO: What do i do with default dates etc.
                     }
                 }
