@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -35,7 +36,16 @@ namespace BuildHelper
 
             /// Create minified style sheet
             var cssBundle = new SquishIt.Framework.CSS.CSSBundle();
-            cssBundle.AddDirectory(currentDir + "\\WebsiteTemplate\\FrontEnd\\css", true);
+            var cssFiles = Directory.GetFiles(currentDir + "\\WebsiteTemplate\\FrontEnd\\css", "*.*", SearchOption.AllDirectories);
+            foreach (var file in cssFiles)
+            {
+                if (file.Contains("siteOverrides"))
+                {
+                    continue;
+                }
+                cssBundle.Add(file);
+            }
+            //cssBundle.AddDirectory(currentDir + "\\WebsiteTemplate\\FrontEnd\\css", true);
             
             var result = cssBundle.Render(cssFileName);
             var cssFile = File.ReadAllText(cssFileName);
@@ -75,6 +85,9 @@ namespace BuildHelper
                 File.Copy(f, newFile, true);
             });
 
+            /// Copy site specific css file
+            File.Copy(currentDir + "WebsiteTemplate\\FrontEnd\\css\\siteOverrides.css", currentDir + "WebsiteTemplateCore\\FrontEnd\\css\\siteOverrides.css", true);
+
 
             /// Copy and Edit Index.html page
             var indexPath = currentDir + "WebsiteTemplateCore\\Index.html";
@@ -94,10 +107,15 @@ namespace BuildHelper
                 var match = matches[i];
                 if (i == 0)
                 {
+                    //var siteOverrideCss = "\n<link href=\"Frontend/css/siteOverrides.css\" rel=\"stylesheet\" />";
                     data = data.Replace(match.Value, "<link href='Frontend/styles.min.css?v=" + randomVersion + "' rel='stylesheet' />");
                 }
                 else
                 {
+                    if (match.Value.Contains("siteOverrides.css"))
+                    {
+                        continue;
+                    }
                     data = data.Replace(match.Value, "");
                 }
             }

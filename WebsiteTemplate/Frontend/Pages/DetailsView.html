@@ -2,7 +2,7 @@
     <h2 class="w3-center" data-bind="text: viewTitle, visible: isEmbeddedView == false" style="margin:0"></h2>
 
     <div class="" data-bind="foreach: viewMenus">
-        <button class="w3-btn w3-blue " data-bind="text: label, click: function(data, event) { $root.menuClick($data, $index(), event) }"></button>
+        <button class="w3-btn w3-app-color " data-bind="text: label, click: function(data, event) { $root.menuClick($data, $index(), event) }"></button>
     </div>
 
     <!-- ko if: detailIsHtml() == true -->

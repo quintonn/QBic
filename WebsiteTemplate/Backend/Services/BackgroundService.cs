@@ -61,12 +61,12 @@ namespace WebsiteTemplate.Backend.Services
 
         private void InitializeBackgroundJobs()
         {
-            AddBackgroundInformation("Background jobs", "Initialize background jobs 1.");
+            AddBackgroundInformation("Background jobs", "Initializing background jobs");
             BackgroundJobs = EventService.BackgroundEventList.Select(b => new BackgroundJob()
             {
                 Event = b.Value,
             }).ToList();
-            AddBackgroundInformation("Background jobs", "Initialize background jobs 2.");
+            
             using (var session = DataService.OpenSession())
             {
                 foreach (var job in BackgroundJobs)
@@ -85,12 +85,11 @@ namespace WebsiteTemplate.Backend.Services
                     }
                 }
             }
-            AddBackgroundInformation("Background jobs", "Initialize background jobs 10.");
+            AddBackgroundInformation("Background jobs", "Background jobs initialized");
         }
 
         private void BackgroundWork(object jobObject)
         {
-            AddBackgroundInformation("Background jobs", "Background work 1");
             var job = (BackgroundJob)jobObject;
             var firstTime = true;
             try
@@ -135,7 +134,7 @@ namespace WebsiteTemplate.Backend.Services
                     }
                     AddBackgroundInformation(job.Event.Description, String.Format("Ran background process {0} : {1} -> {2}", job.Event.Description, result.Status, result.ExecutionInformation));
                     
-                    SaveBackgroundJobResult(result);
+                    //SaveBackgroundJobResult(result);
                 }
             }
             catch (Exception error)
@@ -167,7 +166,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public async void StartBackgroundJobs()
         {
-            AddBackgroundInformation("Background jobs", "Starting background jobs 1");
+            AddBackgroundInformation("Background jobs", "Starting background jobs");
             if (BackgroundJobs == null)
             {
                 try
@@ -179,14 +178,14 @@ namespace WebsiteTemplate.Backend.Services
                     AddBackgroundError("Starting error", e);
                 }
             }
-            AddBackgroundInformation("Background jobs", "Starting background jobs 2");
+            
             foreach (var backgroundJob in BackgroundJobs)
             {
                 var thread = new Thread(new ParameterizedThreadStart(BackgroundWork));
                 BackgroundThreads.Add(thread);
                 thread.Start(backgroundJob);
             }
-            AddBackgroundInformation("Background jobs", "Starting background jobs 10");
+            AddBackgroundInformation("Background jobs", "Backgound jobs started");
         }
 
         internal void AddBackgroundError(string action, Exception error, bool logInDatabase = true)

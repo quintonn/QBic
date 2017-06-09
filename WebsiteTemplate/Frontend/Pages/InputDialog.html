@@ -1,5 +1,5 @@
 ﻿<div class="w3-modal-content">
-    <header class="w3-container w3-blue w3-center">
+    <header class="w3-container w3-app-color w3-center">
         <span class="w3-closebtn w3-padding-top" data-bind="click: closeClick">&times;</span>
         <h2 data-bind="text: title"></h2>
     </header>
@@ -30,7 +30,7 @@
 
     <!-- ko if: buttons().length > 0 -->
     <div class="w3-container w3-padding w3-center" data-bind="foreach: buttons">
-        <button class="w3-btn w3-blue w3-border" data-bind="text: label, click: $root.buttonClick"></button>
+        <button class="w3-btn w3-app-color w3-border" data-bind="text: label, click: $root.buttonClick"></button>
     </div>
     <!-- /ko -->
 </div>

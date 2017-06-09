@@ -246,6 +246,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Frontend\css\siteOverrides.css" />
     <Content Include="Frontend\Pages\DetailsView.html" />
     <Content Include="Frontend\Pages\ListView.html" />
     <Content Include="Frontend\Pages\PasswordResetRequest.html" />
