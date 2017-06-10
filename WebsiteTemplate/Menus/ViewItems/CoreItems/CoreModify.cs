@@ -62,7 +62,7 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
         {
             get
             {
-                return IsNew ? "Add" : "Edit" + (" " + EntityName);
+                return (IsNew ? "Add" : "Edit") + " " + EntityName;
             }
         }
 
