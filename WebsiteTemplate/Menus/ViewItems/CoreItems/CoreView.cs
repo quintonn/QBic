@@ -63,13 +63,19 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
         {
             var query = session.QueryOver<T>();
 
+            var or = Restrictions.Disjunction();
+
             if (!String.IsNullOrWhiteSpace(settings.Filter))
             {
                 var filterItems = GetFilterItems();
+                
                 foreach (var item in filterItems)
                 {
-                    query = query.WhereRestrictionOn(item).IsLike(settings.Filter, MatchMode.Anywhere);
+                    var x = Restrictions.InsensitiveLike(Projections.Property(item), settings.Filter, MatchMode.Anywhere);
+                    or.Add(x);
+                    //query = query.WhereRestrictionOn(item).IsLike(settings.Filter, MatchMode.Anywhere);
                 }
+                query.Where(or);
             }
 
             OrderQuery(query);

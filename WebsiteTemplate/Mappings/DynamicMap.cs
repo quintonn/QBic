@@ -36,6 +36,9 @@ namespace WebsiteTemplate.Mappings
             var nonPrimitiveColumns = properties.Where(p => IsPrimitive(p.PropertyType) == false && IsGenericList(p.PropertyType) == false).ToList();
             var listColumns = properties.Where(p => IsPrimitive(p.PropertyType) == false && IsGenericList(p.PropertyType) == true).ToList();
 
+            //TODO: Need to merge this code with the ChildDynamicMap
+            //      Also, need to map enums to CustomType, because i can't do session.queryover on enums when comparing to string value
+
             //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
 
             foreach (var column in primitiveColumns)
