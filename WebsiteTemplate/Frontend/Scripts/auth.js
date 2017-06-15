@@ -39,9 +39,10 @@
             else
             {
                 //console.log('last refresh was today');
+                resolve();
             }
 
-            resolve();
+            //resolve();
         });
     }
 

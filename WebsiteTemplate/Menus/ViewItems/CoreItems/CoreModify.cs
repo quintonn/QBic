@@ -50,10 +50,7 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
             return result;
         }
 
-        public virtual List<InputField> InputFields()
-        {
-            return new List<InputField>();
-        }
+        public abstract List<InputField> InputFields();
 
         public abstract string EntityName { get; }
         protected Dictionary<string, string> InputParameters { get; set; } = new Dictionary<string, string>();
@@ -187,5 +184,13 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
         public abstract EventNumber GetViewNumber();
 
         public abstract IList<IEvent> PerformModify(bool isNew, string id, ISession session);
+
+        protected IList<IEvent> ErrorMessage(string message)
+        {
+            return new List<IEvent>()
+            {
+                new ShowMessage(message)
+            };
+        }
     }
 }

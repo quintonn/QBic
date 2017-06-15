@@ -213,6 +213,8 @@ $(document).ready(function ()
     {
         return new Promise(function (resolve, reject)
         {
+            console.log('making web call:', url);
+            console.log('auth token:', auth.accessToken);
             $.ajax(
                 {
                     //contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
