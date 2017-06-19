@@ -136,7 +136,8 @@ namespace WebsiteTemplate.Backend.Services
 
                         smtpClient.Send(mailMessage);
 
-                        EmailStatus = "Email sent successfully";
+                        //EmailStatus = "Email sent successfully";
+                        EmailStatus = "If a user with username or email address exists then a password reset link will be sent to the user's registered email address.";
                     }
                     catch (Exception e)
                     {
@@ -154,13 +155,18 @@ namespace WebsiteTemplate.Backend.Services
 
             await Task.Delay(1000); // To prevent it being too obvious that a username/email address exists or does not.
             return EmailStatus;
-            return "If a user with username or email address exists then a password reset link will be sent to the user's registered email address.";
         }
 
         private static string EmailStatus { get; set; }
 
-        public async Task<string> SendAcccountFonfirmationEmail(string userId, string userName, string emailAddress)
+        public async Task<string> SendAcccountFonfirmationEmail(string userId, string userName, string emailAddress, CoreUserManager userManager = null)
         {
+            CoreUserManager theUserManager = UserManager;
+            if (userManager != null)
+            {
+                theUserManager = userManager;
+            }
+            
             Models.SystemSettings settings;
             using (var session = DataService.OpenSession())
             {
@@ -172,7 +178,7 @@ namespace WebsiteTemplate.Backend.Services
                 throw new Exception("No system settings have been setup.");
             }
 
-            var emailToken = UserManager.GenerateEmailConfirmationTokenAsync(userId).Result;
+            var emailToken = theUserManager.GenerateEmailConfirmationTokenAsync(userId).Result;
 
             var myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
 

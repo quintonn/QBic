@@ -213,15 +213,14 @@ $(document).ready(function ()
     {
         return new Promise(function (resolve, reject)
         {
-            console.log('making web call:', url);
-            console.log('auth token:', auth.accessToken);
             $.ajax(
                 {
                     //contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
                     url: mainApp.baseURL + url + "?v="+mainApp.version,
                     data: data,
                     method: method || "GET",
-                    cache: false,
+                    //cache: false,
+                    cache: url.indexOf("html") > -1,
                     beforeSend: function (xhr)
                     {
                         xhr.setRequestHeader("Authorization", "Bearer " + auth.accessToken);

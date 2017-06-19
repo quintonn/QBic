@@ -404,7 +404,7 @@
 
                 return new Promise(function (resolve, reject)
                 {
-                    return inp.getInputValue().then(function (value)
+                    /*return*/ inp.getInputValue().then(function (value)
                     {
                         if (doValidation && (value == null || value.length == 0) && inp.mandatory == true && inp.visible() == true)
                         {
@@ -425,7 +425,6 @@
                                     if (actData.indexOf(false) == -1) // i.e. all mandatory conditions have been met
                                     {
                                         dialog.closeBusyDialog();
-
                                         return dialog.showMessage("Warning", inp.setting.InputLabel + ' is mandatory').then(function ()
                                         {
                                             console.error("reject " + inp.setting.InputName);
@@ -455,7 +454,6 @@
             };
             
             var inputItems = self.inputs();
-            
             var actions = $.map(inputItems, getInputFunction);
 
             return Promise.all(actions).then(function (xData)

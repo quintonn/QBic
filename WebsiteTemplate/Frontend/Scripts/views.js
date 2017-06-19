@@ -2,13 +2,13 @@
 {
     views.getViewContent = function ()
     {
-        return mainApp.makeWebCall("frontend/pages/Views.html?v=" + mainApp.version);
+        return mainApp.makeWebCall("frontend/pages/Views.html");
     };
 
     views.showDetailsView = function (viewData, isEmbeddedView, id)
     {
         dialog.showBusyDialog('Loading data...');
-        return mainApp.makeWebCall("frontend/pages/DetailsView.html?v=" + mainApp.version).then(function (data)
+        return mainApp.makeWebCall("frontend/pages/DetailsView.html").then(function (data)
         {
             data = data.replace("##view_id##", "view_" + id);
 
@@ -39,7 +39,7 @@
     views.showListView = function (viewData, isEmbeddedView, id)
     {
         dialog.showBusyDialog('Loading data...');
-        return mainApp.makeWebCall("frontend/pages/ListView.html?v=" + mainApp.version).then(function (data)
+        return mainApp.makeWebCall("frontend/pages/ListView.html").then(function (data)
         {
             data = data.replace("##view_id##", "view_" + id);
 
@@ -69,7 +69,7 @@
     views.showView = function (viewData, isEmbeddedView, id)
     {
         dialog.showBusyDialog('Loading data...');
-        return mainApp.makeWebCall("frontend/pages/Views.html?v=" + mainApp.version).then(function (data)
+        return mainApp.makeWebCall("frontend/pages/Views.html").then(function (data)
         {
             data = data.replace("##view_id##", "view_" + id);
 

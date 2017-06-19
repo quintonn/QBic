@@ -15,6 +15,8 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 
         Dictionary<string, string> GetInputProperties();
 
+        string UniquePropertyName { get; }
+
         EventNumber GetBaseMenuId();
 
         string GetBaseItemName();
@@ -49,6 +51,14 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
         public override EventNumber GetId()
         {
             return 0;
+        }
+
+        public virtual string UniquePropertyName
+        {
+            get
+            {
+                return String.Empty;
+            }
         }
 
         public abstract Dictionary<string, string> GetColumnsToShowInView();

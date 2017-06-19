@@ -120,6 +120,8 @@ namespace WebsiteTemplate.Backend.Services
                         modifyInstance.Id = subType.GetBaseMenuId() + 1;
                         modifyInstance.ItemName = subType.GetBaseItemName();
                         modifyInstance.InputProperties = subType.GetInputProperties();
+                        modifyInstance.UniquePropertyName = subType.UniquePropertyName;
+
                         if (!EventList.ContainsKey(modifyInstance.GetId()))
                         {
                             EventList.Add(modifyInstance.GetId(), modifyInstance as Event);

@@ -1,5 +1,8 @@
-﻿using System;
+﻿using NHibernate.Criterion;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Data.BaseTypes;
@@ -25,6 +28,8 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                 return false;
             }
         }
+
+        public string UniquePropertyName { get; set; }
 
         private T Item { get; set; } = null;
         private bool IsNew { get; set; } = true;
@@ -118,7 +123,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
         public override async Task<InitializeResult> Initialize(string data)
         {
             var json = JsonHelper.Parse(data);
-            
+
             if (!String.IsNullOrWhiteSpace(json.GetValue("IsNew")))
             {
                 IsNew = json.GetValue<bool>("IsNew");
@@ -169,6 +174,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 
                 using (var session = DataService.OpenSession())
                 {
+                    var dateFormat = String.Empty;
                     T item;
                     if (!isNew)
                     {
@@ -179,12 +185,42 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                         item = Activator.CreateInstance<T>();
                     }
 
+                    if (!String.IsNullOrWhiteSpace(UniquePropertyName))
+                    {
+                        var uniqueValue = GetValue(UniquePropertyName);
+
+                        var existingItem = session.CreateCriteria<T>()
+                                                  .Add(Restrictions.Eq(UniquePropertyName, uniqueValue))
+                                                  .UniqueResult<T>();
+
+                        if (existingItem != null && existingItem.Id != item.Id)
+                        {
+                            return new List<IEvent>()
+                            {
+                                new ShowMessage(this.ItemName + " " + uniqueValue + " already exists")
+                            };
+                        }
+                    }
+
                     foreach (var value in inputs)
                     {
                         var prop = typeof(T).GetProperty(value.Key);
                         if (prop.PropertyType == typeof(LongString))
                         {
                             prop.SetValue(item, new LongString(value.Value?.ToString()));
+                        }
+                        else if (prop.PropertyType == typeof(DateTime))
+                        {
+                            DateTime date;
+                            if (String.IsNullOrWhiteSpace(dateFormat))
+                            {
+                                var appSettings = session.QueryOver<SystemSettings>().List<SystemSettings>().FirstOrDefault();
+                                dateFormat = appSettings.DateFormat;
+                            }
+                            if (DateTime.TryParseExact(value.Value?.ToString(), dateFormat, CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out date))
+                            {
+                                prop.SetValue(item, date);
+                            }
                         }
                         else
                         {

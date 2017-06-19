@@ -34,7 +34,11 @@
             if (lastRefreshDate.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0))
             {
                 console.log('last refresh was before today');
-                auth.performTokenRefresh().then(resolve);
+                auth.performTokenRefresh().catch(function (err)
+                {
+                    console.error("Error performing auth refresh", err);
+                    resolve();
+                }).then(resolve);
             }
             else
             {
@@ -48,6 +52,7 @@
 
     auth.handleLoginSuccess = function(data)
     {
+        console.log('handling login success', data);
         _applicationModel.user().name(data.userName);
 
         auth.accessToken = data.access_token;
@@ -92,11 +97,11 @@
         //var data = "grant_type=refresh_token&refresh_token=" + auth.refreshToken + "&client_id=" + _applicationModel.applicationName();
 
         var data =
-       {
-           "grant_type": "refresh_token",
-           "refresh_token": auth.refreshToken,
-           "client_id": _applicationModel.applicationName()
-       };
+        {
+            "grant_type": "refresh_token",
+            "refresh_token": auth.refreshToken,
+            "client_id": _applicationModel.applicationName()
+        };
 
         return new Promise(function (resolve, reject)
         {
