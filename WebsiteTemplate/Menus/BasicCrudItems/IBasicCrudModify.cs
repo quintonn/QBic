@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Menus.BasicCrudItems
@@ -10,5 +11,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
         Dictionary<string, string> InputProperties { get; set; }
 
         string UniquePropertyName { get; set; }
+
+        Action<object, bool> OnModifyInternal { get; set; }
     }
 }

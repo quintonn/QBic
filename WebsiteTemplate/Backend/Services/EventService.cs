@@ -7,6 +7,7 @@ using System.Reflection;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.BasicCrudItems;
+using WebsiteTemplate.Menus.ViewItems;
 
 namespace WebsiteTemplate.Backend.Services
 {
@@ -107,6 +108,9 @@ namespace WebsiteTemplate.Backend.Services
                         viewInstance.Id = subType.GetBaseMenuId();
                         viewInstance.ItemName = subType.GetBaseItemName();
                         viewInstance.ColumnsToShowInView = subType.GetColumnsToShowInView();
+                        var columnConfig = new ColumnConfiguration();
+                        subType.ConfigureAdditionalColumns(columnConfig);
+                        viewInstance.AdditionalColumns = columnConfig.GetColumns();
 
                         if (!EventList.ContainsKey(viewInstance.GetId()))
                         {
@@ -121,6 +125,7 @@ namespace WebsiteTemplate.Backend.Services
                         modifyInstance.ItemName = subType.GetBaseItemName();
                         modifyInstance.InputProperties = subType.GetInputProperties();
                         modifyInstance.UniquePropertyName = subType.UniquePropertyName;
+                        modifyInstance.OnModifyInternal = subType.OnModifyInternal;
 
                         if (!EventList.ContainsKey(modifyInstance.GetId()))
                         {

@@ -22,6 +22,11 @@ namespace WebsiteTemplate.Menus.ViewItems
             Columns.Remove(column);
         }
 
+        public void AddColumn(ViewColumn column)
+        {
+            Columns.Add(column);
+        }
+
         public void AddStringColumn(string columnLabel, string columnName, int columnSpan)
         {
             Columns.Add(new StringColumn(columnLabel, columnName, columnSpan));

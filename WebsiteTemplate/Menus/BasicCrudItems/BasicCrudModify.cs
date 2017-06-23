@@ -40,6 +40,8 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 
         public Dictionary<string, string> InputProperties { get; set; }
 
+        public Action<object, bool> OnModifyInternal { get; set; }
+
         public override string Description
         {
             get
@@ -227,6 +229,8 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                             prop.SetValue(item, value.Value);
                         }
                     }
+
+                    OnModifyInternal(item, isNew);
 
                     DataService.SaveOrUpdate(session, item);
                     session.Flush();

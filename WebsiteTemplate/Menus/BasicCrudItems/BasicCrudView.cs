@@ -31,6 +31,8 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 
         public string ItemName { get; set; }
 
+        public IList<ViewColumn> AdditionalColumns { get; set; }
+
         public Dictionary<string, string> ColumnsToShowInView { get; set; }
 
         public override string Description
@@ -50,6 +52,11 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             foreach (var col in ColumnsToShowInView)
             {
                 columnConfig.AddStringColumn(col.Value, col.Key);
+            }
+
+            foreach (var col in AdditionalColumns)
+            {
+                columnConfig.AddColumn(col);
             }
 
             columnConfig.AddLinkColumn("", "Id", "Edit", Id + 1);
