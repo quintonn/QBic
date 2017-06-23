@@ -26,7 +26,7 @@ namespace WebsiteTemplate
             var options = new UserAuthenticationOptions()
             {
                 AccessControlAllowOrigin = "*",
-                AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30), //Access token expires after 30min
+                AccessTokenExpireTimeSpan = TimeSpan.FromHours(1), //Access token expires after 60min
                 RefreshTokenExpireTimeSpan = TimeSpan.FromDays(7), //Refresh token expires after 7 days
                 AllowInsecureHttp = false,
                 TokenEndpointPath = new PathString("/api/v1/token"),
@@ -42,7 +42,7 @@ namespace WebsiteTemplate
 
         public void Register(HttpConfiguration config, IAppBuilder app)
         {
-            app.Use<GlobalExceptionMiddleware>("X", "Q", 10);
+            //app.Use<GlobalExceptionMiddleware>("X", "Q", 10);
 
             //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
             //config.MapHttpAttributeRoutes();

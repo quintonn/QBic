@@ -12,9 +12,10 @@
     {
         return new Promise(function (resolve, reject)
         {
-            accessTokenName = _applicationModel.applicationName() + "_accessToken";
-            refreshTokenName = _applicationModel.applicationName() + "_refreshToken";
-            lastTokenRefreshName = _applicationModel.applicationName() + "_lastTokenRefresh";
+            accessTokenName = _applicationModel.appNameAndVersion() + "_accessToken";
+            refreshTokenName = _applicationModel.appNameAndVersion() + "_refreshToken";
+            lastTokenRefreshName = _applicationModel.appNameAndVersion() + "_lastTokenRefresh";
+            console.log('refresh storage names:\n', accessTokenName, '\n', refreshTokenName, '\n', lastTokenRefreshName);
             auth.accessToken = localStorage.getItem(accessTokenName);
             auth.refreshToken = localStorage.getItem(refreshTokenName);
             auth.lastTokenRefresh = localStorage.getItem(lastTokenRefreshName);
@@ -91,10 +92,8 @@
     auth.performTokenRefresh = function ()
     {
         console.log('performing token refresh');
-        //dialog.showBusyDialog("Refreshing token..."); // Todo: Maybe don't show this
+        
         var url = mainApp.apiURL + "token";
-
-        //var data = "grant_type=refresh_token&refresh_token=" + auth.refreshToken + "&client_id=" + _applicationModel.applicationName();
 
         var data =
         {

@@ -12,6 +12,7 @@ namespace WebsiteTemplate.Backend.Services
     public class BackgroundService : IDisposable
     {
         private DataService DataService { get; set; }
+
         private UserContext UserContext { get; set; }
 
         private static object Locker = new object();

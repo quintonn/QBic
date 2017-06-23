@@ -20,7 +20,9 @@ namespace WebsiteTemplate.Backend.Services
         
         public object InitializeApplication()
         {
-            var version = XXXUtils.GetApplicationCoreVersion().ToString();
+            //var version = XXXUtils.GetApplicationCoreVersion().ToString();
+
+            var version = ApplicationSettings.GetType().Assembly.GetName().Version.ToString();
 
             var json = new
             {

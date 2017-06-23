@@ -4,6 +4,11 @@
 
     self.applicationName = ko.observable();
 
+    self.appNameAndVersion = ko.computed(function ()
+    {
+        return self.applicationName();// + "_" + mainApp.version;
+    }, self);
+
     self.user = ko.observable(new userModel());
     self.showUser = ko.computed(function ()
     {
