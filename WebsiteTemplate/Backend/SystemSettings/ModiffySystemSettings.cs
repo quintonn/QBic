@@ -50,6 +50,7 @@ namespace WebsiteTemplate.Backend.SystemSettings
             result.Add(new BooleanInput("EmailEnableSsl", "Enable Ssl", SystemSettings?.EmailEnableSsl, "Mail Settings", true));
 
             result.Add(new StringInput("DateFormat", "Date Format", SystemSettings?.DateFormat, "Formats", true));
+            result.Add(new NumericInput<int>("TimeOffset", "Time Offset", SystemSettings?.TimeOffset, "Formats", true));
 
             result.Add(new StringInput("WebsiteUrl", "Website Base Url", SystemSettings?.WebsiteBaseUrl, "Website", true));
 
@@ -93,6 +94,7 @@ namespace WebsiteTemplate.Backend.SystemSettings
                 var enableSsl = GetValue<bool>("EmailEnableSsl");
 
                 var dateFormat = GetValue("DateFormat");
+                var timeOffset = GetValue<int>("TimeOffset");
 
                 var websiteBaseUrl = GetValue("WebsiteUrl");
 
@@ -112,6 +114,7 @@ namespace WebsiteTemplate.Backend.SystemSettings
                     systemSettings.EmailEnableSsl = enableSsl;
 
                     systemSettings.DateFormat = dateFormat;
+                    systemSettings.TimeOffset = timeOffset;
 
                     systemSettings.WebsiteBaseUrl = websiteBaseUrl;
 
