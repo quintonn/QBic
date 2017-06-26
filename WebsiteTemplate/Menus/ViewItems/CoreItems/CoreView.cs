@@ -1,4 +1,5 @@
-﻿using NHibernate;
+﻿using Microsoft.Practices.Unity;
+using NHibernate;
 using NHibernate.Criterion;
 using System;
 using System.Collections;
@@ -59,9 +60,20 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
             }
         }
 
+        public virtual List<KeyValuePair<Expression<Func<T, object>>, Expression<Func<object>>>> GetAliases()
+        {
+            return new List<KeyValuePair<Expression<Func<T, object>>, Expression<Func<object>>>>();
+        }
+
         public virtual IQueryOver<T> CreateQuery(ISession session, GetDataSettings settings)
         {
             var query = session.QueryOver<T>();
+
+            var aliases = GetAliases();
+            foreach (var alias in aliases)
+            {
+                query = query.Left.JoinAlias(alias.Key, alias.Value);
+            }
 
             var or = Restrictions.Disjunction();
 
@@ -158,7 +170,7 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
                 return query.OrderBy(x => x.Position).Asc();
              }
          * */
-
+         
         public abstract List<Expression<Func<T, object>>> GetFilterItems();
         /* E.G.
          * return new List<Expression<Func<EventFixture, object>>>()

@@ -347,6 +347,7 @@
     <Compile Include="Backend\TestItems\TestBackupProcessor.cs" />
     <Compile Include="Backend\TestItems\TestClassA.cs" />
     <Compile Include="Backend\TestItems\TestClassB.cs" />
+    <Compile Include="Backend\TestItems\TestCoreView.cs" />
     <Compile Include="Backend\TestItems\TestInputView.cs" />
     <Compile Include="Backend\TestItems\TestInputViewInput.cs" />
     <Compile Include="Backend\TestItems\TestLargeFile.cs" />
