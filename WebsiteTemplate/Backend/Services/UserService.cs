@@ -102,6 +102,8 @@ namespace WebsiteTemplate.Backend.Services
                 user = await UserManager.FindByEmailAsync(userNameOrEmail) as User;
             }
 
+            var emailStatus = String.Empty;
+
             if (user != null)
             {
                 var passwordResetLink = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
@@ -136,14 +138,12 @@ namespace WebsiteTemplate.Backend.Services
 
                         smtpClient.Send(mailMessage);
 
-                        //EmailStatus = "Email sent successfully";
-                        EmailStatus = "If a user with username or email address exists then a password reset link will be sent to the user's registered email address.";
+                        emailStatus = "If a user with username or email address exists then a password reset link will be sent to the user's registered email address.";
                     }
                     catch (Exception e)
                     {
                         var message = e.Message + "\n" + e.ToString();
-                        //return message;
-                        EmailStatus = message;
+                        emailStatus = message;
                     }
                 });
                 sendEmailTask.Wait();
@@ -154,10 +154,8 @@ namespace WebsiteTemplate.Backend.Services
             }
 
             await Task.Delay(1000); // To prevent it being too obvious that a username/email address exists or does not.
-            return EmailStatus;
+            return emailStatus;
         }
-
-        private static string EmailStatus { get; set; }
 
         public async Task<string> SendAcccountFonfirmationEmail(string userId, string userName, string emailAddress, CoreUserManager userManager = null)
         {
