@@ -1,6 +1,6 @@
 ﻿using WebsiteTemplate.Models;
 
-namespace WebsiteTemplate.Backend.TestItems
+namespace WebsiteTemplate.Test.MenuItems
 {
     public abstract class TestClassA : DynamicClass
     {

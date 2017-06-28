@@ -12,7 +12,7 @@ using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
 
-namespace WebsiteTemplate.Backend.TestItems
+namespace WebsiteTemplate.Test.MenuItems
 {
     public class TestPdf : OpenFile
     {

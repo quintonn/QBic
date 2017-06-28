@@ -1,6 +1,5 @@
 ﻿using NHibernate;
 using System;
-using System.Collections.Generic;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
 

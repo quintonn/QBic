@@ -1,4 +1,4 @@
-﻿namespace WebsiteTemplate.Backend.TestItems
+﻿namespace WebsiteTemplate.Test.MenuItems
 {
     public class TestClassB : TestClassA
     {

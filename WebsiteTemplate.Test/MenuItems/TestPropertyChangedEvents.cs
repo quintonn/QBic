@@ -10,7 +10,7 @@ using WebsiteTemplate.Menus.PropertyChangedEvents;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
 
-namespace WebsiteTemplate.Backend.TestItems
+namespace WebsiteTemplate.Test.MenuItems
 {
     public class TestPropertyChangedEvents : GetInput
     {

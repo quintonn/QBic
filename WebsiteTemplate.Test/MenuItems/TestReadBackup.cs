@@ -15,7 +15,7 @@ using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
-namespace WebsiteTemplate.Backend.TestItems
+namespace WebsiteTemplate.Test.MenuItems
 {
     public class TestReadBackup : GetInput
     {

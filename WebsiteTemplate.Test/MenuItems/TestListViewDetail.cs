@@ -8,7 +8,7 @@ using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Menus.ViewItems;
 
-namespace WebsiteTemplate.Backend.TestItems
+namespace WebsiteTemplate.Test.MenuItems
 {
     public class TestListViewDetail : ShowDetailView
     {

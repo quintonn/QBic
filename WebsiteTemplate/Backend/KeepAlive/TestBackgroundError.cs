@@ -42,7 +42,7 @@ namespace WebsiteTemplate.Backend.KeepAlive
 
         public override EventNumber GetId()
         {
-            return EventNumber.TestBackgroundError;
+            return 5000;
         }
     }
 }

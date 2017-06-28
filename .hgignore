@@ -16,3 +16,6 @@ WebsiteTemplateCore/Index.html
 WebsiteTemplate/Temp/*
 WebsiteTemplate/Logs/*
 WebsiteTemplate/Data/*.db
+WebsiteTemplate.Test/FrontEnd/*
+WebsiteTemplate.Test/Logs/*
+WebsiteTemplate.Test/Index.html

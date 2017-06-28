@@ -163,6 +163,9 @@ namespace WebsiteTemplate.Backend.Services
                         {
                             var type = SystemTypes[id];
 
+                            //TODO: Need a way to ignore types inherit from base types that are BaseClass.
+                            //      This leads to the restore trying to restore duplicate items, which is temporarily fixed by BaseClassComparer
+
                             var createCriteriaMethodInfo = typeof(ISession).GetMethods().FirstOrDefault(m => m.Name == "CreateCriteria"
                                                             && m.GetParameters().Count() == 0);
                             var createCriteriaMethod = createCriteriaMethodInfo.MakeGenericMethod(type);
@@ -464,11 +467,12 @@ namespace WebsiteTemplate.Backend.Services
 
         private void DeleteItems<T>(IList<T> items, Type dataType, ISession session, int count = 10) where T : BaseClass
         {
-            var tableName = DataStore.GetInstance(null).GetTableName(dataType);
-            if (tableName == "Users")
-            {
-                tableName = "User";
-            }
+            //var tableName = DataStore.GetInstance(null).GetTableName(dataType);
+            var tableName = dataType.ToString().Split(".".ToCharArray()).Last();
+            //if (tableName == "Users")
+            //{
+            //    tableName = "User";
+            //}
             if (items.Count > 0)
             {
                 session.Delete(String.Format("From {0} Tbl", tableName));
@@ -495,8 +499,9 @@ namespace WebsiteTemplate.Backend.Services
 
             tmpString = "[" + tmpString + "]";
             tmpString = tmpString.Replace("}{", "},{");
+            var comparer = new BaseClassComparer();
 
-            var items = JsonHelper.DeserializeObject<List<BaseClass>[]>(tmpString, true).SelectMany(x => x.ToList()).ToList();
+            var items = JsonHelper.DeserializeObject<List<BaseClass>[]>(tmpString, true).SelectMany(x => x.ToList()).Distinct(comparer).ToList();
 
             //CreateNewDatabaseSchema(connectionString); //Not sure if this should be an explicit call or not.
 

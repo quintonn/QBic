@@ -1,10 +1,9 @@
 ﻿using Microsoft.Practices.Unity;
 using System;
-using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 
-namespace WebsiteTemplate.Backend.TestItems
+namespace WebsiteTemplate.Test.MenuItems
 {
     public class BackgroundTest : BackgroundEvent
     {

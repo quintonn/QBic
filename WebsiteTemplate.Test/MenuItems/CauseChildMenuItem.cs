@@ -3,47 +3,41 @@ using System.Collections.Generic;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.BasicCrudItems;
 
-namespace WebsiteTemplate.Backend.TestItems
+namespace WebsiteTemplate.Test.MenuItems
 {
-    public class SuperMenuItem : BasicCrudMenuItem<SuperCause>
+    public class CauseChildMenuItem : BasicCrudMenuItem<CauseChild>
     {
         public override string GetBaseItemName()
         {
-            return "Super Cause";
+            return "Cause Child";
         }
 
         public override EventNumber GetBaseMenuId()
         {
-            return 123;
+            return 131;
         }
 
         public override bool AllowInMenu
         {
             get
             {
-                return true;
+                return false;// return true;
             }
         }
 
         public override Dictionary<string, string> GetColumnsToShowInView()
         {
             var res = new Dictionary<string, string>();
-            res.Add("SuperName", "Name");
-            res.Add("SuperOk", "Ok");
-            res.Add("LongName", "Long Name");
-            res.Add("SuperDate", "Date");
-            //res.Add("SuperChild", "Child");
+            res.Add("ChildName", "Name");
+            res.Add("SomeInt", "Number");
             return res;
         }
 
         public override Dictionary<string, string> GetInputProperties()
         {
             var res = new Dictionary<string, string>();
-            res.Add("SuperName", "Name");
-            res.Add("SuperOk", "Ok");
-            res.Add("LongName", "Long Name");
-            res.Add("SuperDate", "Date");
-            //res.Add("SuperChild", "Child");
+            res.Add("ChildName", "Name");
+            res.Add("SomeInt", "Number");
             return res;
         }
     }

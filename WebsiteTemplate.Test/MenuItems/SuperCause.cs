@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using WebsiteTemplate.Data.BaseTypes;
 using WebsiteTemplate.Models;
 
-namespace WebsiteTemplate.Backend.TestItems
+namespace WebsiteTemplate.Test.MenuItems
 {
     public class SuperCause : DynamicClass
     {
