@@ -11,11 +11,13 @@ $(document).ready(function ()
 (function (mainApp, $, undefined)
 {
     var apiVersion = "v1";
+
+    var scheme = "http";
     
-    mainApp.baseURL = "https://" + window.location.host + window.location.pathname;
+    mainApp.baseURL = scheme + "://" + window.location.host + window.location.pathname;
     
     mainApp.apiURL = "api/" + apiVersion + "/";
-
+    
     mainApp.version = "";
 
     mainApp.initializeApplication = function ()
@@ -211,14 +213,21 @@ $(document).ready(function ()
 
     mainApp.makeWebCall = function (url, method, data, headersToInclude)
     {
+        var urlToCall = url;
+        if (url.indexOf("http") == -1)
+        {
+            urlToCall = mainApp.baseURL + url;
+        }
         return new Promise(function (resolve, reject)
         {
             $.ajax(
                 {
                     //contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                    url: mainApp.baseURL + url + "?v="+mainApp.version,
+                    url: urlToCall + "?v=" + mainApp.version,
                     data: data,
                     method: method || "GET",
+                    crossDomain: true,
+                    
                     //cache: false,
                     cache: url.indexOf("html") > -1,
                     beforeSend: function (xhr)

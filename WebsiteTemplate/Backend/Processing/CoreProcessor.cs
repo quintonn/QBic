@@ -39,7 +39,7 @@ namespace WebsiteTemplate.Backend.Processing
             }
             catch (Exception error)
             {
-                return new BadRequestErrorMessageResult(error.Message, new DefaultContentNegotiator(), requestMessage, new List<MediaTypeFormatter>()
+                return new BadRequestErrorMessageResult(error.Message + "\n" + error.StackTrace.ToString(), new DefaultContentNegotiator(), requestMessage, new List<MediaTypeFormatter>()
                 {
                     new JsonMediaTypeFormatter()
                 });
