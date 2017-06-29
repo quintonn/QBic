@@ -9,13 +9,17 @@ using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Services
 {
+    internal static class ContactLock
+    {
+        internal static readonly object Locker = new object();
+    }
+
     public class BackgroundService : IDisposable
     {
         private DataService DataService { get; set; }
 
         private UserContext UserContext { get; set; }
 
-        private static object Locker = new object();
         public static bool Started { get; set; }
 
         static BackgroundService()
@@ -167,6 +171,16 @@ namespace WebsiteTemplate.Backend.Services
 
         public async void StartBackgroundJobs()
         {
+            var thread = new Thread(new ThreadStart(() =>
+            {
+                Thread.Sleep(10000); // wait 10 seconds before starting
+                StartBackgroundJobs_Internal();
+            }));
+            thread.Start();
+        }
+
+        private async void StartBackgroundJobs_Internal()
+        {
             AddBackgroundInformation("Background jobs", "Starting background jobs");
             if (BackgroundJobs == null)
             {
@@ -196,31 +210,34 @@ namespace WebsiteTemplate.Backend.Services
                 return;
             }
 
-            //Need to do something about thread being aborted exception
-
-            var stackTrace = new System.Diagnostics.StackTrace();
-            var stack = stackTrace.GetFrame(1).GetMethod().Name;
-            var item = new BackgroundInformation(action, String.Format("Error:\n{0}\n{1}\n{2}\n{3}", error.Message, error.StackTrace, stack, stackTrace));
-            var currentDirectory = HttpRuntime.AppDomainAppPath;
-            var logs = currentDirectory + "\\Logs\\";
-            if (!Directory.Exists(logs))
+            lock (ContactLock.Locker)
             {
-                Directory.CreateDirectory(logs);
-            }
-            var path = logs + action + "_" + Guid.NewGuid().ToString();
-            File.WriteAllText(path, item.Information + "\n" + error.StackTrace);
+                //Need to do something about thread being aborted exception
 
-            if (error is ThreadAbortException)
-            {
-                return;
-            }
-
-            if (logInDatabase == true)
-            {
-                using (var session = DataService.OpenSession())
+                var stackTrace = new System.Diagnostics.StackTrace();
+                var stack = stackTrace.GetFrame(1).GetMethod().Name;
+                var item = new BackgroundInformation(action, String.Format("Error:\n{0}\n{1}\n{2}\n{3}", error.Message, error.StackTrace, stack, stackTrace));
+                var currentDirectory = HttpRuntime.AppDomainAppPath;
+                var logs = currentDirectory + "\\Logs\\";
+                if (!Directory.Exists(logs))
                 {
-                    session.Save(item);
-                    session.Flush();
+                    Directory.CreateDirectory(logs);
+                }
+                var path = logs + action + "_" + Guid.NewGuid().ToString();
+                File.WriteAllText(path, item.Information + "\n" + error.StackTrace);
+
+                if (error is ThreadAbortException)
+                {
+                    return;
+                }
+
+                if (logInDatabase == true)
+                {
+                    using (var session = DataService.OpenSession())
+                    {
+                        session.Save(item);
+                        session.Flush();
+                    }
                 }
             }
         }
@@ -231,13 +248,15 @@ namespace WebsiteTemplate.Backend.Services
             {
                 return;
             }
-            lock (Locker)
+            lock (ContactLock.Locker)
             {
-                var item = new BackgroundInformation(task, statusInfo);
-                using (var session = DataService.OpenSession())
                 {
-                    session.Save(item);
-                    session.Flush();
+                    var item = new BackgroundInformation(task, statusInfo);
+                    using (var session = DataService.OpenSession())
+                    {
+                        session.Save(item);
+                        session.Flush();
+                    }
                 }
             }
         }
