@@ -49,7 +49,7 @@ namespace WebsiteTemplate.Controllers
                 }
                 else
                 {
-                    JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = "yyyy-mm-dd" };
+                    JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = "yyyy-MM-dd" };
                 }
             }
         }
