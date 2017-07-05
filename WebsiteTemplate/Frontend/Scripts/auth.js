@@ -93,7 +93,7 @@
     {
         console.log('performing token refresh');
         
-        var url = mainApp.apiURL + "token";
+        var url = mainApp.apiURL + "token" + "?v=" + mainApp.version;
 
         var data =
         {
@@ -108,9 +108,9 @@
                 {
                     url: url,
                     method: "POST",
-                    headers: {
-                        "Authorization": auth.refreshToken
-                    },
+                    //headers: {
+                    //    "Authorization": auth.refreshToken
+                    //},
                     data: data
                 }).done(function (resp)
                 {

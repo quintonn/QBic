@@ -12,7 +12,7 @@ $(document).ready(function ()
 {
     var apiVersion = "v1";
 
-    var scheme = "http";
+    var scheme = "https";
     
     mainApp.baseURL = scheme + "://" + window.location.host + window.location.pathname;
     

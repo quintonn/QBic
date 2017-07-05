@@ -109,6 +109,7 @@ namespace WebsiteTemplate.Backend.PasswordReset
 
                 XXXUtils.SetCurrentUser("System");
 
+                /*
                 var verifyTokenResult = await UserManager.VerifyUserTokenAsync(userId, "ResetPassword", passwordToken);
                 if (verifyTokenResult == false)
                 {
@@ -118,7 +119,7 @@ namespace WebsiteTemplate.Backend.PasswordReset
                     {
                         new ShowMessage("Unable to reset password. The password reset link is no longer valid")
                     };
-                }
+                }*/
 
                 var idResult = await UserManager.ResetPasswordAsync(userId, passwordToken, newPassword);
                 if (idResult.Succeeded == false)
