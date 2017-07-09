@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NHibernate;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -38,6 +39,17 @@ namespace WebsiteTemplate.Utilities
             {
                 return false;
             }
+        }
+
+        public static string GetSystemSetting(ISession session, string settingKey, string valueIfSettingNotFound = null)
+        {
+            var result = valueIfSettingNotFound;
+            var dbSetting = session.QueryOver<SystemSettingValue>().Where(s => s.KeyName == settingKey).SingleOrDefault();
+            if (dbSetting != null)
+            {
+                result = dbSetting.Value;
+            }
+            return result;
         }
 
         [DllImport("urlmon.dll", CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = false)]

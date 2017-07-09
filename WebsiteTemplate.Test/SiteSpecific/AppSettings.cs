@@ -4,6 +4,7 @@ using Owin;
 using System;
 using System.Collections.Generic;
 using WebsiteTemplate.Utilities;
+using WebsiteTemplate.Models.NonDatabase;
 
 namespace WebsiteTemplate.Test.SiteSpecific
 {
@@ -48,6 +49,14 @@ namespace WebsiteTemplate.Test.SiteSpecific
             //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
 
             container.RegisterInstance(app.GetDataProtectionProvider());
+        }
+
+        public override List<SystemSettingItem> GetAdditionalSystemSettings()
+        {
+            return new List<SystemSettingItem>()
+            {
+                new SystemSettingItem("SystemEmail", "System Email", Menus.InputItems.InputType.Text, true, "Email Settings", "")
+            };
         }
     }
 }

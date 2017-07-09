@@ -332,6 +332,7 @@
     <Compile Include="Menus\BasicCrudItems\IBasicCrudModify.cs" />
     <Compile Include="Menus\BasicCrudItems\IBasicCrudView.cs" />
     <Compile Include="Menus\InputItems\DeleteItemUsingInputProcessor.cs" />
+    <Compile Include="Menus\InputItems\InputFieldFactory.cs" />
     <Compile Include="Menus\InputItems\InputProcessingMethods.cs" />
     <Compile Include="Menus\InputItems\LabelInput.cs" />
     <Compile Include="Menus\InputItems\ModifyItemUsingInputProcessor.cs" />
@@ -348,7 +349,9 @@
     <Compile Include="Models\AuditEvent.cs" />
     <Compile Include="Models\BackgroundInformation.cs" />
     <Compile Include="Models\BackgroundJobResult.cs" />
+    <Compile Include="Models\SystemSettingValue.cs" />
     <Compile Include="Models\DynamicClass.cs" />
+    <Compile Include="Models\NonDatabase\SystemSettingItem.cs" />
     <Compile Include="Models\SystemSettings.cs" />
     <Compile Include="Models\UserBase.cs" />
     <Compile Include="SiteSpecific\DefaultsForTest\DefaultStartup.cs" />

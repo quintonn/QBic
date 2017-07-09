@@ -7,6 +7,7 @@ using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
+using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.SystemSettings
@@ -14,6 +15,11 @@ namespace WebsiteTemplate.Backend.SystemSettings
     public class ModiffySystemSettings : GetInput
     {
         private Models.SystemSettings SystemSettings { get; set; }
+
+        /// <summary>
+        /// This is for additional settings inputs obtained from ApplicationSettingsCore instance for each project.
+        /// </summary>
+        private Dictionary<string, object> SystemSettingValues { get; set; }
         private ApplicationSettingsCore AppSettings { get; set; }
         private DataService DataService { get; set; }
 
@@ -21,6 +27,7 @@ namespace WebsiteTemplate.Backend.SystemSettings
         {
             DataService = dataService;
             AppSettings = appSettings;
+            SystemSettingValues = new Dictionary<string, object>();
         }
         public override string Description
         {
@@ -54,17 +61,37 @@ namespace WebsiteTemplate.Backend.SystemSettings
 
             result.Add(new StringInput("WebsiteUrl", "Website Base Url", SystemSettings?.WebsiteBaseUrl, "Website", true));
 
+            var additionalSettings = AppSettings.GetAdditionalSystemSettings();
+            foreach (var setting in additionalSettings)
+            {
+                var defaultValue = SystemSettingValues[setting.Key];
+                if (defaultValue == null)
+                {
+                    defaultValue = setting.DefaultValue;
+                }
+                var input = InputFieldFactory.CreateInputField(setting.InputType, setting.Key, setting.Description, setting.TabNameOnInputScreen, setting.Mandatory, defaultValue);
+                result.Add(input);
+            }
+
             return result;
         }
 
         public override async Task<InitializeResult> Initialize(string data)
         {
+            SystemSettingValues.Clear();
             using (var session = DataService.OpenSession())
             {
                 SystemSettings = session.QueryOver<Models.SystemSettings>().List<Models.SystemSettings>().FirstOrDefault();
                 if (!String.IsNullOrWhiteSpace(SystemSettings?.EmailPassword))
                 {
                     SystemSettings.EmailPassword = Encryption.Decrypt(SystemSettings.EmailPassword, AppSettings.ApplicationPassPhrase);
+                }
+
+                var additionalSettings = AppSettings.GetAdditionalSystemSettings();
+                foreach (var setting in additionalSettings)
+                {
+                    var dbSetting = session.QueryOver<SystemSettingValue>().Where(s => s.KeyName == setting.Key).SingleOrDefault();
+                    SystemSettingValues.Add(setting.Key, dbSetting?.Value);
                 }
             }
             return new InitializeResult(true);
@@ -120,7 +147,23 @@ namespace WebsiteTemplate.Backend.SystemSettings
 
                     DataService.SaveOrUpdate(session, systemSettings);
 
-                    session.Flush();
+                    var additionalSettings = AppSettings.GetAdditionalSystemSettings();
+                    foreach (var setting in additionalSettings)
+                    {
+                        var value = GetValue(setting.Key);
+                        var dbSetting = session.QueryOver<SystemSettingValue>().Where(s => s.KeyName == setting.Key).SingleOrDefault();
+                        if (dbSetting == null)
+                        {
+                            dbSetting = new SystemSettingValue()
+                            {
+                                KeyName = setting.Key
+                            };
+                        }
+                        dbSetting.Value = value;
+                        DataService.SaveOrUpdate(session, dbSetting);
+                    }
+
+                        session.Flush();
                 }
 
                 return new List<IEvent>()

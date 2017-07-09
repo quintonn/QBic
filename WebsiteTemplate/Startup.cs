@@ -18,6 +18,14 @@ namespace WebsiteTemplate
         private static IUnityContainer Container { get; set; }
         public void Configuration(IAppBuilder app)
         {
+            //app.Use(async (context, next) =>
+            //{
+            //    var request = context.Request;
+                
+            //    await next();
+            //});
+
+
             //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
             var myApp = app;
 

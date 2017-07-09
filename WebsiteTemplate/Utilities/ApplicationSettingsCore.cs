@@ -2,6 +2,7 @@
 using Owin;
 using System;
 using System.Collections.Generic;
+using WebsiteTemplate.Models.NonDatabase;
 
 namespace WebsiteTemplate.Utilities
 {
@@ -24,6 +25,11 @@ namespace WebsiteTemplate.Utilities
         public virtual void PerformAdditionalStartupConfiguration(IAppBuilder app, IUnityContainer container)
         {
 
+        }
+
+        public virtual List<SystemSettingItem> GetAdditionalSystemSettings()
+        {
+            return new List<SystemSettingItem>();
         }
     }
 }
