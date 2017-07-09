@@ -130,6 +130,8 @@ namespace WebsiteTemplate.Utilities
             return result;
         }
 
+        private static List<Type> ProcessingTypes { get; set; } = new List<Type>();
+
         private static void ProcessType(Type type, List<Type> sortedTypes)
         {
             /* Only process BaseClass classes and don't repeat any */
@@ -144,6 +146,12 @@ namespace WebsiteTemplate.Utilities
                 return;
             }
 
+            if (ProcessingTypes.Contains(type))
+            {
+                return;
+            }
+            ProcessingTypes.Add(type);
+
             var properties = type.GetProperties().Where(p => p.PropertyType.IsClass && 
                                                              p.PropertyType.IsSubclassOf(typeof(BaseClass)) && 
                                                              p.PropertyType != type).ToList();
@@ -153,6 +161,7 @@ namespace WebsiteTemplate.Utilities
                 ProcessType(pType, sortedTypes);
             }
 
+            ProcessingTypes.Remove(type);
             sortedTypes.Add(type);
         }
 
