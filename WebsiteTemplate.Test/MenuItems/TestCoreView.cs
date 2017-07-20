@@ -34,6 +34,7 @@ namespace WebsiteTemplate.Test.MenuItems
         {
             columnConfig.AddStringColumn("ChildName", "ChildName");
             columnConfig.AddStringColumn("SuperName", "SuperName");
+            columnConfig.AddStringColumn("Some Number", "SomeInt");
         }
 
         SuperCause cause = null;
@@ -51,7 +52,8 @@ namespace WebsiteTemplate.Test.MenuItems
             return data.Select(d => new
             {
                 ChildName = d.ChildName,
-                SuperName = d.SuperCause?.SuperName
+                SuperName = d.SuperCause?.SuperName,
+                SomeInt = d.SomeInt
             });
         }
 
@@ -61,6 +63,14 @@ namespace WebsiteTemplate.Test.MenuItems
             {
                 x => x.ChildName,
                 x => cause.SuperName
+            };
+        }
+
+        public override List<KeyValuePair<Type, Expression<Func<CauseChild, object>>>> GetNonStringFilterItems()
+        {
+            return new List<KeyValuePair<Type, Expression<Func<CauseChild, object>>>>()
+            {
+                new KeyValuePair<Type, Expression<Func<CauseChild, object>>>(typeof(int), x => x.SomeInt)
             };
         }
 

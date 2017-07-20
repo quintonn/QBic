@@ -211,7 +211,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                         {
                             prop.SetValue(item, new LongString(value.Value?.ToString()));
                         }
-                        else if (prop.PropertyType == typeof(DateTime))
+                        else if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
                         {
                             DateTime date;
                             if (String.IsNullOrWhiteSpace(dateFormat))

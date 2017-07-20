@@ -74,6 +74,10 @@ namespace WebsiteTemplate.Backend.Services
                 {
                     Console.WriteLine(ex.Message);
                 }
+                catch (FileNotFoundException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
 
             AppDomain.Unload(appDomain);

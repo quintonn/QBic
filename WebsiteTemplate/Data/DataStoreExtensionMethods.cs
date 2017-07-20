@@ -45,6 +45,10 @@ namespace WebsiteTemplate.Data
                 {
                     Console.WriteLine(ex.Message);
                 }
+                catch (FileNotFoundException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
 
             var list = new List<string>();

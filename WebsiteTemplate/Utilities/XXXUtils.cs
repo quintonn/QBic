@@ -41,6 +41,11 @@ namespace WebsiteTemplate.Utilities
             }
         }
 
+        public static string GetCurrentDirectory()
+        {
+            return HttpRuntime.AppDomainAppPath;
+        }
+
         public static string GetSystemSetting(ISession session, string settingKey, string valueIfSettingNotFound = null)
         {
             var result = valueIfSettingNotFound;

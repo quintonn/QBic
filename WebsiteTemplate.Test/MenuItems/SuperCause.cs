@@ -15,6 +15,8 @@ namespace WebsiteTemplate.Test.MenuItems
 
         public virtual DateTime? SuperDate { get; set; }
 
+        public virtual int CauseNumber { get; set; }
+
         public virtual ISet<CauseChild> CauseChildren { get; set; }
 
         public virtual byte[] FileData { get; set; }

@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
@@ -85,8 +86,31 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
                 {
                     var x = Restrictions.InsensitiveLike(Projections.Property(item), settings.Filter, MatchMode.Anywhere);
                     or.Add(x);
-                    //query = query.WhereRestrictionOn(item).IsLike(settings.Filter, MatchMode.Anywhere);
                 }
+
+                var tempDict = new Dictionary<string, object>()
+                {
+                    { "X", settings.Filter }
+                };
+
+                var nonStringFilterItems = GetNonStringFilterItems();
+
+                var method = Type.GetType("WebsiteTemplate.Menus.InputItems.InputProcessingMethods").GetMethod("GetValue");
+                
+                foreach (var item in nonStringFilterItems)
+                {
+                    var defaultValue = Activator.CreateInstance(item.Key);
+
+                    MethodInfo generic = method.MakeGenericMethod(item.Key);
+
+                    var theValue = generic.Invoke(null, new List<object>() { tempDict, "X", defaultValue }.ToArray());
+                    if (!theValue.Equals(defaultValue))
+                    {
+                        var x = Restrictions.Eq(Projections.Property(item.Value), theValue);
+                        or.Add(x);
+                    }
+                }
+                
                 query.Where(or);
             }
 
@@ -180,5 +204,10 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
                 //x => x.DateTimeUTC
             };
             */
+
+        public virtual List<KeyValuePair<Type, Expression<Func<T, object>>>> GetNonStringFilterItems()
+        {
+            return new List<KeyValuePair<Type, Expression<Func<T, object>>>>();
+        }
     }
 }

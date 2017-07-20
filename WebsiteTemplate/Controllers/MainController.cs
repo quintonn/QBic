@@ -71,10 +71,17 @@ namespace WebsiteTemplate.Controllers
         [DeflateCompression]
         public async Task<IHttpActionResult> InitializeSystem()
         {
-            await Container.Resolve<InitializationProcessor>().Process(0, Request); // Just to initialize core processor
+            try
+            {
+                await Container.Resolve<InitializationProcessor>().Process(0, Request); // Just to initialize core processor
 
-            var json = ApplicationService.InitializeApplication();
-            return Json(json, JSON_SETTINGS);
+                var json = ApplicationService.InitializeApplication();
+                return Json(json, JSON_SETTINGS);
+            }
+            catch (Exception error)
+            {
+                return BadRequest(error.Message + "\n" + error.StackTrace);
+            }
         }
 
         [HttpGet]

@@ -59,6 +59,13 @@ namespace WebsiteTemplate
             Container.LoadConfiguration();
 
             var appSettings = Container.Resolve<ApplicationSettingsCore>();
+
+            #if (DEBUG)
+            if (appSettings.DebugStartup)
+            {
+                if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
+            }
+            #endif
             Container.RegisterInstance(DataStore.GetInstance(appSettings));
 
             Container.RegisterType(typeof(ApplicationStartup), appSettings.GetApplicationStartupType);

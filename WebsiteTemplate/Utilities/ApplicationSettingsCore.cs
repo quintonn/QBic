@@ -16,6 +16,14 @@ namespace WebsiteTemplate.Utilities
 
         public abstract string SystemEmailAddress { get; }
 
+        public virtual bool DebugStartup
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         /// <summary>
         /// Configure the site specific <see cref="WebsiteTemplate.Models.BaseClass"/> classes for backup processing.
         /// </summary>
