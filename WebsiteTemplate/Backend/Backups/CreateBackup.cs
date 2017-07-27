@@ -26,7 +26,7 @@ namespace WebsiteTemplate.Backend.Backups
         {
             get
             {
-                return "Create system backup";
+                return "Create Backup";
             }
         }
 
