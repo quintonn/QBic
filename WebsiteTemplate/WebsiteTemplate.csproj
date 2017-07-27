@@ -339,6 +339,7 @@
     <Compile Include="Menus\LogoutEvent.cs" />
     <Compile Include="Menus\PropertyChangedEvents\UpdateInputVisibility.cs" />
     <Compile Include="Menus\ViewItems\CoreItems\CoreAction.cs" />
+    <Compile Include="Menus\ViewItems\CoreItems\CoreDeleteAction.cs" />
     <Compile Include="Menus\ViewItems\CoreItems\CoreView.cs" />
     <Compile Include="Menus\ViewItems\CoreItems\CoreModify.cs" />
     <Compile Include="Menus\ViewItems\GetDataSettings.cs" />
