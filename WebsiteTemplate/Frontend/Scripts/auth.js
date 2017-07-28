@@ -108,9 +108,6 @@
                 {
                     url: url,
                     method: "POST",
-                    //headers: {
-                    //    "Authorization": auth.refreshToken
-                    //},
                     data: data
                 }).done(function (resp)
                 {
