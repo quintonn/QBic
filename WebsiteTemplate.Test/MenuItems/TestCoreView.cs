@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using NHibernate;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
@@ -56,6 +57,12 @@ namespace WebsiteTemplate.Test.MenuItems
                 SomeInt = d.SomeInt
             });
         }
+
+        //public override IQueryOver<CauseChild> CreateQuery(ISession session, GetDataSettings settings, Expression<Func<CauseChild, bool>> additionalCriteria = null)
+        //{
+        //    var result = base.CreateQuery(session, settings, x => x.ChildName == "xxxxx");
+        //    return result;
+        //}
 
         public override List<Expression<Func<CauseChild, object>>> GetFilterItems()
         {

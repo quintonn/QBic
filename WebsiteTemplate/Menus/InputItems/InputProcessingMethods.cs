@@ -61,13 +61,14 @@ namespace WebsiteTemplate.Menus.InputItems
                         value = tempValue;
                     }
                     //else if (Nullable.GetUnderlyingType(typeof(T)) != null)
-                    else if (nullableType.IsEnum)
+                    else if (nullableType != null && nullableType.IsEnum)
                     {
                         value = null;
                     }
                     else
                     {
-                        throw new Exception(String.Format("Unable to parse non-nullable enum from value '{0}'", value));
+                        //throw new Exception(String.Format("Unable to parse non-nullable enum from value '{0}'", value));
+                        value = null;
                     }
                 }
                 else if (typeof(T) == typeof(bool))

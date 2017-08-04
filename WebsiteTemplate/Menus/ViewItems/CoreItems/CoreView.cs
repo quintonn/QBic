@@ -66,7 +66,7 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
             return new List<KeyValuePair<Expression<Func<T, object>>, Expression<Func<object>>>>();
         }
 
-        public virtual IQueryOver<T> CreateQuery(ISession session, GetDataSettings settings)
+        public virtual IQueryOver<T> CreateQuery(ISession session, GetDataSettings settings, Expression<Func<T, bool>> additionalCriteria = null)
         {
             var query = session.QueryOver<T>();
 
@@ -110,8 +110,12 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
                         or.Add(x);
                     }
                 }
-                
                 query.Where(or);
+            }
+
+            if (additionalCriteria != null)
+            {
+                query.And(additionalCriteria);
             }
 
             OrderQuery(query);
