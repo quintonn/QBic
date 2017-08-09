@@ -104,7 +104,7 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
                     MethodInfo generic = method.MakeGenericMethod(item.Key);
 
                     var theValue = generic.Invoke(null, new List<object>() { tempDict, "X", defaultValue }.ToArray());
-                    if (item.Key.IsEnum || !theValue.Equals(defaultValue))
+                    if ((item.Key.IsEnum && theValue.ToString().ToLower() == settings.Filter.ToLower() ) || !theValue.Equals(defaultValue))
                     {
                         var x = Restrictions.Eq(Projections.Property(item.Value), theValue);
                         or.Add(x);
