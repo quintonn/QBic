@@ -46,7 +46,6 @@ namespace WebsiteTemplate.Controllers
         [RequireHttps]
         public async Task<IHttpActionResult> RequestPasswordReset()
         {
-            //TODO: This can onw be done via a normal Event.
             XXXUtils.SetCurrentUser("System");
 
             var data = GetRequestData();

@@ -1,6 +1,7 @@
 ﻿using NHibernate;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -98,6 +99,17 @@ namespace WebsiteTemplate.Utilities
         public static void SetCurrentUser(string userName)
         {
             HttpContext.Current.User = new GenericPrincipal(new GenericIdentity(userName), new string[] { });
+        }
+
+        public static string GetCurrentRequestData()
+        {
+            using (var stream = HttpContext.Current.Request.InputStream)
+            using (var mem = new MemoryStream())
+            {
+                stream.CopyTo(mem);
+                var res = Encoding.UTF8.GetString(mem.ToArray());
+                return res;
+            }
         }
 
         public static void SendEmail(string body, IList<string> recipients, string subject, string emailHost, int emailPort, string fromEmailUser, string fromEmailPassword, bool enableSsl, bool isHtmlBody = false)

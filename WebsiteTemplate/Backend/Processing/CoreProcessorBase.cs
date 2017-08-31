@@ -103,13 +103,7 @@ namespace WebsiteTemplate.Backend.Processing
 
         protected string GetRequestData()
         {
-            using (var stream = HttpContext.Current.Request.InputStream)
-            using (var mem = new MemoryStream())
-            {
-                stream.CopyTo(mem);
-                var res = System.Text.Encoding.UTF8.GetString(mem.ToArray());
-                return res;
-            }
+            return XXXUtils.GetCurrentRequestData();
         }
 
         protected List<int> GetAllowedEventsForUser(string userId)
