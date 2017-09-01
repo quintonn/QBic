@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Web;
 using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Menus;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Processing
 {
@@ -21,6 +22,7 @@ namespace WebsiteTemplate.Backend.Processing
             if (String.IsNullOrWhiteSpace(data))
             {
                 data = HttpContext.Current.Request.Params["requestData"];
+                data = XXXUtils.Base64Decode(data);
             }
 
             if (!EventList.ContainsKey(eventId))

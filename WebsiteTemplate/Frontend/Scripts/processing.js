@@ -240,11 +240,30 @@
 
     processing.showOrDownloadFile = function (item)
     {
+        var requestData;
+        try
+        {
+            requestData = JSON.parse(item.RequestData);
+            if (requestData.Id && requestData.Id != null)
+            {
+                requestData = requestData.Id;
+            }
+            else
+            {
+                requestData = item.RequestData;
+            }
+        }
+        catch (err)
+        {
+            console.warn('unable to parse request data: ');
+            console.log(item.RequestData);
+            requestData = item.RequestData;
+        }
         dialog.showBusyDialog("Downloading file...");
         var url = mainApp.apiURL + item.DataUrl;
         url = url.replace("//", "/");
         url = url + "?token=" + auth.accessToken;
-        url = url + "&requestData=" + encodeURI(item.RequestData);
+        url = url + "&requestData=" + encodeURI(btoa(requestData));
         
         //var link = document.createElement('a');
         //link.download = item.FileName;
