@@ -22,6 +22,10 @@ namespace WebsiteTemplate.Backend.Processing
             if (String.IsNullOrWhiteSpace(data))
             {
                 data = HttpContext.Current.Request.Params["requestData"];
+            }
+
+            if (!String.IsNullOrWhiteSpace(data))
+            {
                 data = XXXUtils.Base64Decode(data);
             }
 
@@ -31,7 +35,7 @@ namespace WebsiteTemplate.Backend.Processing
             }
 
             var eventItem = EventList[eventId] as OpenFile;
-
+            //var __ignore__ = eventItem.FileName; /* Leave this here -> this initializes the filename */
             var fileInfo = await eventItem.GetFileInfo(data);
             //return fileInfo;
             return new FileActionResult(fileInfo);

@@ -72,7 +72,10 @@ namespace WebsiteTemplate.Test.MenuItems
 
         public override IList<MenuItem> GetViewMenu(Dictionary<string, string> dataForMenu)
         {
-            return new List<MenuItem>();
+            return new List<MenuItem>()
+            {
+                new MenuItem("Extract", 741, "123, 456")
+            };
         }
     }
 }

@@ -29,11 +29,17 @@ namespace WebsiteTemplate.Menus
             }
         }
 
+        private string _fileName { get; set; }
+
         public string FileName
         {
             get
             {
-                return GetFileNameAndExtension();
+                if (string.IsNullOrWhiteSpace(_fileName))
+                {
+                    _fileName = GetFileNameAndExtension();
+                }
+                return _fileName;
             }
         }
 

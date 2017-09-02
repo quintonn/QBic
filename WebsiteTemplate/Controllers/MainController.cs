@@ -118,7 +118,7 @@ namespace WebsiteTemplate.Controllers
         }
 
 
-        [HttpGet]
+        [HttpPost]
         [Route("GetFile/{*eventId}")]
         [RequireHttps]
         [Authorize]

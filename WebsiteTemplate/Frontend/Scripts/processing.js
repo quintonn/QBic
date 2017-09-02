@@ -200,221 +200,72 @@
         });
     };
 
-    processing.toBlob = function (data, datatype)
-    {
-        var out;
-
-        try
-        {
-            console.log('aaaa');
-            out = new Blob([data], { type: datatype });
-        }
-        catch (e)
-        {
-            window.BlobBuilder = window.BlobBuilder ||
-                    window.WebKitBlobBuilder ||
-                    window.MozBlobBuilder ||
-                    window.MSBlobBuilder;
-
-            if (e.name == 'TypeError' && window.BlobBuilder)
-            {
-                var bb = new BlobBuilder();
-                bb.append(data);
-                out = bb.getBlob(datatype);
-                console.log('bbbb');
-            }
-            else if (e.name == "InvalidStateError")
-            {
-                // InvalidStateError (tested on FF13 WinXP)
-                out = new Blob([data], { type: datatype });
-                console.log('cccc');
-            }
-            else
-            {
-                // We're screwed, blob constructor unsupported entirely   
-                console.debug("Error", e);
-            }
-        }
-        return out;
-    };
-
     processing.showOrDownloadFile = function (item)
     {
-        var requestData;
-        try
-        {
-            requestData = JSON.parse(item.RequestData);
-            if (requestData.Id && requestData.Id != null)
-            {
-                requestData = requestData.Id;
-            }
-            else
-            {
-                requestData = item.RequestData;
-            }
-        }
-        catch (err)
-        {
-            console.warn('unable to parse request data: ');
-            console.log(item.RequestData);
-            requestData = item.RequestData;
-        }
         dialog.showBusyDialog("Downloading file...");
         var url = mainApp.apiURL + item.DataUrl;
         url = url.replace("//", "/");
-        url = url + "?token=" + auth.accessToken;
-        url = url + "&requestData=" + encodeURI(btoa(requestData));
-        
-        //var link = document.createElement('a');
-        //link.download = item.FileName;
-        //link.href = url;
-        //link.click();
-        
-        var newWin = window.open(url, "_blank");
-        if (!newWin || newWin.closed || typeof newWin.closed == 'undefined')
+
+        var dataToSend = "";
+        if (item.RequestData != null)
         {
-            dialog.showMessage("Info", "The content was blocked by your browser. Look in the top-right corner to allow popups on this site or to view the file this time only.");
+            dataToSend = base64.encode(item.RequestData);
         }
 
-        return dialog.closeBusyDialog();
-
-        //return mainApp.makeWebCall(url, "POST", item.RequestData, ["content-type", "FileName"]).then(function (resp)
-        //{
-        //    dialog.closeBusyDialog();
-            
-        //    var dataUrl = "data:" + resp['content-type'] + ";base64," + resp.data;
-        //    var filename = resp['FileName'];
-        //    var l = resp.data.length;
-        //    console.log('length: ' + l);
-        //    if (processing.supportsBlob() == true)
-        //    {
-        //        var blobData = resp.Data;
-
-        //        if (window.navigator.msSaveOrOpenBlob)
-        //        {
-        //            var blobObject;
-        //            if (window.BlobBuilder)
-        //            {
-        //                var bb = new BlobBuilder();
-        //                bb.append(resp.Data);
-        //                blobObject = bb.getBlob(resp['content-type']);
-        //            }
-        //            else
-        //            {
-        //                blobObject = new Blob([resp.data], { type: resp['content-type'] });
-        //            }
-        //            window.navigator.msSaveOrOpenBlob(blobObject, filename);
-        //        }
-        //        else
-        //        {
-        //            var blob = processing.toBlob(resp.data, resp['content-type']);
-
-        //            //var fileReader = new FileReader();
-        //            //fileReader.onload = function (evt)
-        //            //{
-        //            //    // Read out file contents as a Data URL
-        //            //    var result = evt.target.result;
-        //            //    console.log(result);
-        //            //    var newWin = window.open(result, "_blank");
-        //            //    if (!newWin || newWin.closed || typeof newWin.closed == 'undefined')
-        //            //    {
-        //            //        dialog.showMessage("Info", "The content was blocked by your browser. Look in the top-right corner to allow popups on this site or to view the file this time only.");
-        //            //    }
-        //            //};
-        //            //// Load blob as Data URL
-        //            //fileReader.readAsDataURL(blob);
-
-        //            var blobUrl = window.URL.createObjectURL(blob);
-        //            var a = document.createElement('a');
-        //            a.style = "display: none";
-        //            a.href = blobUrl;
-        //            a.download = filename;
-        //            document.body.appendChild(a);
-        //            a.click();
-        //            setTimeout(function ()
-        //            {
-        //                document.body.removeChild(a);
-        //                (window.webkitURL || window.URL).revokeObjectURL(blobUrl);
-        //            }, 100);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        // Try using data url
-        //        var newWin = window.open(dataUrl, "_blank");
-        //        if (!newWin || newWin.closed || typeof newWin.closed == 'undefined')
-        //        {
-        //            dialog.showMessage("Info", "The content was blocked by your browser. Look in the top-right corner to allow popups on this site or to view the file this time only.");
-        //        }
-        //    }
-        //}).catch(dialog.closeBusyDialog);
-    };
-
-    processing.supportsBlob = function ()
-    {
-        try
+        return new Promise(function (res, rej)
         {
-            var svg = new Blob(["<svg xmlns='http://www.w3.org/2000/svg'></svg>"], { type: "image/svg+xml;charset=utf-8" });
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: dataToSend,
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                dataType: 'binary',
+                beforeSend: function (xhr)
+                    {
+                        xhr.setRequestHeader("Authorization", "Bearer " + auth.accessToken);
+                    }
 
-            // Safari 6 uses "webkitURL".
-            var url = window.webkitURL || window.URL;
-            var objectUrl = url.createObjectURL(svg);
-            
-            if (/^blob:/.exec(objectUrl) === null)
+            }).done(function (xhr, xx, resp)
             {
-                // `URL.createObjectURL` created a URL that started with something other
-                // than "blob:", which means it has been polyfilled and is not supported by
-                // this browser.
-                return false;
-            } else
+                var filename;
+                if (resp && resp.getResponseHeader)
+                {
+                    filename = resp.getResponseHeader("FileName");
+                }
+                if (filename == null || filename.length == 0)
+                {
+                    filename = "unknown file.zip";
+                }
+                var objUrl = URL.createObjectURL(xhr);
+
+                var a = document.createElement('a');
+                a.href = objUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                URL.revokeObjectURL(objUrl);
+
+                a.remove();
+                dialog.closeBusyDialog();
+                res();
+            }).fail(function(err)
             {
-                return true;
-            }
-        } catch (err)
+                console.error(err);
+                dialog.showMessage("Error", "Error downloading file: \n" + err);
+                dialog.closeBusyDialog();
+                res();
+            });
+        }).catch(function (err)
         {
             console.error(err);
-            return false;
-        }
-    };
+            dialog.showMessage("Error", "Error downloading file: \n" + err);
+            dialog.closeBusyDialog();
+            res();
+        });
 
-    processing.base64ToBlob = function (b64Data, contentType, sliceSize)
-    {
-        contentType = contentType || '';
-        sliceSize = sliceSize || 512;
-
-        var byteCharacters = atob(b64Data);
-        var byteArrays = [];
-
-        for (var offset = 0; offset < byteCharacters.length; offset += sliceSize)
-        {
-            var slice = byteCharacters.slice(offset, offset + sliceSize);
-
-            var byteNumbers = new Array(slice.length);
-            for (var i = 0; i < slice.length; i++)
-            {
-                byteNumbers[i] = slice.charCodeAt(i);
-            }
-
-            var byteArray = new Uint8Array(byteNumbers);
-
-            byteArrays.push(byteArray);
-        }
-
-        try
-        {
-            var blob = new Blob(byteArrays, { type: contentType });
-            return blob;
-        } catch (e)
-        {
-            // The BlobBuilder API has been deprecated in favour of Blob, but older
-            // browsers don't know about the Blob constructor
-            // IE10 also supports BlobBuilder, but since the `Blob` constructor
-            //  also works, there's no need to add `MSBlobBuilder`.
-            var bb = new (window.WebKitBlobBuilder || window.MozBlobBuilder);
-            bb.append(arraybuffer);
-            var blob = bb.getBlob(contentType); // <-- Here's the Blob
-            return blob;
-        }
+        //return dialog.closeBusyDialog();
     };
 
     processing.updateViewData = function (eventId, params)

@@ -1,6 +1,7 @@
 ﻿/// <autosync enabled="true" />
 /// <reference path="applicationModel.js" />
 /// <reference path="auth.js" />
+/// <reference path="base64.js" />
 /// <reference path="date.js" />
 /// <reference path="dialog.js" />
 /// <reference path="inputDialog.js" />
