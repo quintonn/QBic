@@ -122,6 +122,10 @@ namespace WebsiteTemplate.Backend.Services.Background
                     
                     AddBackgroundInformation(job.Event.Description, String.Format("Background process {0} is going to sleep until {1}", job.Event.Description, job.NextRunTime));
                     var sleepTime = job.NextRunTime.Subtract(DateTime.Now); /* Do this after adding background info because it takes time too */
+                    if (sleepTime < TimeSpan.FromSeconds(0))
+                    {
+                        sleepTime = TimeSpan.FromMinutes(1);
+                    }
 
                     Thread.Sleep(sleepTime);
                 }

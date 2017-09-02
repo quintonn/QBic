@@ -37,7 +37,7 @@ namespace WebsiteTemplate.Backend.KeepAlive
         {
             get
             {
-                return false;
+                return true;
             }
         }
 

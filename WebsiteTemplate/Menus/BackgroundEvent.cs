@@ -47,7 +47,13 @@ namespace WebsiteTemplate.Menus
         /// Set this to true if the next run time should only be determined after successfully running doing the work.
         /// Else, set it to false to calculate next run time immediately after starting work.
         /// </summary>
-        public abstract bool RunSynchronously { get; }
+        public virtual bool RunSynchronously
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public abstract DateTime CalculateNextRunTime(DateTime? lastRunTime);
 
