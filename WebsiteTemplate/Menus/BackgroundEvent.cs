@@ -1,6 +1,6 @@
 ﻿using Microsoft.Practices.Unity;
 using System;
-using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Backend.Services.Background;
 using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Menus
@@ -42,6 +42,12 @@ namespace WebsiteTemplate.Menus
         }
 
         public abstract void DoWork();
+
+        /// <summary>
+        /// Set this to true if the next run time should only be determined after successfully running doing the work.
+        /// Else, set it to false to calculate next run time immediately after starting work.
+        /// </summary>
+        public abstract bool RunSynchronously { get; }
 
         public abstract DateTime CalculateNextRunTime(DateTime? lastRunTime);
 

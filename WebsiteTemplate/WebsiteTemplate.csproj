@@ -275,8 +275,10 @@
     <Compile Include="Backend\Processing\InitializationProcessor.cs" />
     <Compile Include="Backend\Processing\InputProcessing\ProcessingResult.cs" />
     <Compile Include="Backend\Processing\PingProcessor.cs" />
-    <Compile Include="Backend\Services\BackgroundJob.cs" />
-    <Compile Include="Backend\Services\BackgroundService.cs" />
+    <Compile Include="Backend\Services\Background\BackgroundJob.cs" />
+    <Compile Include="Backend\Services\Background\BackgroundManager.cs" />
+    <Compile Include="Backend\Services\Background\BackgroundService.cs" />
+    <Compile Include="Backend\Services\Background\BackgroundWorker.cs" />
     <Compile Include="Backend\Services\BackupService.cs" />
     <Compile Include="Backend\Services\BaseClassComparer.cs" />
     <Compile Include="Backend\SystemSettings\ModiffySystemSettings.cs" />

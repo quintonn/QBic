@@ -21,6 +21,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public EventService(IUnityContainer container)
         {
+            //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
             Container = container;
 
             if (EventList == null)

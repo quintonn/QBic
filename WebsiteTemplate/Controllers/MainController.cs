@@ -74,7 +74,6 @@ namespace WebsiteTemplate.Controllers
             try
             {
                 await Container.Resolve<InitializationProcessor>().Process(0, Request); // Just to initialize core processor
-
                 var json = ApplicationService.InitializeApplication();
                 return Json(json, JSON_SETTINGS);
             }

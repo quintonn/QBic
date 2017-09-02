@@ -16,7 +16,15 @@ namespace WebsiteTemplate.Backend.KeepAlive
         {
             get
             {
-                return "";
+                return "Background Error Testing Process";
+            }
+        }
+
+        public override bool RunSynchronously
+        {
+            get
+            {
+                return false;
             }
         }
 
@@ -36,7 +44,7 @@ namespace WebsiteTemplate.Backend.KeepAlive
 
         public override void DoWork()
         {
-            //throw new Exception("Abort");
+            throw new Exception("Abort");
             Console.WriteLine("Hello");
         }
 

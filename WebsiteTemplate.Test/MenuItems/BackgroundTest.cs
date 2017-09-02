@@ -23,7 +23,7 @@ namespace WebsiteTemplate.Test.MenuItems
 
         public override DateTime CalculateNextRunTime(DateTime? lastRunTime)
         {
-            //return DateTime.Now.AddMinutes(2);
+            //return DateTime.Now.AddMinutes(0.2);
             return DateTime.Now.AddDays(10);
         }
 
@@ -38,6 +38,14 @@ namespace WebsiteTemplate.Test.MenuItems
         }
 
         public override bool RunImmediatelyFirstTime
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public override bool RunSynchronously
         {
             get
             {
