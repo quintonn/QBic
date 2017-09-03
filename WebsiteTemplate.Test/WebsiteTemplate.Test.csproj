@@ -45,8 +45,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicAuthentication, Version=1.0.11.27385, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BasicAuthentication.1.0.11.27385\lib\net461\BasicAuthentication.dll</HintPath>
+    <Reference Include="BasicAuthentication, Version=1.0.12.20144, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicAuthentication.1.0.12.20144\lib\net461\BasicAuthentication.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="DocumentGenerator, Version=0.0.6159.25178, Culture=neutral, processorArchitecture=MSIL">

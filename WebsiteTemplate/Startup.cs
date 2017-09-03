@@ -38,7 +38,8 @@ namespace WebsiteTemplate
                 RefreshTokenExpireTimeSpan = TimeSpan.FromDays(7), //Refresh token expires after 7 days
                 AllowInsecureHttp = false,
                 TokenEndpointPath = new PathString("/api/v1/token"),
-                UserContext = Container.Resolve<UserContext>()
+                UserContext = Container.Resolve<UserContext>(),
+                ClientId = appSettings.ClientId
             };
 
             myApp.UseBasicUserTokenAuthentication(options);

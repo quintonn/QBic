@@ -24,6 +24,14 @@ namespace WebsiteTemplate.Utilities
             }
         }
 
+        public virtual string ClientId
+        {
+            get
+            {
+                return GetApplicationName();
+            }
+        }
+
         /// <summary>
         /// Configure the site specific <see cref="WebsiteTemplate.Models.BaseClass"/> classes for backup processing.
         /// </summary>
