@@ -238,16 +238,24 @@
                 {
                     filename = "unknown file.zip";
                 }
-                var objUrl = URL.createObjectURL(xhr);
+                if (window.navigator && window.navigator.msSaveBlob) // Microsoft
+                {
+                    window.navigator.msSaveBlob(xhr, filename);
+                }
+                else
+                {
+                    var objUrl = URL.createObjectURL(xhr);
 
-                var a = document.createElement('a');
-                a.href = objUrl;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                URL.revokeObjectURL(objUrl);
+                    var a = document.createElement('a');
+                    a.href = objUrl;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    URL.revokeObjectURL(objUrl);
 
-                a.remove();
+                    a.remove();
+                }
+                
                 dialog.closeBusyDialog();
                 res();
             }).fail(function(err)
