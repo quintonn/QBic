@@ -163,6 +163,11 @@ namespace WebsiteTemplate.Backend.Services
                         {
                             var type = SystemTypes[id];
 
+                            if (type == typeof (AuditEvent))
+                            {
+                                continue;
+                            }
+
                             //TODO: Need a way to ignore types inherit from base types that are BaseClass.
                             //      This leads to the restore trying to restore duplicate items, which is temporarily fixed by BaseClassComparer
 

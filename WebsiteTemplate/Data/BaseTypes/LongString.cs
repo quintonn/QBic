@@ -29,7 +29,7 @@ namespace WebsiteTemplate.Data.BaseTypes
 
         public static implicit operator string(LongString ls)
         {
-            return ls.Base;
+            return ls?.Base;
         }
 
         public static implicit operator LongString(string ls)
