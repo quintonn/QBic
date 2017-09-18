@@ -11,7 +11,7 @@
 
     dialog.getUserConfirmation = function (settings, data, params)
     {
-        dialog.closeBusyDialog(); /// This is because the busy dialog covers the confirmation dialog. TODO: need to fix this
+        dialog.closeAllBusyDialogs(); /// This is because the busy dialog covers the confirmation dialog. TODO: need to fix this
         var cancelText = settings.CancelButtonText;
         var confirmText = settings.ConfirmationButtonText;
         var message = settings.ConfirmationMessage;

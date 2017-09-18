@@ -207,7 +207,7 @@ $(document).ready(function ()
     {
         return processing.processUIActionResult(data, eventId).catch(function (err)
         {
-            mainApp.handleError(err);
+            return mainApp.handleError(err);
         });;
     };
 
