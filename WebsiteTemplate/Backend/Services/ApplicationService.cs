@@ -18,7 +18,7 @@ namespace WebsiteTemplate.Backend.Services
         }
 
         
-        public object InitializeApplication()
+        public object InitializeApplication(string constructorError)
         {
             //var version = XXXUtils.GetApplicationCoreVersion().ToString();
 
@@ -27,7 +27,8 @@ namespace WebsiteTemplate.Backend.Services
             var json = new
             {
                 ApplicationName = ApplicationSettings.GetApplicationName(),
-                Version = version
+                Version = version,
+                ConstructorError = constructorError
             };
 
             return json;

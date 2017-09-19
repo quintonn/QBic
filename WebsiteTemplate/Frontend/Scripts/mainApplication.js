@@ -27,6 +27,12 @@ $(document).ready(function ()
         {
             var appName = data['ApplicationName'];
             var version = data['Version'];
+            var error = data['ConstructorError'];
+            if (error != null && error.length > 0)
+            {
+                console.log('There was a constructor error:');
+                console.log(error);
+            }
             mainApp.version = version;
             _applicationModel.applicationName(appName);
             

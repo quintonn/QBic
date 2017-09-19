@@ -20,6 +20,8 @@ namespace WebsiteTemplate.Controllers
 
         private JsonSerializerSettings JSON_SETTINGS;
 
+        private string ConstructorError { get; set; }
+
         [HttpGet]
         [Route("custom/{*path}")]
         [AllowAnonymous]
@@ -30,27 +32,36 @@ namespace WebsiteTemplate.Controllers
 
         public MainController(IUnityContainer container)
         {
-            Container = container;
-            ApplicationService = container.Resolve<ApplicationService>();
-            var eventService = container.Resolve<EventService>(); // This is here to ensure EventService is initialize and it's constructor is called so that EventList is not empty
-
-            var dataService = container.Resolve<DataService>();
-            
-            using (var session = dataService.OpenSession())
+            try
             {
-                var appSettings = session.QueryOver<SystemSettings>().List<SystemSettings>().FirstOrDefault();
-                if (appSettings != null)
+                Container = container;
+                ApplicationService = container.Resolve<ApplicationService>();
+                var eventService = container.Resolve<EventService>(); // This is here to ensure EventService is initialize and it's constructor is called so that EventList is not empty
+
+                var dataService = container.Resolve<DataService>();
+
+                using (var session = dataService.OpenSession())
                 {
-                    JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = appSettings.DateFormat };
-                    if (String.IsNullOrWhiteSpace(XXXUtils.DateFormat))
+                    var appSettings = session.QueryOver<SystemSettings>().List<SystemSettings>().FirstOrDefault();
+                    if (appSettings != null)
                     {
-                        XXXUtils.DateFormat = appSettings.DateFormat;
+                        JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = appSettings.DateFormat };
+                        if (String.IsNullOrWhiteSpace(XXXUtils.DateFormat))
+                        {
+                            XXXUtils.DateFormat = appSettings.DateFormat;
+                        }
+                    }
+                    else
+                    {
+                        JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = "yyyy-MM-dd" };
                     }
                 }
-                else
-                {
-                    JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = "yyyy-MM-dd" };
-                }
+
+                ConstructorError = String.Empty;
+            }
+            catch (Exception error)
+            {
+                ConstructorError = String.Format(error.Message + "\n" + error.StackTrace);
             }
         }
 
@@ -74,12 +85,12 @@ namespace WebsiteTemplate.Controllers
             try
             {
                 await Container.Resolve<InitializationProcessor>().Process(0, Request); // Just to initialize core processor
-                var json = ApplicationService.InitializeApplication();
+                var json = ApplicationService.InitializeApplication(ConstructorError);
                 return Json(json, JSON_SETTINGS);
             }
             catch (Exception error)
             {
-                return BadRequest(error.Message + "\n" + error.StackTrace);
+                return BadRequest(error.Message + "\n" + error.StackTrace + "\n" + ConstructorError);
             }
         }
 
