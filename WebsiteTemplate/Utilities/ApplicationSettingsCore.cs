@@ -2,6 +2,7 @@
 using Owin;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using WebsiteTemplate.Models.NonDatabase;
 
 namespace WebsiteTemplate.Utilities
@@ -15,6 +16,11 @@ namespace WebsiteTemplate.Utilities
         public abstract Type GetApplicationStartupType { get; }
 
         public abstract string SystemEmailAddress { get; }
+
+        public virtual List<Assembly> GetAdditinalAssembliesToMap()
+        {
+            return new List<Assembly>();
+        }
 
         public virtual bool DebugStartup
         {

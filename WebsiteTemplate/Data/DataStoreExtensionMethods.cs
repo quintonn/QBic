@@ -15,9 +15,14 @@ namespace WebsiteTemplate.Data
     {
         public static FluentMappingsContainer CustomAddFromAssemblyOf<T>(this FluentMappingsContainer mappings, ApplicationSettingsCore appSettings)
         {
-            //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
             var currentAssembly = Assembly.GetAssembly(appSettings.GetType());
             var container = mappings.AddFromAssemblyOf<User>().AddFromAssembly(currentAssembly);
+
+            var extraAssemblies = appSettings.GetAdditinalAssembliesToMap();
+            foreach (var assembly in extraAssemblies)
+            {
+                mappings.AddFromAssembly(assembly);
+            }
 
             var curDir = HttpRuntime.AppDomainAppPath;
             var dlls = Directory.GetFiles(curDir, "*.dll", SearchOption.AllDirectories);
