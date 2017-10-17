@@ -29,7 +29,12 @@ namespace WebsiteTemplate.Mappings
                 Map(x => x.OriginalObject).Nullable().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
                 Map(x => x.NewObject).Nullable().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
             }
-            else
+            else if (DataStore.ProviderName.Contains("MySql"))
+            {
+                Map(x => x.OriginalObject).Nullable().CustomSqlType("LONGTEXT").Length(int.MaxValue);
+                Map(x => x.NewObject).Nullable().CustomSqlType("LONGTEXT").Length(int.MaxValue);
+            }
+            else if (DataStore.SetCustomSqlTypes)
             {
                 Map(x => x.OriginalObject).Nullable().Length(int.MaxValue);
                 Map(x => x.NewObject).Nullable().Length(int.MaxValue);

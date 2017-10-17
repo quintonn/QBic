@@ -63,6 +63,7 @@ namespace WebsiteTemplate.Backend.Backups
                 var backupFile = GetValue<FileInfo>("BackupFile");
 
                 var mainConnectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
+                var providerName = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ProviderName;
                 var success = false;
                 //using (var scope = new TransactionScope())
                 {
@@ -70,7 +71,7 @@ namespace WebsiteTemplate.Backend.Backups
                     {
                         BackupService.BusyWithBackups = true;
                         BackupService.RemoveExistingData(mainConnectionString);
-                        success = BackupService.RestoreBackupOfAllData(backupFile.Data, mainConnectionString);
+                        success = BackupService.RestoreBackupOfAllData(backupFile.Data, mainConnectionString, providerName);
 
                         if (success == true)
                         {

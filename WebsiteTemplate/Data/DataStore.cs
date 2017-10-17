@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Web;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
@@ -29,6 +30,7 @@ namespace WebsiteTemplate.Data
         private ApplicationSettingsCore AppSettings { get; set; }
 
         internal static bool SetCustomSqlTypes { get; set; }
+        internal static string ProviderName { get; set; }
 
         private DataStore(ApplicationSettingsCore appSettings)
         {
@@ -91,15 +93,17 @@ namespace WebsiteTemplate.Data
                 throw new ArgumentNullException("MainDataStore connection string property in web.config does not contain a value for connection string");
             }
 
-            Configuration = CreateNewConfigurationUsingConnectionString(mainConnectionString);
+            Configuration = CreateNewConfigurationUsingConnectionString(mainConnectionString, ConfigurationManager.ConnectionStrings["MainDataStore"]?.ProviderName);
             
             return Configuration.BuildSessionFactory();
         }
 
-        public NHibernate.Cfg.Configuration CreateNewConfigurationUsingConnectionString(string connectionString)
+        public NHibernate.Cfg.Configuration CreateNewConfigurationUsingConnectionString(string connectionString, string providerName)
         {
             IPersistenceConfigurer configurer;
             DataStore.SetCustomSqlTypes = true;
+            DataStore.ProviderName = providerName;
+
             if (connectionString.Contains("##CurrentDirectory##"))
             {
                 var currentDirectory = HttpRuntime.AppDomainAppPath;
@@ -107,6 +111,10 @@ namespace WebsiteTemplate.Data
 
                 configurer = FluentNHibernate.Cfg.Db.SQLiteConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
                 DataStore.SetCustomSqlTypes = false;
+            }
+            else if (providerName.Contains("MySql"))
+            {
+                configurer = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
             }
             else
             {
@@ -162,6 +170,10 @@ namespace WebsiteTemplate.Data
                         var currentDirectory = HttpRuntime.AppDomainAppPath;
                         connectionString = connectionString.Replace("##CurrentDirectory##", currentDirectory);
                         Connection = new SQLiteConnection(connectionString);
+                    }
+                    else if (ConfigurationManager.ConnectionStrings["MainDataStore"]?.ProviderName.Contains("MySql") == true)
+                    {
+                        Connection = new MySql.Data.MySqlClient.MySqlConnection(connectionString);
                     }
                     else
                     {

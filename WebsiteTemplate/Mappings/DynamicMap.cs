@@ -50,7 +50,11 @@ namespace WebsiteTemplate.Mappings
 
                 if (properties.Where(p => p.Name == column).Single().PropertyType == typeof(byte[]))
                 {
-                    if (DataStore.SetCustomSqlTypes == true)
+                    if (DataStore.ProviderName.Contains("MySql"))
+                    {
+                        Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomSqlType("BLOB").Length(int.MaxValue);
+                    }
+                    else if (DataStore.SetCustomSqlTypes == true)
                     {
                         Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomSqlType("varbinary(max)").Length(int.MaxValue);
                     }
@@ -61,7 +65,11 @@ namespace WebsiteTemplate.Mappings
                 }
                 else if (properties.Where(p => p.Name == column).Single().PropertyType == typeof(LongString))
                 {
-                    if (DataStore.SetCustomSqlTypes == true)
+                    if (DataStore.ProviderName.Contains("MySql"))
+                    {
+                        Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomType<LongString>().CustomSqlType("LONGTEXT").Length(int.MaxValue);
+                    }
+                    else if (DataStore.SetCustomSqlTypes == true)
                     {
                         Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomType<LongString>().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
                     }

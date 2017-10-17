@@ -259,14 +259,14 @@ namespace WebsiteTemplate.Backend.Services
             return bytes;
         }
 
-        public void CreateNewDatabaseSchema(string connectionString)
+        public void CreateNewDatabaseSchema(string connectionString, string providerName)
         {
             var store = DataStore.GetInstance(null);
 
             DynamicClass.SetIdsToBeAssigned = true; // This will set the Fluent NHibernate mappings' id's to be assigned and not GUID's for the restore.
 
             //var connectionString = "Integrated Security=SSPI;Persist Security Info=False;Data Source=localhost;Initial Catalog=WebsiteTemplate";
-            var config = store.CreateNewConfigurationUsingConnectionString(connectionString);
+            var config = store.CreateNewConfigurationUsingConnectionString(connectionString, providerName);
             new SchemaUpdate(config).Execute(true, true);
 
             //var factory = config.BuildSessionFactory();
@@ -497,7 +497,7 @@ namespace WebsiteTemplate.Backend.Services
             //}
         }
 
-        public bool RestoreBackupOfAllData(byte[] data, string connectionString)
+        public bool RestoreBackupOfAllData(byte[] data, string connectionString, string providerName)
         {
             var tmpBytes = CompressionHelper.InflateByte(data);
             var tmpString = XXXUtils.GetString(tmpBytes);
@@ -516,7 +516,7 @@ namespace WebsiteTemplate.Backend.Services
                 var store = DataStore.GetInstance(null);
                 store.CloseSession();
                 ////var connectionString = "Integrated Security=SSPI;Persist Security Info=False;Data Source=localhost;Initial Catalog=WebsiteTemplate";
-                var config = store.CreateNewConfigurationUsingConnectionString(connectionString);
+                var config = store.CreateNewConfigurationUsingConnectionString(connectionString, providerName);
                 var factory = config.BuildSessionFactory();
 
                 //var comparer = new BasicClassEqualityComparer();
