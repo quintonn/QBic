@@ -37,6 +37,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public void AuditChange<T>(T item, AuditAction action, string entityName, User user = null) where T : BaseClass
         {
+            return;
             if (user == null)
             {
                 var userTask = BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync(UserContext);
