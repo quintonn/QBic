@@ -61,7 +61,14 @@ namespace WebsiteTemplate.Controllers
             }
             catch (Exception error)
             {
-                ConstructorError = String.Format(error.Message + "\n" + error.StackTrace);
+                ConstructorError = "";
+                var err = error;
+                while (err != null)
+                {
+                    ConstructorError = String.Format("{0}{1}\n{2}\n|---|\n", ConstructorError, error.Message, error.StackTrace);
+
+                    err = error.InnerException;
+                }
             }
         }
 
@@ -86,7 +93,14 @@ namespace WebsiteTemplate.Controllers
             {
                 await Container.Resolve<InitializationProcessor>().Process(0, Request); // Just to initialize core processor
                 var json = ApplicationService.InitializeApplication(ConstructorError);
-                return Json(json, JSON_SETTINGS);
+                if (JSON_SETTINGS != null)
+                {
+                    return Json(json, JSON_SETTINGS);
+                }
+                else
+                {
+                    return Json(json);
+                }
             }
             catch (Exception error)
             {
@@ -104,7 +118,14 @@ namespace WebsiteTemplate.Controllers
             await Container.Resolve<InitializationProcessor>().Process(0, Request); // Just to initialize core processor
 
             var json = await ApplicationService.InitializeSession();
-            return Json(json, JSON_SETTINGS);
+            if (JSON_SETTINGS != null)
+            {
+                return Json(json, JSON_SETTINGS);
+            }
+            else
+            {
+                return Json(json);
+            }
         }
 
         [HttpPost]

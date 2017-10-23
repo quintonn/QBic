@@ -36,7 +36,7 @@ namespace WebsiteTemplate.Mappings
                 {
                     if (DataStore.ProviderName.Contains("MySql"))
                     {
-                        Map(FluentNHibernate.Reveal.Member<T>(column)).Not.Nullable().CustomSqlType("BLOB").Length(int.MaxValue);
+                        Map(FluentNHibernate.Reveal.Member<T>(column)).Not.Nullable().CustomSqlType("LONGBLOB").Length(int.MaxValue);
                     }
                     else if (DataStore.SetCustomSqlTypes == true)
                     {
