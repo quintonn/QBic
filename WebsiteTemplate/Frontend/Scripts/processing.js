@@ -258,10 +258,10 @@
                 
                 dialog.closeBusyDialog();
                 res();
-            }).fail(function(err)
+            }).fail(function (jqXHR, textStatus, error)
             {
-                console.error(err);
-                dialog.showMessage("Error", "Error downloading file: \n" + err);
+                console.error(error);
+                dialog.showMessage("Error", "Error downloading file: \n" + error);
                 dialog.closeBusyDialog();
                 res();
             });
