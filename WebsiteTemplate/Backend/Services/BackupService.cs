@@ -183,7 +183,7 @@ namespace WebsiteTemplate.Backend.Services
 
                             while (added != count)
                             {
-                                var nextLoad = 100;
+                                var nextLoad = 10;
 
                                 var items = GetItems(type, session, added, nextLoad);
 
