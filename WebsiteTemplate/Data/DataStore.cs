@@ -30,11 +30,14 @@ namespace WebsiteTemplate.Data
         private ApplicationSettingsCore AppSettings { get; set; }
 
         internal static bool SetCustomSqlTypes { get; set; }
+
+        private static bool UpdateDatabase { get; set; }
         internal static string ProviderName { get; set; }
 
         private DataStore(ApplicationSettingsCore appSettings)
         {
             AppSettings = appSettings;
+            UpdateDatabase = appSettings.UpdateDatabase;
             init();
         }
 
@@ -75,7 +78,10 @@ namespace WebsiteTemplate.Data
             
             Store = CreateSessionFactory();
 
-            new SchemaUpdate(Configuration).Execute(true, true);
+            if (UpdateDatabase)
+            {
+                new SchemaUpdate(Configuration).Execute(false, UpdateDatabase);
+            }
         }
 
         private ISessionFactory CreateSessionFactory()
@@ -124,7 +130,7 @@ namespace WebsiteTemplate.Data
 
             var config = Fluently.Configure()
               .Database(configurer)
-              
+
               .Mappings(m => m.FluentMappings.CustomAddFromAssemblyOf<User>(AppSettings).Conventions.Add<JoinedSubclassIdConvention>());
 
             config.ExposeConfiguration(x =>
@@ -137,11 +143,10 @@ namespace WebsiteTemplate.Data
                 //    prop.Batcher<NHibernate.AdoNet.MySqlClientBatchingBatcherFactory>();
                 //});
             });
+
             var configuration = config.BuildConfiguration();
 
             return configuration;
-
-            //return configuration.BuildSessionFactory();
         }
 
         public void ResetData()

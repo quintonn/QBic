@@ -30,6 +30,14 @@ namespace WebsiteTemplate.Utilities
             }
         }
 
+        public virtual bool UpdateDatabase
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public virtual string ClientId
         {
             get
