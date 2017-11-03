@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.IO;
 using WebsiteTemplate.Menus.InputItems;
 
 namespace WebsiteTemplate.Utilities
@@ -225,6 +226,45 @@ namespace WebsiteTemplate.Utilities
             };
 
             return JsonConvert.SerializeObject(value, prettyFormat == true ? Formatting.Indented : Formatting.None, jsonSettings);
+        }
+
+        public static byte[] SerializeObject_New(object value, bool includeTypeInfo)
+        {
+            var path = Path.GetTempPath() + Guid.NewGuid().ToString() + ".dat";
+            try
+            {
+                //var filePath = @"C:\somewhere.json";
+                using (var stream = File.Open(path, FileMode.CreateNew))
+                using (var writer = new StreamWriter(stream))
+                using (var jsonWriter = new JsonTextWriter(writer))
+                {
+                    var jsonSettings = new JsonSerializerSettings()
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        TypeNameHandling = includeTypeInfo == true ? TypeNameHandling.All : TypeNameHandling.None,
+                    };
+                    var serializer = JsonSerializer.Create(jsonSettings);
+                    //var serializer = new JsonSerializer();
+                    serializer.Serialize(jsonWriter, value);
+                }
+
+                var data = File.ReadAllBytes(path);
+                //var tmp = File.ReadAllText(path);
+                return data;
+                //return null;
+            }
+            catch (Exception error)
+            {
+                Console.WriteLine(error.Message);
+                return null;
+            }
+            finally
+            {
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+            }
         }
     }
 }
