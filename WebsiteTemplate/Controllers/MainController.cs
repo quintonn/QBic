@@ -18,7 +18,10 @@ namespace WebsiteTemplate.Controllers
         private IUnityContainer Container { get; set; }
         private ApplicationService ApplicationService { get; set; }
 
-        private JsonSerializerSettings JSON_SETTINGS;
+        private static JsonSerializerSettings JSON_SETTINGS;
+
+        private static bool Setup = false;
+        private static object _Lock = new object();
 
         private string ConstructorError { get; set; }
 
@@ -34,30 +37,37 @@ namespace WebsiteTemplate.Controllers
         {
             try
             {
-                Container = container;
-                ApplicationService = container.Resolve<ApplicationService>();
-                var eventService = container.Resolve<EventService>(); // This is here to ensure EventService is initialize and it's constructor is called so that EventList is not empty
-
-                var dataService = container.Resolve<DataService>();
-
-                using (var session = dataService.OpenSession())
+                lock (_Lock)
                 {
-                    var appSettings = session.QueryOver<SystemSettings>().List<SystemSettings>().FirstOrDefault();
-                    if (appSettings != null)
+                    Container = container;
+                    ApplicationService = container.Resolve<ApplicationService>();
+                    if (Setup == false)
                     {
-                        JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = appSettings.DateFormat };
-                        if (String.IsNullOrWhiteSpace(XXXUtils.DateFormat))
+                        var eventService = container.Resolve<EventService>(); // This is here to ensure EventService is initialize and it's constructor is called so that EventList is not empty
+
+                        var dataService = container.Resolve<DataService>();
+
+                        using (var session = dataService.OpenSession())
                         {
-                            XXXUtils.DateFormat = appSettings.DateFormat;
+                            var appSettings = session.QueryOver<SystemSettings>().List<SystemSettings>().FirstOrDefault();
+                            if (appSettings != null)
+                            {
+                                JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = appSettings.DateFormat };
+                                if (String.IsNullOrWhiteSpace(XXXUtils.DateFormat))
+                                {
+                                    XXXUtils.DateFormat = appSettings.DateFormat;
+                                }
+                            }
+                            else
+                            {
+                                JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = "yyyy-MM-dd" };
+                            }
                         }
-                    }
-                    else
-                    {
-                        JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = "yyyy-MM-dd" };
+
+                        ConstructorError = String.Empty;
+                        Setup = true;
                     }
                 }
-
-                ConstructorError = String.Empty;
             }
             catch (Exception error)
             {
@@ -91,6 +101,10 @@ namespace WebsiteTemplate.Controllers
         {
             try
             {
+                if (!String.IsNullOrWhiteSpace(ConstructorError))
+                {
+                    return BadRequest(ConstructorError);
+                }
                 await Container.Resolve<InitializationProcessor>().Process(0, Request); // Just to initialize core processor
                 var json = ApplicationService.InitializeApplication(ConstructorError);
                 if (JSON_SETTINGS != null)
@@ -212,24 +226,32 @@ namespace WebsiteTemplate.Controllers
         [HttpPost]
         [Route("setAcmeChallenge")]
         [RequireHttps]
+        [AllowAnonymous]
         //[Authorize] //Not sure if we can have authorization. should  be possible
         public async Task<IHttpActionResult> SetAcmeChallenge()
         {
-            string requestData;
-            using (var stream = System.Web.HttpContext.Current.Request.InputStream)
-            using (var mem = new System.IO.MemoryStream())
+            try
             {
-                stream.CopyTo(mem);
-                requestData = System.Text.Encoding.UTF8.GetString(mem.ToArray());
+                string requestData;
+                using (var stream = System.Web.HttpContext.Current.Request.InputStream)
+                using (var mem = new System.IO.MemoryStream())
+                {
+                    stream.CopyTo(mem);
+                    requestData = System.Text.Encoding.UTF8.GetString(mem.ToArray());
+                }
+
+                //var jData = JsonHelper.Parse(requestData);
+                //var acmeValue = jData.GetValue("acme");
+                var acmeValue = requestData.Split("=".ToCharArray()).Last();
+
+                AcmeController.ChallengeResponse = acmeValue;
+
+                return Json("success: " + acmeValue);
             }
-
-            //var jData = JsonHelper.Parse(requestData);
-            //var acmeValue = jData.GetValue("acme");
-            var acmeValue = requestData.Split("=".ToCharArray()).Last();
-
-            AcmeController.ChallengeResponse = acmeValue;
-
-            return Json("success: " + acmeValue);
+            catch (Exception error)
+            {
+                return BadRequest("Unable to complete acme challenge: " + error.Message);
+            }
         }
     }
 }
