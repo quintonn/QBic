@@ -19,3 +19,4 @@ WebsiteTemplate/Data/*.db
 WebsiteTemplate.Test/FrontEnd/*
 WebsiteTemplate.Test/Logs/*
 WebsiteTemplate.Test/Index.html
+WebsiteTemplate.Test/Data/appData.db

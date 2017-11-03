@@ -58,5 +58,13 @@ namespace WebsiteTemplate.Test.SiteSpecific
                 new SystemSettingItem("SystemEmail", "System Email", Menus.InputItems.InputType.Text, true, "Email Settings", "")
             };
         }
+
+        public override bool DebugStartup
+        {
+            get
+            {
+                return true;
+            }
+        }
     }
 }
