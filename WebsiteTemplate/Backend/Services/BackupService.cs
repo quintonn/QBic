@@ -127,6 +127,118 @@ namespace WebsiteTemplate.Backend.Services
             return items;
         }
 
+        private void CreateBackupFile(string backupLocation)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = "WebsiteTemplate.Data.BlankDB.db";
+
+            using (var stream = assembly.GetManifestResourceStream(resourceName))
+            using (var backupStream = File.Create(backupLocation))
+            //using (var reader = new StreamReader(stream))
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+                stream.CopyTo(backupStream);
+            }
+        }
+
+        public byte[] CreateFullBackup()
+        {
+            var cnt = 1;
+            var backupName = "Backup_" + DateTime.Now.ToString("dd_MM_yyyy") + ".db";
+            var currentDirectory = HttpRuntime.AppDomainAppPath + "\\Data\\";
+            while (File.Exists(currentDirectory + backupName))
+            {
+                backupName = "Backup_" + DateTime.Now.ToString("dd_MM_yyyy") + "_" + cnt + ".db";
+                cnt++;
+            }
+
+            try
+            {
+                DynamicClass.SetIdsToBeAssigned = true;
+
+                CreateBackupFile(currentDirectory + backupName);
+
+                var connectionString = String.Format(@"Data Source=##CurrentDirectory##\Data\{0};Version=3;Journal Mode=Off;Connection Timeout=12000", backupName);
+                var store = DataStore.GetInstance(null);
+                var config = store.CreateNewConfigurationUsingConnectionString(connectionString, String.Empty);
+                new SchemaUpdate(config).Execute(false, true); // Build the tables etc.
+                var factory = config.BuildSessionFactory();
+
+                var ids = SystemTypes.Keys.ToList().OrderBy(i => i);
+
+                var total = 0;
+
+                using (var backupSession = factory.OpenSession())
+                using (var session = DataService.OpenSession())
+                {
+                    foreach (var id in ids)
+                    {
+                        var type = SystemTypes[id];
+
+                        var items = GetItems(type, session);
+                       
+
+                        var sameTypeProperties = type.GetProperties().Where(p => p.PropertyType == type).ToList();
+                        if (sameTypeProperties.Count > 0)
+                        {
+                            var totalItemsToAdd = items.Where(i => i.GetType() == type).ToList();
+
+                            var addedItems = new List<string>();
+                            while (addedItems.Count < totalItemsToAdd.Count)
+                            {
+                                foreach (var prop in sameTypeProperties)
+                                {
+                                    var itemsToAdd = totalItemsToAdd.Where(i => ShouldAddItem(i, prop, totalItemsToAdd, addedItems) == true).ToList();
+
+                                    total += itemsToAdd.Count();
+                                    InsertItems(itemsToAdd, factory, type);
+                                    addedItems.AddRange(itemsToAdd.Select(i => i.Id));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var itemsToAdd = items.Where(i => i.GetType() == type).ToList();
+
+                            total += itemsToAdd.Count();
+                            InsertItems(itemsToAdd, factory, type);
+                        }
+                        session.Flush();
+                    }
+                    //session.Flush();
+                }
+
+                factory.Close();
+
+                using (var session = factory.OpenSession())
+                {
+                    var users = session.QueryOver<Models.User>().List().ToList();
+                    var count = session
+                            .CreateCriteria<BaseClass>()
+                            .SetProjection(
+                                Projections.Count(Projections.Id())
+                            )
+                            .List<int>()
+                            .Sum();
+
+                    if (count != total)
+                    {
+                        throw new Exception("Backup did not complete successfully. Try again or contact support.");
+                    }
+                }
+
+                store.CloseSession();
+
+                return File.ReadAllBytes(currentDirectory + backupName);
+            }
+            finally
+            {
+                DynamicClass.SetIdsToBeAssigned = true;
+
+                File.Delete(currentDirectory + backupName);
+            }
+        }
+
         public byte[] CreateBackupOfAllData()
         {
             //var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
@@ -150,61 +262,79 @@ namespace WebsiteTemplate.Backend.Services
             //    return bytes;
             //}
 
-            #region JSON Backup
-            using (var session = DataService.OpenSession())
+            var tmpFile = Path.GetTempPath() + Guid.NewGuid().ToString();
+            try
             {
-                byte[] bytes;
-                using (var output = new MemoryStream())
+                #region JSON Backup
+                using (var session = DataService.OpenSession())
                 {
-                    using (var compressor = new Ionic.Zlib.DeflateStream(output, Ionic.Zlib.CompressionMode.Compress, Ionic.Zlib.CompressionLevel.BestCompression))
+                    byte[] bytes;
+
+                    //using (var output = new MemoryStream())
+                    using (var output = File.Open(tmpFile, FileMode.CreateNew))
                     {
-                        var ids = SystemTypes.Keys.ToList().OrderBy(i => i);
-                        foreach (var id in ids)
+                        using (var compressor = new Ionic.Zlib.DeflateStream(output, Ionic.Zlib.CompressionMode.Compress, Ionic.Zlib.CompressionLevel.BestCompression))
                         {
-                            var type = SystemTypes[id];
-
-                            if (type == typeof (AuditEvent))
+                            var ids = SystemTypes.Keys.ToList().OrderBy(i => i);
+                            foreach (var id in ids)
                             {
-                                continue;
+                                var type = SystemTypes[id];
+
+                                if (type == typeof(AuditEvent))
+                                {
+                                    continue;
+                                }
+
+                                //TODO: Need a way to ignore types inherit from base types that are BaseClass.
+                                //      This leads to the restore trying to restore duplicate items, which is temporarily fixed by BaseClassComparer
+
+                                var createCriteriaMethodInfo = typeof(ISession).GetMethods().FirstOrDefault(m => m.Name == "CreateCriteria"
+                                                                && m.GetParameters().Count() == 0);
+                                var createCriteriaMethod = createCriteriaMethodInfo.MakeGenericMethod(type);
+                                var count = (createCriteriaMethod.Invoke(session, null) as ICriteria)
+                                            .SetProjection(Projections.Count(Projections.Id()))
+                                            .List<int>()
+                                            .Sum();
+
+                                var added = 0;
+
+                                while (added != count)
+                                {
+                                    var nextLoad = 100;
+
+                                    var items = GetItems(type, session, added, nextLoad);
+
+                                    //var json = JsonHelper.SerializeObject(items, false, true);
+                                    //var data = XXXUtils.GetBytes(json);
+                                    //compressor.write
+                                    //compressor.Write(data, 0, data.Length);
+                                    var data = JsonHelper.SerializeObject_New(items, true);
+                                    compressor.Write(data, 0, data.Length);
+
+                                    added += items.Count;
+                                }
+
+                                //TODO: Add ability to add site specific items to backups, eg. PDF files etc etc. ?? 
+                                //      OR NOT ??
                             }
-
-                            //TODO: Need a way to ignore types inherit from base types that are BaseClass.
-                            //      This leads to the restore trying to restore duplicate items, which is temporarily fixed by BaseClassComparer
-
-                            var createCriteriaMethodInfo = typeof(ISession).GetMethods().FirstOrDefault(m => m.Name == "CreateCriteria"
-                                                            && m.GetParameters().Count() == 0);
-                            var createCriteriaMethod = createCriteriaMethodInfo.MakeGenericMethod(type);
-                            var count = (createCriteriaMethod.Invoke(session, null) as ICriteria)
-                                        .SetProjection(Projections.Count(Projections.Id()))
-                                        .List<int>()
-                                        .Sum();
-
-                            var added = 0;
-
-                            while (added != count)
-                            {
-                                var nextLoad = 10;
-
-                                var items = GetItems(type, session, added, nextLoad);
-
-                                var json = JsonHelper.SerializeObject(items, false, true);
-                                var data = XXXUtils.GetBytes(json);
-                                compressor.Write(data, 0, data.Length);
-
-                                added += items.Count;
-                            }
-
-                            //TODO: Add ability to add site specific items to backups, eg. PDF files etc etc. ?? 
-                            //      OR NOT ??
                         }
+
+                        //bytes = output.ToArray();
                     }
 
-                    bytes = output.ToArray();
+                    //return bytes;
                 }
+                #endregion
 
-                return bytes;
+                return File.ReadAllBytes(tmpFile);
             }
-            #endregion
+            finally
+            {
+                if (File.Exists(tmpFile))
+                {
+                    File.Delete(tmpFile);
+                }
+            }
         }
 
         private byte[] CreateSqlBackup(string connectionString)
@@ -299,7 +429,7 @@ namespace WebsiteTemplate.Backend.Services
                 using (var session = DataService.OpenSession())
                 {
                     items = GetItems(type, session);
-                    Delete(items, session, type);
+                    Delete(items, /*session,*/ type);
                     session.Flush();
                 }
             }
@@ -336,7 +466,7 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        private void Delete(IList<BaseClass> items, ISession session, Type type)
+        private void Delete(IList<BaseClass> items, /*ISession session, */Type type)
         {
             var sameTypeProperties = type.GetProperties().Where(p => p.PropertyType == type).ToList();
             if (sameTypeProperties.Count > 0)
@@ -348,14 +478,14 @@ namespace WebsiteTemplate.Backend.Services
                     foreach (var prop in sameTypeProperties)
                     {
                         var itemsToDelete = items.Where(i => ShouldDeleteItem(i, prop, items, deletedItems) == true).ToList();
-                        DeleteItems(itemsToDelete, type, session);
+                        DeleteItems(itemsToDelete, type);//, session);
                         deletedItems.AddRange(itemsToDelete.Select(i => i.Id));
                     }
                 }
             }
             else
             {
-                DeleteItems(items, type, session);
+                DeleteItems(items, type);//, session);
             }
         }
 
@@ -470,17 +600,26 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        private void DeleteItems<T>(IList<T> items, Type dataType, ISession session, int count = 10) where T : BaseClass
+        private void DeleteItems<T>(IList<T> items, Type dataType/*, ISession session*/, int count = 10) where T : BaseClass
         {
             //var tableName = DataStore.GetInstance(null).GetTableName(dataType);
-            var tableName = dataType.ToString().Split(".".ToCharArray()).Last();
+            //var tableName = dataType.ToString().Split(".".ToCharArray()).Last();
             //if (tableName == "Users")
             //{
             //    tableName = "User";
             //}
             if (items.Count > 0)
             {
-                session.Delete(String.Format("From {0} Tbl", tableName));
+                using (var session = DataService.OpenStatelessSession())
+                using (var transaction = session.BeginTransaction())
+                {
+                    //session.Delete(String.Format("From {0} Tbl", tableName));
+                    foreach (var item in items)
+                    {
+                        session.Delete(item);
+                    }
+                    transaction.Commit();
+                }
             }
             //else if (items.Count > 0)
             //{
@@ -497,6 +636,119 @@ namespace WebsiteTemplate.Backend.Services
             //}
         }
 
+        public bool RestoreFullBackup(byte[] data, string dbConnectionString, string providerName)
+        {
+            var cnt = 1;
+            var backupName = "Restore_" + DateTime.Now.ToString("dd_MM_yyyy") + ".db";
+            var currentDirectory = HttpRuntime.AppDomainAppPath + "\\Data\\";
+            while (File.Exists(currentDirectory + backupName))
+            {
+                backupName = "Restore_" + DateTime.Now.ToString("dd_MM_yyyy") + "_" + cnt + ".db";
+                cnt++;
+            }
+
+
+            try
+            {
+                File.WriteAllBytes(currentDirectory + backupName, data);
+
+                var connectionString = String.Format(@"Data Source=##CurrentDirectory##\Data\{0};Version=3;Journal Mode=Off;Connection Timeout=12000", backupName);
+                var store = DataStore.GetInstance(null);
+                var backupConfig = store.CreateNewConfigurationUsingConnectionString(connectionString, String.Empty);
+                var backupFactory = backupConfig.BuildSessionFactory();
+
+                DynamicClass.SetIdsToBeAssigned = true;
+                store.CloseSession();
+                var config = store.CreateNewConfigurationUsingConnectionString(dbConnectionString, providerName);
+                var factory = config.BuildSessionFactory();
+
+                var ids = SystemTypes.Keys.ToList().OrderBy(i => i);
+
+                var totalItems = 0;
+
+                using (var backupSession = backupFactory.OpenSession())
+                using (var session = factory.OpenSession())
+                {
+                    foreach (var id in ids)
+                    {
+                        var type = SystemTypes[id];
+
+                        var items = GetItems(type, backupSession);
+                        totalItems += items.Count();
+
+                        var sameTypeProperties = type.GetProperties().Where(p => p.PropertyType == type).ToList();
+                        if (sameTypeProperties.Count > 0)
+                        {
+                            var totalItemsToAdd = items.Where(i => i.GetType() == type).ToList();
+
+                            var addedItems = new List<string>();
+                            while (addedItems.Count < totalItemsToAdd.Count)
+                            {
+                                foreach (var prop in sameTypeProperties)
+                                {
+                                    var itemsToAdd = totalItemsToAdd.Where(i => ShouldAddItem(i, prop, totalItemsToAdd, addedItems) == true).ToList();
+                                    InsertItems(itemsToAdd, factory, type);
+                                    addedItems.AddRange(itemsToAdd.Select(i => i.Id));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var itemsToAdd = items.Where(i => i.GetType() == type).ToList();
+                            InsertItems(itemsToAdd, factory, type);
+                        }
+                        session.Flush();
+                    }
+                    //session.Flush();
+                }
+
+                factory.Close();
+                backupFactory.Close();
+
+                using (var session = factory.OpenSession())
+                {
+                    var count = session
+                            .CreateCriteria<BaseClass>()
+                            .SetProjection(
+                                Projections.Count(Projections.Id())
+                            )
+                            .List<int>()
+                            .Sum();
+
+                    //var total = 0;
+                    //foreach (var type in SystemTypes)
+                    //{
+                    //    var cnt = GetCount(type.Value, session);
+                    //    total += cnt;
+                    //}
+
+
+                    //var count = session.QueryOver<BaseClass>()
+                    //            .Select(Projections.RowCount())
+                    //            .FutureValue<int>()
+                    //            .Value;
+
+                    if (count != totalItems)
+                    //if (total != items.Count)
+                    {
+                        //throw new Exception("Not all items were restored. Contact support");
+                        return false;
+                    }
+                }
+
+                store.CloseSession();
+
+                return true;
+            }
+            finally
+            {
+                DynamicClass.SetIdsToBeAssigned = true;
+                if (File.Exists(currentDirectory + backupName))
+                {
+                    File.Delete(currentDirectory + backupName);
+                }
+            }
+        }
         public bool RestoreBackupOfAllData(byte[] data, string connectionString, string providerName)
         {
             var tmpBytes = CompressionHelper.InflateByte(data);
@@ -735,8 +987,9 @@ namespace WebsiteTemplate.Backend.Services
             var failedItems = new List<BaseClass>();
             var longStringProperties = type.GetProperties().Where(p => p.PropertyType == typeof(LongString)).ToList();
             var hasLongStringProperty = longStringProperties.Count() > 0;
-            //using (var session = factory.OpenStatelessSession())
-            using (var session = factory.OpenSession())
+            using (var session = factory.OpenStatelessSession())
+            //using (var session = factory.OpenSession())
+            using (var transaction = session.BeginTransaction())
             {
                 //session.SetBatchSize(items.Count);
                 var cnt = 0;
@@ -753,14 +1006,15 @@ namespace WebsiteTemplate.Backend.Services
                             }
                         }
                     }
-                    //session.Insert(item);
-                    session.Save(item);
-                    if (cnt++ % 10 == 0)
-                    {
-                        session.Flush();
-                    }
+                    session.Insert(item);
+                    //session.Save(item);
+                    //if (cnt++ % 10 == 0)
+                    //{
+                    //    session.Flush();
+                    //}
                 }
-                session.Flush();
+                //session.Flush();
+                transaction.Commit();
             }
         }
     }

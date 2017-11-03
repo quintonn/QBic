@@ -71,7 +71,8 @@ namespace WebsiteTemplate.Backend.Backups
                     {
                         BackupService.BusyWithBackups = true;
                         BackupService.RemoveExistingData(mainConnectionString);
-                        success = BackupService.RestoreBackupOfAllData(backupFile.Data, mainConnectionString, providerName);
+                        //success = BackupService.RestoreBackupOfAllData(backupFile.Data, mainConnectionString, providerName);
+                        success = BackupService.RestoreFullBackup(backupFile.Data, mainConnectionString, providerName);
 
                         if (success == true)
                         {

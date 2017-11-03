@@ -233,6 +233,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="packages.config" />
+    <EmbeddedResource Include="Data\BlankDB.db" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

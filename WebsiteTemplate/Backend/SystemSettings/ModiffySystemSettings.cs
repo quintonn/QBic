@@ -60,6 +60,7 @@ namespace WebsiteTemplate.Backend.SystemSettings
             result.Add(new NumericInput<int>("TimeOffset", "Time Offset", SystemSettings?.TimeOffset, "Formats", true));
 
             result.Add(new StringInput("WebsiteUrl", "Website Base Url", SystemSettings?.WebsiteBaseUrl, "Website", true));
+            result.Add(new LabelInput("64Bit", "Is 64 bit", Environment.Is64BitOperatingSystem.ToString(), "Website"));
 
             var additionalSettings = AppSettings.GetAdditionalSystemSettings();
             foreach (var setting in additionalSettings)

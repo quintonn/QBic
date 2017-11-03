@@ -160,7 +160,7 @@ namespace WebsiteTemplate.Data
 
         public static void KillConnection()
         {
-            Connection.Close();
+            Connection?.Close();
             Connection = null;
         }
         public ISession OpenSession()
@@ -188,6 +188,33 @@ namespace WebsiteTemplate.Data
                 }
             }
             return Store.OpenSession(Connection);
+        }
+
+        public IStatelessSession OpenStatelessSession()
+        {
+            lock (locker)
+            {
+                if (Connection == null)
+                {
+                    var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
+                    if (connectionString.Contains("##CurrentDirectory##"))
+                    {
+                        var currentDirectory = HttpRuntime.AppDomainAppPath;
+                        connectionString = connectionString.Replace("##CurrentDirectory##", currentDirectory);
+                        Connection = new SQLiteConnection(connectionString);
+                    }
+                    else if (ConfigurationManager.ConnectionStrings["MainDataStore"]?.ProviderName.Contains("MySql") == true)
+                    {
+                        Connection = new MySql.Data.MySqlClient.MySqlConnection(connectionString);
+                    }
+                    else
+                    {
+                        Connection = new System.Data.SqlClient.SqlConnection(connectionString);
+                    }
+                    Connection.Open();
+                }
+            }
+            return Store.OpenStatelessSession(Connection);
         }
 
         public void CloseSession()

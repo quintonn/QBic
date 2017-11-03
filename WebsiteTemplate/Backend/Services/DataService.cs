@@ -42,5 +42,10 @@ namespace WebsiteTemplate.Backend.Services
         {
             return Store.OpenSession();
         }
+
+        public IStatelessSession OpenStatelessSession()
+        {
+            return Store.OpenStatelessSession();
+        }
     }
 }
