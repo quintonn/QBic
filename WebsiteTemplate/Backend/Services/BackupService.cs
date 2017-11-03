@@ -674,8 +674,7 @@ namespace WebsiteTemplate.Backend.Services
                         var type = SystemTypes[id];
 
                         var items = GetItems(type, backupSession);
-                        totalItems += items.Count();
-
+                        
                         var sameTypeProperties = type.GetProperties().Where(p => p.PropertyType == type).ToList();
                         if (sameTypeProperties.Count > 0)
                         {
@@ -687,6 +686,9 @@ namespace WebsiteTemplate.Backend.Services
                                 foreach (var prop in sameTypeProperties)
                                 {
                                     var itemsToAdd = totalItemsToAdd.Where(i => ShouldAddItem(i, prop, totalItemsToAdd, addedItems) == true).ToList();
+
+                                    totalItems += itemsToAdd.Count();
+
                                     InsertItems(itemsToAdd, factory, type);
                                     addedItems.AddRange(itemsToAdd.Select(i => i.Id));
                                 }
@@ -695,6 +697,9 @@ namespace WebsiteTemplate.Backend.Services
                         else
                         {
                             var itemsToAdd = items.Where(i => i.GetType() == type).ToList();
+
+                            totalItems += itemsToAdd.Count();
+
                             InsertItems(itemsToAdd, factory, type);
                         }
                         session.Flush();
