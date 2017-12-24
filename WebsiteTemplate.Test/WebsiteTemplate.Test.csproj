@@ -221,14 +221,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="android-chrome-192x192.png" />
+    <Content Include="android-chrome-256x256.png" />
+    <Content Include="apple-touch-icon.png" />
+    <Content Include="browserconfig.xml" />
     <Content Include="ConnectionStrings.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="favicon-16x16.png" />
+    <Content Include="favicon-32x32.png" />
+    <Content Include="favicon.ico" />
     <Content Include="FrontEnd\fonts\fontawesome-webfont.eot" />
     <Content Include="FrontEnd\fonts\fontawesome-webfont.ttf" />
     <Content Include="FrontEnd\fonts\fontawesome-webfont.woff" />
     <Content Include="FrontEnd\fonts\fontawesome-webfont.woff2" />
+    <Content Include="mstile-150x150.png" />
     <Content Include="packages.config" />
+    <Content Include="manifest.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -287,6 +296,7 @@
     <Content Include="FrontEnd\Scripts\views.js" />
     <None Include="FrontEnd\Scripts\_references.js" />
     <Content Include="Index.html" />
+    <Content Include="safari-pinned-tab.svg" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
