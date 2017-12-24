@@ -11,12 +11,6 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
             return "Website Template";
         }
 
-        public override void ConfigureSiteSpecificTypes(Dictionary<int, Type> systemTypes)
-        {
-            Console.WriteLine("");
-
-        }
-
         public override string ApplicationPassPhrase
         {
             get

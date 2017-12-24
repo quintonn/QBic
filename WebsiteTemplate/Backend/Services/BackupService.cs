@@ -176,7 +176,7 @@ namespace WebsiteTemplate.Backend.Services
                         var type = SystemTypes[id];
 
                         var items = GetItems(type, session);
-                       
+
 
                         var sameTypeProperties = type.GetProperties().Where(p => p.PropertyType == type).ToList();
                         if (sameTypeProperties.Count > 0)
@@ -230,6 +230,11 @@ namespace WebsiteTemplate.Backend.Services
                 store.CloseSession();
 
                 return File.ReadAllBytes(currentDirectory + backupName);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
             }
             finally
             {
@@ -744,6 +749,11 @@ namespace WebsiteTemplate.Backend.Services
                 store.CloseSession();
 
                 return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
             }
             finally
             {

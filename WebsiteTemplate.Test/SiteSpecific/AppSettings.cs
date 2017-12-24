@@ -34,11 +34,6 @@ namespace WebsiteTemplate.Test.SiteSpecific
             }
         }
 
-        public override void ConfigureSiteSpecificTypes(Dictionary<int, Type> systemTypes)
-        {
-
-        }
-
         public override string GetApplicationName()
         {
             return "Web Template Test";
@@ -63,7 +58,7 @@ namespace WebsiteTemplate.Test.SiteSpecific
         {
             get
             {
-                return true;
+                return false;
             }
         }
     }

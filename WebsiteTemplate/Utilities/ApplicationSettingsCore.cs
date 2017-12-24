@@ -30,6 +30,14 @@ namespace WebsiteTemplate.Utilities
             }
         }
 
+        public virtual bool ShowSQL
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public virtual bool UpdateDatabase
         {
             get
@@ -45,12 +53,6 @@ namespace WebsiteTemplate.Utilities
                 return GetApplicationName();
             }
         }
-
-        /// <summary>
-        /// Configure the site specific <see cref="WebsiteTemplate.Models.BaseClass"/> classes for backup processing.
-        /// </summary>
-        /// <param name="systemTypes"></param>
-        public abstract void ConfigureSiteSpecificTypes(Dictionary<int, Type> systemTypes);
 
         public virtual void PerformAdditionalStartupConfiguration(IAppBuilder app, IUnityContainer container)
         {

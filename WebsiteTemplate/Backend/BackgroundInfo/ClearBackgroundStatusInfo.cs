@@ -34,14 +34,16 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
 
         public override async Task<IList<IEvent>> ProcessAction()
         {
-            using (var session = DataService.OpenSession())
+            using (var session = DataService.OpenStatelessSession())
+            using (var transaction = session.BeginTransaction())
             {
                 var items = session.QueryOver<BackgroundInformation>().Where(Restrictions.Not(Restrictions.On<BackgroundInformation>(x => x.Information).IsLike("Error:", MatchMode.Start))).List().ToList();
                 foreach (var item in items)
                 {
                     session.Delete(item);
                 }
-                session.Flush();
+                //session.Flush();
+                transaction.Commit();
             }
             return new List<IEvent>()
             {
