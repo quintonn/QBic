@@ -1,7 +1,5 @@
-﻿using Microsoft.Practices.Unity;
-using System.Collections.Generic;
-using WebsiteTemplate.Menus.BaseItems;
-using WebsiteTemplate.SiteSpecific;
+﻿using WebsiteTemplate.Menus.BaseItems;
+using Unity.Attributes;
 
 namespace WebsiteTemplate.Menus
 {

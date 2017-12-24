@@ -4,6 +4,8 @@ using NHibernate.SqlTypes;
 using NHibernate.UserTypes;
 using System;
 using System.Data;
+using NHibernate.Engine;
+using System.Data.Common;
 
 namespace WebsiteTemplate.Data.BaseTypes
 {
@@ -96,18 +98,18 @@ namespace WebsiteTemplate.Data.BaseTypes
             return x.GetHashCode();
         }
 
-        public object NullSafeGet(IDataReader rs, string[] names, object owner)
-        {
-            object obj = NHibernateUtil.String.NullSafeGet(rs, names[0]);
-            if (obj == null)
-            {
-                return null;
-            }
+        //public object NullSafeGet(IDataReader rs, string[] names, object owner)
+        //{
+        //    object obj = NHibernateUtil.String.NullSafeGet(rs, names[0] );
+        //    if (obj == null)
+        //    {
+        //        return null;
+        //    }
             
-            var resString = (string)obj;
-            var res = (LongString)resString;
-            return res;
-        }
+        //    var resString = (string)obj;
+        //    var res = (LongString)resString;
+        //    return res;
+        //}
 
         public void NullSafeSet(IDbCommand cmd, object value, int index)
         {
@@ -121,9 +123,27 @@ namespace WebsiteTemplate.Data.BaseTypes
             }
         }
 
+        public void NullSafeSet(DbCommand cmd, object value, int index, ISessionImplementor session)
+        {
+            NullSafeSet(cmd, value, index);
+        }
+
         public object Replace(object original, object target, object owner)
         {
             return original;
+        }
+
+        public object NullSafeGet(DbDataReader rs, string[] names, ISessionImplementor session, object owner)
+        {
+            object obj = NHibernateUtil.String.NullSafeGet(rs, names[0], session, owner);
+            if (obj == null)
+            {
+                return null;
+            }
+
+            var resString = (string)obj;
+            var res = (LongString)resString;
+            return res;
         }
 
         #endregion

@@ -1,4 +1,4 @@
-﻿using Microsoft.Practices.Unity;
+﻿using Unity;
 using WebsiteTemplate.Backend.Services;
 
 namespace WebsiteTemplate.Utilities

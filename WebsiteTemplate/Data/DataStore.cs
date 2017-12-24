@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Web;
@@ -158,7 +159,7 @@ namespace WebsiteTemplate.Data
             new SchemaUpdate(Configuration).Execute(true, true);
         }
 
-        static IDbConnection Connection { get; set; }
+        static DbConnection Connection { get; set; }
         static object locker = new object();
 
         public static void KillConnection()

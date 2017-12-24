@@ -1,7 +1,7 @@
 ﻿using DocumentGenerator.DocumentTypes;
 using DocumentGenerator.Settings;
 using DocumentGenerator.Styles;
-using Microsoft.Practices.Unity;
+using Unity;
 using MigraDoc.DocumentObjectModel;
 using System;
 using System.Globalization;

@@ -1,4 +1,4 @@
-﻿using Microsoft.Practices.Unity;
+﻿using Unity.Attributes;
 using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Menus.PropertyChangedEvents

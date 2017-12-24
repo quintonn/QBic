@@ -3,7 +3,7 @@ using BasicAuthentication.Security;
 using BasicAuthentication.Startup;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.DataProtection;
-using Microsoft.Practices.Unity;
+using Unity;
 using Microsoft.Practices.Unity.Configuration;
 using Owin;
 using System;

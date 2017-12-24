@@ -1,4 +1,4 @@
-﻿using Microsoft.Practices.Unity;
+﻿using Unity;
 using NHibernate.Criterion;
 using System;
 using System.Linq;
@@ -24,7 +24,7 @@ namespace WebsiteTemplate.Test
             UserManager = userManager;
         }
 
-        public override void RegisterUnityContainers(Microsoft.Practices.Unity.IUnityContainer container)
+        public override void RegisterUnityContainers(IUnityContainer container)
         {
             
         }

@@ -1,8 +1,8 @@
-﻿using Microsoft.Practices.Unity;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
+using Unity.Attributes;
 
 namespace WebsiteTemplate.Menus.PropertyChangedEvents
 {

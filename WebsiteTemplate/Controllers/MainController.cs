@@ -1,5 +1,5 @@
 ﻿using BasicAuthentication.Security;
-using Microsoft.Practices.Unity;
+using Unity;
 using Newtonsoft.Json;
 using System;
 using System.Linq;

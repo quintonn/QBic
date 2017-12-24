@@ -1,9 +1,15 @@
-﻿using System;
+﻿using SquishIt.AspNet;
+using SquishIt.AspNet.Caches;
+using SquishIt.AspNet.Utilities;
+using SquishIt.Framework;
+using SquishIt.Framework.Utilities;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Configuration;
 
 namespace BuildHelper
 {
@@ -35,7 +41,14 @@ namespace BuildHelper
             }
 
             /// Create minified style sheet
-            var cssBundle = new SquishIt.Framework.CSS.CSSBundle();
+
+            Configuration.Instance.Platform = new PlatformConfiguration();
+            Configuration.Instance.Platform.CacheImplementation = new CacheImplementation();
+            Configuration.Instance.Platform.DebugStatusReader = new DebugStatusReader();
+            Configuration.Instance.Platform.TrustLevel = new MyTrustLevel();
+            Configuration.Instance.Platform.PathTranslator = new PathTranslator();
+
+            var cssBundle = Bundle.Css();// new SquishIt.Framework.CSS.CSSBundle();
             var cssFiles = Directory.GetFiles(currentDir + "\\WebsiteTemplate\\FrontEnd\\css", "*.*", SearchOption.AllDirectories);
             foreach (var file in cssFiles)
             {
