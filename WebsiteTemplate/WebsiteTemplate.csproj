@@ -219,20 +219,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="android-chrome-192x192.png" />
-    <Content Include="android-chrome-256x256.png" />
-    <Content Include="apple-touch-icon.png" />
-    <Content Include="browserconfig.xml" />
-    <Content Include="favicon-16x16.png" />
-    <Content Include="favicon-32x32.png" />
-    <Content Include="favicon.ico" />
     <Content Include="Frontend\css\siteOverrides.css" />
     <Content Include="Frontend\Pages\DetailsView.html" />
     <Content Include="Frontend\Pages\ListView.html" />
     <Content Include="Frontend\Pages\PasswordResetRequest.html" />
     <Content Include="Frontend\Scripts\base64.js" />
-    <Content Include="mstile-150x150.png" />
-    <Content Include="safari-pinned-tab.svg" />
     <Content Include="Utilities\Getting Started.txt" />
     <Content Include="Frontend\css\busyIndicator.css" />
     <Content Include="Frontend\css\font-awesome.min.css" />
@@ -274,7 +265,6 @@
       <SubType>Designer</SubType>
     </Content>
     <EmbeddedResource Include="Data\BlankDB.db" />
-    <Content Include="manifest.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
