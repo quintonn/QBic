@@ -47,8 +47,8 @@
       <HintPath>..\packages\Antlr3.Runtime.3.5.1\lib\net40-client\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="BasicAuthentication, Version=1.0.12.27976, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BasicAuthentication.1.0.12.27976\lib\net461\BasicAuthentication.dll</HintPath>
+    <Reference Include="BasicAuthentication, Version=1.0.12.28317, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicAuthentication.1.0.12.28317\lib\net461\BasicAuthentication.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CommonServiceLocator, Version=2.0.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
@@ -179,6 +179,10 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.Cors, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Cors.5.2.3\lib\net45\System.Web.Http.Cors.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Http.Owin, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -349,6 +353,8 @@
     <Compile Include="Backend\UserRoles\EditUserRole.cs" />
     <Compile Include="Backend\UserRoles\ModifyUserRole.cs" />
     <Compile Include="Backend\UserRoles\ViewUserRoles.cs" />
+    <Compile Include="Backend\Users\DefaultUserInjector.cs" />
+    <Compile Include="Backend\Users\UserInjector.cs" />
     <Compile Include="Backend\Users\ModifyUser.cs" />
     <Compile Include="Controllers\CompressionHelper.cs" />
     <Compile Include="Controllers\ConditionalAuthorizeAttribute.cs" />

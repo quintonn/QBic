@@ -14,13 +14,11 @@ namespace WebsiteTemplate.Test
     {
         private IUnityContainer Container { get; set; }
 
-        private EventService EventService { get; set; }
         private DefaultUserManager UserManager { get; set; }
 
-        public Startup(EventService eventService, DataService dataService, DefaultUserManager userManager)
+        public Startup(DataService dataService, DefaultUserManager userManager)
             : base(dataService)
         {
-            EventService = eventService;
             UserManager = userManager;
         }
 

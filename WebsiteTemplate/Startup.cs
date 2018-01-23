@@ -3,11 +3,13 @@ using BasicAuthentication.Security;
 using BasicAuthentication.Startup;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.DataProtection;
-using Unity;
 using Microsoft.Practices.Unity.Configuration;
 using Owin;
 using System;
 using System.Web.Http;
+using System.Web.Http.Cors;
+using Unity;
+using WebsiteTemplate.Backend.Users;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Utilities;
 
@@ -27,7 +29,7 @@ namespace WebsiteTemplate
 
 
             //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
-            var myApp = app;
+            //var myApp = app;
 
             var appSettings = Container.Resolve<ApplicationSettingsCore>();
 
@@ -42,11 +44,12 @@ namespace WebsiteTemplate
                 ClientId = appSettings.ClientId
             };
 
-            myApp.UseBasicUserTokenAuthentication(options);
+            app.UseBasicUserTokenAuthentication(options);
             
             appSettings.PerformAdditionalStartupConfiguration(app, Container);
 
-            myApp.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
+            //app.UseCors(CorsOptions.AllowAll);
+            
         }
 
         public void Register(HttpConfiguration config, IAppBuilder app)
@@ -71,12 +74,18 @@ namespace WebsiteTemplate
 
             Container.RegisterType(typeof(ApplicationStartup), appSettings.GetApplicationStartupType);
 
+            Container.RegisterType<UserInjector, DefaultUserInjector>();
+
             Container.RegisterInstance(app.GetDataProtectionProvider());
 
             var appStartup = Container.Resolve<ApplicationStartup>();
             appStartup.RegisterUnityContainers(Container);
 
             config.DependencyResolver = new UnityDependencyResolver(Container);
+
+            var cors = new EnableCorsAttribute("*", "*", "*");
+
+            config.EnableCors(cors);
         }
     }
 }

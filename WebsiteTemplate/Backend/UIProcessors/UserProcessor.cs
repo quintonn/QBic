@@ -7,17 +7,20 @@ using WebsiteTemplate.Backend.Processing.InputProcessing;
 using WebsiteTemplate.Backend.Services;
 using System.Linq;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.Backend.Users;
 
 namespace WebsiteTemplate.Backend.UIProcessors
 {
     public class UserProcessor : NHibernateDataItemService<User>
     {
         private UserService UserService { get; set; }
+        private UserInjector Injector { get; set; }
 
-        public UserProcessor(DataService dataService, UserService userService)
+        public UserProcessor(DataService dataService, UserService userService, UserInjector injector)
             :base(dataService)
         {
             UserService = userService;
+            Injector = injector;
         }
         public override IQueryOver<User, User> CreateQueryForRetrieval(IQueryOver<User, User> query, string filter, IDictionary<string, object> additionalParameters)
         {
@@ -53,7 +56,7 @@ namespace WebsiteTemplate.Backend.UIProcessors
                 DataService.TryDelete(session, u);
             });
 
-            return new ProcessingResult(true);
+            return Injector.DeleteItem(session, itemId);
         }
 
         public override async Task<ProcessingResult> SaveOrUpdate(string itemId)
@@ -79,6 +82,13 @@ namespace WebsiteTemplate.Backend.UIProcessors
             else
             {
                 message = await UserService.CreateUser(userName, email, password, userRoles);
+            }
+
+            var result = await Injector.SaveOrUpdateUser(InputData, userName);
+            if (result.Success == false)
+            {
+                message = result.Message + "\n" + message;
+                return new ProcessingResult(false, message);
             }
 
             return new ProcessingResult(true, message);

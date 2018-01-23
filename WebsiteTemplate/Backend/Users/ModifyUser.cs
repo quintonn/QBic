@@ -14,11 +14,13 @@ namespace WebsiteTemplate.Backend.Users
     public abstract class ModifyUser : ModifyItemUsingInputProcessor<UserProcessor, User>
     {
         private UserService UserService { get; set; }
+        private UserInjector Injector { get; set; }
 
-        public ModifyUser(UserService service, UserProcessor userProcessor, bool isNew)
+        public ModifyUser(UserService service, UserProcessor userProcessor, UserInjector injector, bool isNew)
             : base(userProcessor, isNew)
         {
             UserService = service;
+            Injector = injector;
         }
 
         public override string ItemNameForDisplay
@@ -41,12 +43,20 @@ namespace WebsiteTemplate.Backend.Users
         {
             var list = new List<InputField>();
 
-            list.Add(new StringInput("UserName", "User Name", DataItem?.UserName, mandatory: true));
-            list.Add(new StringInput("Email", "Email", DataItem?.Email));
+            var mainTab = "";
+            var injectedInputs = Injector.GetInputFields(DataItem);
+
+            if (injectedInputs != null && injectedInputs.Count > 0)
+            {
+                mainTab = "Main";
+            }
+
+            list.Add(new StringInput("UserName", "User Name", DataItem?.UserName, mainTab, true));
+            list.Add(new StringInput("Email", "Email", DataItem?.Email, mainTab));
             if (IsNew)
             {
-                list.Add(new PasswordInput("Password", "Password"));
-                list.Add(new PasswordInput("ConfirmPassword", "Confirm Password"));
+                list.Add(new PasswordInput("Password", "Password", null, mainTab));
+                list.Add(new PasswordInput("ConfirmPassword", "Confirm Password", null, mainTab));
             }
 
             var items = UserService.GetUserRoles()
@@ -62,7 +72,7 @@ namespace WebsiteTemplate.Backend.Users
                                            .ToList();
             }
 
-            var listSelection = new ListSelectionInput("UserRoles", "User Roles", existingItems)
+            var listSelection = new ListSelectionInput("UserRoles", "User Roles", existingItems, mainTab)
             {
                 AvailableItemsLabel = "List of User Roles:",
                 SelectedItemsLabel = "Chosen User Roles:",
@@ -72,6 +82,8 @@ namespace WebsiteTemplate.Backend.Users
             list.Add(listSelection);
 
             list.Add(new HiddenInput("Id", DataItem?.Id));
+
+            list.AddRange(injectedInputs);
 
             return list;
         }

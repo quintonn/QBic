@@ -11,13 +11,11 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
 {
     public class DefaultStartup : ApplicationStartup
     {
-        private EventService EventService { get; set; }
         private DefaultUserManager UserManager { get; set;  }
 
-        public DefaultStartup(EventService eventService, DataService dataService, DefaultUserManager userManager)
+        public DefaultStartup(DataService dataService, DefaultUserManager userManager)
             : base(dataService)
         {
-            EventService = eventService;
             UserManager = userManager;
         }
 

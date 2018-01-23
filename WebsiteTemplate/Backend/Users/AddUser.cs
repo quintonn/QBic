@@ -6,8 +6,8 @@ namespace WebsiteTemplate.Backend.Users
 {
     public class AddUser : ModifyUser
     {
-        public AddUser(UserProcessor userProcessor, UserService userService)
-            : base(userService, userProcessor, true)
+        public AddUser(UserProcessor userProcessor, UserService userService, UserInjector injector)
+            : base(userService, userProcessor, injector, true)
         {
         }
 

@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using WebsiteTemplate.Utilities;
 using WebsiteTemplate.Models.NonDatabase;
+using WebsiteTemplate.Backend.Users;
+using WebsiteTemplate.Test.MenuItems.Users;
 
 namespace WebsiteTemplate.Test.SiteSpecific
 {
@@ -44,6 +46,8 @@ namespace WebsiteTemplate.Test.SiteSpecific
             //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
 
             container.RegisterInstance(app.GetDataProtectionProvider());
+
+            container.RegisterType<UserInjector, TestUserInjector>();
         }
 
         public override List<SystemSettingItem> GetAdditionalSystemSettings()
