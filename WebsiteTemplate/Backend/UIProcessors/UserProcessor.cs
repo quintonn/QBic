@@ -84,6 +84,11 @@ namespace WebsiteTemplate.Backend.UIProcessors
                 message = await UserService.CreateUser(userName, email, password, userRoles);
             }
 
+            if (!String.IsNullOrWhiteSpace(message))
+            {
+                return new ProcessingResult(false, message);
+            }
+
             var result = await Injector.SaveOrUpdateUser(InputData, userName);
             if (result.Success == false)
             {
