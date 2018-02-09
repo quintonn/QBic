@@ -1,5 +1,4 @@
 ﻿using NHibernate;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Processing.InputProcessing;
@@ -13,7 +12,7 @@ namespace WebsiteTemplate.Backend.Users
     {
         public DefaultUserInjector(DataService dataService) : base(dataService)
         {
-            Console.WriteLine("TEST");
+            
         }
 
         public override ProcessingResult DeleteItem(ISession session, string itemId)

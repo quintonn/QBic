@@ -405,6 +405,7 @@
     <Compile Include="Utilities\ApplicationStartup.cs" />
     <Compile Include="Utilities\Encryption.cs" />
     <Compile Include="Utilities\GlobalExceptionMiddleware.cs" />
+    <Compile Include="Utilities\InjectorBase.cs" />
     <Compile Include="Utilities\JsonArray.cs" />
     <Compile Include="Utilities\JsonHelper.cs" />
     <Compile Include="Utilities\UnityDependencyResolver.cs" />

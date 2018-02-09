@@ -6,17 +6,15 @@ using WebsiteTemplate.Backend.Processing.InputProcessing;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Users
 {
-    public abstract class UserInjector
+    public abstract class UserInjector : InjectorBase
     {
-        protected DataService DataService { get; set; }
-        internal IDictionary<string, object> InputData { get; set; }
-
         public UserInjector(DataService dataService)
+            : base(dataService)
         {
-            DataService = dataService;
         }
 
         public abstract IList<InputField> GetInputFields(User user);
@@ -37,32 +35,5 @@ namespace WebsiteTemplate.Backend.Users
             }
             return result;
         }
-
-        protected T GetValue<T>(string propertyName, T defaultValue = default(T))
-        {
-            return InputProcessingMethods.GetValue(InputData, propertyName, defaultValue);
-        }
-
-        protected T GetDataSourceValue<T>(string propertyName)
-        {
-            return InputProcessingMethods.GetDataSourceValue<T>(InputData, DataService, propertyName);
-        }
-
-        protected string GetValue(string propertyName)
-        {
-            return InputProcessingMethods.GetValue<string>(InputData, propertyName);
-        }
-
-        protected DateTime? GetDateFromString(string dateString, DateTime? defaultValue = null)
-        {
-            return InputProcessingMethods.GetDateFromString(dateString, defaultValue);
-        }
-
-        protected decimal GetDecimalValue(string decimalString, decimal defaultValue = 0)
-        {
-            return InputProcessingMethods.GetDecimalValue(decimalString, defaultValue);
-        }
-
-
     }
 }
