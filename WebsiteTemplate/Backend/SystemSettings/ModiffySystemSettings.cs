@@ -164,8 +164,10 @@ namespace WebsiteTemplate.Backend.SystemSettings
                         DataService.SaveOrUpdate(session, dbSetting);
                     }
 
-                        session.Flush();
+                    session.Flush();
                 }
+
+                XXXUtils.DateFormat = dateFormat;
 
                 return new List<IEvent>()
                 {

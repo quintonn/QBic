@@ -170,6 +170,16 @@ namespace WebsiteTemplate.Utilities
             return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
         }
 
+        public static string GetCurrentUrl()
+        {
+            var request = HttpContext.Current.Request.RequestContext.HttpContext.Request;
+
+            var uri = request.Url;
+
+            var result = uri.Scheme + "://" + uri.Host + request.ApplicationPath;
+            return result;
+        }
+
         private static List<Type> ProcessingTypes { get; set; } = new List<Type>();
 
         private static void ProcessType(Type type, List<Type> sortedTypes)
