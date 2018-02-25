@@ -7,6 +7,7 @@ using WebsiteTemplate.Utilities;
 using WebsiteTemplate.Models.NonDatabase;
 using WebsiteTemplate.Backend.Users;
 using WebsiteTemplate.Test.MenuItems.Users;
+using log4net.Core;
 
 namespace WebsiteTemplate.Test.SiteSpecific
 {
@@ -63,6 +64,14 @@ namespace WebsiteTemplate.Test.SiteSpecific
             get
             {
                 return false;
+            }
+        }
+
+        public override Level LogLevel
+        {
+            get
+            {
+                return Level.Debug;
             }
         }
     }

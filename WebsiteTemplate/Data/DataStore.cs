@@ -116,22 +116,22 @@ namespace WebsiteTemplate.Data
                 var currentDirectory = HttpRuntime.AppDomainAppPath;
                 connectionString = connectionString.Replace("##CurrentDirectory##", currentDirectory); // for my sqlite connectiontion string
 
-                configurer = FluentNHibernate.Cfg.Db.SQLiteConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
+                configurer = SQLiteConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
                 DataStore.SetCustomSqlTypes = false;
             }
             else if (providerName.Contains("MySql"))
             {
-                configurer = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
+                configurer = MySQLConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
             }
             else
             {
-                configurer = FluentNHibernate.Cfg.Db.MsSqlConfiguration.MsSql2012.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
+                configurer = MsSqlConfiguration.MsSql2012.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
             }
 
 
             var config = Fluently.Configure()
               .Database(configurer)
-
+              
               .Mappings(m => m.FluentMappings.CustomAddFromAssemblyOf<User>(AppSettings).Conventions.Add<JoinedSubclassIdConvention>());
 
             config.ExposeConfiguration(x =>

@@ -71,6 +71,10 @@
       <HintPath>..\packages\MarkerMetro.Unity.Ionic.Zlib.2.0.0.14\lib\net35\Ionic.ZLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
       <Private>True</Private>
@@ -306,8 +310,6 @@
     <Compile Include="Backend\BackgroundInfo\ViewBackgroundStatusInfo.cs" />
     <Compile Include="Backend\Backups\CreateBackup.cs" />
     <Compile Include="Backend\Backups\RestoreBackup.cs" />
-    <Compile Include="Backend\KeepAlive\KeepAliveBackgroundEvent.cs" />
-    <Compile Include="Backend\KeepAlive\TestBackgroundError.cs" />
     <Compile Include="Backend\Menus\DecrementMenuOrder.cs" />
     <Compile Include="Backend\Menus\IncrementMenuOrder.cs" />
     <Compile Include="Backend\PasswordReset\ResetPassword.cs" />
@@ -408,6 +410,7 @@
     <Compile Include="Utilities\InjectorBase.cs" />
     <Compile Include="Utilities\JsonArray.cs" />
     <Compile Include="Utilities\JsonHelper.cs" />
+    <Compile Include="Utilities\SystemLogger.cs" />
     <Compile Include="Utilities\UnityDependencyResolver.cs" />
     <Compile Include="Utilities\XXXUtils.cs" />
     <Compile Include="Data\DataStore.cs" />
