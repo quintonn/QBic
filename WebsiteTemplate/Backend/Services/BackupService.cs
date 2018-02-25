@@ -1,4 +1,5 @@
-﻿using Microsoft.SqlServer.Management.Common;
+﻿using log4net;
+using Microsoft.SqlServer.Management.Common;
 using Microsoft.SqlServer.Management.Smo;
 using NHibernate;
 using NHibernate.Criterion;
@@ -6,14 +7,12 @@ using NHibernate.Tool.hbm2ddl;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Web;
-using WebsiteTemplate.Backend.Processing;
 using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Data.BaseTypes;
@@ -38,6 +37,8 @@ namespace WebsiteTemplate.Backend.Services
     public class BackupService
     {
         private static Dictionary<int, Type> SystemTypes { get; set; }
+
+        private static readonly ILog Logger = SystemLogger.GetLogger<BackupService>();
         public static bool BusyWithBackups { get; set; } = false;
 
         private DataService DataService { get; set; }
@@ -93,10 +94,10 @@ namespace WebsiteTemplate.Backend.Services
 
             return count;
 
-            var countx = session.QueryOver<BaseClass>()
-                                .Select(Projections.RowCount())
-                                .FutureValue<int>()
-                                .Value;
+            //var countx = session.QueryOver<BaseClass>()
+            //                    .Select(Projections.RowCount())
+            //                    .FutureValue<int>()
+            //                    .Value;
         }
 
         private List<BaseClass> GetItems(Type type, ISession session, int skip = 0, int take = int.MaxValue)
@@ -233,6 +234,7 @@ namespace WebsiteTemplate.Backend.Services
             }
             catch (Exception e)
             {
+                Logger.Error("Error creating full backup", e);
                 Console.WriteLine(e.Message);
                 throw;
             }
@@ -575,6 +577,7 @@ namespace WebsiteTemplate.Backend.Services
                 }
                 catch (Exception error)
                 {
+                    Logger.Error("Error in delete method", error);
                     Console.WriteLine(error.InnerException?.Message);
                     errorCnt++;
                     cnt++;
@@ -752,6 +755,7 @@ namespace WebsiteTemplate.Backend.Services
             }
             catch (Exception e)
             {
+                Logger.Error("Error restoring full backup", e);
                 Console.WriteLine(e.Message);
                 throw;
             }

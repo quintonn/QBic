@@ -1,7 +1,5 @@
-﻿using Unity;
-using System;
-using System.Configuration;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Unity;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Menus.InputItems;

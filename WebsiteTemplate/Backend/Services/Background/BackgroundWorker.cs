@@ -1,13 +1,17 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Services.Background
 {
     public class BackgroundWorker
     {
         private BackgroundService BackgroundService { get; set; }
+
+        protected static readonly ILog Logger = SystemLogger.GetLogger<BackgroundWorker>();
 
         public BackgroundWorker(BackgroundService backgroundService)
         {
@@ -75,6 +79,7 @@ namespace WebsiteTemplate.Backend.Services.Background
             }
             catch (Exception error)
             {
+                Logger.Error("Error doing background worker work", error);
                 result.Status = "Error: " + job.Event.Description;
                 result.ExecutionInformation = error.Message + "\n" + error.StackTrace;
                 BackgroundService.AddBackgroundError(job.Event.Description, error);

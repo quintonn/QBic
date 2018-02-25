@@ -1,4 +1,5 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Threading;
 using System.Web;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Services.Background
 {
@@ -17,6 +19,8 @@ namespace WebsiteTemplate.Backend.Services.Background
 
         private static object Locker = new object();
         public static bool Started { get; set; }
+
+        protected static readonly ILog Logger = SystemLogger.GetLogger<BackgroundService>();
 
         static BackgroundService()
         {
@@ -38,6 +42,7 @@ namespace WebsiteTemplate.Backend.Services.Background
 
         private async void Setup()
         {
+            Logger.Debug("Starting background service");
             SystemUser = await UserContext.FindUserByNameAsync("System");
             Started = true;
         }
@@ -175,6 +180,7 @@ namespace WebsiteTemplate.Backend.Services.Background
 
         internal void AddBackgroundError(string action, Exception error, bool logInDatabase = true)
         {
+            Logger.Error(action, error);
             if (BackupService.BusyWithBackups == true)
             {
                 return;
@@ -211,6 +217,7 @@ namespace WebsiteTemplate.Backend.Services.Background
 
         internal void AddBackgroundInformation(string task, string statusInfo)
         {
+            Logger.Debug(task + "\n" + statusInfo);
             if (BackupService.BusyWithBackups == true)
             {
                 return;

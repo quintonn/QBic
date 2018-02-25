@@ -48,6 +48,8 @@ namespace WebsiteTemplate
             
             appSettings.PerformAdditionalStartupConfiguration(app, Container);
 
+            Container.Resolve<SystemLogger>().Setup();
+
             //app.UseCors(CorsOptions.AllowAll);
             
         }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using WebsiteTemplate.Models.NonDatabase;
+using log4net.Core;
 
 namespace WebsiteTemplate.Utilities
 {
@@ -20,6 +21,14 @@ namespace WebsiteTemplate.Utilities
         public virtual List<Assembly> GetAdditinalAssembliesToMap()
         {
             return new List<Assembly>();
+        }
+
+        public virtual Level LogLevel
+        {
+            get
+            {
+                return Level.Info;
+            }
         }
 
         public virtual bool DebugStartup

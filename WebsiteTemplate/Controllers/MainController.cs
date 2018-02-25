@@ -1,10 +1,11 @@
 ﻿using BasicAuthentication.Security;
-using Unity;
+using log4net;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Unity;
 using WebsiteTemplate.Backend.Processing;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Models;
@@ -22,6 +23,8 @@ namespace WebsiteTemplate.Controllers
 
         private static bool Setup = false;
         private static object _Lock = new object();
+
+        private static readonly ILog Logger = SystemLogger.GetLogger<MainController>();
 
         private string ConstructorError { get; set; }
 
@@ -43,6 +46,7 @@ namespace WebsiteTemplate.Controllers
                     ApplicationService = container.Resolve<ApplicationService>();
                     if (Setup == false)
                     {
+                        Logger.Debug("MainController - Setup = false, performing setup");
                         var eventService = container.Resolve<EventService>(); // This is here to ensure EventService is initialize and it's constructor is called so that EventList is not empty
 
                         var dataService = container.Resolve<DataService>();
@@ -71,6 +75,7 @@ namespace WebsiteTemplate.Controllers
             }
             catch (Exception error)
             {
+                Logger.Error("Error in main controller constructor", error);
                 ConstructorError = "";
                 var err = error;
                 while (err != null)
@@ -118,6 +123,7 @@ namespace WebsiteTemplate.Controllers
             }
             catch (Exception error)
             {
+                Logger.Error("Error in initialize system", error);
                 return BadRequest(error.Message + "\n" + error.StackTrace + "\n" + ConstructorError);
             }
         }
@@ -250,6 +256,7 @@ namespace WebsiteTemplate.Controllers
             }
             catch (Exception error)
             {
+                Logger.Error("Error in setting acme challenge", error);
                 return BadRequest("Unable to complete acme challenge: " + error.Message);
             }
         }
