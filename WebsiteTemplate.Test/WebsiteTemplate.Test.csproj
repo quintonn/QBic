@@ -47,8 +47,8 @@
       <HintPath>..\packages\Antlr3.Runtime.3.5.1\lib\net40-client\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="BasicAuthentication, Version=1.0.12.28317, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BasicAuthentication.1.0.12.28317\lib\net461\BasicAuthentication.dll</HintPath>
+    <Reference Include="BasicAuthentication, Version=1.0.13.34968, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicAuthentication.1.0.13.34968\lib\net461\BasicAuthentication.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CommonServiceLocator, Version=2.0.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
