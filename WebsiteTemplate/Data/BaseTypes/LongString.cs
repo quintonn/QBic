@@ -133,6 +133,11 @@ namespace WebsiteTemplate.Data.BaseTypes
             return original;
         }
 
+        public void Replace(string oldValue, string newValue)
+        {
+            Base.Replace(oldValue, newValue);
+        }
+
         public object NullSafeGet(DbDataReader rs, string[] names, ISessionImplementor session, object owner)
         {
             object obj = NHibernateUtil.String.NullSafeGet(rs, names[0], session, owner);
