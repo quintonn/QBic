@@ -39,6 +39,14 @@ namespace WebsiteTemplate.Utilities
             }
         }
 
+        public virtual bool EnableAuditing
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public virtual bool ShowSQL
         {
             get

@@ -12,10 +12,13 @@ namespace WebsiteTemplate.Backend.Services
     {
         private DataStore DataStore { get; set; }
         private UserContext UserContext { get; set; }
-        public AuditService(DataStore dataStore, UserContext userContext)
+
+        private ApplicationSettingsCore AppSettings { get; set; }
+        public AuditService(DataStore dataStore, UserContext userContext, ApplicationSettingsCore appSettings)
         {
             DataStore = dataStore;
             UserContext = userContext;
+            AppSettings = AppSettings;
         }
 
         public async Task LogUserEvent(int eventId)
@@ -37,7 +40,11 @@ namespace WebsiteTemplate.Backend.Services
 
         public void AuditChange<T>(T item, AuditAction action, string entityName, User user = null) where T : BaseClass
         {
-            return;
+            if (AppSettings.EnableAuditing == false)
+            {
+                return;
+            }
+            
             if (user == null)
             {
                 var userTask = BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync(UserContext);
