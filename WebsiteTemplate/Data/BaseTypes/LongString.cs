@@ -135,7 +135,7 @@ namespace WebsiteTemplate.Data.BaseTypes
 
         public void Replace(string oldValue, string newValue)
         {
-            Base.Replace(oldValue, newValue);
+            Base = Base?.Replace(oldValue, newValue);
         }
 
         public object NullSafeGet(DbDataReader rs, string[] names, ISessionImplementor session, object owner)

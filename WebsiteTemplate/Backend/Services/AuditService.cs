@@ -18,7 +18,7 @@ namespace WebsiteTemplate.Backend.Services
         {
             DataStore = dataStore;
             UserContext = userContext;
-            AppSettings = AppSettings;
+            AppSettings = appSettings;
         }
 
         public async Task LogUserEvent(int eventId)
