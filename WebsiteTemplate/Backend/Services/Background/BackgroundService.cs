@@ -180,7 +180,7 @@ namespace WebsiteTemplate.Backend.Services.Background
 
         internal void AddBackgroundError(string action, Exception error, bool logInDatabase = true)
         {
-            Logger.Error(action, error);
+            SystemLogger.LogError<BackgroundService>(action, error);
             if (BackupService.BusyWithBackups == true)
             {
                 return;
@@ -191,14 +191,14 @@ namespace WebsiteTemplate.Backend.Services.Background
             var stackTrace = new System.Diagnostics.StackTrace();
             var stack = stackTrace.GetFrame(1).GetMethod().Name;
             var item = new BackgroundInformation(action, String.Format("Error:\n{0}\n{1}\n{2}\n{3}", error.Message, error.StackTrace, stack, stackTrace));
-            var currentDirectory = HttpRuntime.AppDomainAppPath;
-            var logs = currentDirectory + "\\Logs\\";
-            if (!Directory.Exists(logs))
-            {
-                Directory.CreateDirectory(logs);
-            }
-            var path = logs + action + "_" + Guid.NewGuid().ToString();
-            File.WriteAllText(path, item.Information + "\n" + error.StackTrace);
+            //var currentDirectory = HttpRuntime.AppDomainAppPath;
+            //var logs = currentDirectory + "\\Logs\\";
+            //if (!Directory.Exists(logs))
+            //{
+            //    Directory.CreateDirectory(logs);
+            //}
+            //var path = logs + action + "_" + Guid.NewGuid().ToString();
+            //File.WriteAllText(path, item.Information + "\n" + error.StackTrace);
 
             if (error is ThreadAbortException)
             {

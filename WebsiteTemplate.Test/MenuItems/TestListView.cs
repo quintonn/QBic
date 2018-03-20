@@ -38,6 +38,7 @@ namespace WebsiteTemplate.Test.MenuItems
                     LongDesc = "More detail"
                 });
             }
+
             return results;
         }
 

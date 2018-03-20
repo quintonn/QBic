@@ -79,7 +79,7 @@ namespace WebsiteTemplate.Backend.Services.Background
             }
             catch (Exception error)
             {
-                Logger.Error("Error doing background worker work", error);
+                SystemLogger.LogError<BackgroundWorker>("Error doing background worker work", error);
                 result.Status = "Error: " + job.Event.Description;
                 result.ExecutionInformation = error.Message + "\n" + error.StackTrace;
                 BackgroundService.AddBackgroundError(job.Event.Description, error);

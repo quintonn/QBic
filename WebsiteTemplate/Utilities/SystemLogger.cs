@@ -4,6 +4,8 @@ using log4net.Core;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
 using System;
+using System.Diagnostics;
+using System.Linq;
 
 namespace WebsiteTemplate.Utilities
 {
@@ -13,36 +15,53 @@ namespace WebsiteTemplate.Utilities
 
         public static ILog GetLogger<T>()
         {
-            var result = LogManager.GetLogger(typeof(T));
+            var typeString = typeof(T).ToString().Split(".".ToCharArray()).Last();
+            var result = LogManager.GetLogger(typeString);
 
             return result;
         }
 
-        public static void LogError<T>(object message, Exception e = null)
+        public static void LogError<T>(string message, Exception error)
         {
-            var logger = LogManager.GetLogger(typeof(T));
-            if (e == null)
-            {
-                logger.Error(message);
-            }
-            else
-            {
-                logger.Error(message, e);
-            }
+            LogError(message, typeof(T), error);
         }
 
-        public static void LogMessage(string message,
-        [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
-        [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
-        [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
+        public static void LogError(string message, Type callingType, Exception error)
         {
-            var logger = LogManager.GetLogger(typeof(SystemLogger));
+            var typeString = callingType.ToString().Split(".".ToCharArray()).Last();
+            var logger = LogManager.GetLogger(typeString);
 
-            logger.Info("message: " + message);
-            logger.Info("member name: " + memberName);
-            logger.Info("source file path: " + sourceFilePath);
-            logger.Info("source line number: " + sourceLineNumber);
+            logger.Error("*********************************************************************************************************");
+            logger.Error("message: " + message);
+            logger.Error("Error Message: " + error?.Message + " |");
+
+            logger.Error("Error:", error);
+
+            var stack = new StackTrace(error, true);
+            
+            //foreach (var frame in stack.GetFrames())
+            //{
+            //    logger.Error(frame.ToString());
+            //    logger.Error("member name: " + frame.GetMethod().Name);
+            //    logger.Error("type: " + frame.GetMethod().DeclaringType);
+            //    logger.Error("source file path: " + frame.GetFileName());
+            //    logger.Error("source line number: " + frame.GetFileLineNumber());
+            //}
+            logger.Error("*********************************************************************************************************");
         }
+
+        //public static void LogMessage(string message,
+        //[System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
+        //[System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
+        //[System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
+        //{
+        //    var logger = LogManager.GetLogger(typeof(SystemLogger));
+
+        //    logger.Info("message: " + message);
+        //    logger.Info("member name: " + memberName);
+        //    logger.Info("source file path: " + sourceFilePath);
+        //    logger.Info("source line number: " + sourceLineNumber);
+        //}
 
         public SystemLogger(ApplicationSettingsCore appSettings)
         {
@@ -63,9 +82,10 @@ namespace WebsiteTemplate.Utilities
             roller.File = @"Logs\log.txt";
             roller.Layout = patternLayout;
             roller.MaxSizeRollBackups = 10;
-            roller.MaximumFileSize = "1GB";
+            //roller.MaximumFileSize = "1GB"; default is 10MB
             roller.RollingStyle = RollingFileAppender.RollingMode.Size;
             roller.StaticLogFileName = true;
+            roller.LockingModel = new FileAppender.MinimalLock();
             roller.ActivateOptions();
             hierarchy.Root.AddAppender(roller);
 

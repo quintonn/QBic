@@ -310,6 +310,8 @@
     <Compile Include="Backend\BackgroundInfo\ViewBackgroundStatusInfo.cs" />
     <Compile Include="Backend\Backups\CreateBackup.cs" />
     <Compile Include="Backend\Backups\RestoreBackup.cs" />
+    <Compile Include="Backend\Logs\ClearLog.cs" />
+    <Compile Include="Backend\Logs\ViewLogs.cs" />
     <Compile Include="Backend\Menus\DecrementMenuOrder.cs" />
     <Compile Include="Backend\Menus\IncrementMenuOrder.cs" />
     <Compile Include="Backend\PasswordReset\ResetPassword.cs" />

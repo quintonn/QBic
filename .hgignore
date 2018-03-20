@@ -20,3 +20,7 @@ WebsiteTemplate.Test/FrontEnd/*
 WebsiteTemplate.Test/Logs/*
 WebsiteTemplate.Test/Index.html
 WebsiteTemplate.Test/Data/appData.db
+WebsiteTemplate.Test/obj/*
+BuildHelper/obj/*
+WebsiteTemplate/obj/Release/*
+WebsiteTemplateCore/obj/Release/*

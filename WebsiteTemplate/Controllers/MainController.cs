@@ -75,7 +75,7 @@ namespace WebsiteTemplate.Controllers
             }
             catch (Exception error)
             {
-                Logger.Error("Error in main controller constructor", error);
+                SystemLogger.LogError<MainController>("Error in main controller constructor", error);
                 ConstructorError = "";
                 var err = error;
                 while (err != null)
@@ -123,7 +123,7 @@ namespace WebsiteTemplate.Controllers
             }
             catch (Exception error)
             {
-                Logger.Error("Error in initialize system", error);
+                SystemLogger.LogError<MainController>("Error in initialize system", error);
                 return BadRequest(error.Message + "\n" + error.StackTrace + "\n" + ConstructorError);
             }
         }
@@ -256,7 +256,7 @@ namespace WebsiteTemplate.Controllers
             }
             catch (Exception error)
             {
-                Logger.Error("Error in setting acme challenge", error);
+                SystemLogger.LogError<MainController>("Error in setting acme challenge", error);
                 return BadRequest("Unable to complete acme challenge: " + error.Message);
             }
         }

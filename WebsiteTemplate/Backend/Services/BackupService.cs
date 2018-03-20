@@ -234,7 +234,7 @@ namespace WebsiteTemplate.Backend.Services
             }
             catch (Exception e)
             {
-                Logger.Error("Error creating full backup", e);
+                SystemLogger.LogError<BackupService>("Error creating full backup", e);
                 Console.WriteLine(e.Message);
                 throw;
             }
@@ -577,7 +577,7 @@ namespace WebsiteTemplate.Backend.Services
                 }
                 catch (Exception error)
                 {
-                    Logger.Error("Error in delete method", error);
+                    SystemLogger.LogError<BackupService>("Error in delete method", error);
                     Console.WriteLine(error.InnerException?.Message);
                     errorCnt++;
                     cnt++;
@@ -755,7 +755,7 @@ namespace WebsiteTemplate.Backend.Services
             }
             catch (Exception e)
             {
-                Logger.Error("Error restoring full backup", e);
+                SystemLogger.LogError<BackupService>("Error restoring full backup", e);
                 Console.WriteLine(e.Message);
                 throw;
             }

@@ -22,8 +22,6 @@ namespace WebsiteTemplate.Backend.Processing
 
         }
 
-        protected static readonly ILog Logger = SystemLogger.GetLogger<T>();
-
         public abstract Task<T> ProcessEvent(int eventId);
 
         public async Task<IHttpActionResult> Process(int eventId, HttpRequestMessage requestMessage)
@@ -31,7 +29,6 @@ namespace WebsiteTemplate.Backend.Processing
             JsonResult<T> jsonResult;
             try
             {
-                Logger.Debug("Process called for event id: " + eventId);
                 await AuditService.LogUserEvent(eventId);
                 var result = await ProcessEvent(eventId);
 
@@ -41,13 +38,13 @@ namespace WebsiteTemplate.Backend.Processing
                 }
 
                 jsonResult = new JsonResult<T>(result, JSON_SETTINGS, Encoding.UTF8, requestMessage);
-                Logger.Debug("Result from processing " + eventId + " is:");
-                Logger.Debug(new JavaScriptSerializer().Serialize(jsonResult.Content));
+                //Logger.Debug("Result from processing " + eventId + " is:");
+                //Logger.Debug(new JavaScriptSerializer().Serialize(jsonResult.Content));
                 return jsonResult;
             }
             catch (Exception error)
             {
-                Logger.Error("Error in core processor during Process", error);
+                SystemLogger.LogError("Error in core processor during Process", this.GetType(), error);
 
                 return new BadRequestErrorMessageResult(error.Message + "\n" + error.StackTrace.ToString(), new DefaultContentNegotiator(), requestMessage, new List<MediaTypeFormatter>()
                 {
