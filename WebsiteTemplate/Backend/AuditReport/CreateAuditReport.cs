@@ -2,6 +2,7 @@
 using DocumentGenerator.DocumentTypes;
 using DocumentGenerator.Settings;
 using DocumentGenerator.Styles;
+using JsonDiffPatchDotNet;
 using MigraDoc.DocumentObjectModel;
 using Newtonsoft.Json.Linq;
 using NHibernate.Criterion;
@@ -57,12 +58,8 @@ namespace WebsiteTemplate.Backend.AuditReport
             document.SetDocumentFooter(footer);
             document.SetSideMargin(Unit.FromCentimeter(1));
 
-            document.AddRowHeading("Date Time\t\tAction\tEntity");
-            document.AddRowHeading("Tmp", "");
-            //document.AddRowHeading("Action");
-            //document.AddRowHeading("Entity");
-            //document.AddRowHeading("Original Value");
-            //document.AddRowHeading("New Value");
+            document.AddRowHeading("User\t\tDate Time");
+            document.AddRowHeading("Entity\t\tAction");
 
             using (var session = DataService.OpenSession())
             {
@@ -75,12 +72,42 @@ namespace WebsiteTemplate.Backend.AuditReport
                                          .AddOrder(Order.Asc("EntityName"))
                                          .List<AuditEvent>()
                                          .ToList();
+
+                var jdp = new JsonDiffPatch();
+                
                 foreach (var audit in auditEvents)
                 {
+                    if (audit.OriginalObject == null && audit.NewObject == null)
+                    {
+                        continue;
+                    }
                     var origObj = audit.OriginalObject;
                     var newObj = audit.NewObject.Replace(",\"", ", \"");
-                    document.AddRowUsingParams(audit.AuditEventDateTimeUTC.ToString() + "\t" + audit.AuditAction.ToString() + "\t\t" + audit.EntityName +"\n"+origObj, "\n"+newObj);
-                    //document.AddRowUsingParams(origObj, newObj);
+
+                    var diff = String.Empty;
+
+                    if (String.IsNullOrWhiteSpace(audit.OriginalObject))
+                    {
+                        diff = audit.NewObject;
+                    }
+                    else if (String.IsNullOrWhiteSpace(audit.NewObject))
+                    {
+                        diff = audit.OriginalObject;
+                    }
+                    else
+                    {
+                        var left = JToken.Parse(audit.OriginalObject);
+                        var right = JToken.Parse(audit.NewObject);
+                        
+                        var diffItem = jdp.Diff(left, right);
+                        diff = diffItem.ToString();
+                    }
+
+                    //document.AddRowUsingParams(audit.User.UserName + "\t" + audit.AuditEventDateTimeUTC.ToString() + "\t" + audit.AuditAction.ToString() + "\t\t" + audit.EntityName + "\n" + origObj, "\n" + newObj + "\n\n" + diff);
+                    document.AddRowUsingParams(audit.User.UserName + "\t\t" + audit.AuditEventDateTimeUTC.ToString(), audit.EntityName + "\t\t" + audit.AuditAction.ToString());
+                    document.AddRowUsingParams("ORIGINAL ITEM", "MODIFICATION");
+                    document.AddRowUsingParams(origObj, diff);
+                    document.AddEmptyRow();
                 }
             }
 

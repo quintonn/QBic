@@ -65,6 +65,10 @@ namespace WebsiteTemplate.Backend.Services
                 {
                     existingItem = session.Get<T>(item.Id);
                 }
+                //if (existingItem == null)
+                //{
+                //    existingItem = item;
+                //}
 
                 var auditEvent = new AuditEvent()
                 {

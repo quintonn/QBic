@@ -8,6 +8,7 @@ namespace WebsiteTemplate.Mappings
     {
         public AuditEventMapping()
         {
+            //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
             Table("AuditEvent");
 
             References(x => x.User).Column("IdUser")
@@ -34,7 +35,7 @@ namespace WebsiteTemplate.Mappings
                 Map(x => x.OriginalObject).Nullable().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
                 Map(x => x.NewObject).Nullable().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
             }
-            else if (DataStore.SetCustomSqlTypes)
+            else if (DataStore.SetCustomSqlTypes == false)
             {
                 Map(x => x.OriginalObject).Nullable().Length(int.MaxValue);
                 Map(x => x.NewObject).Nullable().Length(int.MaxValue);

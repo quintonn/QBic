@@ -74,5 +74,21 @@ namespace WebsiteTemplate.Test.SiteSpecific
                 return Level.Debug;
             }
         }
+
+        public override bool EnableAuditing
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool UpdateDatabase
+        {
+            get
+            {
+                return true;
+            }
+        }
     }
 }

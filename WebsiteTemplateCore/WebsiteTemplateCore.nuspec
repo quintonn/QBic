@@ -45,6 +45,7 @@
 				<dependency id="Remotion.Linq.EagerFetching" version="2.1.0"/>
 				<dependency id="System.Data.SQLite.Core" version="1.0.106.0"/>
 				<dependency id="Unity" version="5.5.0"/>
+				<dependency id="JsonDiffPatch.Net" version="2.1.0" />
 				<dependency id="log4net" version="2.0.8" />
 			</group>
 		</dependencies>
