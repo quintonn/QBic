@@ -411,7 +411,7 @@ namespace WebsiteTemplate.Backend.Services
             DynamicClass.SetIdsToBeAssigned = false; // Change it back
         }
 
-        public void RemoveExistingData(string connectionString)
+        public void RemoveExistingData(string connectionString, bool restoreSystemSettings)
         {
             //var store = DataStore.GetInstance(null);
             //var config = store.CreateNewConfigurationUsingConnectionString(connectionString);
@@ -429,12 +429,22 @@ namespace WebsiteTemplate.Backend.Services
 
             var ids = SystemTypes.Keys.ToList().OrderBy(i => i).Reverse().ToList();
 
+            var itemsAllowed = 0;
+
             foreach (var id in ids)
             {
                 var type = SystemTypes[id];
+                
                 List<BaseClass> items;
                 using (var session = DataService.OpenSession())
                 {
+                    if ((type == typeof(Models.SystemSettings) || (type == typeof(SystemSettingValue))) && restoreSystemSettings == false)
+                    {
+                        itemsAllowed = session.QueryOver<Models.SystemSettings>().RowCount() +
+                                       session.QueryOver<Models.SystemSettingValue>().RowCount();
+                        continue;
+                    }
+
                     items = GetItems(type, session);
                     Delete(items, /*session,*/ type);
                     session.Flush();
@@ -466,7 +476,7 @@ namespace WebsiteTemplate.Backend.Services
                         )
                         .List<int>()
                         .Sum();
-                if (count != 0)
+                if (count != itemsAllowed)
                 {
                     throw new Exception("Not all items were deleted. Contact support");
                 }
@@ -644,7 +654,7 @@ namespace WebsiteTemplate.Backend.Services
             //}
         }
 
-        public bool RestoreFullBackup(byte[] data, string dbConnectionString, string providerName)
+        public bool RestoreFullBackup(byte[] data, string dbConnectionString, string providerName, bool restoreSystemSettings)
         {
             var cnt = 1;
             var backupName = "Restore_" + DateTime.Now.ToString("dd_MM_yyyy") + ".db";
@@ -680,6 +690,11 @@ namespace WebsiteTemplate.Backend.Services
                     foreach (var id in ids)
                     {
                         var type = SystemTypes[id];
+
+                        if ((type == typeof(Models.SystemSettings) || (type == typeof(SystemSettingValue))) && restoreSystemSettings == false)
+                        {
+                            continue;
+                        }
 
                         var items = GetItems(type, backupSession);
                         

@@ -151,7 +151,8 @@ namespace WebsiteTemplate.Backend.SystemSettings
                     var additionalSettings = AppSettings.GetAdditionalSystemSettings();
                     foreach (var setting in additionalSettings)
                     {
-                        var value = GetValue(setting.Key);
+
+                        var value = InputData[setting.Key]?.ToString();
                         var dbSetting = session.QueryOver<SystemSettingValue>().Where(s => s.KeyName == setting.Key).SingleOrDefault();
                         if (dbSetting == null)
                         {

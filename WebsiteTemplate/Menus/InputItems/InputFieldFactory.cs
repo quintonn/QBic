@@ -9,7 +9,8 @@ namespace WebsiteTemplate.Menus.InputItems
             switch (inputType)
             {
                 case InputType.Boolean:
-                    return new BooleanInput(name, label, defaultValue, tabName, mandatory);
+                    var defaultBool = Convert.ToBoolean(defaultValue);
+                    return new BooleanInput(name, label, defaultBool, tabName, mandatory);
                 case InputType.ComboBox:
                     return new ComboBoxInput(name, label, defaultValue, tabName, mandatory);
                 case InputType.Date:

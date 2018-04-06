@@ -55,7 +55,8 @@ namespace WebsiteTemplate.Test.SiteSpecific
         {
             return new List<SystemSettingItem>()
             {
-                new SystemSettingItem("SystemEmail", "System Email", Menus.InputItems.InputType.Text, true, "Email Settings", "")
+                new SystemSettingItem("SystemEmail", "System Email", Menus.InputItems.InputType.Text, true, "Email Settings", ""),
+                new SystemSettingItem("TestCheck", "Test Check", Menus.InputItems.InputType.Boolean, true, "Email Settings", false),
             };
         }
 

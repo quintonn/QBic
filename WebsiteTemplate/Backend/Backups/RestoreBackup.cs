@@ -33,6 +33,7 @@ namespace WebsiteTemplate.Backend.Backups
         {
             var results = new List<InputField>();
             results.Add(new FileInput("BackupFile", "Backup File", mandatory: true));
+            results.Add(new BooleanInput("SystemSettings", "Restore System Settings", false));
             return results;
         }
 
@@ -61,6 +62,7 @@ namespace WebsiteTemplate.Backend.Backups
             else if (actionNumber == 0)
             {
                 var backupFile = GetValue<FileInfo>("BackupFile");
+                var restoreSystemSettings = GetValue<bool>("SystemSettings");
 
                 var mainConnectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
                 var providerName = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ProviderName;
@@ -70,9 +72,9 @@ namespace WebsiteTemplate.Backend.Backups
                     try
                     {
                         BackupService.BusyWithBackups = true;
-                        BackupService.RemoveExistingData(mainConnectionString);
+                        BackupService.RemoveExistingData(mainConnectionString, restoreSystemSettings);
                         //success = BackupService.RestoreBackupOfAllData(backupFile.Data, mainConnectionString, providerName);
-                        success = BackupService.RestoreFullBackup(backupFile.Data, mainConnectionString, providerName);
+                        success = BackupService.RestoreFullBackup(backupFile.Data, mainConnectionString, providerName, restoreSystemSettings);
 
                         if (success == true)
                         {
