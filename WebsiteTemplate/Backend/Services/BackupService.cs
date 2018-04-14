@@ -3,6 +3,7 @@ using Microsoft.SqlServer.Management.Common;
 using Microsoft.SqlServer.Management.Smo;
 using NHibernate;
 using NHibernate.Criterion;
+using NHibernate.Linq;
 using NHibernate.Tool.hbm2ddl;
 using System;
 using System.Collections;
@@ -62,6 +63,45 @@ namespace WebsiteTemplate.Backend.Services
                     SystemTypes.Add(cnt++, type);
                 }
             }
+        }
+
+        private void DeleteAllOfType(Type type)//, ISession session)
+        {
+            using (var session = DataService.OpenSession())
+            //using (var transaction = session.BeginTransaction())
+            {
+                //var cnt = (int)session.CreateCriteria(type)
+                //                 .SetProjection(Projections.RowCountInt64())
+                //                 .UniqueResult<long>();
+                //session.SetBatchSize(cnt);
+                var queryOverMethodInfo = typeof(ISession).GetMethods().FirstOrDefault(m => m.Name == "Query"
+                                                                && m.GetParameters().Count() == 0);
+                var queryOverMethod = queryOverMethodInfo.MakeGenericMethod(type);
+                
+                var queryOver = queryOverMethod.Invoke(session, null);
+
+                var genericType = typeof(IQueryable<>);
+                Type[] typeArgs = { type };
+                var gType = genericType.MakeGenericType(typeArgs);
+                
+                var timeoutMethodInfo = typeof(LinqExtensionMethods).GetMethods().FirstOrDefault(m => m.Name == "Timeout");
+                var timeoutMethod = timeoutMethodInfo.MakeGenericMethod(type);
+
+                queryOver = timeoutMethod.Invoke(null, new object[] { queryOver, 600 });
+
+                var deleteMethodInfo = typeof(DmlExtensionMethods).GetMethods().FirstOrDefault(m => m.Name == "Delete");
+                var deleteMethod = deleteMethodInfo.MakeGenericMethod(type);
+
+                var tmpResult = deleteMethod.Invoke(null, new object[] { queryOver });
+                //session.Query<object>().SetOptions(o => o.SetTimeout(3600));
+
+                //transaction.Commit();
+                session.Flush();
+            }
+            //session.Query<object>().Delete<object>();
+            //var tmp = queryOver.GetType().GetMethods().ToList();
+            //var deleteMethodInfo = queryOver.GetType().GetMethods().FirstOrDefault(m => m.Name == "Delete" && m.GetParameters().Count() == 0);
+            //var deleteMethod = deleteMethodInfo.Invoke(queryOver, null);
         }
 
         private int GetCount(Type type, ISession session)
@@ -431,11 +471,13 @@ namespace WebsiteTemplate.Backend.Services
 
             var itemsAllowed = 0;
 
+            //var timeoutValue = NHibernate.Util.PropertiesHelper.GetInt32(NHibernate.Cfg.Environment.CommandTimeout, NHibernate.Cfg.Environment.Properties, -1);
+
             foreach (var id in ids)
             {
                 var type = SystemTypes[id];
                 
-                List<BaseClass> items;
+                //List<BaseClass> items;
                 using (var session = DataService.OpenSession())
                 {
                     if ((type == typeof(Models.SystemSettings) || (type == typeof(SystemSettingValue))) && restoreSystemSettings == false)
@@ -445,8 +487,10 @@ namespace WebsiteTemplate.Backend.Services
                         continue;
                     }
 
-                    items = GetItems(type, session);
-                    Delete(items, /*session,*/ type);
+                    //session.Query<string>().Delete();
+                    DeleteAllOfType(type);
+                    //items = GetItems(type, session);
+                    //Delete(items, /*session,*/ type);
                     session.Flush();
                 }
             }
@@ -485,6 +529,9 @@ namespace WebsiteTemplate.Backend.Services
 
         private void Delete(IList<BaseClass> items, /*ISession session, */Type type)
         {
+            DeleteItems(items, type);
+
+            return;
             var sameTypeProperties = type.GetProperties().Where(p => p.PropertyType == type).ToList();
             if (sameTypeProperties.Count > 0)
             {
