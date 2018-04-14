@@ -140,6 +140,12 @@ namespace WebsiteTemplate.Data
                 {
                     x.SetInterceptor(new SqlStatementInterceptor());
                 }
+                // This will set the command_timeout property on factory-level
+                //x.SetProperty(NHibernate.Cfg.Environment.CommandTimeout, "180");
+
+                // This will set the command_timeout property on system-level
+                //NHibernate.Cfg.Environment.Properties.Add(NHibernate.Cfg.Environment.CommandTimeout, "180");
+
                 x.Properties.Add("use_proxy_validator", "false"); // to ignore public/internal fields on model classes
                 //x.DataBaseIntegration(prop =>
                 //{
