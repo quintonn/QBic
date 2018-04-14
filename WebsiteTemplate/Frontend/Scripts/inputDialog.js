@@ -635,7 +635,7 @@
                                 return function (e)
                                 {
                                     fileData = e.target.result;
-                                    console.log(fileData);
+                                    //console.log(fileData);
                                     fileData = window.btoa(fileData);  // base 64 encode
                                     var filename = theFile.name;
                                     var parts = filename.split('.');
