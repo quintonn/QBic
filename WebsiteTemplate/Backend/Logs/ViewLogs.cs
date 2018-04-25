@@ -64,7 +64,9 @@ namespace WebsiteTemplate.Backend.Logs
 
         public override IEnumerable GetData(GetDataSettings settings)
         {
-            var data = GetLogs();
+            var data = GetLogs()
+                           .Skip((settings.CurrentPage - 1) * settings.LinesPerPage)
+                           .Take(settings.LinesPerPage);
 
             //var result = new List<object>();
             var result = data.Select(d => new
