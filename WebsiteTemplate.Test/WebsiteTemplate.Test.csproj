@@ -310,6 +310,10 @@
   <ItemGroup>
     <Compile Include="MenuItems\TestFileOpen.cs" />
     <Compile Include="MenuItems\Users\TestUserInjector.cs" />
+    <Compile Include="Models\FilterItem.cs" />
+    <Compile Include="Models\FilterItemParentBase.cs" />
+    <Compile Include="Models\NewsFilterItem.cs" />
+    <Compile Include="Models\NewsItem.cs" />
     <Compile Include="Models\UserExtraInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SiteSpecific\AppSettings.cs" />
