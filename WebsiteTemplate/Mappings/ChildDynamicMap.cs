@@ -13,6 +13,8 @@ namespace WebsiteTemplate.Mappings
     {
         public ChildDynamicMap()
         {
+            var tableName = typeof(T).Name.Split(".".ToCharArray()).Last();
+
             IEnumerable<PropertyInfo> properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public)
                                                             .Where(p => p.GetMethod.IsVirtual)
                                                             .ToList();
@@ -23,7 +25,8 @@ namespace WebsiteTemplate.Mappings
             properties = properties.Where(p => !parentProperties.Contains(p.Name)).ToList();
 
             var primitiveColumns = properties.Where(p => IsPrimitive(p.PropertyType) == true).Select(p => p.Name).ToList();
-            var nonPrimitiveColumns = properties.Where(p => IsPrimitive(p.PropertyType) == false).ToList();
+            var nonPrimitiveColumns = properties.Where(p => IsPrimitive(p.PropertyType) == false && IsGenericList(p.PropertyType) == false).ToList();
+            var listColumns = properties.Where(p => IsPrimitive(p.PropertyType) == false && IsGenericList(p.PropertyType) == true).ToList();
 
             foreach (var column in primitiveColumns)
             {
@@ -84,6 +87,23 @@ namespace WebsiteTemplate.Mappings
                            .NotFound.Ignore()
                            .LazyLoad(Laziness.False);
             }
+
+            foreach (var column in listColumns)
+            {
+                var method = typeof(FluentNHibernate.Reveal).GetMethods().Where(m => m.Name == "Member").Last();
+
+                var genericType = column.PropertyType.GenericTypeArguments.First();
+
+                //var listType = Type.GetType("System.Collections.Generic.IEnumerable<" + genericType + ">");
+                var listType = typeof(IEnumerable<>).MakeGenericType(new[] { genericType });
+                var generic = method.MakeGenericMethod(typeof(T), listType);
+
+                dynamic tmp = generic.Invoke(this, new object[] { column.Name });
+
+                //HasMany<object>(x => x.Id).KeyColumn("").Inverse().AsSet();  // for intellisense
+
+                HasMany(tmp).KeyColumn(tableName + "_id").Inverse().AsSet().Not.LazyLoad();//.Cascade.None();
+            }
         }
 
         public List<PropertyInfo> GetParentProperties(Type parentType)
@@ -99,6 +119,30 @@ namespace WebsiteTemplate.Mappings
             properties.AddRange(moreParentProperties);
 
             return properties;
+        }
+
+        private bool IsGenericList(Type type)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
+            foreach (Type @interface in type.GetInterfaces())
+            {
+                if (@interface.Name == "IEnumerable")
+                {
+                    return true;
+                }
+                if (@interface.IsGenericType)
+                {
+                    if (@interface.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                    {
+                        // if needed, you can also return the type used as generic argument
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         private static bool IsPrimitive(Type t)
