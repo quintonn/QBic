@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
@@ -112,7 +113,7 @@ namespace WebsiteTemplate.Utilities
             }
         }
 
-        public static void SendEmail(string body, IList<string> recipients, string subject, string emailHost, int emailPort, string fromEmailUser, string fromEmailPassword, bool enableSsl, bool isHtmlBody = false)
+        public static void SendEmailWithAttachments(string body, IList<string> recipients, string subject, string emailHost, int emailPort, string fromEmailUser, string fromEmailPassword, bool enableSsl, bool isHtmlBody = false, params Attachment[] attachments)
         {
             var smtpClient = new System.Net.Mail.SmtpClient(emailHost, emailPort);
 
@@ -126,12 +127,22 @@ namespace WebsiteTemplate.Utilities
             }
             var mailMessage = new System.Net.Mail.MailMessage(fromEmailUser, recipients.First(), subject, body);
             mailMessage.IsBodyHtml = isHtmlBody;
-            foreach (var recipient in recipients.Skip(1).ToList())
+            attachments.ToList().ForEach(a =>
+            {
+                mailMessage.Attachments.Add(a);
+            });
+            
+            foreach (var recipient in recipients.Skip(1).ToList()) // skip 1 because first recipient is in mail message constructor
             {
                 mailMessage.To.Add(recipient);
             }
 
             smtpClient.Send(mailMessage);
+        }
+
+        public static void SendEmail(string body, IList<string> recipients, string subject, string emailHost, int emailPort, string fromEmailUser, string fromEmailPassword, bool enableSsl, bool isHtmlBody = false)
+        {
+            SendEmailWithAttachments(body, recipients, subject, emailHost, emailPort, fromEmailUser, fromEmailPassword, enableSsl, isHtmlBody);
         }
 
         internal static string DateFormat { get; set; }
