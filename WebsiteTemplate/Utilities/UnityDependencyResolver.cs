@@ -1,13 +1,16 @@
-﻿using Unity;
+﻿using log4net;
 using System;
 using System.Collections.Generic;
 using System.Web.Http.Dependencies;
+using Unity;
 using Unity.Exceptions;
 
 namespace WebsiteTemplate.Utilities
 {
     public class UnityDependencyResolver : IDependencyResolver
     {
+        private static readonly ILog Logger = SystemLogger.GetLogger<UnityDependencyResolver>();
+
         protected IUnityContainer Container;
 
         public UnityDependencyResolver(IUnityContainer container)
@@ -36,8 +39,9 @@ namespace WebsiteTemplate.Utilities
             {
                 return Container.Resolve(serviceType);
             }
-            catch (ResolutionFailedException)
+            catch (ResolutionFailedException exception)
             {
+                Logger.Error("Error resolving " + serviceType.ToString(), exception);
                 return null;
             }
         }
@@ -48,8 +52,9 @@ namespace WebsiteTemplate.Utilities
             {
                 return Container.ResolveAll(serviceType);
             }
-            catch (ResolutionFailedException)
+            catch (ResolutionFailedException exception)
             {
+                Logger.Error("Error resolving " + serviceType.ToString(), exception);
                 return new List<object>();
             }
         }

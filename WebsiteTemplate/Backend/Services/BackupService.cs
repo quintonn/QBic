@@ -57,7 +57,7 @@ namespace WebsiteTemplate.Backend.Services
                 SystemTypes = new Dictionary<int, Type>();
                 var cnt = 1;
 
-                var types = XXXUtils.GetAllBaseClassTypes(appSettings.GetApplicationStartupType);
+                var types = XXXUtils.GetAllBaseClassTypes(appSettings);
                 foreach (var type in types)
                 {
                     SystemTypes.Add(cnt++, type);
@@ -706,6 +706,10 @@ namespace WebsiteTemplate.Backend.Services
             var cnt = 1;
             var backupName = "Restore_" + DateTime.Now.ToString("dd_MM_yyyy") + ".db";
             var currentDirectory = HttpRuntime.AppDomainAppPath + "\\Data\\";
+            if (!Directory.Exists(currentDirectory))
+            {
+                Directory.CreateDirectory(currentDirectory);
+            }
             while (File.Exists(currentDirectory + backupName))
             {
                 backupName = "Restore_" + DateTime.Now.ToString("dd_MM_yyyy") + "_" + cnt + ".db";

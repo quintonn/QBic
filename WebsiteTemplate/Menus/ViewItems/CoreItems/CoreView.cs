@@ -194,7 +194,7 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
         /* E.G.
              public override IQueryOver<LogItem> OrderQuery(IQueryOver<LogItem, LogItem> query)
              {
-                return query.OrderBy(x => x.Position).Asc();
+                return query.OrderBy(x => x.Position).Asc;
              }
          * */
          

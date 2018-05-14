@@ -152,13 +152,15 @@ namespace WebsiteTemplate.Utilities
             return DateFormat;
         }
 
-        public static List<Type> GetAllBaseClassTypes(Type applicationStartupType)
+        public static List<Type> GetAllBaseClassTypes(ApplicationSettingsCore appSettings)
         {
             var baseTypes = Assembly.GetAssembly(typeof(Models.User)).GetTypes().Where(t => t.IsClass && t.IsSubclassOf(typeof(BaseClass)) && t.IsAbstract == false).ToList();
             //var siteTypes = Assembly.GetCallingAssembly().GetTypes().Where(t => t.IsClass && t.IsSubclassOf(typeof(BaseClass))).ToList();
-            var siteTypes = Assembly.GetAssembly(applicationStartupType).GetTypes().Where(t => t.IsClass && t.IsSubclassOf(typeof(BaseClass)) && t.IsAbstract == false).ToList();
+            var siteTypes = Assembly.GetAssembly(appSettings.GetApplicationStartupType).GetTypes().Where(t => t.IsClass && t.IsSubclassOf(typeof(BaseClass)) && t.IsAbstract == false).ToList();
 
-            var allTypes = baseTypes.Union(siteTypes).ToList();
+            var coreSettingsAssemblyTypes = appSettings.GetType().Assembly.GetTypes().Where(t => t.IsClass && t.IsSubclassOf(typeof(BaseClass)) && t.IsAbstract == false).ToList();
+
+            var allTypes = baseTypes.Union(siteTypes).Union(coreSettingsAssemblyTypes).Distinct().ToList();
 
             var result = new List<Type>();
 
