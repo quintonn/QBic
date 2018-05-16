@@ -39,6 +39,27 @@ namespace WebsiteTemplate.Data.BaseTypes
             return new LongString(ls);
         }
 
+        public static bool operator <(LongString e1, string e2)
+        {
+            return e1.Base?.CompareTo(e2) < 0;
+        }
+
+        public static bool operator >(LongString e1, string e2)
+        {
+            return !(e1 < e2);
+        }
+
+        public static bool operator <=(LongString e1, string e2)
+        {
+            return e1.Base?.CompareTo(e2) <= 0;
+        }
+
+        public static bool operator >=(LongString e1, string e2)
+        {
+            return !(e1 <= e2);
+        }
+
+
         public override string ToString()
         {
             return Base;
