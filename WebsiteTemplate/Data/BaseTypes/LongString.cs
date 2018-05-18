@@ -59,6 +59,15 @@ namespace WebsiteTemplate.Data.BaseTypes
             return !(e1 <= e2);
         }
 
+        public string ToUpper()
+        {
+            return Base?.ToUpper();
+        }
+
+        public string ToLower()
+        {
+            return Base?.ToLower();
+        }
 
         public override string ToString()
         {

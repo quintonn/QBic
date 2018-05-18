@@ -31,23 +31,12 @@ namespace WebsiteTemplate.Utilities
             var typeString = callingType.ToString().Split(".".ToCharArray()).Last();
             var logger = LogManager.GetLogger(typeString);
 
-            logger.Error("*********************************************************************************************************");
-            logger.Error("message: " + message);
-            logger.Error("Error Message: " + error?.Message + " |");
-
-            logger.Error("Error:", error);
-
-            var stack = new StackTrace(error, true);
-            
-            //foreach (var frame in stack.GetFrames())
-            //{
-            //    logger.Error(frame.ToString());
-            //    logger.Error("member name: " + frame.GetMethod().Name);
-            //    logger.Error("type: " + frame.GetMethod().DeclaringType);
-            //    logger.Error("source file path: " + frame.GetFileName());
-            //    logger.Error("source line number: " + frame.GetFileLineNumber());
-            //}
-            logger.Error("*********************************************************************************************************");
+            logger.Error("An error ocurred: " + message);
+            while (error != null)
+            {
+                logger.Error("\t" + error.Message);
+                error = error.InnerException;
+            }
         }
 
         //public static void LogMessage(string message,

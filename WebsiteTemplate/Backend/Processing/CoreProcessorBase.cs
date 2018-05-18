@@ -37,6 +37,7 @@ namespace WebsiteTemplate.Backend.Processing
                 {
                     Container = container;
 
+                    //TODO: maybe all of thse should go outside of the "SetupDone" check and run everytime.
                     ApplicationStartup = container.Resolve<ApplicationStartup>();
                     EventService = container.Resolve<EventService>();
                     DataService = container.Resolve<DataService>();
@@ -49,7 +50,8 @@ namespace WebsiteTemplate.Backend.Processing
                     BackgroundService.StartBackgroundJobs();
                 }
             }
-            using (var session = DataService.OpenSession())
+            using (var session = DataService.OpenStatelessSession())
+            //using (var transaction = session.BeginTransaction())
             {
                 var appSettings = session.QueryOver<Models.SystemSettings>().List<Models.SystemSettings>().FirstOrDefault();
                 if (appSettings != null)

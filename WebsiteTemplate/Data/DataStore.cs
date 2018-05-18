@@ -196,8 +196,9 @@ namespace WebsiteTemplate.Data
                     }
                     Connection.Open();
                 }
+                
+                return Store.WithOptions().Connection(Connection).OpenSession();// .OpenSession(Connection);
             }
-            return Store.OpenSession(Connection);
         }
 
         public IStatelessSession OpenStatelessSession()
@@ -223,8 +224,8 @@ namespace WebsiteTemplate.Data
                     }
                     Connection.Open();
                 }
+                return Store.OpenStatelessSession(Connection);
             }
-            return Store.OpenStatelessSession(Connection);
         }
 
         public void CloseSession()
