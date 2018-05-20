@@ -744,6 +744,11 @@ namespace WebsiteTemplate.Backend.Services
 
                         if ((type == typeof(Models.SystemSettings) || (type == typeof(SystemSettingValue))) && restoreSystemSettings == false)
                         {
+                            var tmpItems = GetItems(type, backupSession);
+
+                            // We need to increment totalItems else the backup will think it didn't add enough items to the database
+                            totalItems += tmpItems.Count();
+                            
                             continue;
                         }
 
@@ -794,18 +799,6 @@ namespace WebsiteTemplate.Backend.Services
                             .List<int>()
                             .Sum();
 
-                    //var total = 0;
-                    //foreach (var type in SystemTypes)
-                    //{
-                    //    var cnt = GetCount(type.Value, session);
-                    //    total += cnt;
-                    //}
-
-
-                    //var count = session.QueryOver<BaseClass>()
-                    //            .Select(Projections.RowCount())
-                    //            .FutureValue<int>()
-                    //            .Value;
 
                     if (count != totalItems)
                     //if (total != items.Count)
