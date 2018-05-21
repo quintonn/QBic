@@ -17,6 +17,8 @@ namespace WebsiteTemplate.Data
         {
             var currentAssembly = Assembly.GetAssembly(appSettings.GetType());
             var container = mappings.AddFromAssemblyOf<User>().AddFromAssembly(currentAssembly);
+            var executingAssembly = Assembly.GetExecutingAssembly();
+            // seems to be enough, the above ones.
 
             var extraAssemblies = appSettings.GetAdditinalAssembliesToMap();
             foreach (var assembly in extraAssemblies)
@@ -24,37 +26,45 @@ namespace WebsiteTemplate.Data
                 mappings.AddFromAssembly(assembly);
             }
 
-            var curDir = HttpRuntime.AppDomainAppPath;
-            var dlls = Directory.GetFiles(curDir, "*.dll", SearchOption.AllDirectories);
+            //var curDir = HttpRuntime.AppDomainAppPath;
+            //var dlls = Directory.GetFiles(curDir, "*.dll", SearchOption.AllDirectories);
             var types = new List<Type>();
-
-            var appDomain = AppDomain.CreateDomain("tmpDomainForWebTemplate");
-            foreach (var dll in dlls)
+            var allAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+            foreach (var assembly in allAssemblies)
             {
-                if (dll.Contains("\\roslyn\\"))
-                {
-                    continue;
-                }
-
-                try
-                {
-                    var assembly = appDomain.Load(File.ReadAllBytes(dll));
-                    var dynamicTypes = assembly.GetTypes().Where(myType => myType.IsClass /*&& !myType.IsAbstract */&& myType.IsSubclassOf(typeof(DynamicClass)));
-                    types.AddRange(dynamicTypes);
-                }
-                catch (BadImageFormatException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-                catch (ReflectionTypeLoadException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-                catch (FileNotFoundException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
+                var tmpBaseTypes = assembly.GetTypes()
+                                           .Where(myType => myType.IsClass /*&& !myType.IsAbstract */&& myType.IsSubclassOf(typeof(DynamicClass)))
+                                           .ToList();
+                types.AddRange(tmpBaseTypes);
             }
+
+            //var appDomain = AppDomain.CreateDomain("tmpDomainForWebTemplate");
+            //foreach (var dll in dlls)
+            //{
+            //    if (dll.Contains("\\roslyn\\"))
+            //    {
+            //        continue;
+            //    }
+
+            //    try
+            //    {
+            //        var assembly = appDomain.Load(File.ReadAllBytes(dll));
+            //        var dynamicTypes = assembly.GetTypes().Where(myType => myType.IsClass /*&& !myType.IsAbstract */&& myType.IsSubclassOf(typeof(DynamicClass)));
+            //        types.AddRange(dynamicTypes);
+            //    }
+            //    catch (BadImageFormatException ex)
+            //    {
+            //        Console.WriteLine(ex.Message);
+            //    }
+            //    catch (ReflectionTypeLoadException ex)
+            //    {
+            //        Console.WriteLine(ex.Message);
+            //    }
+            //    catch (FileNotFoundException ex)
+            //    {
+            //        Console.WriteLine(ex.Message);
+            //    }
+            //}
 
             var list = new List<string>();
             foreach (var type in types)

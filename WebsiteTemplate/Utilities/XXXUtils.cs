@@ -154,13 +154,21 @@ namespace WebsiteTemplate.Utilities
 
         public static List<Type> GetAllBaseClassTypes(ApplicationSettingsCore appSettings)
         {
-            var baseTypes = Assembly.GetAssembly(typeof(Models.User)).GetTypes().Where(t => t.IsClass && t.IsSubclassOf(typeof(BaseClass)) && t.IsAbstract == false).ToList();
-            //var siteTypes = Assembly.GetCallingAssembly().GetTypes().Where(t => t.IsClass && t.IsSubclassOf(typeof(BaseClass))).ToList();
-            var siteTypes = Assembly.GetAssembly(appSettings.GetApplicationStartupType).GetTypes().Where(t => t.IsClass && t.IsSubclassOf(typeof(BaseClass)) && t.IsAbstract == false).ToList();
+            //var baseTypes = Assembly.GetAssembly(typeof(Models.User)).GetTypes().Where(t => t.IsClass && t.IsSubclassOf(typeof(BaseClass)) && t.IsAbstract == false).ToList();
+            ////var siteTypes = Assembly.GetCallingAssembly().GetTypes().Where(t => t.IsClass && t.IsSubclassOf(typeof(BaseClass))).ToList();
+            //var siteTypes = Assembly.GetAssembly(appSettings.GetApplicationStartupType).GetTypes().Where(t => t.IsClass && t.IsSubclassOf(typeof(BaseClass)) && t.IsAbstract == false).ToList();
 
-            var coreSettingsAssemblyTypes = appSettings.GetType().Assembly.GetTypes().Where(t => t.IsClass && t.IsSubclassOf(typeof(BaseClass)) && t.IsAbstract == false).ToList();
+            //var coreSettingsAssemblyTypes = appSettings.GetType().Assembly.GetTypes().Where(t => t.IsClass && t.IsSubclassOf(typeof(BaseClass)) && t.IsAbstract == false).ToList();
 
-            var allTypes = baseTypes.Union(siteTypes).Union(coreSettingsAssemblyTypes).Distinct().ToList();
+            //var allTypes = baseTypes.Union(siteTypes).Union(coreSettingsAssemblyTypes).Distinct().ToList();
+
+            var tmpAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var allTypes = new List<Type>();
+            foreach (var assembly in tmpAssemblies)
+            {
+                var tmpBaseTypes = assembly.GetTypes().Where(t => t.IsClass && t.IsSubclassOf(typeof(BaseClass)) && t.IsAbstract == false).ToList();
+                allTypes.AddRange(tmpBaseTypes);
+            }
 
             var result = new List<Type>();
 
