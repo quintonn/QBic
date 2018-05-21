@@ -65,9 +65,19 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        private void DeleteAllOfType(Type type)//, ISession session)
+        public void DeleteAllOfType<T>(IStatelessSession session)
         {
-            using (var session = DataService.OpenSession())
+            session.Query<T>().Delete();
+        }
+
+        //public void DeleteAllOfType<T>(ISession session)
+        //{
+        //    session.Query<T>().Delete();
+        //}
+
+        private void DeleteAllOfType(Type type, ISession session)//, ISession session)
+        {
+            //using (var session = DataService.OpenSession())
             //using (var transaction = session.BeginTransaction())
             {
                 //var cnt = (int)session.CreateCriteria(type)
@@ -91,6 +101,8 @@ namespace WebsiteTemplate.Backend.Services
 
                 var deleteMethodInfo = typeof(DmlExtensionMethods).GetMethods().FirstOrDefault(m => m.Name == "Delete");
                 var deleteMethod = deleteMethodInfo.MakeGenericMethod(type);
+
+                //session.Query<Models.User>().Delete();
 
                 var tmpResult = deleteMethod.Invoke(null, new object[] { queryOver });
                 //session.Query<object>().SetOptions(o => o.SetTimeout(3600));
@@ -473,13 +485,18 @@ namespace WebsiteTemplate.Backend.Services
 
             //var timeoutValue = NHibernate.Util.PropertiesHelper.GetInt32(NHibernate.Cfg.Environment.CommandTimeout, NHibernate.Cfg.Environment.Properties, -1);
 
-            foreach (var id in ids)
+            var deleteMethodInfo = GetType().GetMethods().FirstOrDefault(m => m.Name == "DeleteAllOfType"
+                                                                && m.GetParameters().Count() == 1);
+
+            using (var session = DataService.OpenStatelessSession())
+            using (var transaction = session.BeginTransaction())
             {
-                var type = SystemTypes[id];
-                
-                //List<BaseClass> items;
-                using (var session = DataService.OpenSession())
+                foreach (var id in ids)
                 {
+                    var type = SystemTypes[id];
+
+                    //List<BaseClass> items;
+
                     if ((type == typeof(Models.SystemSettings) || (type == typeof(SystemSettingValue))) && restoreSystemSettings == false)
                     {
                         itemsAllowed = session.QueryOver<Models.SystemSettings>().RowCount() +
@@ -487,12 +504,17 @@ namespace WebsiteTemplate.Backend.Services
                         continue;
                     }
 
+                    var deleteMethod = deleteMethodInfo.MakeGenericMethod(type);
+                    deleteMethod.Invoke(this, new object[] { session });
                     //session.Query<string>().Delete();
-                    DeleteAllOfType(type);
+                    //DeleteAllOfType(type, session);
                     //items = GetItems(type, session);
                     //Delete(items, /*session,*/ type);
-                    session.Flush();
+                    //session.Flush();
+
+
                 }
+                transaction.Commit();
             }
 
             //    var users = items.Where(i => i is Models.User).ToList();
@@ -727,13 +749,15 @@ namespace WebsiteTemplate.Backend.Services
                 var backupFactory = backupConfig.BuildSessionFactory();
 
                 DynamicClass.SetIdsToBeAssigned = true;
-                store.CloseSession();
+                //store.CloseSession();
                 var config = store.CreateNewConfigurationUsingConnectionString(dbConnectionString, providerName);
                 var factory = config.BuildSessionFactory();
 
                 var ids = SystemTypes.Keys.ToList().OrderBy(i => i);
 
                 var totalItems = 0;
+                //var addedItemIds = new List<string>();
+                //var itemsToIgnore = new List<BaseClass>();
 
                 using (var backupSession = backupFactory.OpenSession())
                 using (var session = factory.OpenSession())
@@ -747,7 +771,9 @@ namespace WebsiteTemplate.Backend.Services
                             var tmpItems = GetItems(type, backupSession);
 
                             // We need to increment totalItems else the backup will think it didn't add enough items to the database
-                            totalItems += tmpItems.Count();
+                            //totalItems += tmpItems.Count();
+                            //addedItemIds.AddRange(tmpItems.Select(t => t.Id).ToList());
+                            //itemsToIgnore.AddRange(tmpItems);
                             
                             continue;
                         }
@@ -767,6 +793,7 @@ namespace WebsiteTemplate.Backend.Services
                                     var itemsToAdd = totalItemsToAdd.Where(i => ShouldAddItem(i, prop, totalItemsToAdd, addedItems) == true).ToList();
 
                                     totalItems += itemsToAdd.Count();
+                                    //addedItemIds.AddRange(itemsToAdd.Select(t => t.Id).ToList());
 
                                     InsertItems(itemsToAdd, factory, type);
                                     addedItems.AddRange(itemsToAdd.Select(i => i.Id));
@@ -778,6 +805,7 @@ namespace WebsiteTemplate.Backend.Services
                             var itemsToAdd = items.Where(i => i.GetType() == type).ToList();
 
                             totalItems += itemsToAdd.Count();
+                            //addedItemIds.AddRange(itemsToAdd.Select(t => t.Id).ToList());
 
                             InsertItems(itemsToAdd, factory, type);
                         }
@@ -798,6 +826,21 @@ namespace WebsiteTemplate.Backend.Services
                             )
                             .List<int>()
                             .Sum();
+
+                    if (restoreSystemSettings == false)
+                    {
+                        var settingsCount = session.QueryOver<Models.SystemSettings>().RowCount() +
+                                            session.QueryOver<SystemSettingValue>().RowCount();
+                        count -= settingsCount;
+                    }
+
+                    //var newItemIds = session.QueryOver<BaseClass>()
+                    //                        .Select(b => b.Id)
+                    //                        .List<string>()
+                    //                        .ToList();
+
+                    //var unexpectedItemIds = newItemIds.Except(addedItemIds).ToList();
+                    //var unexpectedItems = session.QueryOver<BaseClass>().WhereRestrictionOn(x => x.Id).IsIn(unexpectedItemIds).List().ToList();
 
 
                     if (count != totalItems)

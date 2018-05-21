@@ -175,25 +175,14 @@ namespace WebsiteTemplate.Data
         }
         public ISession OpenSession()
         {
+            return Store.OpenSession();
             lock (locker)
             {
+                // This code is required when the transaction is removed from the backup restore process when it deletes existing records
                 if (Connection == null)
                 {
                     var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
-                    if (connectionString.Contains("##CurrentDirectory##"))
-                    {
-                        var currentDirectory = HttpRuntime.AppDomainAppPath;
-                        connectionString = connectionString.Replace("##CurrentDirectory##", currentDirectory);
-                        Connection = new SQLiteConnection(connectionString);
-                    }
-                    else if (ConfigurationManager.ConnectionStrings["MainDataStore"]?.ProviderName.Contains("MySql") == true)
-                    {
-                        Connection = new MySql.Data.MySqlClient.MySqlConnection(connectionString);
-                    }
-                    else
-                    {
-                        Connection = new System.Data.SqlClient.SqlConnection(connectionString);
-                    }
+                    Connection = CreateConnection(connectionString);
                     Connection.Open();
                 }
                 
@@ -203,28 +192,35 @@ namespace WebsiteTemplate.Data
 
         public IStatelessSession OpenStatelessSession()
         {
+            return Store.OpenStatelessSession();
             lock (locker)
             {
+                // This code is required when the transaction is removed from the backup restore process when it deletes existing records
                 if (Connection == null)
                 {
                     var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
-                    if (connectionString.Contains("##CurrentDirectory##"))
-                    {
-                        var currentDirectory = HttpRuntime.AppDomainAppPath;
-                        connectionString = connectionString.Replace("##CurrentDirectory##", currentDirectory);
-                        Connection = new SQLiteConnection(connectionString);
-                    }
-                    else if (ConfigurationManager.ConnectionStrings["MainDataStore"]?.ProviderName.Contains("MySql") == true)
-                    {
-                        Connection = new MySql.Data.MySqlClient.MySqlConnection(connectionString);
-                    }
-                    else
-                    {
-                        Connection = new System.Data.SqlClient.SqlConnection(connectionString);
-                    }
+                    Connection = CreateConnection(connectionString);
                     Connection.Open();
                 }
                 return Store.OpenStatelessSession(Connection);
+            }
+        }
+
+        public DbConnection CreateConnection(string connectionString)
+        {
+            if (connectionString.Contains("##CurrentDirectory##"))
+            {
+                var currentDirectory = HttpRuntime.AppDomainAppPath;
+                connectionString = connectionString.Replace("##CurrentDirectory##", currentDirectory);
+                return new SQLiteConnection(connectionString);
+            }
+            else if (ConfigurationManager.ConnectionStrings["MainDataStore"]?.ProviderName.Contains("MySql") == true)
+            {
+                return new MySql.Data.MySqlClient.MySqlConnection(connectionString);
+            }
+            else
+            {
+                return new System.Data.SqlClient.SqlConnection(connectionString);
             }
         }
 
