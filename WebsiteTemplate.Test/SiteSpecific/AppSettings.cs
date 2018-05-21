@@ -13,6 +13,22 @@ namespace WebsiteTemplate.Test.SiteSpecific
 {
     public class AppSettings : ApplicationSettingsCore
     {
+        public override bool DebugStartup
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool UpdateDatabase
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public override string ApplicationPassPhrase
         {
             get
@@ -44,8 +60,6 @@ namespace WebsiteTemplate.Test.SiteSpecific
 
         public override void PerformAdditionalStartupConfiguration(IAppBuilder app, IUnityContainer container)
         {
-            //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
-
             container.RegisterInstance(app.GetDataProtectionProvider());
 
             container.RegisterType<UserInjector, TestUserInjector>();
@@ -60,14 +74,6 @@ namespace WebsiteTemplate.Test.SiteSpecific
             };
         }
 
-        public override bool DebugStartup
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         public override Level LogLevel
         {
             get
@@ -77,14 +83,6 @@ namespace WebsiteTemplate.Test.SiteSpecific
         }
 
         public override bool EnableAuditing
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        public override bool UpdateDatabase
         {
             get
             {
