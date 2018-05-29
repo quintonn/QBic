@@ -67,29 +67,19 @@ namespace WebsiteTemplate.Backend.Backups
                 var mainConnectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
                 var providerName = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ProviderName;
                 var success = false;
-                //using (var scope = new TransactionScope())
+                try
                 {
-                    try
-                    {
-                        BackupService.BusyWithBackups = true;
-                        BackupService.RemoveExistingData(mainConnectionString, restoreSystemSettings);
-                        //success = BackupService.RestoreBackupOfAllData(backupFile.Data, mainConnectionString, providerName);
-                        success = BackupService.RestoreFullBackup(backupFile.Data, mainConnectionString, providerName, restoreSystemSettings);
-
-                        if (success == true)
-                        {
-                            //scope.Complete();
-                        }
-                    }
-                    finally
-                    {
-                        BackupService.BusyWithBackups = false;
-                    }
+                    BackupService.BusyWithBackups = true;
+                    BackupService.RemoveExistingData(mainConnectionString, restoreSystemSettings);
+                    success = BackupService.RestoreFullBackup(backupFile.Data, mainConnectionString, providerName, restoreSystemSettings);
+                }
+                finally
+                {
+                    BackupService.BusyWithBackups = false;
                 }
 
                 return new List<IEvent>()
                 {
-                    //new CancelInputDialog(),
                     new ShowMessage(success ? "Backup restored successfully." : "Backup unsuccessful")
                 };
             }

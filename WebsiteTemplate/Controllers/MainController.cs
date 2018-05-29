@@ -53,24 +53,22 @@ namespace WebsiteTemplate.Controllers
 
                         using (var session = dataService.OpenSession())
                         {
+                            XXXUtils.DateFormat = "yyyy-MM-dd";
                             var appSettings = session.QueryOver<SystemSettings>().List<SystemSettings>().FirstOrDefault();
                             if (appSettings != null)
                             {
-                                JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = appSettings.DateFormat };
                                 if (String.IsNullOrWhiteSpace(XXXUtils.DateFormat))
                                 {
                                     XXXUtils.DateFormat = appSettings.DateFormat;
                                 }
-                            }
-                            else
-                            {
-                                JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = "yyyy-MM-dd" };
                             }
                         }
 
                         ConstructorError = String.Empty;
                         Setup = true;
                     }
+
+                    JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = XXXUtils.DateFormat };
                 }
             }
             catch (Exception error)

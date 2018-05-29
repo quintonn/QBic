@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Unity;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Controllers;
@@ -27,17 +28,24 @@ namespace WebsiteTemplate.Backend.Processing
             //var json = JsonHelper.Parse(jsonString);
 
             var requestBackupTypeString = System.Web.HttpContext.Current.Request.Headers[BackupService.BACKUP_HEADER_KEY];
-            
+
             //Todo: decrypt data and check for a certain value to confirm this request is legit
 
-            var result = BackupService.CreateBackupOfAllData();
+            //var result = BackupService.CreateBackupOfAllData();
 
-            //System.Web.HttpContext.Current.Response.Headers.Add(BackupService.BACKUP_HEADER_KEY, backupType.ToString());
+            ////System.Web.HttpContext.Current.Response.Headers.Add(BackupService.BACKUP_HEADER_KEY, backupType.ToString());
 
-            var fileInfo = new FileInfo();
-            fileInfo.Data = result;
-            fileInfo.MimeType = "application/octet-stream";
-            return new FileActionResult(fileInfo);
+            //var fileInfo = new FileInfo();
+            //fileInfo.Data = result;
+            //fileInfo.MimeType = "application/octet-stream";
+            var result = new FileInfo();
+
+            result.Data = BackupService.CreateFullBackup();
+
+            result.FileExtension = "dat";
+            result.FileName = "Backup-" + DateTime.UtcNow.ToString("dd-MM-yyyy");
+            result.MimeType = "application/octet-stream";  //"application/zip"
+            return new FileActionResult(result);
         }
     }
 }

@@ -236,7 +236,6 @@
     <Content Include="Frontend\Pages\ListView.html" />
     <Content Include="Frontend\Pages\PasswordResetRequest.html" />
     <Content Include="Frontend\Scripts\base64.js" />
-    <Content Include="Utilities\Getting Started.txt" />
     <Content Include="Frontend\css\busyIndicator.css" />
     <Content Include="Frontend\css\font-awesome.min.css" />
     <Content Include="Frontend\css\images\ui-icons_444444_256x240.png" />
@@ -302,6 +301,9 @@
     <Content Include="Frontend\Scripts\inputDialog.js" />
     <Content Include="Frontend\Scripts\views.js" />
     <None Include="Frontend\Scripts\_references.js" />
+    <Content Include="SQLite.Interop.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -412,7 +414,6 @@
     <Compile Include="SiteSpecific\DefaultsForTest\DefaultUserManager.cs" />
     <Compile Include="Utilities\ApplicationStartup.cs" />
     <Compile Include="Utilities\Encryption.cs" />
-    <Compile Include="Utilities\GlobalExceptionMiddleware.cs" />
     <Compile Include="Utilities\InjectorBase.cs" />
     <Compile Include="Utilities\JsonArray.cs" />
     <Compile Include="Utilities\JsonHelper.cs" />

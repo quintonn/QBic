@@ -20,17 +20,6 @@ namespace WebsiteTemplate
         private static IUnityContainer Container { get; set; }
         public void Configuration(IAppBuilder app)
         {
-            //app.Use(async (context, next) =>
-            //{
-            //    var request = context.Request;
-                
-            //    await next();
-            //});
-
-
-            //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
-            //var myApp = app;
-
             var appSettings = Container.Resolve<ApplicationSettingsCore>();
 
             var options = new UserAuthenticationOptions()
@@ -50,17 +39,10 @@ namespace WebsiteTemplate
 
             Container.Resolve<SystemLogger>().Setup();
 
-            //app.UseCors(CorsOptions.AllowAll);
-            
         }
 
         public void Register(HttpConfiguration config, IAppBuilder app)
         {
-            //app.Use<GlobalExceptionMiddleware>("X", "Q", 10);
-
-            //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
-            //config.MapHttpAttributeRoutes();
-
             Container = new UnityContainer();
             Container.LoadConfiguration();
 
