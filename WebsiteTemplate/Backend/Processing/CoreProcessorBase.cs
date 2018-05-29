@@ -31,7 +31,7 @@ namespace WebsiteTemplate.Backend.Processing
 
         public CoreProcessorBase(IUnityContainer container)
         {
-            lock(LockObject)
+            lock (LockObject)
             {
                 if (SetupDone == false)
                 {
@@ -49,19 +49,8 @@ namespace WebsiteTemplate.Backend.Processing
                     SetupDone = true;
                     BackgroundService.StartBackgroundJobs();
                 }
-            }
-            using (var session = DataService.OpenStatelessSession())
-            //using (var transaction = session.BeginTransaction())
-            {
-                var appSettings = session.QueryOver<Models.SystemSettings>().List<Models.SystemSettings>().FirstOrDefault();
-                if (appSettings != null)
-                {
-                    JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = appSettings.DateFormat };
-                }
-                else
-                {
-                    JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = "yyyy-mm-dd" };
-                }
+
+                JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = XXXUtils.DateFormat };
             }
         }
 

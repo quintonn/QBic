@@ -41,7 +41,7 @@ namespace WebsiteTemplate.Utilities
             }
             catch (ResolutionFailedException exception)
             {
-                Logger.Error("Error resolving " + serviceType.ToString(), exception);
+                //Logger.Error("Error resolving " + serviceType.ToString());
                 return null;
             }
         }
@@ -54,7 +54,7 @@ namespace WebsiteTemplate.Utilities
             }
             catch (ResolutionFailedException exception)
             {
-                Logger.Error("Error resolving " + serviceType.ToString(), exception);
+                //Logger.Error("Error resolving " + serviceType.ToString());
                 return new List<object>();
             }
         }
