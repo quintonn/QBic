@@ -52,7 +52,7 @@ namespace WebsiteTemplate.Backend.SystemSettings
             result.Add(new StringInput("EmailFromAddress", "From Email", SystemSettings?.EmailFromAddress, "Mail Settings", true));
             result.Add(new StringInput("EmailHost", "Email Host", SystemSettings?.EmailHost, "Mail Settings", true));
             result.Add(new StringInput("EmailUserName", "Username", SystemSettings?.EmailUserName, "Mail Settings", false));
-            result.Add(new PasswordInput("EmailPassword", "Password", SystemSettings?.EmailPassword, "Mail Settings", false));
+            result.Add(new PasswordInput("EmailPassword", "Password", null, "Mail Settings", false));
             result.Add(new NumericInput<int>("EmailPort", "Port", SystemSettings?.EmailPort, "Mail Settings", true));
             result.Add(new BooleanInput("EmailEnableSsl", "Enable Ssl", SystemSettings?.EmailEnableSsl, "Mail Settings", true));
 
@@ -83,10 +83,6 @@ namespace WebsiteTemplate.Backend.SystemSettings
             using (var session = DataService.OpenSession())
             {
                 SystemSettings = session.QueryOver<Models.SystemSettings>().List<Models.SystemSettings>().FirstOrDefault();
-                if (!String.IsNullOrWhiteSpace(SystemSettings?.EmailPassword))
-                {
-                    SystemSettings.EmailPassword = Encryption.Decrypt(SystemSettings.EmailPassword, AppSettings.ApplicationPassPhrase);
-                }
 
                 var additionalSettings = AppSettings.GetAdditionalSystemSettings();
                 foreach (var setting in additionalSettings)
@@ -137,7 +133,10 @@ namespace WebsiteTemplate.Backend.SystemSettings
                     systemSettings.EmailFromAddress = fromEmail;
                     systemSettings.EmailHost = host;
                     systemSettings.EmailUserName = username;
-                    systemSettings.EmailPassword = Encryption.Encrypt(password, AppSettings.ApplicationPassPhrase);
+                    if (!String.IsNullOrWhiteSpace(password))
+                    {
+                        systemSettings.EmailPassword = Encryption.Encrypt(password, AppSettings.ApplicationPassPhrase);
+                    }
                     systemSettings.EmailPort = port;
                     systemSettings.EmailEnableSsl = enableSsl;
 
