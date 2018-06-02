@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using Benoni.Core.Utilities;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Web.Http.Dependencies;

@@ -18,10 +18,10 @@ namespace WebsiteTemplate.Controllers
             {
                 base.OnAuthorization(actionContext);
             }
-            else
-            {
-                XXXUtils.SetCurrentUser("System");
-            }
+            //else
+            //{
+            //    //XXXUtils.SetCurrentUser("System");
+            //}
         }
     }
 }

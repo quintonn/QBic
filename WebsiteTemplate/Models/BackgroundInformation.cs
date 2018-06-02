@@ -1,5 +1,6 @@
-﻿using System;
-using WebsiteTemplate.Data.BaseTypes;
+﻿using Benoni.Core.Data.BaseTypes;
+using Benoni.Core.Models;
+using System;
 
 namespace WebsiteTemplate.Models
 {

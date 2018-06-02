@@ -3,7 +3,7 @@ using FluentNHibernate.Conventions.AcceptanceCriteria;
 using FluentNHibernate.Conventions.Inspections;
 using FluentNHibernate.Conventions.Instances;
 
-namespace WebsiteTemplate.Data
+namespace Benoni.Core.Data
 {
     public class JoinedSubclassIdConvention : IJoinedSubclassConvention, IJoinedSubclassConventionAcceptance
     {

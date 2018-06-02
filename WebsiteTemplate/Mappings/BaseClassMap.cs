@@ -1,4 +1,6 @@
-﻿using FluentNHibernate.Mapping;
+﻿using Benoni.Core.Mappings;
+using Benoni.Core.Models;
+using FluentNHibernate.Mapping;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Mappings

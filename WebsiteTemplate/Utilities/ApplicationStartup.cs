@@ -18,7 +18,7 @@ namespace WebsiteTemplate.Utilities
 
         internal void SetupDefaultsInternal()
         {
-            XXXUtils.SetCurrentUser("System");
+            //XXXUtils.SetCurrentUser("System");
             SetupDefaults();
         }
     }

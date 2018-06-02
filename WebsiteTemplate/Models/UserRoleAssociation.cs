@@ -1,4 +1,6 @@
-﻿namespace WebsiteTemplate.Models
+﻿using Benoni.Core.Models;
+
+namespace WebsiteTemplate.Models
 {
     public class UserRoleAssociation : BaseClass
     {

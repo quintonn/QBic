@@ -1,9 +1,9 @@
-﻿using log4net;
+﻿using Benoni.Core.Utilities;
+using log4net;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using WebsiteTemplate.Models;
-using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Services.Background
 {

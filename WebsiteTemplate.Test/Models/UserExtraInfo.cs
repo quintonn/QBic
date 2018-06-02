@@ -1,4 +1,5 @@
-﻿using WebsiteTemplate.Models;
+﻿using Benoni.Core.Models;
+using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Test.Models
 {

@@ -1,6 +1,8 @@
-﻿using log4net;
-using Microsoft.SqlServer.Management.Common;
-using Microsoft.SqlServer.Management.Smo;
+﻿using Benoni.Core.Data;
+using Benoni.Core.Data.BaseTypes;
+using Benoni.Core.Models;
+using Benoni.Core.Utilities;
+using log4net;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Linq;
@@ -9,32 +11,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Web;
-using WebsiteTemplate.Controllers;
-using WebsiteTemplate.Data;
-using WebsiteTemplate.Data.BaseTypes;
-using WebsiteTemplate.Models;
-using WebsiteTemplate.Utilities;
 
-namespace WebsiteTemplate.Backend.Services
+namespace Benoni.Core.Services
 {
-    public class BasicClassEqualityComparer : IEqualityComparer<BaseClass>
-    {
-        public bool Equals(BaseClass x, BaseClass y)
-        {
-            return x.Id == y.Id;
-        }
-
-        public int GetHashCode(BaseClass obj)
-        {
-            return 0;
-        }
-    }
-
     public class BackupService
     {
         private static Dictionary<int, Type> SystemTypes { get; set; }
@@ -42,22 +25,20 @@ namespace WebsiteTemplate.Backend.Services
         private static readonly ILog Logger = SystemLogger.GetLogger<BackupService>();
         public static bool BusyWithBackups { get; set; } = false;
 
-        private DataService DataService { get; set; }
-        private ApplicationSettingsCore AppSettings { get; set; }
+        private DataStore DataService { get; set; }
 
         public static readonly string BACKUP_HEADER_KEY = "BackupType";
 
-        public BackupService(DataService dataService, ApplicationSettingsCore appSettings)
+        public BackupService()
         {
-            DataService = dataService;
-            AppSettings = appSettings;
+            DataService = DataStore.GetInstance(false);
 
             if (SystemTypes == null)
             {
                 SystemTypes = new Dictionary<int, Type>();
                 var cnt = 1;
 
-                var types = XXXUtils.GetAllBaseClassTypes(appSettings);
+                var types = GetAllBaseClassTypes();
                 foreach (var type in types)
                 {
                     SystemTypes.Add(cnt++, type);
@@ -70,40 +51,40 @@ namespace WebsiteTemplate.Backend.Services
             session.Query<T>().Delete();
         }
 
-        private int GetCount(Type type, ISession session)
+        //private int GetCount(Type type, ISession session)
+        //{
+        //    var queryOverMethodInfo = typeof(ISession).GetMethods().FirstOrDefault(m => m.Name == "QueryOver"
+        //                                                        && m.GetParameters().Count() == 0);
+        //    var queryOverMethod = queryOverMethodInfo.MakeGenericMethod(type);
+
+        //    var genericType = typeof(IQueryOver<>);
+        //    Type[] typeArgs = { type };
+
+        //    var genericType1 = typeof(IQueryOver<,>);
+        //    Type[] typeArgs1 = { type, type };
+
+        //    var queryOver = queryOverMethod.Invoke(session, null);
+
+        //    var gType = genericType.MakeGenericType(typeArgs);
+        //    var gType1 = genericType1.MakeGenericType(typeArgs1);
+
+        //    var selectMethod = gType1.GetMethods().Where(m => m.Name == "Select").Last();
+        //    var parameters = new IProjection[] { Projections.RowCount() };
+        //    queryOver = selectMethod.Invoke(queryOver, new object[] { parameters });
+
+        //    var futureValueMethodInfo = gType.GetMethods().Where(m => m.Name == "FutureValue").Last();
+        //    var futureValueMethod = futureValueMethodInfo.MakeGenericMethod(typeof(int));
+
+        //    var futureValue = futureValueMethod.Invoke(queryOver, null) as IFutureValue<int>;
+
+        //    var count = futureValue.Value;
+
+        //    return count;
+        //}
+
+        private List<BaseClass> GetItems<Session>(Type type, Session session, int skip = 0, int take = int.MaxValue)
         {
-            var queryOverMethodInfo = typeof(ISession).GetMethods().FirstOrDefault(m => m.Name == "QueryOver"
-                                                                && m.GetParameters().Count() == 0);
-            var queryOverMethod = queryOverMethodInfo.MakeGenericMethod(type);
-
-            var genericType = typeof(IQueryOver<>);
-            Type[] typeArgs = { type };
-
-            var genericType1 = typeof(IQueryOver<,>);
-            Type[] typeArgs1 = { type, type };
-
-            var queryOver = queryOverMethod.Invoke(session, null);
-
-            var gType = genericType.MakeGenericType(typeArgs);
-            var gType1 = genericType1.MakeGenericType(typeArgs1);
-
-            var selectMethod = gType1.GetMethods().Where(m => m.Name == "Select").Last();
-            var parameters = new IProjection[] { Projections.RowCount() };
-            queryOver = selectMethod.Invoke(queryOver, new object[] { parameters });
-
-            var futureValueMethodInfo = gType.GetMethods().Where(m => m.Name == "FutureValue").Last();
-            var futureValueMethod = futureValueMethodInfo.MakeGenericMethod(typeof(int));
-
-            var futureValue = futureValueMethod.Invoke(queryOver, null) as IFutureValue<int>;
-
-            var count = futureValue.Value;
-
-            return count;
-        }
-
-        private List<BaseClass> GetItems(Type type, IStatelessSession session, int skip = 0, int take = int.MaxValue)
-        {
-            var queryOverMethodInfo = typeof(IStatelessSession).GetMethods().FirstOrDefault(m => m.Name == "QueryOver"
+            var queryOverMethodInfo = session.GetType().GetMethods().FirstOrDefault(m => m.Name == "QueryOver"
                                                                                                  && m.GetParameters().Count() == 0);
             var queryOverMethod = queryOverMethodInfo.MakeGenericMethod(type);
 
@@ -132,7 +113,7 @@ namespace WebsiteTemplate.Backend.Services
         private void CreateBackupFile(string backupLocation)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "WebsiteTemplate.Data.BlankDB.db";
+            var resourceName = "Benoni.Core.Data.BlankDB.db";
 
             using (var stream = assembly.GetManifestResourceStream(resourceName))
             using (var backupStream = File.Create(backupLocation))
@@ -146,7 +127,7 @@ namespace WebsiteTemplate.Backend.Services
         {
             var cnt = 1;
             var backupName = "Backup_" + DateTime.Now.ToString("dd_MM_yyyy") + ".db";
-            var currentDirectory = HttpRuntime.AppDomainAppPath + "\\Data\\";
+            var currentDirectory = BenoniUtils.GetCurrentDirectory() + "\\Data\\";
             while (File.Exists(currentDirectory + backupName))
             {
                 backupName = "Backup_" + DateTime.Now.ToString("dd_MM_yyyy") + "_" + cnt + ".db";
@@ -162,8 +143,8 @@ namespace WebsiteTemplate.Backend.Services
                 CreateBackupFile(currentDirectory + backupName);
 
                 var connectionString = String.Format(@"Data Source=##CurrentDirectory##\Data\{0};Version=3;Journal Mode=Off;Connection Timeout=12000", backupName);
-                var store = DataStore.GetInstance(null);
-                var config = store.CreateNewConfigurationUsingConnectionString(connectionString, String.Empty);
+                var store = DataStore.GetInstance(false);
+                var config = store.CreateNewConfigurationUsingConnectionString(connectionString);
                 new SchemaUpdate(config).Execute(false, true); // Build the tables etc.
                 var factory = config.BuildSessionFactory();
 
@@ -216,7 +197,7 @@ namespace WebsiteTemplate.Backend.Services
 
                 using (var session = factory.OpenSession())
                 {
-                    var users = session.QueryOver<Models.User>().List().ToList();
+                    //var users = session.QueryOver<Models.User>().List().ToList();
                     var count = session
                             .CreateCriteria<BaseClass>()
                             .SetProjection(
@@ -232,7 +213,6 @@ namespace WebsiteTemplate.Backend.Services
                     }
                 }
                 Logger.Info("Closing store session");
-                store.CloseSession();
 
                 return File.ReadAllBytes(currentDirectory + backupName);
             }
@@ -250,19 +230,19 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        public void CreateNewDatabaseSchema(string connectionString, string providerName)
+        public void CreateNewDatabaseSchema(string connectionString)
         {
-            var store = DataStore.GetInstance(null);
+            var store = DataStore.GetInstance(false);
 
             DynamicClass.SetIdsToBeAssigned = true; // This will set the Fluent NHibernate mappings' id's to be assigned and not GUID's for the restore.
 
-            var config = store.CreateNewConfigurationUsingConnectionString(connectionString, providerName);
+            var config = store.CreateNewConfigurationUsingConnectionString(connectionString);
             new SchemaUpdate(config).Execute(true, true);
 
             DynamicClass.SetIdsToBeAssigned = false; // Change it back
         }
 
-        public void RemoveExistingData(string connectionString, bool restoreSystemSettings)
+        public void RemoveExistingData(string connectionString, params Type[] typesToIgnore)
         {
             var ids = SystemTypes.Keys.ToList().OrderBy(i => i).Reverse().ToList();
 
@@ -278,10 +258,12 @@ namespace WebsiteTemplate.Backend.Services
                 {
                     var type = SystemTypes[id];
 
-                    if ((type == typeof(Models.SystemSettings) || (type == typeof(SystemSettingValue))) && restoreSystemSettings == false)
+                    //if ((type == typeof(Models.SystemSettings) || (type == typeof(SystemSettingValue))) && restoreSystemSettings == false)
+                    if (typesToIgnore.Contains(type))
                     {
-                        itemsAllowed = session.QueryOver<Models.SystemSettings>().RowCount() +
-                                       session.QueryOver<Models.SystemSettingValue>().RowCount();
+                        //itemsAllowed = session.QueryOver<Models.SystemSettings>().RowCount() +
+                        //               session.QueryOver<Models.SystemSettingValue>().RowCount();
+                        itemsAllowed += GetItemCount(type, session);
                         continue;
                     }
 
@@ -344,11 +326,17 @@ namespace WebsiteTemplate.Backend.Services
             return false;
         }
 
-        public bool RestoreFullBackup(byte[] data, string dbConnectionString, string providerName, bool restoreSystemSettings)
+        public bool RestoreFullBackup(bool removeExistingItemsFirst, byte[] data, string dbConnectionString, params Type[] typesToIgnore)
         {
+            if (removeExistingItemsFirst)
+            {
+                RemoveExistingData(dbConnectionString, typesToIgnore);
+            }
+
+            var stopwatch = new Stopwatch();
             var cnt = 1;
             var backupName = "Restore_" + DateTime.Now.ToString("dd_MM_yyyy") + ".db";
-            var currentDirectory = HttpRuntime.AppDomainAppPath + "\\Data\\";
+            var currentDirectory = BenoniUtils.GetCurrentDirectory() + "\\Data\\";
             if (!Directory.Exists(currentDirectory))
             {
                 Directory.CreateDirectory(currentDirectory);
@@ -364,12 +352,12 @@ namespace WebsiteTemplate.Backend.Services
                 File.WriteAllBytes(currentDirectory + backupName, data);
 
                 var connectionString = String.Format(@"Data Source=##CurrentDirectory##\Data\{0};Version=3;Journal Mode=Off;Connection Timeout=12000", backupName);
-                var store = DataStore.GetInstance(null);
-                var backupConfig = store.CreateNewConfigurationUsingConnectionString(connectionString, String.Empty);
+                var store = DataStore.GetInstance(false);
+                var backupConfig = store.CreateNewConfigurationUsingConnectionString(connectionString);
                 var backupFactory = backupConfig.BuildSessionFactory();
 
                 DynamicClass.SetIdsToBeAssigned = true;
-                var config = store.CreateNewConfigurationUsingConnectionString(dbConnectionString, providerName);
+                var config = store.CreateNewConfigurationUsingConnectionString(dbConnectionString);
                 var factory = config.BuildSessionFactory();
 
                 var ids = SystemTypes.Keys.ToList().OrderBy(i => i);
@@ -383,7 +371,8 @@ namespace WebsiteTemplate.Backend.Services
                     {
                         var type = SystemTypes[id];
 
-                        if ((type == typeof(Models.SystemSettings) || (type == typeof(SystemSettingValue))) && restoreSystemSettings == false)
+                        //if ((type == typeof(Models.SystemSettings) || (type == typeof(SystemSettingValue))) && restoreSystemSettings == false)
+                        if (typesToIgnore.Contains(type))
                         {
                             var tmpItems = GetItems(type, backupSession);
 
@@ -435,11 +424,18 @@ namespace WebsiteTemplate.Backend.Services
                             .List<int>()
                             .Sum();
 
-                    if (restoreSystemSettings == false)
+                    //if (restoreSystemSettings == false)
+                    //{
+                    //    var settingsCount = session.QueryOver<Models.SystemSettings>().RowCount() +
+                    //                        session.QueryOver<SystemSettingValue>().RowCount();
+                    //    count -= settingsCount;
+                    //}
+
+                    var queryOverMethodInfo = typeof(ISession).GetMethods().FirstOrDefault(m => m.Name == "QueryOver" && m.GetParameters().Count() == 0);
+                    foreach (var t in typesToIgnore)
                     {
-                        var settingsCount = session.QueryOver<Models.SystemSettings>().RowCount() +
-                                            session.QueryOver<SystemSettingValue>().RowCount();
-                        count -= settingsCount;
+                        var tCount = GetItemCount(t, session);
+                        count -= tCount;
                     }
 
                     if (count != totalItems)
@@ -448,7 +444,9 @@ namespace WebsiteTemplate.Backend.Services
                     }
                 }
 
-                store.CloseSession();
+                stopwatch.Stop();
+
+                Logger.Info("Full restore took " + stopwatch.ElapsedMilliseconds + " ms");
 
                 return true;
             }
@@ -468,6 +466,25 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
+        private int GetItemCount<Session>(Type t, Session session)
+        {
+            var queryOverMethodInfo = session.GetType().GetMethods().FirstOrDefault(m => m.Name == "QueryOver"
+                                                                && m.GetParameters().Count() == 0);
+            var queryOverMethod = queryOverMethodInfo.MakeGenericMethod(t);
+
+            var genericType = typeof(IQueryOver<>);
+            Type[] typeArgs = { t };
+
+            var queryOver = queryOverMethod.Invoke(session, null);
+
+            var gType = genericType.MakeGenericType(typeArgs);
+
+            var rowCountMethod = gType.GetMethod("RowCount");
+            var tCountObj = rowCountMethod.Invoke(queryOver, null);
+
+            return (int)tCountObj;
+        }
+
         private void InsertItems(IList<BaseClass> items, ISessionFactory factory, Type type)
         {
             var failedItems = new List<BaseClass>();
@@ -483,7 +500,7 @@ namespace WebsiteTemplate.Backend.Services
                         foreach (var prop in longStringProperties)
                         {
                             var value = prop.GetValue(item);
-                            if (value == null || (value as LongString).Base == null)
+                            if (value == null || String.IsNullOrWhiteSpace((value as LongString)?.ToString()))
                             {
                                 prop.SetValue(item, new LongString(String.Empty));
                             }
@@ -494,5 +511,61 @@ namespace WebsiteTemplate.Backend.Services
                 transaction.Commit();
             }
         }
+
+        private List<Type> GetAllBaseClassTypes()
+        {
+            var tmpAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var allTypes = new List<Type>();
+            foreach (var assembly in tmpAssemblies)
+            {
+                var tmpBaseTypes = assembly.GetTypes().Where(t => t.IsClass && t.IsSubclassOf(typeof(BaseClass)) && t.IsAbstract == false).ToList();
+                allTypes.AddRange(tmpBaseTypes);
+            }
+
+            var result = new List<Type>();
+
+            foreach (var type in allTypes)
+            {
+                ProcessType(type, result);
+            }
+
+            return result;
+        }
+
+        private static List<Type> ProcessingTypes { get; set; } = new List<Type>();
+
+        private static void ProcessType(Type type, List<Type> sortedTypes)
+        {
+            /* Only process BaseClass classes and don't repeat any */
+            if (!type.IsSubclassOf(typeof(BaseClass)) || sortedTypes.Contains(type))
+            {
+                return;
+            }
+
+            /* Classes to explicitly ignore */
+            if (type == typeof(DynamicClass))
+            {
+                return;
+            }
+
+            if (ProcessingTypes.Contains(type))
+            {
+                return;
+            }
+            ProcessingTypes.Add(type);
+
+            var properties = type.GetProperties().Where(p => p.PropertyType.IsClass &&
+                                                             p.PropertyType.IsSubclassOf(typeof(BaseClass)) &&
+                                                             p.PropertyType != type).ToList();
+            foreach (var property in properties)
+            {
+                var pType = property.PropertyType;
+                ProcessType(pType, sortedTypes);
+            }
+
+            ProcessingTypes.Remove(type);
+            sortedTypes.Add(type);
+        }
+
     }
 }

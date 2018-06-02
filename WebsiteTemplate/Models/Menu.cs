@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Benoni.Core.Models;
+using System.Collections.Generic;
 
 namespace WebsiteTemplate.Models
 {

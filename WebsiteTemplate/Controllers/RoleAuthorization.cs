@@ -1,9 +1,9 @@
-﻿using NHibernate.Criterion;
+﻿using Benoni.Core.Data;
+using NHibernate.Criterion;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Web.Http.Filters;
-using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Controllers
@@ -31,7 +31,7 @@ namespace WebsiteTemplate.Controllers
             var identity = actionContext.RequestContext.Principal.Identity as System.Security.Claims.ClaimsIdentity;
 
             User user;
-            var store = DataStore.GetInstance(null);
+            var store = DataStore.GetInstance(false);
             using (var session = store.OpenSession())
             {
                 user = session.CreateCriteria<User>()

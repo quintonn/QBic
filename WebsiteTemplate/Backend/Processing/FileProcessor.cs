@@ -5,6 +5,7 @@ using System.Web;
 using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Utilities;
+using Benoni.Core.Utilities;
 
 namespace WebsiteTemplate.Backend.Processing
 {
@@ -26,7 +27,7 @@ namespace WebsiteTemplate.Backend.Processing
 
             if (!String.IsNullOrWhiteSpace(data))
             {
-                data = XXXUtils.Base64Decode(data);
+                data = BenoniUtils.Base64Decode(data);
             }
 
             if (!EventList.ContainsKey(eventId))

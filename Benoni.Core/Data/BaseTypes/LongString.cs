@@ -1,13 +1,13 @@
 ﻿using Newtonsoft.Json;
 using NHibernate;
+using NHibernate.Engine;
 using NHibernate.SqlTypes;
 using NHibernate.UserTypes;
 using System;
 using System.Data;
-using NHibernate.Engine;
 using System.Data.Common;
 
-namespace WebsiteTemplate.Data.BaseTypes
+namespace Benoni.Core.Data.BaseTypes
 {
     [JsonConverter(typeof(LongStringConverter))]
     /// <summary>

@@ -1,11 +1,12 @@
-﻿using NHibernate.Criterion;
+﻿using Benoni.Core.Data.BaseTypes;
+using Benoni.Core.Models;
+using NHibernate.Criterion;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
-using WebsiteTemplate.Data.BaseTypes;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Benoni.Core.Models;
+using System;
 using System.Collections.Generic;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;

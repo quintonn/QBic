@@ -25,3 +25,4 @@ BuildHelper/obj/*
 WebsiteTemplate/obj/Release/*
 WebsiteTemplateCore/obj/Release/*
 .vs/*
+*.csproj.user

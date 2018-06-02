@@ -1,4 +1,5 @@
-﻿using NHibernate;
+﻿using Benoni.Core.Models;
+using NHibernate;
 using NHibernate.Criterion;
 using System;
 using System.Collections;
@@ -7,7 +8,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using WebsiteTemplate.Backend.Services;
-using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.ViewItems.CoreItems

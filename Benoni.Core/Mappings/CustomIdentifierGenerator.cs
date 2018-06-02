@@ -1,10 +1,10 @@
-﻿using NHibernate.Id;
+﻿using NHibernate.Engine;
+using NHibernate.Id;
 using System;
-using NHibernate.Engine;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace WebsiteTemplate.Models
+namespace Benoni.Core.Mappings
 {
     public class CustomIdentifierGenerator : IIdentifierGenerator
     {

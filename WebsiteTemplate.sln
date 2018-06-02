@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2000
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsiteTemplate", "WebsiteTemplate\WebsiteTemplate.csproj", "{1547BF19-E581-44E9-B509-8CEF08276652}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -13,6 +13,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsiteTemplateCore", "WebsiteTemplateCore\WebsiteTemplateCore.csproj", "{342B90FD-09F9-4C4E-9944-C22405884DBB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsiteTemplate.Test", "WebsiteTemplate.Test\WebsiteTemplate.Test.csproj", "{6A7A76CD-F5D3-45EF-B98E-D06DBD23311E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsiteTemplate.UnitTests", "WebsiteTemplate.UnitTests\WebsiteTemplate.UnitTests.csproj", "{408B0C11-BB4E-4E9E-87F2-1B2A4D0D05A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benoni.Core", "Benoni.Core\Benoni.Core.csproj", "{39FDCBFC-A698-49DA-9C9D-3E7858E49BE0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,8 +40,19 @@ Global
 		{6A7A76CD-F5D3-45EF-B98E-D06DBD23311E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A7A76CD-F5D3-45EF-B98E-D06DBD23311E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A7A76CD-F5D3-45EF-B98E-D06DBD23311E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{408B0C11-BB4E-4E9E-87F2-1B2A4D0D05A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{408B0C11-BB4E-4E9E-87F2-1B2A4D0D05A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{408B0C11-BB4E-4E9E-87F2-1B2A4D0D05A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{408B0C11-BB4E-4E9E-87F2-1B2A4D0D05A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39FDCBFC-A698-49DA-9C9D-3E7858E49BE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39FDCBFC-A698-49DA-9C9D-3E7858E49BE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39FDCBFC-A698-49DA-9C9D-3E7858E49BE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39FDCBFC-A698-49DA-9C9D-3E7858E49BE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1B4DF753-0BE2-48F1-89A6-6ACFF8F5D9F5}
 	EndGlobalSection
 EndGlobal

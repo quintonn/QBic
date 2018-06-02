@@ -1,6 +1,4 @@
-﻿using WebsiteTemplate.Mappings;
-using WebsiteTemplate.Menus.BaseItems;
-using WebsiteTemplate.SiteSpecific;
+﻿using Benoni.Core.Models;
 
 namespace WebsiteTemplate.Models
 {

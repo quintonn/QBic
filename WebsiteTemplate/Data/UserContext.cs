@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Benoni.Core.Data;
+using System.Threading.Tasks;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Data

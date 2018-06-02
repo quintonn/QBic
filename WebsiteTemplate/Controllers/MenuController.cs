@@ -46,7 +46,7 @@ namespace WebsiteTemplate.Controllers
         [RequireHttps]
         public async Task<IHttpActionResult> RequestPasswordReset()
         {
-            XXXUtils.SetCurrentUser("System");
+            //XXXUtils.SetCurrentUser("System");
 
             var data = GetRequestData();
             var json = JsonHelper.Parse(data);
@@ -73,7 +73,7 @@ namespace WebsiteTemplate.Controllers
             try
             {
                 // Set current user to 'System' user for auditing purposes. Because no user will be logged in at the moment.
-                XXXUtils.SetCurrentUser("System");
+                //XXXUtils.SetCurrentUser("System");
 
                 var queryString = this.Request.GetQueryNameValuePairs();
                 var userId = queryString.Single(q => q.Key == "userId").Value;

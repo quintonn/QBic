@@ -1,4 +1,4 @@
-﻿namespace WebsiteTemplate.Models
+﻿namespace Benoni.Core.Models
 {
     public abstract class BaseClass
     {
@@ -8,7 +8,7 @@
 
         public BaseClass()
         {
-            CanDelete = true;
+            CanDelete = true;   
         }
 
         public BaseClass(bool canDelete)

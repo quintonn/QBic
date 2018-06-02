@@ -1,4 +1,5 @@
 ﻿using BasicAuthentication.Security;
+using Benoni.Core.Utilities;
 using log4net;
 using Newtonsoft.Json;
 using System;
@@ -53,13 +54,13 @@ namespace WebsiteTemplate.Controllers
 
                         using (var session = dataService.OpenSession())
                         {
-                            XXXUtils.DateFormat = "yyyy-MM-dd";
+                            WebsiteUtils.DateFormat = "yyyy-MM-dd";
                             var appSettings = session.QueryOver<SystemSettings>().List<SystemSettings>().FirstOrDefault();
                             if (appSettings != null)
                             {
-                                if (String.IsNullOrWhiteSpace(XXXUtils.DateFormat))
+                                if (String.IsNullOrWhiteSpace(WebsiteUtils.DateFormat))
                                 {
-                                    XXXUtils.DateFormat = appSettings.DateFormat;
+                                    WebsiteUtils.DateFormat = appSettings.DateFormat;
                                 }
                             }
                         }
@@ -68,7 +69,7 @@ namespace WebsiteTemplate.Controllers
                         Setup = true;
                     }
 
-                    JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = XXXUtils.DateFormat };
+                    JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = WebsiteUtils.DateFormat };
                 }
             }
             catch (Exception error)
@@ -234,6 +235,8 @@ namespace WebsiteTemplate.Controllers
         //[Authorize] //Not sure if we can have authorization. should  be possible
         public async Task<IHttpActionResult> SetAcmeChallenge()
         {
+            //TODO:   1. Verify request using maybe key/value pair.
+            //        2. Maybe just save to the correct path here with the correct file (maybe not, I can delete it using other way).
             try
             {
                 string requestData;
@@ -244,11 +247,36 @@ namespace WebsiteTemplate.Controllers
                     requestData = System.Text.Encoding.UTF8.GetString(mem.ToArray());
                 }
 
-                //var jData = JsonHelper.Parse(requestData);
-                //var acmeValue = jData.GetValue("acme");
                 var acmeValue = requestData.Split("=".ToCharArray()).Last();
 
+                //TODO:   The below code should also work?
+                //        And, should also be sending full path
+                Logger.Info("Setting acme challenge");
+                Logger.Info("RequestData = " + requestData);
+                try
+                {
+                    var jData = JsonHelper.Parse(requestData);
+                    var acmeValueTmp = jData.GetValue("acme");
+                    Logger.Info("acme value was found using json parser");
+
+                    if (acmeValue == acmeValueTmp)
+                    {
+                        Logger.Info("Acme value is the same both ways");
+                    }
+                    else
+                    {
+                        Logger.Info("Acme challenge is not the same both ways");
+                    }
+                }
+                catch (Exception error)
+                {
+                    Logger.Info("Acme value not json: " + error.Message);
+                }
+
+                var challengePath = "TODO";//
+
                 AcmeController.ChallengeResponse = acmeValue;
+                AcmeController.ChallengePath = challengePath;
 
                 return Json("success: " + acmeValue);
             }

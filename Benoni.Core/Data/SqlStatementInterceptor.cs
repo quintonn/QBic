@@ -1,6 +1,6 @@
 ﻿using NHibernate;
 
-namespace WebsiteTemplate.Data
+namespace Benoni.Core.Data
 {
     public class SqlStatementInterceptor : EmptyInterceptor
     {

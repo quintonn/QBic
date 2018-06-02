@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Benoni.Core.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
-using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Menus.BasicCrudItems
 {

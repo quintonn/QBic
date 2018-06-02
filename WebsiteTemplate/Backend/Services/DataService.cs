@@ -1,6 +1,7 @@
-﻿using NHibernate;
+﻿using Benoni.Core.Data;
+using Benoni.Core.Models;
+using NHibernate;
 using System;
-using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Services

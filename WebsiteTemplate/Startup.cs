@@ -1,6 +1,8 @@
 ﻿using BasicAuthentication.Authentication;
 using BasicAuthentication.Security;
 using BasicAuthentication.Startup;
+using Benoni.Core.Data;
+using Benoni.Core.Utilities;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.DataProtection;
 using Microsoft.Practices.Unity.Configuration;
@@ -37,7 +39,7 @@ namespace WebsiteTemplate
             
             appSettings.PerformAdditionalStartupConfiguration(app, Container);
 
-            Container.Resolve<SystemLogger>().Setup();
+            Container.Resolve<SystemLogger>().Setup(appSettings.LogLevel);
 
         }
 
@@ -54,7 +56,7 @@ namespace WebsiteTemplate
                 if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
             }
             #endif
-            Container.RegisterInstance(DataStore.GetInstance(appSettings));
+            Container.RegisterInstance(DataStore.GetInstance(appSettings.UpdateDatabase));
 
             Container.RegisterType(typeof(ApplicationStartup), appSettings.GetApplicationStartupType);
 

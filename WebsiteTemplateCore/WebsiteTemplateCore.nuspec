@@ -16,37 +16,38 @@
 		<tags>Website Template Core</tags>
 		<dependencies> 
 			<group>
-				<dependency id="Antlr3.Runtime" version="3.5.1"/>
-				<dependency id="BasicAuthentication" version="1.0.13.34968"/>
-				<dependency id="CommonServiceLocator" version="2.0.1"/>
-				<dependency id="DocumentGenerator" version="0.0.6567.20299"/>
-				<dependency id="FluentNHibernate" version="2.0.3.0"/>
-				<dependency id="Iesi.Collections" version="4.0.4"/>
-				<dependency id="MarkerMetro.Unity.Ionic.Zlib" version="2.0.0.14"/>
-				<dependency id="Microsoft.AspNet.Cors" version="5.2.3"/>
-				<dependency id="Microsoft.AspNet.Identity.Core" version="2.2.1"/>
-				<dependency id="Microsoft.AspNet.Identity.Owin" version="2.2.1"/>
-				<dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3"/>
-				<dependency id="Microsoft.AspNet.WebApi.Core" version="5.2.3"/>
-				<dependency id="Microsoft.AspNet.WebApi.Owin" version="5.2.3"/>
-				<dependency id="Microsoft.Owin" version="3.1.0"/>
-				<dependency id="Microsoft.AspNet.WebApi.Cors" version="5.2.3" />
-				<dependency id="Microsoft.Owin.Cors" version="3.1.0"/>
-				<dependency id="Microsoft.Owin.Host.SystemWeb" version="3.1.0"/>
-				<dependency id="Microsoft.Owin.Security" version="3.1.0"/>
-				<dependency id="Microsoft.Owin.Security.Cookies" version="3.1.0"/>
-				<dependency id="Microsoft.Owin.Security.OAuth" version="3.1.0"/>
-				<dependency id="MySql.Data" version="6.9.9"/>
-				<dependency id="Newtonsoft.Json" version="11.0.1"/>
-				<dependency id="NHibernate" version="5.0.3"/>
-				<dependency id="Owin" version="1.0"/>
-				<dependency id="PDFsharp-MigraDoc-GDI" version="1.32.4334.0"/>
-				<dependency id="Remotion.Linq" version="2.1.2"/>
-				<dependency id="Remotion.Linq.EagerFetching" version="2.1.0"/>
-				<dependency id="System.Data.SQLite.Core" version="1.0.106.0"/>
-				<dependency id="Unity" version="5.5.0"/>
+				<dependency id="Antlr3.Runtime" version="3.5.1" />
+				<dependency id="BasicAuthentication" version="1.1.1.20667" />
+				<dependency id="BasicAuthentication.Core" version="1.1.1.20667" />
+				<dependency id="CommonServiceLocator" version="2.0.1" />
+				<dependency id="Benoni.Core" version="0.5.6727.20892" />
+				<dependency id="DocumentGenerator" version="0.0.6567.20299" />
+				<dependency id="FluentNHibernate" version="2.1.2" />
+				<dependency id="Iesi.Collections" version="4.0.4" />
 				<dependency id="JsonDiffPatch.Net" version="2.1.0" />
 				<dependency id="log4net" version="2.0.8" />
+				<dependency id="MarkerMetro.Unity.Ionic.Zlib" version="2.0.0.14" />
+				<dependency id="Microsoft.AspNet.Cors" version="5.2.3" />
+				<dependency id="Microsoft.AspNet.Identity.Core" version="2.2.1" />
+				<dependency id="Microsoft.AspNet.Identity.Owin" version="2.2.1" />
+				<dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3" />
+				<dependency id="Microsoft.AspNet.WebApi.Core" version="5.2.3" />
+				<dependency id="Microsoft.AspNet.WebApi.Cors" version="5.2.3" />
+				<dependency id="Microsoft.AspNet.WebApi.Owin" version="5.2.3" />
+				<dependency id="Microsoft.Owin" version="3.1.0" />
+				<dependency id="Microsoft.Owin.Cors" version="3.1.0" />
+				<dependency id="Microsoft.Owin.Host.SystemWeb" version="3.1.0" />
+				<dependency id="Microsoft.Owin.Security" version="3.1.0" />
+				<dependency id="Microsoft.Owin.Security.Cookies" version="3.1.0" />
+				<dependency id="Microsoft.Owin.Security.OAuth" version="3.1.0" />
+				<dependency id="Newtonsoft.Json" version="11.0.2" />
+				<dependency id="NHibernate" version="5.1.2" />
+				<dependency id="Owin" version="1.0" />
+				<dependency id="PDFsharp-MigraDoc-GDI" version="1.32.4334.0" />
+				<dependency id="Remotion.Linq" version="2.1.2" />
+				<dependency id="Remotion.Linq.EagerFetching" version="2.1.0" />
+				<dependency id="System.Data.SQLite.Core" version="1.0.108.0" />
+				<dependency id="Unity" version="5.5.0" />
 			</group>
 		</dependencies>
 	</metadata>  

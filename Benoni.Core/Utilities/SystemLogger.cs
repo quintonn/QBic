@@ -4,15 +4,12 @@ using log4net.Core;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
 using System;
-using System.Diagnostics;
 using System.Linq;
 
-namespace WebsiteTemplate.Utilities
+namespace Benoni.Core.Utilities
 {
     public class SystemLogger
     {
-        private ApplicationSettingsCore AppSettings { get; set; }
-
         public static ILog GetLogger<T>()
         {
             var typeString = typeof(T).ToString().Split(".".ToCharArray()).Last();
@@ -52,11 +49,7 @@ namespace WebsiteTemplate.Utilities
         //    logger.Info("source line number: " + sourceLineNumber);
         //}
 
-        public SystemLogger(ApplicationSettingsCore appSettings)
-        {
-            AppSettings = appSettings;
-        }
-        public void Setup()
+        public void Setup(Level logLevel)
         {
             var hierarchy = (Hierarchy)LogManager.GetRepository();
 
@@ -82,7 +75,7 @@ namespace WebsiteTemplate.Utilities
             //memory.ActivateOptions();
             //hierarchy.Root.AddAppender(memory);
 
-            hierarchy.Root.Level = AppSettings.LogLevel;
+            hierarchy.Root.Level = logLevel;
             hierarchy.Configured = true;
         }
 

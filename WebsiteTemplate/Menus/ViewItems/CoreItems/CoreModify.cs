@@ -1,4 +1,5 @@
-﻿using NHibernate;
+﻿using Benoni.Core.Models;
+using NHibernate;
 using System;
 using System.Collections.Generic;
 using System.Linq;

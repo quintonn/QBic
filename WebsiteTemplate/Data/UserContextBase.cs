@@ -1,5 +1,6 @@
-﻿using BasicAuthentication.Security;
-using BasicAuthentication.Users;
+﻿using BasicAuthentication.Core.Security;
+using BasicAuthentication.Core.Users;
+using Benoni.Core.Data;
 using NHibernate.Criterion;
 using System;
 using System.Collections.Generic;
@@ -42,12 +43,12 @@ namespace WebsiteTemplate.Data
             return Task.FromResult(true);
         }
 
-        public override System.Threading.Tasks.Task AddClaimAsync(T user, System.Security.Claims.Claim claim)
+        public override Task AddClaimAsync(T user, System.Security.Claims.Claim claim)
         {
             return Task.FromResult(0);
         }
 
-        public override System.Threading.Tasks.Task AddRefreshToken(BasicAuthentication.Security.RefreshToken token)
+        public override Task AddRefreshToken(RefreshToken token)
         {
             using (var session = DataStore.OpenSession())
             {
@@ -57,7 +58,7 @@ namespace WebsiteTemplate.Data
             return Task.FromResult(0);
         }
 
-        public override System.Threading.Tasks.Task CreateUserAsync(T user)
+        public override Task CreateUserAsync(T user)
         {
             using (var session = DataStore.OpenSession())
             {
@@ -67,7 +68,7 @@ namespace WebsiteTemplate.Data
             return Task.FromResult(0);
         }
 
-        public override System.Threading.Tasks.Task DeleteUserAsync(T user)
+        public override Task DeleteUserAsync(T user)
         {
             using (var session = DataStore.OpenSession())
             {
@@ -77,7 +78,7 @@ namespace WebsiteTemplate.Data
             return Task.FromResult(0);
         }
 
-        public override System.Threading.Tasks.Task<BasicAuthentication.Security.RefreshToken> FindRefreshToken(string hashedTokenId)
+        public override Task<RefreshToken> FindRefreshToken(string hashedTokenId)
         {
             RefreshToken token;
             using (var session = DataStore.OpenSession())
@@ -87,7 +88,7 @@ namespace WebsiteTemplate.Data
             return Task.FromResult<RefreshToken>(token);
         }
 
-        public override System.Threading.Tasks.Task<T> FindUserByEmailAsync(string email)
+        public override Task<T> FindUserByEmailAsync(string email)
         {
             T result;
             using (var session = DataStore.OpenSession())
@@ -101,7 +102,7 @@ namespace WebsiteTemplate.Data
             return Task.FromResult(result);
         }
 
-        public override System.Threading.Tasks.Task<T> FindUserByIdAsync(string id)
+        public override Task<T> FindUserByIdAsync(string id)
         {
             T result;
             using (var session = DataStore.OpenSession())
@@ -112,12 +113,12 @@ namespace WebsiteTemplate.Data
             return Task.FromResult(result);
         }
 
-        public override System.Threading.Tasks.Task<T> FindUserByLogin(Microsoft.AspNet.Identity.UserLoginInfo login)
+        public override Task<T> FindUserByLogin(Microsoft.AspNet.Identity.UserLoginInfo login)
         {
             throw new NotImplementedException();
         }
 
-        public override System.Threading.Tasks.Task<T> FindUserByNameAsync(string name)
+        public override Task<T> FindUserByNameAsync(string name)
         {
             T result;
             using (var session = DataStore.OpenSession())
@@ -129,27 +130,27 @@ namespace WebsiteTemplate.Data
             return Task.FromResult(result);
         }
 
-        public override System.Threading.Tasks.Task<IList<System.Security.Claims.Claim>> GetClaimsAsync(T user)
+        public override Task<IList<System.Security.Claims.Claim>> GetClaimsAsync(T user)
         {
             return Task.FromResult<IList<Claim>>(new List<Claim>());
         }
 
-        public override System.Threading.Tasks.Task<string> GetEmailAsync(T user)
+        public override Task<string> GetEmailAsync(T user)
         {
             return Task.FromResult(user.Email);
         }
 
-        public override System.Threading.Tasks.Task<bool> GetEmailConfirmedAsync(T user)
+        public override Task<bool> GetEmailConfirmedAsync(T user)
         {
             return Task.FromResult(user.EmailConfirmed);
         }
 
-        public override System.Threading.Tasks.Task<string> GetPasswordHashAsync(T user)
+        public override Task<string> GetPasswordHashAsync(T user)
         {
             return Task.FromResult(user.PasswordHash);
         }
 
-        public override System.Threading.Tasks.Task<string> GetSecurityStampAsync(T user)
+        public override Task<string> GetSecurityStampAsync(T user)
         {
             var result = String.Empty;
             if (SecurityStamps.ContainsKey(user.Id))
@@ -164,17 +165,17 @@ namespace WebsiteTemplate.Data
             throw new NotImplementedException();
         }
 
-        public override System.Threading.Tasks.Task<bool> HasPasswordAsync(T user)
+        public override Task<bool> HasPasswordAsync(T user)
         {
             return Task.FromResult(true);
         }
 
-        public override System.Threading.Tasks.Task RemoveClaimAsync(T user, System.Security.Claims.Claim claim)
+        public override Task RemoveClaimAsync(T user, System.Security.Claims.Claim claim)
         {
             throw new NotImplementedException();
         }
 
-        public override System.Threading.Tasks.Task RemoveRefreshToken(string hashedTokenId)
+        public override Task RemoveRefreshToken(string hashedTokenId)
         {
             using (var session = DataStore.OpenSession())
             {
@@ -185,25 +186,25 @@ namespace WebsiteTemplate.Data
             return Task.FromResult<RefreshToken>(null);
         }
 
-        public override System.Threading.Tasks.Task SetEmailAsync(T user, string email)
+        public override Task SetEmailAsync(T user, string email)
         {
             user.Email = email;
             return Task.FromResult(0);
         }
 
-        public override System.Threading.Tasks.Task SetEmailConfirmedAsync(T user, bool confirmed)
+        public override Task SetEmailConfirmedAsync(T user, bool confirmed)
         {
             user.EmailConfirmed = confirmed;
             return Task.FromResult(0);
         }
 
-        public override System.Threading.Tasks.Task SetPasswordHashAsync(T user, string passwordHash)
+        public override Task SetPasswordHashAsync(T user, string passwordHash)
         {
             user.PasswordHash = passwordHash;
             return Task.FromResult(0);
         }
 
-        public override System.Threading.Tasks.Task SetSecurityStampAsync(T user, string stamp)
+        public override Task SetSecurityStampAsync(T user, string stamp)
         {
             if (user != null && !String.IsNullOrWhiteSpace(user.Id))
             {
@@ -218,7 +219,7 @@ namespace WebsiteTemplate.Data
 
         private Dictionary<string, string> SecurityStamps = new Dictionary<string, string>();
 
-        public override System.Threading.Tasks.Task UpdateUserAsync(T user)
+        public override Task UpdateUserAsync(T user)
         {
             using (var session = DataStore.OpenSession())
             {

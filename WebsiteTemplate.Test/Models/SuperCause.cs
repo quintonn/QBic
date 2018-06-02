@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Benoni.Core.Data.BaseTypes;
+using Benoni.Core.Models;
+using System;
 using System.Collections.Generic;
-using WebsiteTemplate.Data.BaseTypes;
-using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Test.MenuItems
 {
@@ -19,7 +19,7 @@ namespace WebsiteTemplate.Test.MenuItems
 
         public virtual ISet<CauseChild> CauseChildren { get; set; }
 
-        public virtual byte[] FileData { get; set; }
+        //public virtual byte[] FileData { get; set; }
 
         //public virtual CauseChild SuperChild { get; set; }
 

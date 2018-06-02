@@ -50,7 +50,7 @@ namespace WebsiteTemplate.Backend.Processing
                     BackgroundService.StartBackgroundJobs();
                 }
 
-                JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = XXXUtils.DateFormat };
+                JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = WebsiteUtils.DateFormat };
             }
         }
 
@@ -93,7 +93,7 @@ namespace WebsiteTemplate.Backend.Processing
 
         protected string GetRequestData()
         {
-            return XXXUtils.GetCurrentRequestData();
+            return WebsiteUtils.GetCurrentRequestData();
         }
 
         protected List<int> GetAllowedEventsForUser(string userId)

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Benoni.Core.Models;
+using Benoni.Core.Services;
+using Benoni.Core.Utilities;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -44,7 +47,7 @@ namespace WebsiteTemplate.Test.MenuItems
             var url = "https://localhost/websitetemplate/api/v1/performBackup";
             var json = new JsonHelper();
             json.Add("abc", "xyz");
-            var bytes = XXXUtils.GetBytes(json.ToString());
+            var bytes = BenoniUtils.GetBytes(json.ToString());
 
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
             //using (var client = new WebClient())
@@ -69,7 +72,7 @@ namespace WebsiteTemplate.Test.MenuItems
                 var data = Convert.FromBase64String(stringContent);
                 var responseData = CompressionHelper.InflateByte(data);
 
-                var itemsString = XXXUtils.GetString(responseData);
+                var itemsString = BenoniUtils.GetString(responseData);
 
                 itemsString = "[" + itemsString + "]";
                 itemsString = itemsString.Replace("}{", "},{");

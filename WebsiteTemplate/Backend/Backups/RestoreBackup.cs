@@ -1,12 +1,8 @@
-﻿using System;
+﻿using Benoni.Core.Services;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Transactions;
-using System.Web;
-using WebsiteTemplate.Backend.Processing;
-using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
@@ -63,15 +59,21 @@ namespace WebsiteTemplate.Backend.Backups
             {
                 var backupFile = GetValue<FileInfo>("BackupFile");
                 var restoreSystemSettings = GetValue<bool>("SystemSettings");
-
+                var connection = ConfigurationManager.ConnectionStrings["MainDataStore"];
                 var mainConnectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
-                var providerName = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ProviderName;
+                
                 var success = false;
                 try
                 {
+                    var typesToIgnore = new List<Type>();
+                    if (restoreSystemSettings == false)
+                    {
+                        typesToIgnore.Add(typeof(Models.SystemSettings));
+                        typesToIgnore.Add(typeof(Models.SystemSettingValue));
+                    }
                     BackupService.BusyWithBackups = true;
-                    BackupService.RemoveExistingData(mainConnectionString, restoreSystemSettings);
-                    success = BackupService.RestoreFullBackup(backupFile.Data, mainConnectionString, providerName, restoreSystemSettings);
+                    //BackupService.RemoveExistingData(mainConnectionString, typesToIgnore.ToArray());
+                    success = BackupService.RestoreFullBackup(true, backupFile.Data, mainConnectionString, typesToIgnore.ToArray());
                 }
                 finally
                 {

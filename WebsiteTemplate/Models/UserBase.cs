@@ -1,4 +1,5 @@
-﻿using BasicAuthentication.Users;
+﻿using BasicAuthentication.Core.Users;
+using Benoni.Core.Models;
 
 namespace WebsiteTemplate.Models
 {
@@ -16,7 +17,7 @@ namespace WebsiteTemplate.Models
 
         public UserBase()
         {
-            UserStatus = Models.UserStatus.Active;
+            UserStatus = UserStatus.Active;
         }
 
         public UserBase(bool canDelete)

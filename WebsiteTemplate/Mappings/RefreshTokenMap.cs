@@ -1,6 +1,6 @@
-﻿using BasicAuthentication.Security;
+﻿using BasicAuthentication.Core.Security;
+using Benoni.Core.Data;
 using FluentNHibernate.Mapping;
-using WebsiteTemplate.Data;
 
 namespace WebsiteTemplate.Mappings
 {
@@ -15,11 +15,11 @@ namespace WebsiteTemplate.Mappings
             Map(x => x.ClientId).Not.Nullable().Length(50);
             Map(x => x.ExpiresUtc).Not.Nullable();
             Map(x => x.IssuedUtc).Not.Nullable();
-            if (DataStore.ProviderName.Contains("MySql"))
-            {
-                Map(x => x.ProtectedTicket).Not.Nullable().CustomType("StringClob").CustomSqlType("LONGTEXT").Length(int.MaxValue);
-            }
-            else if (DataStore.SetCustomSqlTypes == true)
+            //if (DataStore.ProviderName.Contains("MySql"))
+            //{
+            //    Map(x => x.ProtectedTicket).Not.Nullable().CustomType("StringClob").CustomSqlType("LONGTEXT").Length(int.MaxValue);
+            //}
+            if (DataStore.SetCustomSqlTypes == true)
             {
                 Map(x => x.ProtectedTicket).Not.Nullable().CustomType("StringClob").CustomSqlType("nvarchar(max)").Length(int.MaxValue);
             }

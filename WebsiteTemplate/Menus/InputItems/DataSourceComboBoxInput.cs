@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Benoni.Core.Data;
+using Benoni.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -49,7 +51,7 @@ namespace WebsiteTemplate.Menus.InputItems
                                        bool orderByAsc = true,
                                        bool addBlankValue = false)
         {
-            var store = DataStore.GetInstance(null); // by now datastore should be initialized
+            var store = DataStore.GetInstance(false);
             using (var session = store.OpenSession())
             {
                 var queryOver = session.QueryOver<T>();

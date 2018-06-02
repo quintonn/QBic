@@ -12,7 +12,7 @@ using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.SystemSettings
 {
-    public class ModiffySystemSettings : GetInput
+    public class ModifySystemSettings : GetInput
     {
         private Models.SystemSettings SystemSettings { get; set; }
 
@@ -23,7 +23,7 @@ namespace WebsiteTemplate.Backend.SystemSettings
         private ApplicationSettingsCore AppSettings { get; set; }
         private DataService DataService { get; set; }
 
-        public ModiffySystemSettings(DataService dataService, ApplicationSettingsCore appSettings)
+        public ModifySystemSettings(DataService dataService, ApplicationSettingsCore appSettings)
         {
             DataService = dataService;
             AppSettings = appSettings;
@@ -167,7 +167,7 @@ namespace WebsiteTemplate.Backend.SystemSettings
                     session.Flush();
                 }
 
-                XXXUtils.DateFormat = dateFormat;
+                WebsiteUtils.DateFormat = dateFormat;
 
                 return new List<IEvent>()
                 {

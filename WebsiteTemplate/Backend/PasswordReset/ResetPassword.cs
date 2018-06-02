@@ -107,7 +107,7 @@ namespace WebsiteTemplate.Backend.PasswordReset
                     };
                 }
 
-                XXXUtils.SetCurrentUser("System");
+                //WebsiteUtils.SetCurrentUser("System");
 
                 /*
                 var verifyTokenResult = await UserManager.VerifyUserTokenAsync(userId, "ResetPassword", passwordToken);

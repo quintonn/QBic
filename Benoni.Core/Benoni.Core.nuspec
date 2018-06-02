@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<package >
+	<metadata>
+		<id>$id$</id>
+		<version>$version$</version>
+		<title>$title$</title>
+		<authors>$author$</authors>
+		<owners>$author$</owners>
+		<licenseUrl>http://www.example.com</licenseUrl>
+		<projectUrl>http://www.example.com</projectUrl>
+		<iconUrl>http://www.example.com</iconUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>$description$</description>
+		<releaseNotes>TODO</releaseNotes>
+		<copyright>Copyright 2016</copyright>
+		<tags>Benoni Core Benoni.Core</tags>
+		<dependencies> 
+			<group>
+				<dependency id="Antlr3.Runtime" version="3.5.1" />
+			    <dependency id="FluentNHibernate" version="2.1.2" />
+			    <dependency id="Iesi.Collections" version="4.0.4" />
+			    <dependency id="log4net" version="2.0.8" />
+			    <dependency id="Microsoft.AspNet.Identity.Core" version="2.2.1" />
+			    <dependency id="Newtonsoft.Json" version="11.0.2" />
+			    <dependency id="NHibernate" version="5.1.2" />
+			    <dependency id="Remotion.Linq" version="2.1.2" />
+			    <dependency id="Remotion.Linq.EagerFetching" version="2.1.0" />
+			    <dependency id="System.Data.SQLite.Core" version="1.0.108.0" />
+			</group>
+		</dependencies>
+	</metadata>  
+</package>

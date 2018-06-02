@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Benoni.Core.Utilities;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
-using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Test.MenuItems
 {
@@ -52,7 +48,7 @@ namespace WebsiteTemplate.Test.MenuItems
             data.Append(info);
             data.AppendLine();
 
-            var result = XXXUtils.GetBytes(data.ToString());
+            var result = BenoniUtils.GetBytes(data.ToString());
             return result;
         }
 

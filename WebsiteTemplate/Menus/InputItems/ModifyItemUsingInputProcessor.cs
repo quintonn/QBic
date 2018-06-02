@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Benoni.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Processing.InputProcessing;
 using WebsiteTemplate.Menus.BaseItems;
-using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.InputItems

@@ -1,13 +1,12 @@
-﻿using log4net;
+﻿using Benoni.Core.Services;
+using Benoni.Core.Utilities;
+using log4net;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Web;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
-using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Services.Background
 {
