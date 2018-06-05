@@ -54,7 +54,7 @@ namespace WebsiteTemplate.Controllers
 
                         using (var session = dataService.OpenSession())
                         {
-                            WebsiteUtils.DateFormat = "yyyy-MM-dd";
+                            WebsiteUtils.DateFormat = "dd-MM-yyyy";
                             var appSettings = session.QueryOver<SystemSettings>().List<SystemSettings>().FirstOrDefault();
                             if (appSettings != null)
                             {
