@@ -26,6 +26,17 @@ namespace WebsiteTemplate.Utilities
             return result;
         }
 
+        public static string GetSystemSetting(IStatelessSession session, string settingKey, string valueIfSettingNotFound = null)
+        {
+            var result = valueIfSettingNotFound;
+            var dbSetting = session.QueryOver<SystemSettingValue>().Where(s => s.KeyName == settingKey).SingleOrDefault();
+            if (dbSetting != null)
+            {
+                result = dbSetting.Value;
+            }
+            return result;
+        }
+
         public static string GetCurrentRequestData()
         {
             using (var stream = HttpContext.Current.Request.InputStream)

@@ -58,7 +58,7 @@ namespace WebsiteTemplate.Controllers
                             var appSettings = session.QueryOver<SystemSettings>().List<SystemSettings>().FirstOrDefault();
                             if (appSettings != null)
                             {
-                                if (String.IsNullOrWhiteSpace(WebsiteUtils.DateFormat))
+                                if (!String.IsNullOrWhiteSpace(WebsiteUtils.DateFormat))
                                 {
                                     WebsiteUtils.DateFormat = appSettings.DateFormat;
                                 }
