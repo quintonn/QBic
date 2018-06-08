@@ -108,8 +108,9 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
                 var id = GetValue("Id");
                 var isNew = String.IsNullOrWhiteSpace(id);
 
-                using (var transaction = new TransactionScope())
+                //using (var transaction = new TransactionScope())
                 using (var session = DataService.OpenSession())
+                using (var transaction = session.BeginTransaction())
                 {
                     var res = PerformModify(isNew, id, session);
                     if (res != null && res.Count > 0)
@@ -117,8 +118,8 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
                         return res;
                     }
 
-                    session.Flush();
-                    transaction.Complete();
+                    //session.Flush();
+                    transaction.Commit();
                     result.Add(new ShowMessage(EntityName + " successfully " + (isNew ? "added" : "modified")));
                     if (GetViewNumber() != null)
                     {

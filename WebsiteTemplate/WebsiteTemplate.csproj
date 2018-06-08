@@ -54,8 +54,8 @@
     <Reference Include="BasicAuthentication.Core, Version=1.1.1.20667, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BasicAuthentication.Core.1.1.1.20667\lib\net461\BasicAuthentication.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Benoni.Core, Version=0.5.6727.20892, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Benoni.Core.0.5.6727.20892\lib\net461\Benoni.Core.dll</HintPath>
+    <Reference Include="Benoni.Core, Version=0.5.6733.23593, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Benoni.Core.0.5.6733.23593\lib\net461\Benoni.Core.dll</HintPath>
     </Reference>
     <Reference Include="CommonServiceLocator, Version=2.0.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\Unity.5.5.0\lib\net45\CommonServiceLocator.dll</HintPath>

@@ -24,7 +24,7 @@ namespace WebsiteTemplate.Backend.Services
             session.SaveOrUpdate(item);
             var entityName = session.GetEntityName(item);
 
-            AuditService.AuditChange(item, action, entityName, user);
+            AuditService.AuditChange(session, item, action, entityName, user);
         }
 
         public void TryDelete<T>(ISession session, T item) where T : BaseClass
@@ -35,7 +35,7 @@ namespace WebsiteTemplate.Backend.Services
             }
             var entityName = session.GetEntityName(item);
 
-            AuditService.AuditChange(item, AuditAction.Delete, entityName);
+            AuditService.AuditChange(session, item, AuditAction.Delete, entityName);
             session.Delete(item);
         }
 

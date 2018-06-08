@@ -1,5 +1,6 @@
 ﻿using Benoni.Core.Data;
 using Benoni.Core.Models;
+using NHibernate;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,13 +40,14 @@ namespace WebsiteTemplate.Backend.Services
             // I think this covers everything
         }
 
-        public void AuditChange<T>(T item, AuditAction action, string entityName, User user = null) where T : BaseClass
+        public void AuditChange<T>(ISession session, T item, AuditAction action, string entityName, User user = null) where T : BaseClass
         {
+            return; // Globally disable auditing for now because it does not work properly.
             if (AppSettings.EnableAuditing == false)
             {
                 return;
             }
-            
+
             if (user == null)
             {
                 var userTask = BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync(UserContext);
@@ -59,31 +61,29 @@ namespace WebsiteTemplate.Backend.Services
 
             entityName = entityName.Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Last();
 
-            using (var session = DataStore.OpenSession())
+            object existingItem = null;
+            if (!String.IsNullOrWhiteSpace(item.Id))
             {
-                object existingItem = null;
-                if (!String.IsNullOrWhiteSpace(item.Id))
-                {
-                    existingItem = session.Get<T>(item.Id);
-                }
-                //if (existingItem == null)
-                //{
-                //    existingItem = item;
-                //}
-
-                var auditEvent = new AuditEvent()
-                {
-                    AuditAction = action,
-                    AuditEventDateTimeUTC = DateTime.UtcNow,
-                    User = user,
-                    ObjectId = item.Id,
-                    EntityName = entityName,
-                    OriginalObject = SerializeObject(existingItem),
-                    NewObject = action != AuditAction.Delete ? SerializeObject(item) : String.Empty
-                };
-                session.Save(auditEvent);
-                session.Flush();
+                existingItem = session.Get<T>(item.Id); // This is not working because we need a stateless session for this to work
             }
+            //if (existingItem == null)
+            //{
+            //    existingItem = item;
+            //}
+
+            var auditEvent = new AuditEvent()
+            {
+                AuditAction = action,
+                AuditEventDateTimeUTC = DateTime.UtcNow,
+                User = user,
+                ObjectId = item.Id,
+                EntityName = entityName,
+                OriginalObject = SerializeObject(existingItem),
+                NewObject = action != AuditAction.Delete ? SerializeObject(item) : String.Empty
+            };
+            session.Save(auditEvent);
+
+            session.Flush();
         }
 
         private string SerializeObject(object item)
