@@ -18,6 +18,19 @@ namespace Benoni.Core.Utilities
             return result;
         }
 
+        public static string GetMessageStack(Exception exception)
+        {
+            var result = String.Empty;
+            while (exception != null)
+            {
+                result = exception.Message + "\n" + exception.Message;
+
+                exception = exception.InnerException;
+            }
+
+            return result;
+        }
+
         public static void LogError<T>(string message, Exception error)
         {
             LogError(message, typeof(T), error);

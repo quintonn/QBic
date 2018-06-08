@@ -47,7 +47,7 @@ namespace WebsiteTemplate.Backend.Processing
             {
                 SystemLogger.LogError("Error in core processor during Process", this.GetType(), error);
 
-                return new BadRequestErrorMessageResult(error.Message + "\n" + error.StackTrace.ToString(), new DefaultContentNegotiator(), requestMessage, new List<MediaTypeFormatter>()
+                return new BadRequestErrorMessageResult(SystemLogger.GetMessageStack(error), new DefaultContentNegotiator(), requestMessage, new List<MediaTypeFormatter>()
                 {
                     new JsonMediaTypeFormatter()
                 });
