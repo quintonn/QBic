@@ -17,7 +17,7 @@ namespace WebsiteTemplate.Test.SiteSpecific
         {
             get
             {
-                return false;
+                return true;
             }
         }
 

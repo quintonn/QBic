@@ -16,6 +16,11 @@ namespace WebsiteTemplate.Utilities
 
         public abstract Type GetApplicationStartupType { get; }
 
+        /// <summary>
+        /// This is the email address to assign to the 'System' user.
+        /// The 'System' user is mostly used for auditing when no actual user is used, such as background processing.
+        /// This might be removed in future.
+        /// </summary>
         public abstract string SystemEmailAddress { get; }
 
         public virtual List<Assembly> GetAdditinalAssembliesToMap()

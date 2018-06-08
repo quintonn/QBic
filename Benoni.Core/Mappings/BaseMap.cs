@@ -26,13 +26,15 @@ namespace Benoni.Core.Mappings
                     continue;
                 }
 
-                if (properties.Where(p => p.Name == column).Single().PropertyType == typeof(byte[]))
+                var propertyType = properties.Where(p => p.Name == column).Single().PropertyType;
+
+                if (propertyType == typeof(byte[]))
                 {
                     //if (DataStore.ProviderName.Contains("MySql"))
                     //{
                     //    dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Not.Nullable().CustomSqlType("LONGBLOB").Length(int.MaxValue);
                     //}
-                     if (DataStore.SetCustomSqlTypes == true)
+                    if (DataStore.SetCustomSqlTypes == true)
                     {
                         dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Not.Nullable().CustomSqlType("varbinary(max)").Length(int.MaxValue);
                     }
@@ -41,13 +43,13 @@ namespace Benoni.Core.Mappings
                         dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Not.Nullable().Length(int.MaxValue);
                     }
                 }
-                else if (properties.Where(p => p.Name == column).Single().PropertyType == typeof(LongString))
+                else if (propertyType == typeof(LongString))
                 {
                     //if (DataStore.ProviderName.Contains("MySql"))
                     //{
                     //    dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomType<LongString>().CustomSqlType("LONGTEXT").Length(int.MaxValue);
                     //}
-                     if (DataStore.SetCustomSqlTypes == true)
+                    if (DataStore.SetCustomSqlTypes == true)
                     {
                         dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomType<LongString>().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
                     }
@@ -56,11 +58,22 @@ namespace Benoni.Core.Mappings
                         dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomType<LongString>().Length(int.MaxValue);
                     }
                 }
+                else if (IsNullable(propertyType))
+                {
+                    dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable();
+                }
                 else
                 {
                     dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Not.Nullable();
                 }
             }
+        }
+
+        public static bool IsNullable(Type type)
+        {
+            //if (!type.IsValueType) return true; // ref-type  this includes types like string
+            if (Nullable.GetUnderlyingType(type) != null) return true; // Nullable<T>
+            return false; // value-type
         }
 
         public static void MapNonPrimitiveTypes<T>(this ClasslikeMapBase<T> dynamicMap, IList<PropertyInfo> nonPrimitiveColumns, bool nullableReference) where T : DynamicClass

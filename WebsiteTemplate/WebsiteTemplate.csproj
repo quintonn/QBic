@@ -54,9 +54,6 @@
     <Reference Include="BasicAuthentication.Core, Version=1.1.1.20667, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BasicAuthentication.Core.1.1.1.20667\lib\net461\BasicAuthentication.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Benoni.Core, Version=0.5.6733.23593, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Benoni.Core.0.5.6733.23593\lib\net461\Benoni.Core.dll</HintPath>
-    </Reference>
     <Reference Include="CommonServiceLocator, Version=2.0.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\Unity.5.5.0\lib\net45\CommonServiceLocator.dll</HintPath>
       <Private>True</Private>
@@ -495,6 +492,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Benoni.Core\Benoni.Core.csproj">
+      <Project>{39fdcbfc-a698-49da-9c9d-3e7858e49be0}</Project>
+      <Name>Benoni.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
