@@ -13,7 +13,7 @@
 		<description>$description$</description>
 		<releaseNotes>TODO</releaseNotes>
 		<copyright>Copyright 2016</copyright>
-		<tags>Benoni Core Benoni.Core</tags>
+		<tags>QCumber Core QCumber.Core</tags>
 		<dependencies> 
 			<group>
 				<dependency id="Antlr3.Runtime" version="3.5.1" />

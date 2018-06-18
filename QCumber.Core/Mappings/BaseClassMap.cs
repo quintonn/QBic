@@ -1,7 +1,7 @@
-﻿using Benoni.Core.Models;
+﻿using QCumber.Core.Models;
 using FluentNHibernate.Mapping;
 
-namespace Benoni.Core.Mappings
+namespace QCumber.Core.Mappings
 {
     public class BaseClassMap<T> : ClassMap<T> where T : BaseClass
     {

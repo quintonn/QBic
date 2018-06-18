@@ -1,5 +1,5 @@
-﻿using Benoni.Core.Data;
-using Benoni.Core.Services;
+﻿using QCumber.Core.Data;
+using QCumber.Core.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Configuration;

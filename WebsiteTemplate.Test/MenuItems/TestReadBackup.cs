@@ -1,5 +1,5 @@
-﻿using Benoni.Core.Models;
-using Benoni.Core.Utilities;
+﻿using QCumber.Core.Models;
+using QCumber.Core.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
@@ -63,7 +63,7 @@ namespace WebsiteTemplate.Test.MenuItems
             var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
 
             var bytes = file.Data;
-            var base64 = BenoniUtils.GetString(bytes);
+            var base64 = QCumberUtils.GetString(bytes);
             base64 = base64.Replace("data:;base64,", "").Replace("\0", "");
             bytes = Convert.FromBase64String(base64);
 
@@ -79,7 +79,7 @@ namespace WebsiteTemplate.Test.MenuItems
             }
             else
             {
-                var json = BenoniUtils.GetString(bytes);
+                var json = QCumberUtils.GetString(bytes);
 
                 json = "[" + json + "]";
                 json = json.Replace("}{", "},{");

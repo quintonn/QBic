@@ -4,7 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Benoni.Core.Mappings
+namespace QCumber.Core.Mappings
 {
     public class CustomIdentifierGenerator : IIdentifierGenerator
     {

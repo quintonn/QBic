@@ -1,5 +1,5 @@
 ﻿using BasicAuthentication.Core.Security;
-using Benoni.Core.Data;
+using QCumber.Core.Data;
 using FluentNHibernate.Mapping;
 
 namespace WebsiteTemplate.Mappings

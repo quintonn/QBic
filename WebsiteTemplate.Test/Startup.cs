@@ -141,6 +141,21 @@ namespace WebsiteTemplate.Test
                     DataService.SaveOrUpdate(session, userRoleMenu);
                 }
 
+                var settingsMenu = session.CreateCriteria<Menu>()
+                                          .Add(Restrictions.Eq("Event", (int)EventNumber.ModifySystemSettings))
+                                          .UniqueResult<Menu>();
+                if (settingsMenu == null)
+                {
+                    settingsMenu = new Menu()
+                    {
+                        Event = EventNumber.ModifySystemSettings,
+                        Name = "Settings",
+                        Position = 3,
+                        ParentMenu = systemMenu
+                    };
+                    DataService.SaveOrUpdate(session, settingsMenu);
+                }
+
                 var allEvents = EventService.EventList.Where(e => e.Value.ActionType != EventType.InputDataView).Select(e => e.Value.GetEventId())
                                       .ToList();
 

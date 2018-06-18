@@ -7,7 +7,7 @@ using System;
 using System.Data;
 using System.Data.Common;
 
-namespace Benoni.Core.Data.BaseTypes
+namespace QCumber.Core.Data.BaseTypes
 {
     [JsonConverter(typeof(LongStringConverter))]
     /// <summary>

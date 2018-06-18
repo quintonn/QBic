@@ -1,5 +1,5 @@
-﻿using Benoni.Core.Data.BaseTypes;
-using Benoni.Core.Models;
+﻿using QCumber.Core.Data.BaseTypes;
+using QCumber.Core.Models;
 
 namespace WebsiteTemplate.UnitTests.Models
 {

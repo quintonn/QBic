@@ -1,6 +1,6 @@
 ﻿using NHibernate;
 
-namespace Benoni.Core.Data
+namespace QCumber.Core.Data
 {
     public class SqlStatementInterceptor : EmptyInterceptor
     {

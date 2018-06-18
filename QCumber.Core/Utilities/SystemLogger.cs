@@ -6,7 +6,7 @@ using log4net.Repository.Hierarchy;
 using System;
 using System.Linq;
 
-namespace Benoni.Core.Utilities
+namespace QCumber.Core.Utilities
 {
     public class SystemLogger
     {

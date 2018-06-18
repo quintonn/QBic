@@ -1,10 +1,10 @@
-﻿using Benoni.Core.Models;
+﻿using QCumber.Core.Models;
 using FluentNHibernate.Mapping;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Benoni.Core.Mappings
+namespace QCumber.Core.Mappings
 {
     public class DynamicMap<T> : ClassMap<T> where T : DynamicClass
     {

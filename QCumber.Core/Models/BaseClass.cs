@@ -1,4 +1,4 @@
-﻿namespace Benoni.Core.Models
+﻿namespace QCumber.Core.Models
 {
     public abstract class BaseClass
     {

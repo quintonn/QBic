@@ -1,4 +1,4 @@
-﻿using Benoni.Core.Utilities;
+﻿using QCumber.Core.Utilities;
 using System.Text;
 using System.Threading.Tasks;
 using WebsiteTemplate.Menus;
@@ -48,7 +48,7 @@ namespace WebsiteTemplate.Test.MenuItems
             data.Append(info);
             data.AppendLine();
 
-            var result = BenoniUtils.GetBytes(data.ToString());
+            var result = QCumberUtils.GetBytes(data.ToString());
             return result;
         }
 

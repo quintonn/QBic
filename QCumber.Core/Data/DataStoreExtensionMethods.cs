@@ -1,11 +1,11 @@
-﻿using Benoni.Core.Mappings;
-using Benoni.Core.Models;
+﻿using QCumber.Core.Mappings;
+using QCumber.Core.Models;
 using FluentNHibernate.Cfg;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Benoni.Core.Data
+namespace QCumber.Core.Data
 {
     public static class DataStoreExtensionMethods
     {

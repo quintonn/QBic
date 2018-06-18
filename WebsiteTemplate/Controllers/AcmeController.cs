@@ -6,7 +6,7 @@ using WebsiteTemplate.Utilities;
 using System.IO;
 using System;
 using log4net;
-using Benoni.Core.Utilities;
+using QCumber.Core.Utilities;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -42,7 +42,7 @@ namespace WebsiteTemplate.Controllers
             var resp = challenge + "." + ChallengeResponse;
             if (ChallengeResponse == "xxx") // Not sure if i need this. Why would this code run like this and not be set?? 
             {
-                var dir = BenoniUtils.GetCurrentDirectory();
+                var dir = QCumberUtils.GetCurrentDirectory();
                 var physicallPath = dir + "\\.well-known\\acme-challenge\\" + challenge;
                 if (File.Exists(physicallPath))
                 {

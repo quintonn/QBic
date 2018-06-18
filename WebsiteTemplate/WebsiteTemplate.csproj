@@ -494,9 +494,9 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Benoni.Core\Benoni.Core.csproj">
+    <ProjectReference Include="..\QCumber.Core\QCumber.Core.csproj">
       <Project>{39fdcbfc-a698-49da-9c9d-3e7858e49be0}</Project>
-      <Name>Benoni.Core</Name>
+      <Name>QCumber.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

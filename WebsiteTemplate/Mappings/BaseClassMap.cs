@@ -1,5 +1,5 @@
-﻿using Benoni.Core.Mappings;
-using Benoni.Core.Models;
+﻿using QCumber.Core.Mappings;
+using QCumber.Core.Models;
 using FluentNHibernate.Mapping;
 using WebsiteTemplate.Models;
 

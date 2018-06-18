@@ -1,7 +1,7 @@
-﻿using Benoni.Core.Data;
-using Benoni.Core.Data.BaseTypes;
-using Benoni.Core.Models;
-using Benoni.Core.Utilities;
+﻿using QCumber.Core.Data;
+using QCumber.Core.Data.BaseTypes;
+using QCumber.Core.Models;
+using QCumber.Core.Utilities;
 using log4net;
 using NHibernate;
 using NHibernate.Criterion;
@@ -16,7 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Benoni.Core.Services
+namespace QCumber.Core.Services
 {
     public class BackupService
     {
@@ -113,7 +113,7 @@ namespace Benoni.Core.Services
         private void CreateBackupFile(string backupLocation)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "Benoni.Core.Data.BlankDB.db";
+            var resourceName = "QCumber.Core.Data.BlankDB.db";
 
             using (var stream = assembly.GetManifestResourceStream(resourceName))
             using (var backupStream = File.Create(backupLocation))
@@ -127,7 +127,7 @@ namespace Benoni.Core.Services
         {
             var cnt = 1;
             var backupName = "Backup_" + DateTime.Now.ToString("dd_MM_yyyy") + ".db";
-            var currentDirectory = BenoniUtils.GetCurrentDirectory() + "\\Data\\";
+            var currentDirectory = QCumberUtils.GetCurrentDirectory() + "\\Data\\";
             while (File.Exists(currentDirectory + backupName))
             {
                 backupName = "Backup_" + DateTime.Now.ToString("dd_MM_yyyy") + "_" + cnt + ".db";
@@ -336,7 +336,7 @@ namespace Benoni.Core.Services
             var stopwatch = new Stopwatch();
             var cnt = 1;
             var backupName = "Restore_" + DateTime.Now.ToString("dd_MM_yyyy") + ".db";
-            var currentDirectory = BenoniUtils.GetCurrentDirectory() + "\\Data\\";
+            var currentDirectory = QCumberUtils.GetCurrentDirectory() + "\\Data\\";
             if (!Directory.Exists(currentDirectory))
             {
                 Directory.CreateDirectory(currentDirectory);

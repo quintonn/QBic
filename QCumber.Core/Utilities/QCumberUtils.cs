@@ -6,12 +6,12 @@ using System.Net.Mail;
 using System.Text;
 using System.Web;
 
-namespace Benoni.Core.Utilities
+namespace QCumber.Core.Utilities
 {
     /// <summary>
     /// This class contanis many utilities to help common .net problems.
     /// </summary>
-    public static class BenoniUtils
+    public static class QCumberUtils
     {
         public static byte[] GetBytes(string str)
         {
@@ -46,44 +46,6 @@ namespace Benoni.Core.Utilities
                 return Directory.GetCurrentDirectory();
             }
         }
-
-        //[DllImport("urlmon.dll", CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = false)]
-        //static extern int FindMimeFromData(IntPtr pBC,
-        //                                    [MarshalAs(UnmanagedType.LPWStr)] string pwzUrl,
-        //                                    [MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.I1, SizeParamIndex=3)]
-        //                                    byte[] pBuffer,
-        //                                    int cbSize,
-        //                                    [MarshalAs(UnmanagedType.LPWStr)] string pwzMimeProposed,
-        //                                    int dwMimeFlags,
-        //                                    out IntPtr ppwzMimeOut,
-        //                                    int dwReserved
-        //    );
-
-
-        //public static string GetMimeFromBytes(byte[] dataBytes)
-        //{
-        //    if (dataBytes == null)
-        //    {
-        //        throw new ArgumentNullException("dataBytes");
-        //    }
-        //    var mimeRet = String.Empty;
-        //    var suggestPtr = IntPtr.Zero;
-        //    var filePtr = IntPtr.Zero;
-        //    var outPtr = IntPtr.Zero;
-        //    var mimeProposed = "text/plain";
-        //    var ret = FindMimeFromData(IntPtr.Zero, null, dataBytes, dataBytes.Length, mimeProposed, 0, out outPtr, 0);
-        //    if (ret == 0 && outPtr != IntPtr.Zero)
-        //    {
-        //        //todo: this leaks memory outPtr must be freed
-        //        return Marshal.PtrToStringUni(outPtr);
-        //    }
-        //    return mimeRet;
-        //}
-
-        //public static Version GetApplicationCoreVersion()
-        //{
-        //    return typeof(ShowView).Assembly.GetName().Version;
-        //}
 
         public static void SendEmailWithAttachments(string body, IList<string> recipients, string subject, string emailHost, int emailPort, string fromEmailUser, string fromEmailPassword, bool enableSsl, bool isHtmlBody = false, params Attachment[] attachments)
         {

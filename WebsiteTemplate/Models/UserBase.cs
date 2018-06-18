@@ -1,5 +1,5 @@
 ﻿using BasicAuthentication.Core.Users;
-using Benoni.Core.Models;
+using QCumber.Core.Models;
 
 namespace WebsiteTemplate.Models
 {

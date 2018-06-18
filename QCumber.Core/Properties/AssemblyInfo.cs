@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Benoni.Core")]
-[assembly: AssemblyDescription("Core code for Benoni Framework")]
+[assembly: AssemblyTitle("QCumber.Core")]
+[assembly: AssemblyDescription("Core code for QCumber Framework")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Quintonn Rothmann")]
-[assembly: AssemblyProduct("Benoni.Core")]
+[assembly: AssemblyProduct("QCumber.Core")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

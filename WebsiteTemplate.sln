@@ -16,7 +16,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsiteTemplate.Test", "Web
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsiteTemplate.UnitTests", "WebsiteTemplate.UnitTests\WebsiteTemplate.UnitTests.csproj", "{408B0C11-BB4E-4E9E-87F2-1B2A4D0D05A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benoni.Core", "Benoni.Core\Benoni.Core.csproj", "{39FDCBFC-A698-49DA-9C9D-3E7858E49BE0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QCumber.Core", "QCumber.Core\QCumber.Core.csproj", "{39FDCBFC-A698-49DA-9C9D-3E7858E49BE0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

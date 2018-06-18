@@ -1,4 +1,4 @@
-﻿using Benoni.Core.Models;
+﻿using QCumber.Core.Models;
 using NHibernate;
 using NHibernate.Criterion;
 using System;

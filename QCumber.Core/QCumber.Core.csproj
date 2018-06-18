@@ -7,8 +7,8 @@
     <ProjectGuid>{39FDCBFC-A698-49DA-9C9D-3E7858E49BE0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Benoni.Core</RootNamespace>
-    <AssemblyName>Benoni.Core</AssemblyName>
+    <RootNamespace>QCumber.Core</RootNamespace>
+    <AssemblyName>QCumber.Core</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -90,7 +90,7 @@
     <Compile Include="Models\DynamicClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\BackupService.cs" />
-    <Compile Include="Utilities\BenoniUtils.cs" />
+    <Compile Include="Utilities\QCumberUtils.cs" />
     <Compile Include="Utilities\SystemLogger.cs" />
   </ItemGroup>
   <ItemGroup>

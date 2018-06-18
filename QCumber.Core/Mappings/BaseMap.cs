@@ -1,13 +1,13 @@
-﻿using Benoni.Core.Data;
-using Benoni.Core.Data.BaseTypes;
-using Benoni.Core.Models;
+﻿using QCumber.Core.Data;
+using QCumber.Core.Data.BaseTypes;
+using QCumber.Core.Models;
 using FluentNHibernate.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Benoni.Core.Mappings
+namespace QCumber.Core.Mappings
 {
     public static class BaseMap
     {

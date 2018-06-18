@@ -1,8 +1,8 @@
 ﻿using BasicAuthentication.Authentication;
 using BasicAuthentication.Security;
 using BasicAuthentication.Startup;
-using Benoni.Core.Data;
-using Benoni.Core.Utilities;
+using QCumber.Core.Data;
+using QCumber.Core.Utilities;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.DataProtection;
 using Microsoft.Practices.Unity.Configuration;
