@@ -1,4 +1,4 @@
-﻿using QCumber.Core.Data;
+﻿using QBic.Core.Data;
 using FluentNHibernate.Mapping;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;

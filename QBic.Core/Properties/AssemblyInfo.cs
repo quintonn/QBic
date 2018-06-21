@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("QCumber.Core")]
-[assembly: AssemblyDescription("Core code for QCumber Framework")]
+[assembly: AssemblyTitle("QBic.Core")]
+[assembly: AssemblyDescription("Core code for QBic Framework")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Quintonn Rothmann")]
-[assembly: AssemblyProduct("QCumber.Core")]
+[assembly: AssemblyProduct("QBic.Core")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

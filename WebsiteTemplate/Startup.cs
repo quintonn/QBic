@@ -1,8 +1,8 @@
 ﻿using BasicAuthentication.Authentication;
 using BasicAuthentication.Security;
 using BasicAuthentication.Startup;
-using QCumber.Core.Data;
-using QCumber.Core.Utilities;
+using QBic.Core.Data;
+using QBic.Core.Utilities;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.DataProtection;
 using Microsoft.Practices.Unity.Configuration;

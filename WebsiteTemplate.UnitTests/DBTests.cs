@@ -1,5 +1,5 @@
-﻿using QCumber.Core.Data;
-using QCumber.Core.Services;
+﻿using QBic.Core.Data;
+using QBic.Core.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Configuration;

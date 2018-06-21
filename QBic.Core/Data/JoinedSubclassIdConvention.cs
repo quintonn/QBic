@@ -3,7 +3,7 @@ using FluentNHibernate.Conventions.AcceptanceCriteria;
 using FluentNHibernate.Conventions.Inspections;
 using FluentNHibernate.Conventions.Instances;
 
-namespace QCumber.Core.Data
+namespace QBic.Core.Data
 {
     public class JoinedSubclassIdConvention : IJoinedSubclassConvention, IJoinedSubclassConventionAcceptance
     {

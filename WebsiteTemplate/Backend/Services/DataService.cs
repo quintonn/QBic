@@ -1,5 +1,5 @@
-﻿using QCumber.Core.Data;
-using QCumber.Core.Models;
+﻿using QBic.Core.Data;
+using QBic.Core.Models;
 using NHibernate;
 using System;
 using WebsiteTemplate.Models;

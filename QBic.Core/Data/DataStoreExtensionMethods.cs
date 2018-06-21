@@ -1,11 +1,11 @@
-﻿using QCumber.Core.Mappings;
-using QCumber.Core.Models;
+﻿using QBic.Core.Mappings;
+using QBic.Core.Models;
 using FluentNHibernate.Cfg;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace QCumber.Core.Data
+namespace QBic.Core.Data
 {
     public static class DataStoreExtensionMethods
     {

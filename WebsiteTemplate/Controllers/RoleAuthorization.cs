@@ -1,4 +1,4 @@
-﻿using QCumber.Core.Data;
+﻿using QBic.Core.Data;
 using NHibernate.Criterion;
 using System.Collections.Generic;
 using System.Linq;

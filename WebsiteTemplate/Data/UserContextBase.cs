@@ -1,6 +1,6 @@
 ﻿using BasicAuthentication.Core.Security;
 using BasicAuthentication.Core.Users;
-using QCumber.Core.Data;
+using QBic.Core.Data;
 using NHibernate.Criterion;
 using System;
 using System.Collections.Generic;

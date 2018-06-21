@@ -1,4 +1,4 @@
-﻿namespace QCumber.Core.Models
+﻿namespace QBic.Core.Models
 {
     public abstract class BaseClass
     {

@@ -333,9 +333,9 @@
     <Compile Include="MenuItems\TestView.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\QCumber.Core\QCumber.Core.csproj">
+    <ProjectReference Include="..\QBic.Core\QBic.Core.csproj">
       <Project>{39fdcbfc-a698-49da-9c9d-3e7858e49be0}</Project>
-      <Name>QCumber.Core</Name>
+      <Name>QBic.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\WebsiteTemplate\WebsiteTemplate.csproj">
       <Project>{1547bf19-e581-44e9-b509-8cef08276652}</Project>

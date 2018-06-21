@@ -1,5 +1,5 @@
-﻿using QCumber.Core.Data.BaseTypes;
-using QCumber.Core.Models;
+﻿using QBic.Core.Data.BaseTypes;
+using QBic.Core.Models;
 using NHibernate.Criterion;
 using System;
 using System.Collections.Generic;

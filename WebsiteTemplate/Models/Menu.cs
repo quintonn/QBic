@@ -1,4 +1,4 @@
-﻿using QCumber.Core.Models;
+﻿using QBic.Core.Models;
 using System.Collections.Generic;
 
 namespace WebsiteTemplate.Models

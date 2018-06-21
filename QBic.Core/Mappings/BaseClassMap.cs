@@ -1,7 +1,7 @@
-﻿using QCumber.Core.Models;
+﻿using QBic.Core.Models;
 using FluentNHibernate.Mapping;
 
-namespace QCumber.Core.Mappings
+namespace QBic.Core.Mappings
 {
     public class BaseClassMap<T> : ClassMap<T> where T : BaseClass
     {

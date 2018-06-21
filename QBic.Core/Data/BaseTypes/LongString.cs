@@ -7,7 +7,7 @@ using System;
 using System.Data;
 using System.Data.Common;
 
-namespace QCumber.Core.Data.BaseTypes
+namespace QBic.Core.Data.BaseTypes
 {
     [JsonConverter(typeof(LongStringConverter))]
     /// <summary>

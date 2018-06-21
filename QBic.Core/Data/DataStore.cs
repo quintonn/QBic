@@ -1,4 +1,4 @@
-﻿using QCumber.Core.Utilities;
+﻿using QBic.Core.Utilities;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using NHibernate;
@@ -10,7 +10,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
 
-namespace QCumber.Core.Data
+namespace QBic.Core.Data
 {
     public class DataStore
     {
@@ -97,7 +97,7 @@ namespace QCumber.Core.Data
             
             if (connectionString.Contains("##CurrentDirectory##") || connectionString.Contains(":memory:"))
             {
-                var currentDirectory = QCumberUtils.GetCurrentDirectory();
+                var currentDirectory = QBicUtils.GetCurrentDirectory();
                 connectionString = connectionString.Replace("##CurrentDirectory##", currentDirectory); // for my sqlite connectiontion string
 
                 configurer = SQLiteConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
@@ -164,7 +164,7 @@ namespace QCumber.Core.Data
         {
             if (connectionString.Contains("##CurrentDirectory##") || connectionString.Contains(":memory:"))
             {
-                connectionString = connectionString.Replace("##CurrentDirectory##", QCumberUtils.GetCurrentDirectory());
+                connectionString = connectionString.Replace("##CurrentDirectory##", QBicUtils.GetCurrentDirectory());
                 return new SQLiteConnection(connectionString);
             }
             else if (ConfigurationManager.ConnectionStrings["MainDataStore"]?.ProviderName.Contains("MySql") == true)

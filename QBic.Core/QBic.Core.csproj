@@ -7,8 +7,8 @@
     <ProjectGuid>{39FDCBFC-A698-49DA-9C9D-3E7858E49BE0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>QCumber.Core</RootNamespace>
-    <AssemblyName>QCumber.Core</AssemblyName>
+    <RootNamespace>QBic.Core</RootNamespace>
+    <AssemblyName>QBic.Core</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>

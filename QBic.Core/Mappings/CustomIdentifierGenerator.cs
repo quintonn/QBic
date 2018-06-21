@@ -4,7 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace QCumber.Core.Mappings
+namespace QBic.Core.Mappings
 {
     public class CustomIdentifierGenerator : IIdentifierGenerator
     {

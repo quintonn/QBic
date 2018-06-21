@@ -6,12 +6,12 @@ using System.Net.Mail;
 using System.Text;
 using System.Web;
 
-namespace QCumber.Core.Utilities
+namespace QBic.Core.Utilities
 {
     /// <summary>
     /// This class contanis many utilities to help common .net problems.
     /// </summary>
-    public static class QCumberUtils
+    public static class QBicUtils
     {
         public static byte[] GetBytes(string str)
         {

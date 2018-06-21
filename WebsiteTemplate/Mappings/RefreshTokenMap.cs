@@ -1,5 +1,5 @@
 ﻿using BasicAuthentication.Core.Security;
-using QCumber.Core.Data;
+using QBic.Core.Data;
 using FluentNHibernate.Mapping;
 
 namespace WebsiteTemplate.Mappings

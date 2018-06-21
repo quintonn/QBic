@@ -1,4 +1,4 @@
-﻿namespace QCumber.Core.Models
+﻿namespace QBic.Core.Models
 {
     /// <summary>
     /// This class is so we can use reflection to find only the dynamic classes.

@@ -1,5 +1,5 @@
 ﻿using BasicAuthentication.Security;
-using QCumber.Core.Utilities;
+using QBic.Core.Utilities;
 using log4net;
 using Newtonsoft.Json;
 using System;

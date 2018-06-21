@@ -1,13 +1,13 @@
-﻿using QCumber.Core.Data;
-using QCumber.Core.Data.BaseTypes;
-using QCumber.Core.Models;
+﻿using QBic.Core.Data;
+using QBic.Core.Data.BaseTypes;
+using QBic.Core.Models;
 using FluentNHibernate.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace QCumber.Core.Mappings
+namespace QBic.Core.Mappings
 {
     public static class BaseMap
     {

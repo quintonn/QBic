@@ -1,4 +1,4 @@
-﻿using QCumber.Core.Utilities;
+﻿using QBic.Core.Utilities;
 using log4net;
 using System;
 using System.Threading;

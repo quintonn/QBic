@@ -1,4 +1,4 @@
-﻿using QCumber.Core.Utilities;
+﻿using QBic.Core.Utilities;
 using System;
 using System.Threading.Tasks;
 using System.Web;
@@ -26,7 +26,7 @@ namespace WebsiteTemplate.Backend.Processing
 
             if (!String.IsNullOrWhiteSpace(data))
             {
-                data = QCumberUtils.Base64Decode(data);
+                data = QBicUtils.Base64Decode(data);
             }
 
             if (!EventList.ContainsKey(eventId))

@@ -1,6 +1,6 @@
-﻿using QCumber.Core.Models;
-using QCumber.Core.Services;
-using QCumber.Core.Utilities;
+﻿using QBic.Core.Models;
+using QBic.Core.Services;
+using QBic.Core.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -47,7 +47,7 @@ namespace WebsiteTemplate.Test.MenuItems
             var url = "https://localhost/websitetemplate/api/v1/performBackup";
             var json = new JsonHelper();
             json.Add("abc", "xyz");
-            var bytes = QCumberUtils.GetBytes(json.ToString());
+            var bytes = QBicUtils.GetBytes(json.ToString());
 
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
             //using (var client = new WebClient())
@@ -72,7 +72,7 @@ namespace WebsiteTemplate.Test.MenuItems
                 var data = Convert.FromBase64String(stringContent);
                 var responseData = CompressionHelper.InflateByte(data);
 
-                var itemsString = QCumberUtils.GetString(responseData);
+                var itemsString = QBicUtils.GetString(responseData);
 
                 itemsString = "[" + itemsString + "]";
                 itemsString = itemsString.Replace("}{", "},{");

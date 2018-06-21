@@ -1,5 +1,5 @@
-﻿using QCumber.Core.Mappings;
-using QCumber.Core.Models;
+﻿using QBic.Core.Mappings;
+using QBic.Core.Models;
 using FluentNHibernate.Mapping;
 using WebsiteTemplate.Models;
 

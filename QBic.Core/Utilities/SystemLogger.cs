@@ -6,7 +6,7 @@ using log4net.Repository.Hierarchy;
 using System;
 using System.Linq;
 
-namespace QCumber.Core.Utilities
+namespace QBic.Core.Utilities
 {
     public class SystemLogger
     {

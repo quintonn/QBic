@@ -1,6 +1,6 @@
 ﻿using NHibernate;
 
-namespace QCumber.Core.Data
+namespace QBic.Core.Data
 {
     public class SqlStatementInterceptor : EmptyInterceptor
     {

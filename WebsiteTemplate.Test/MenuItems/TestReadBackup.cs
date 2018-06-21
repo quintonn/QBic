@@ -1,5 +1,5 @@
-﻿using QCumber.Core.Models;
-using QCumber.Core.Utilities;
+﻿using QBic.Core.Models;
+using QBic.Core.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
@@ -63,7 +63,7 @@ namespace WebsiteTemplate.Test.MenuItems
             var connectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
 
             var bytes = file.Data;
-            var base64 = QCumberUtils.GetString(bytes);
+            var base64 = QBicUtils.GetString(bytes);
             base64 = base64.Replace("data:;base64,", "").Replace("\0", "");
             bytes = Convert.FromBase64String(base64);
 
@@ -79,7 +79,7 @@ namespace WebsiteTemplate.Test.MenuItems
             }
             else
             {
-                var json = QCumberUtils.GetString(bytes);
+                var json = QBicUtils.GetString(bytes);
 
                 json = "[" + json + "]";
                 json = json.Replace("}{", "},{");

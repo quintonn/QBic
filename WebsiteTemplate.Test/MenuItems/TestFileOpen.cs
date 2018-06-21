@@ -1,4 +1,4 @@
-﻿using QCumber.Core.Utilities;
+﻿using QBic.Core.Utilities;
 using System.Text;
 using System.Threading.Tasks;
 using WebsiteTemplate.Menus;
@@ -48,7 +48,7 @@ namespace WebsiteTemplate.Test.MenuItems
             data.Append(info);
             data.AppendLine();
 
-            var result = QCumberUtils.GetBytes(data.ToString());
+            var result = QBicUtils.GetBytes(data.ToString());
             return result;
         }
 

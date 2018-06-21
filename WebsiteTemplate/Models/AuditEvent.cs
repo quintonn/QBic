@@ -1,4 +1,4 @@
-﻿using QCumber.Core.Models;
+﻿using QBic.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

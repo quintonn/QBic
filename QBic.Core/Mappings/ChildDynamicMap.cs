@@ -1,11 +1,11 @@
-﻿using QCumber.Core.Models;
+﻿using QBic.Core.Models;
 using FluentNHibernate.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace QCumber.Core.Mappings
+namespace QBic.Core.Mappings
 {
     public class ChildDynamicMap<T> : SubclassMap<T> where T : DynamicClass
     {

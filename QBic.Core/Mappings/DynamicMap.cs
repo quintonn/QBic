@@ -1,10 +1,10 @@
-﻿using QCumber.Core.Models;
+﻿using QBic.Core.Models;
 using FluentNHibernate.Mapping;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace QCumber.Core.Mappings
+namespace QBic.Core.Mappings
 {
     public class DynamicMap<T> : ClassMap<T> where T : DynamicClass
     {

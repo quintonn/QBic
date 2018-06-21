@@ -1,5 +1,5 @@
 ﻿using BasicAuthentication.Core.Users;
-using QCumber.Core.Models;
+using QBic.Core.Models;
 
 namespace WebsiteTemplate.Models
 {

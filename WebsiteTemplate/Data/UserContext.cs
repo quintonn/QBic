@@ -1,4 +1,4 @@
-﻿using QCumber.Core.Data;
+﻿using QBic.Core.Data;
 using System.Threading.Tasks;
 using WebsiteTemplate.Models;
 
