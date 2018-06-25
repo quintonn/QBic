@@ -55,7 +55,7 @@ namespace WebsiteTemplate.Test.SiteSpecific
 
         public override string GetApplicationName()
         {
-            return "Web Template Test";
+            return "QBic";
         }
 
         public override void PerformAdditionalStartupConfiguration(IAppBuilder app, IUnityContainer container)
