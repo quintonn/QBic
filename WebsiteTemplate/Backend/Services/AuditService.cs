@@ -40,9 +40,9 @@ namespace WebsiteTemplate.Backend.Services
             // I think this covers everything
         }
 
-        public void AuditChange<T>(ISession session, T item, AuditAction action, string entityName, User user = null) where T : BaseClass
+        public void AuditChange<T>(ISession session, string itemId, T item, AuditAction action, string entityName, User user = null) where T : BaseClass
         {
-            return; // Globally disable auditing for now because it does not work properly.
+            //return; // Globally disable auditing for now because it does not work properly.
             if (AppSettings.EnableAuditing == false)
             {
                 return;
@@ -61,29 +61,35 @@ namespace WebsiteTemplate.Backend.Services
 
             entityName = entityName.Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Last();
 
-            object existingItem = null;
-            if (!String.IsNullOrWhiteSpace(item.Id))
-            {
-                existingItem = session.Get<T>(item.Id); // This is not working because we need a stateless session for this to work
-            }
             //if (existingItem == null)
             //{
             //    existingItem = item;
             //}
 
-            var auditEvent = new AuditEvent()
+            using (var auditSession = DataStore.OpenAuditSession())
+            using (var statelessSession = DataStore.OpenStatelessSession())
             {
-                AuditAction = action,
-                AuditEventDateTimeUTC = DateTime.UtcNow,
-                User = user,
-                ObjectId = item.Id,
-                EntityName = entityName,
-                OriginalObject = SerializeObject(existingItem),
-                NewObject = action != AuditAction.Delete ? SerializeObject(item) : String.Empty
-            };
-            session.Save(auditEvent);
+                string originalObject = null;
+                if (!String.IsNullOrWhiteSpace(itemId))
+                {
+                    var dbItem = statelessSession.Get<T>(itemId); // Get original/unmodified item
+                    originalObject = SerializeObject(dbItem);
+                }
+                var auditEvent = new AuditEvent()
+                {
+                    AuditAction = action,
+                    AuditEventDateTimeUTC = DateTime.UtcNow,
+                    UserId = user.Id,
+                    UserName = user.UserName,
+                    ObjectId = item.Id,
+                    EntityName = entityName,
+                    OriginalObject = originalObject,
+                    NewObject = action != AuditAction.Delete ? SerializeObject(item) : String.Empty
+                };
+                auditSession.Save(auditEvent);
 
-            session.Flush();
+                auditSession.Flush();
+            }
         }
 
         private string SerializeObject(object item)

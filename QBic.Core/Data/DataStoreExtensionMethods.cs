@@ -9,6 +9,16 @@ namespace QBic.Core.Data
 {
     public static class DataStoreExtensionMethods
     {
+        public static FluentMappingsContainer AddAuditModels(this FluentMappingsContainer mappings)
+        {
+            var auditType = Type.GetType("WebsiteTemplate.Mappings.AuditEventMapping, WebsiteTemplate");
+
+            mappings.Add(auditType);
+
+            return mappings;
+
+        }
+
         public static FluentMappingsContainer AddFromRunningAssemblies(this FluentMappingsContainer mappings)
         {
             var types = new List<Type>();
@@ -28,7 +38,10 @@ namespace QBic.Core.Data
                     mappings.Add(refreshTokenMapper);
                 }
 
-                var baseMappingTypes = assemblyTypes.Where(t => t.BaseType != null && t.BaseType.Name.Contains("BaseClassMap")).ToList();
+                var baseMappingTypes = assemblyTypes.Where(t => t.BaseType != null && 
+                                                                t.BaseType.Name.Contains("BaseClassMap") && 
+                                                                !t.Name.Contains("AuditEventMapping")) // Don't map audit table to main data store.
+                                                    .ToList();
                 if (baseMappingTypes.Count > 0)
                 {
                     baseMappingTypes.ForEach(b =>
@@ -46,6 +59,7 @@ namespace QBic.Core.Data
                 {
                     continue;
                 }
+
                 list.Add(typeString);
                 if (type.BaseType == typeof(DynamicClass))
                 {

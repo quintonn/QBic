@@ -21,10 +21,12 @@ namespace WebsiteTemplate.Backend.Services
         {
             var action = String.IsNullOrWhiteSpace(item.Id) ? AuditAction.New : AuditAction.Modify;
 
+            var itemId = item.Id; // Get before calling save/update as this creates id
+
             session.SaveOrUpdate(item);
             var entityName = session.GetEntityName(item);
 
-            AuditService.AuditChange(session, item, action, entityName, user);
+            AuditService.AuditChange(session, itemId, item, action, entityName, user);
         }
 
         public void TryDelete<T>(ISession session, T item) where T : BaseClass
@@ -35,7 +37,7 @@ namespace WebsiteTemplate.Backend.Services
             }
             var entityName = session.GetEntityName(item);
 
-            AuditService.AuditChange(session, item, AuditAction.Delete, entityName);
+            AuditService.AuditChange(session, item.Id, item, AuditAction.Delete, entityName);
             session.Delete(item);
         }
 

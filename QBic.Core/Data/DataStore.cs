@@ -44,6 +44,7 @@ namespace QBic.Core.Data
         }
 
         private static ISessionFactory Store;
+        private static ISessionFactory AuditStore;
         private static NHibernate.Cfg.Configuration Configuration;
 
         //public string GetTableName(Type type)
@@ -55,6 +56,7 @@ namespace QBic.Core.Data
         private void init()
         {
             Store = CreateSessionFactory();
+            AuditStore = CreateAuditSessionFactory();
 
             if (UpdateDatabase)
             {
@@ -90,11 +92,38 @@ namespace QBic.Core.Data
             }
         }
 
-        public NHibernate.Cfg.Configuration CreateNewConfigurationUsingConnectionString(string connectionString)
+        private ISessionFactory CreateAuditSessionFactory()
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["AuditDataStore"]?.ConnectionString;
+
+            if (String.IsNullOrWhiteSpace(connectionString))
+            {
+                return null;
+            }
+
+            var configurer = CreatePersistenceConfigurer(connectionString);
+
+            var config = Fluently.Configure()
+                .Database(configurer)
+                .Mappings(m => m.FluentMappings.AddAuditModels().Conventions.Add<JoinedSubclassIdConvention>());
+
+            var configuration = config.BuildConfiguration();
+
+            var factory = configuration.BuildSessionFactory();
+
+            if (UpdateDatabase)
+            {
+                new SchemaUpdate(configuration).Execute(false, UpdateDatabase);
+            }
+
+            return factory;
+        }
+
+        private IPersistenceConfigurer CreatePersistenceConfigurer(string connectionString)
         {
             IPersistenceConfigurer configurer;
             SetCustomSqlTypes = true;
-            
+
             if (connectionString.Contains("##CurrentDirectory##") || connectionString.Contains(":memory:"))
             {
                 var currentDirectory = QBicUtils.GetCurrentDirectory();
@@ -112,6 +141,12 @@ namespace QBic.Core.Data
                 configurer = MsSqlConfiguration.MsSql2012.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
             }
 
+            return configurer;
+        }
+
+        public NHibernate.Cfg.Configuration CreateNewConfigurationUsingConnectionString(string connectionString)
+        {
+            var configurer = CreatePersistenceConfigurer(connectionString);
 
             var config = Fluently.Configure()
               .Database(configurer)
@@ -149,6 +184,16 @@ namespace QBic.Core.Data
         //    //new SchemaExport(Configuration).Execute(false, true, false);
         //    new SchemaUpdate(Configuration).Execute(true, true);
         //}
+
+        public ISession OpenAuditSession()
+        {
+            return AuditStore.OpenSession();
+        }
+
+        public IStatelessSession OpenAuditStatelessSession()
+        {
+            return AuditStore.OpenStatelessSession();
+        }
 
         public ISession OpenSession()
         {

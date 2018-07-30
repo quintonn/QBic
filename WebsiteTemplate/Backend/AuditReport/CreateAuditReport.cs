@@ -6,6 +6,7 @@ using JsonDiffPatchDotNet;
 using MigraDoc.DocumentObjectModel;
 using Newtonsoft.Json.Linq;
 using NHibernate.Criterion;
+using QBic.Core.Data;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,13 +31,13 @@ namespace WebsiteTemplate.Backend.AuditReport
         }
 
         private StyleSetup StyleSetup { get; set; }
-        private DataService DataService { get; set; }
+        private DataStore DataStore { get; set; }
         private UserContext UserContext { get; set; }
 
-        public CreateAuditReport(StyleSetup styleSetup, DataService dataService, UserContext userContext)
+        public CreateAuditReport(StyleSetup styleSetup, DataStore dataStore, UserContext userContext)
         {
             StyleSetup = styleSetup;
-            DataService = dataService;
+            DataStore = dataStore;
             UserContext = userContext;
         }
 
@@ -61,13 +62,12 @@ namespace WebsiteTemplate.Backend.AuditReport
             document.AddRowHeading("User\t\tDate Time");
             document.AddRowHeading("Entity\t\tAction");
 
-            using (var session = DataService.OpenSession())
+            using (var session = DataStore.OpenAuditSession())
             {
                 var auditEvents = session.CreateCriteria<AuditEvent>()
-                                         .CreateAlias("User", "user")
                                          .Add(Restrictions.Gt("AuditEventDateTimeUTC", fromDate.AddDays(-1)))
                                          .Add(Restrictions.Lt("AuditEventDateTimeUTC", toDate.AddDays(1)))
-                                         .Add(Restrictions.In("user.Id", userIds))
+                                         .Add(Restrictions.In("UserId", userIds))
                                          .AddOrder(Order.Asc("AuditEventDateTimeUTC"))
                                          .AddOrder(Order.Asc("EntityName"))
                                          .List<AuditEvent>()
@@ -81,7 +81,7 @@ namespace WebsiteTemplate.Backend.AuditReport
                     {
                         continue;
                     }
-                    var origObj = audit.OriginalObject;
+                    var origObj = audit.OriginalObject ?? String.Empty;
                     var newObj = audit.NewObject.Replace(",\"", ", \"");
 
                     var diff = String.Empty;
@@ -98,13 +98,15 @@ namespace WebsiteTemplate.Backend.AuditReport
                     {
                         var left = JToken.Parse(audit.OriginalObject);
                         var right = JToken.Parse(audit.NewObject);
-                        
-                        var diffItem = jdp.Diff(left, right);
-                        diff = diffItem.ToString();
+
+                        var patch = jdp.Diff(left, right);
+                        diff = jdp.Patch(left, patch)?.ToString();
+                        //var diffItem = jdp.Diff(left, right);
+                        //diff = diffItem.ToString();
                     }
 
                     //document.AddRowUsingParams(audit.User.UserName + "\t" + audit.AuditEventDateTimeUTC.ToString() + "\t" + audit.AuditAction.ToString() + "\t\t" + audit.EntityName + "\n" + origObj, "\n" + newObj + "\n\n" + diff);
-                    document.AddRowUsingParams(audit.User.UserName + "\t\t" + audit.AuditEventDateTimeUTC.ToString(), audit.EntityName + "\t\t" + audit.AuditAction.ToString());
+                    document.AddRowUsingParams(audit.UserName + "\t\t" + audit.AuditEventDateTimeUTC.ToString(), audit.EntityName + "\t\t" + audit.AuditAction.ToString());
                     document.AddRowUsingParams("ORIGINAL ITEM", "MODIFICATION");
                     document.AddRowUsingParams(origObj, diff);
                     document.AddEmptyRow();

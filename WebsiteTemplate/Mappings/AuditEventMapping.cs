@@ -1,6 +1,5 @@
-﻿using QBic.Core.Data;
-using FluentNHibernate.Mapping;
-using WebsiteTemplate.Data;
+﻿using FluentNHibernate.Mapping;
+using QBic.Core.Data;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Mappings
@@ -12,12 +11,12 @@ namespace WebsiteTemplate.Mappings
             //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
             Table("AuditEvent");
 
-            References(x => x.User).Column("IdUser")
-                           //.Not.Nullable()
-                           //.Cascade.Delete()
-                           .Nullable()
-                           .NotFound.Ignore()
-                           .LazyLoad(Laziness.False);
+            //References(x => x.User).Column("IdUser")
+            //               .Nullable()
+            //               .NotFound.Ignore()
+            //               .LazyLoad(Laziness.False);
+            Map(x => x.UserId).Not.Nullable();
+            Map(x => x.UserName).Not.Nullable();
 
             Map(x => x.AuditEventDateTimeUTC).Not.Nullable();
 
