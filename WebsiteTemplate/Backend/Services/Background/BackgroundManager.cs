@@ -7,6 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using WebsiteTemplate.Menus;
+using QBic.Core.Utilities;
+using log4net;
 
 namespace WebsiteTemplate.Backend.Services.Background
 {
@@ -15,6 +17,8 @@ namespace WebsiteTemplate.Backend.Services.Background
         internal static ManualResetEvent MainEvent { get; set; }
         private static ConcurrentQueue<BackgroundJob> BackgroundWorkerQueue { get; set; }
         private static CancellationTokenSource CancelToken { get; set; }
+
+        //protected static readonly ILog Logger = SystemLogger.GetLogger<BackgroundManager>();
 
         private static List<Task> Tasks { get; set; }
 
@@ -68,9 +72,10 @@ namespace WebsiteTemplate.Backend.Services.Background
 
         public static void AddJobToQueue(BackgroundJob job)
         {
+            //Logger.Info("adding job " + job.Event.Description + " to backgorund queue");
             BackgroundWorkerQueue.Enqueue(job);
             MainEvent.Set();
-            MainEvent.Reset();
+            //MainEvent.Reset();
         }
 
         public static BackgroundJob Dequeue()

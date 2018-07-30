@@ -11,7 +11,7 @@ namespace WebsiteTemplate.Backend.Services.Background
     {
         private BackgroundService BackgroundService { get; set; }
 
-        protected static readonly ILog Logger = SystemLogger.GetLogger<BackgroundWorker>();
+        //protected static readonly ILog Logger = SystemLogger.GetLogger<BackgroundWorker>();
 
         public BackgroundWorker(BackgroundService backgroundService)
         {
@@ -30,18 +30,27 @@ namespace WebsiteTemplate.Backend.Services.Background
 
         void Run()
         {
+            //Logger.Info("Running background worker " + Thread.CurrentThread.ManagedThreadId);
             while (true)
             {
+                //Logger.Info("WaitOne in " + Thread.CurrentThread.ManagedThreadId);
                 BackgroundManager.MainEvent.WaitOne();
+                //Logger.Info("WaitOne passed in" + Thread.CurrentThread.ManagedThreadId);
 
                 if (CancelToken.IsCancellationRequested)
                 {
+                    //Logger.Info("Cancellation token received for " + Thread.CurrentThread.ManagedThreadId);
                     CancelToken.ThrowIfCancellationRequested(); // sets task status to cancel
                     break; // or sets task as RanToCompletion (i like this option).
                 }
 
-               //object item;
+                //object item;
+                //Logger.Info("Dequeing background job " + Thread.CurrentThread.ManagedThreadId);
                 var backgroundJob = BackgroundManager.Dequeue();
+                if (backgroundJob ==null)
+                {
+                    //Logger.Info("Background job is null for " + Thread.CurrentThread.ManagedThreadId);
+                }
                 while (backgroundJob != null)
                 {
                     //Thread.Sleep(1000);
@@ -49,8 +58,7 @@ namespace WebsiteTemplate.Backend.Services.Background
 
                     if (backgroundJob != null)
                     {
-                        Console.WriteLine("Thread " + Thread.CurrentThread.ManagedThreadId + " got " + backgroundJob.Event.Description);
-                        //Thread.Sleep(3000);
+                        //Logger.Info("Doing work in " + Thread.CurrentThread.ManagedThreadId + " for " + backgroundJob.Event.Description);
                         DoWork(backgroundJob);
                         backgroundJob = BackgroundManager.Dequeue();
                     }
