@@ -79,7 +79,7 @@ namespace QBic.Core.Utilities
             roller.MaxSizeRollBackups = 10;
             //roller.MaximumFileSize = "1GB"; default is 10MB
             roller.RollingStyle = RollingFileAppender.RollingMode.Size;
-            roller.StaticLogFileName = true;
+            roller.StaticLogFileName = false;
             roller.LockingModel = new FileAppender.MinimalLock();
             roller.ActivateOptions();
             hierarchy.Root.AddAppender(roller);
