@@ -73,6 +73,7 @@ namespace QBic.Core.Mappings
         {
             //if (!type.IsValueType) return true; // ref-type  this includes types like string
             if (Nullable.GetUnderlyingType(type) != null) return true; // Nullable<T>
+            if (!type.IsValueType) return true;
             return false; // value-type
         }
 
