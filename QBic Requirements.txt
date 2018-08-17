@@ -1,0 +1,4 @@
+IIS installed on developer machine
+Run Visual Studio as Administrator
+Add HTTPS binding to IIS for Default Site
+Install URL REWRITE module into IIS  -> https://www.iis.net/downloads/microsoft/url-rewrite
