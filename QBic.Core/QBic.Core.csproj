@@ -90,7 +90,7 @@
     <Compile Include="Models\DynamicClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\BackupService.cs" />
-    <Compile Include="Utilities\QCumberUtils.cs" />
+    <Compile Include="Utilities\QBicUtils.cs" />
     <Compile Include="Utilities\SystemLogger.cs" />
   </ItemGroup>
   <ItemGroup>

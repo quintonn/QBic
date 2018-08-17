@@ -300,7 +300,9 @@
     <None Include="FrontEnd\Scripts\_references.js" />
     <Content Include="Index.html" />
     <Content Include="safari-pinned-tab.svg" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MenuItems\TestFileOpen.cs" />
