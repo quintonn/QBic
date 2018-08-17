@@ -249,7 +249,14 @@ namespace WebsiteTemplate.Controllers
                     requestData = System.Text.Encoding.UTF8.GetString(mem.ToArray());
                 }
 
-                var acmeValue = requestData.Split("=".ToCharArray()).Last();
+                Logger.Info("Set Acme Challenge Request data: " + requestData);
+
+                //var acmeValue = requestData.Split("=".ToCharArray()).Last().Split('.').Last();
+                var queryString = this.Request.GetQueryNameValuePairs();
+                var acmeValue = queryString.Single(q => q.Key == "acmeValue").Value;
+                //var acmeValue = HttpUtility.ParseQueryString(HttpContext.Current.Request.Url.AbsolutePath).Get("acmeValue");
+
+                Logger.Info("Acme value is: " + acmeValue);
 
                 //TODO:   The below code should also work?
                 //        And, should also be sending full path
