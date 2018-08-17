@@ -251,36 +251,35 @@ namespace WebsiteTemplate.Controllers
 
                 Logger.Info("Set Acme Challenge Request data: " + requestData);
 
-                //var acmeValue = requestData.Split("=".ToCharArray()).Last().Split('.').Last();
-                var queryString = this.Request.GetQueryNameValuePairs();
-                var acmeValue = queryString.Single(q => q.Key == "acmeValue").Value;
-                //var acmeValue = HttpUtility.ParseQueryString(HttpContext.Current.Request.Url.AbsolutePath).Get("acmeValue");
+                var items = requestData.Split("&".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                var acmeString = items.Where(i => i.Contains("acme")).FirstOrDefault();
+                var acmeValue = acmeString.Split('=').Last();
 
                 Logger.Info("Acme value is: " + acmeValue);
 
                 //TODO:   The below code should also work?
                 //        And, should also be sending full path
                 Logger.Info("Setting acme challenge");
-                Logger.Info("RequestData = " + requestData);
-                try
-                {
-                    var jData = JsonHelper.Parse(requestData);
-                    var acmeValueTmp = jData.GetValue("acme");
-                    Logger.Info("acme value was found using json parser");
+                //Logger.Info("RequestData = " + requestData);
+                //try
+                //{
+                //    var jData = JsonHelper.Parse(requestData);
+                //    var acmeValueTmp = jData.GetValue("acme");
+                //    Logger.Info("acme value was found using json parser");
 
-                    if (acmeValue == acmeValueTmp)
-                    {
-                        Logger.Info("Acme value is the same both ways");
-                    }
-                    else
-                    {
-                        Logger.Info("Acme challenge is not the same both ways");
-                    }
-                }
-                catch (Exception error)
-                {
-                    Logger.Info("Acme value not json: " + error.Message);
-                }
+                //    if (acmeValue == acmeValueTmp)
+                //    {
+                //        Logger.Info("Acme value is the same both ways");
+                //    }
+                //    else
+                //    {
+                //        Logger.Info("Acme challenge is not the same both ways");
+                //    }
+                //}
+                //catch (Exception error)
+                //{
+                //    Logger.Info("Acme value not json: " + error.Message);
+                //}
 
                 var challengePath = "TODO";//
 
