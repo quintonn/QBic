@@ -89,15 +89,5 @@ namespace QBic.Core.Utilities
             var base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
             return GetString(base64EncodedBytes);
         }
-
-        public static string GetCurrentUrl()
-        {
-            var request = HttpContext.Current.Request.RequestContext.HttpContext.Request;
-
-            var uri = request.Url;
-
-            var result = uri.Scheme + "://" + uri.Host + request.ApplicationPath;
-            return result;
-        }
     }
 }

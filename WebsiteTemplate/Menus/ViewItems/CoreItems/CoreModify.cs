@@ -11,7 +11,7 @@ using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.ViewItems.CoreItems
 {
-    public abstract class CoreModify<T> : GetInput where T : IDynamicClass
+    public abstract class CoreModify<T> : GetInput where T : DynamicClass
     {
         protected DataService DataService { get; set; }
         protected bool IsNew { get; set; }
