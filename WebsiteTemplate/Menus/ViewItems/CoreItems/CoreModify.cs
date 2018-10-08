@@ -4,16 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Transactions;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
-using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.ViewItems.CoreItems
 {
-    public abstract class CoreModify<T> : GetInput where T : DynamicClass
+    public abstract class CoreModify<T> : GetInput where T : IDynamicClass
     {
         protected DataService DataService { get; set; }
         protected bool IsNew { get; set; }
