@@ -69,7 +69,7 @@ namespace BuildHelper
             /// Create minified javascript
             var jsBundle = new SquishIt.Framework.JavaScript.JavaScriptBundle();
             
-            jsBundle.AddMinified(currentDir + "\\WebsiteTemplate\\FrontEnd\\Scripts\\jquery-3.1.0.min.js");
+            jsBundle.Add(currentDir + "\\WebsiteTemplate\\FrontEnd\\Scripts\\jquery-3.1.0.min.js");
             jsBundle.AddDirectory(currentDir + "\\WebsiteTemplate\\FrontEnd\\Scripts", true);
             
             result = jsBundle.Render(jsFileName);
