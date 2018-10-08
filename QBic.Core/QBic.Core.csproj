@@ -88,6 +88,7 @@
     <Compile Include="Mappings\DynamicMap.cs" />
     <Compile Include="Models\BaseClass.cs" />
     <Compile Include="Models\DynamicClass.cs" />
+    <Compile Include="Models\IDynamicClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\BackupService.cs" />
     <Compile Include="Utilities\QBicUtils.cs" />
