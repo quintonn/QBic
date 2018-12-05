@@ -1,5 +1,6 @@
 ﻿using NHibernate;
 using System.IO;
+using System.Security.Principal;
 using System.Text;
 using System.Web;
 using WebsiteTemplate.Models;
@@ -58,9 +59,9 @@ namespace WebsiteTemplate.Utilities
             return result;
         }
 
-        //public static void SetCurrentUser(string userName)
-        //{
-        //    HttpContext.Current.User = new GenericPrincipal(new GenericIdentity(userName), new string[] { });
-        //}
+        public static void SetCurrentUser(string userName)
+        {
+            HttpContext.Current.User = new GenericPrincipal(new GenericIdentity(userName), new string[] { });
+        }
     }
 }

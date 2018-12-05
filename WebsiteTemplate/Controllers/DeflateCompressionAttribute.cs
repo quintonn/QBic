@@ -24,6 +24,7 @@ namespace WebsiteTemplate.Controllers
             actContext.Response.Content = new ByteArrayContent(zlibbedContent);
             actContext.Response.Content.Headers.Remove("Content-Type");
             actContext.Response.Content.Headers.Add("Content-encoding", "deflate");
+            //TODO: We're losing original headers, need to copy them.
             
             actContext.Response.Content.Headers.Add("Content-Type", originalType?.FirstOrDefault());
             base.OnActionExecuted(actContext);
