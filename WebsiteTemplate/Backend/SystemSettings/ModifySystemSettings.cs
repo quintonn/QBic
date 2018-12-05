@@ -61,6 +61,7 @@ namespace WebsiteTemplate.Backend.SystemSettings
 
             result.Add(new StringInput("WebsiteUrl", "Website Base Url", SystemSettings?.WebsiteBaseUrl, "Website", true));
             result.Add(new LabelInput("64Bit", "Is 64 bit", Environment.Is64BitOperatingSystem.ToString(), "Website"));
+            result.Add(new LabelInput("Time", "System Time", DateTime.Now.ToString("HH:mm:ss")));
 
             var additionalSettings = AppSettings.GetAdditionalSystemSettings();
             foreach (var setting in additionalSettings)
