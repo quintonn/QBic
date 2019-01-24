@@ -1,4 +1,4 @@
-﻿using Unity.Attributes;
+﻿using Unity;
 
 namespace WebsiteTemplate.Menus.BaseItems
 {

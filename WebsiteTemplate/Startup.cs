@@ -1,12 +1,12 @@
 ﻿using BasicAuthentication.Authentication;
 using BasicAuthentication.Security;
 using BasicAuthentication.Startup;
-using QBic.Core.Data;
-using QBic.Core.Utilities;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.DataProtection;
 using Microsoft.Practices.Unity.Configuration;
 using Owin;
+using QBic.Core.Data;
+using QBic.Core.Utilities;
 using System;
 using System.Web.Http;
 using System.Web.Http.Cors;

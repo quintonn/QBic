@@ -17,40 +17,45 @@
 		<dependencies> 
 			<group>
 				<dependency id="Antlr3.Runtime" version="3.5.1" />
-				<dependency id="BasicAuthentication" version="1.1.1.20000" />
-				<dependency id="BasicAuthentication.Core" version="1.1.1.20000" />
-				<dependency id="CommonServiceLocator" version="2.0.1" />
-				<dependency id="DocumentGenerator" version="0.0.6567.20299" />
+				<dependency id="BasicAuthentication" version="1.1.1.25521" />
+				<dependency id="BasicAuthentication.Core" version="1.1.1.25521" />
+				<dependency id="CommonServiceLocator" version="2.0.4" />
+				<dependency id="DocumentGenerator" version="0.0.6963.21445" />
 				<dependency id="FluentNHibernate" version="2.1.2" />
 				<dependency id="Iesi.Collections" version="4.0.4" />
 				<dependency id="JsonDiffPatch.Net" version="2.1.0" />
 				<dependency id="log4net" version="2.0.8" />
 				<dependency id="MarkerMetro.Unity.Ionic.Zlib" version="2.0.0.14" />
-				<dependency id="Microsoft.AspNet.Cors" version="5.2.3" />
-				<dependency id="Microsoft.AspNet.Identity.Core" version="2.2.1" />
-				<dependency id="Microsoft.AspNet.Identity.Owin" version="2.2.1" />
-				<dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3" />
-				<dependency id="Microsoft.AspNet.WebApi.Core" version="5.2.3" />
-				<dependency id="Microsoft.AspNet.WebApi.Cors" version="5.2.3" />
-				<dependency id="Microsoft.AspNet.WebApi.Owin" version="5.2.3" />
-				<dependency id="Microsoft.Owin" version="3.1.0" />
-				<dependency id="Microsoft.Owin.Cors" version="3.1.0" />
-				<dependency id="Microsoft.Owin.Host.SystemWeb" version="3.1.0" />
-				<dependency id="Microsoft.Owin.Security" version="3.1.0" />
-				<dependency id="Microsoft.Owin.Security.Cookies" version="3.1.0" />
-				<dependency id="Microsoft.Owin.Security.OAuth" version="3.1.0" />
-				<dependency id="Newtonsoft.Json" version="11.0.2" />
-				<dependency id="NHibernate" version="5.1.2" />
+				<dependency id="Microsoft.AspNet.Cors" version="5.2.7" />
+				<dependency id="Microsoft.AspNet.Identity.Core" version="2.2.2" />
+				<dependency id="Microsoft.AspNet.Identity.Owin" version="2.2.2" />
+				<dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.7" />
+				<dependency id="Microsoft.AspNet.WebApi.Core" version="5.2.7" />
+				<dependency id="Microsoft.AspNet.WebApi.Cors" version="5.2.7" />
+				<dependency id="Microsoft.AspNet.WebApi.Owin" version="5.2.7" />
+				<dependency id="Microsoft.Owin" version="4.0.0" />
+				<dependency id="Microsoft.Owin.Cors" version="4.0.0" />
+				<dependency id="Microsoft.Owin.Host.SystemWeb" version="4.0.0" />
+				<dependency id="Microsoft.Owin.Security" version="4.0.0" />
+				<dependency id="Microsoft.Owin.Security.Cookies" version="4.0.0" />
+				<dependency id="Microsoft.Owin.Security.OAuth" version="4.0.0" />
+				<dependency id="Newtonsoft.Json" version="12.0.1" />
+				<dependency id="NHibernate" version="5.2.3" />
 				<dependency id="Owin" version="1.0" />
 				<dependency id="PDFsharp-MigraDoc-GDI" version="1.32.4334.0" />
-				<dependency id="QBic.Core" version="0.5.6779.18597" />
-				<dependency id="Remotion.Linq" version="2.1.2" />
-				<dependency id="Remotion.Linq.EagerFetching" version="2.1.0" />
-				<dependency id="System.Data.SQLite.Core" version="1.0.108.0" />
-				<dependency id="Unity" version="5.5.0" />
+				<dependency id="QBic.Core" version="0.5.6963.25141" />
+				<dependency id="Remotion.Linq" version="2.2.0" />
+				<dependency id="Remotion.Linq.EagerFetching" version="2.2.0" />
+				<dependency id="System.Data.SQLite.Core" version="1.0.109.2" />
+				<dependency id="System.Runtime.CompilerServices.Unsafe" version="4.5.2" />
+				<dependency id="System.ValueTuple" version="4.5.0" />
+				<dependency id="Unity" version="5.9.0" />
+				<dependency id="Unity.Abstractions" version="4.0.0" />
+				<dependency id="Unity.Configuration" version="5.9.0" />
+				<dependency id="Unity.Container" version="5.9.0" />
 			</group>
 		</dependencies>
-	</metadata>  
+	</metadata> 
 	<files>
 		<file src="Frontend\**\*.*" target="content\Frontend" />
 		<file src="Index.html" target="content" />

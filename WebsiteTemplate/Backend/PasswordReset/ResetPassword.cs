@@ -124,7 +124,7 @@ namespace WebsiteTemplate.Backend.PasswordReset
                 var idResult = await UserManager.ResetPasswordAsync(userId, passwordToken, newPassword);
                 if (idResult.Succeeded == false)
                 {
-                    var errorMessage = "Unable to create user:\n" + String.Join("\n", idResult.Errors);
+                    var errorMessage = "Unable to reset password:\n" + String.Join("\n", idResult.Errors);
                     return new List<IEvent>()
                     {
                         new ShowMessage(errorMessage)

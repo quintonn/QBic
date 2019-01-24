@@ -158,14 +158,15 @@ namespace WebsiteTemplate.Backend.Processing
                     throw new Exception(initializeResult.Error);
                 }
 
-                var user = await GetLoggedInUser();
-                var allowedMenus = GetAllowedEventsForUser(user.Id);
                 var inputFields = inputResult.GetInputFields();
                 for (var i = 0; i < inputFields.Count; i++)
                 {
                     var input = inputFields[i];
                     if (input is ViewInput)
                     {
+                        var user = await GetLoggedInUser();
+                        var allowedMenus = GetAllowedEventsForUser(user?.Id);
+
                         var columns = (input as ViewInput).ViewForInput.DoConfigureColumns(allowedMenus);
                         (input as ViewInput).ViewForInput.Columns = columns;
                     }

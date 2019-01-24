@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
-using Unity.Attributes;
+using Unity;
 
 namespace WebsiteTemplate.Menus.PropertyChangedEvents
 {
