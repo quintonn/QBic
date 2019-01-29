@@ -99,7 +99,8 @@ namespace BuildHelper
             });
 
             /// Copy site specific css file
-            File.Copy(currentDir + "WebsiteTemplate\\FrontEnd\\css\\siteOverrides.css", currentDir + "WebsiteTemplateCore\\FrontEnd\\css\\siteOverrides.css", true);
+            // Let's not do this anymore
+            // File.Copy(currentDir + "WebsiteTemplate\\FrontEnd\\css\\siteOverrides.css", currentDir + "WebsiteTemplateCore\\FrontEnd\\css\\siteOverrides.css", true);
 
 
             /// Copy and Edit Index.html page
@@ -120,7 +121,6 @@ namespace BuildHelper
                 var match = matches[i];
                 if (i == 0)
                 {
-                    //var siteOverrideCss = "\n<link href=\"Frontend/css/siteOverrides.css\" rel=\"stylesheet\" />";
                     data = data.Replace(match.Value, "<link href='Frontend/styles.min.css?v=" + randomVersion + "' rel='stylesheet' />");
                 }
                 else
