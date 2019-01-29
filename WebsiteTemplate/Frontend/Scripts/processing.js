@@ -6,6 +6,7 @@
 {
     processing.processUIActionResult = function (data, eventId)
     {
+        views.currentView = -1;
         data = data || [];
         return Promise.all(data.map(function (item)
         {

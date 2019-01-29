@@ -27,6 +27,8 @@ namespace WebsiteTemplate.Test.MenuItems
             }
         }
 
+        public override int AutoRefreshScreenTime => 3000;
+
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
             columnConfig.AddStringColumn("Name", "Name");

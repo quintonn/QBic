@@ -30,6 +30,17 @@ namespace WebsiteTemplate.Menus.ViewItems
             }
         }
 
+        /// <summary>
+        /// If greater than 0, will auto refresh the screen every X milliseconds
+        /// </summary>
+        public virtual int AutoRefreshScreenTime
+        {
+            get
+            {
+                return 0;
+            }
+        }
+
         internal IList<ViewColumn> DoConfigureColumns(IList<int> allowedUserEvents)
         {
             var config = new ColumnConfiguration();

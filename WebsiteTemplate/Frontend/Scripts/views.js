@@ -66,8 +66,12 @@
         });
     };
 
+    views.currentView = -1;
+
     views.showView = function (viewData, isEmbeddedView, id)
     {
+        console.log('setting current view number to ' + id);
+        views.currentView = id;
         dialog.showBusyDialog('Loading data...');
         return mainApp.makeWebCall("frontend/pages/Views.html").then(function (data)
         {
@@ -91,10 +95,37 @@
 
             return dialog.closeBusyDialog().then(function ()
             {
+                if (viewData.AutoRefreshScreenTime != null)
+                {
+                    console.log('viewdata.autorefreshscreentime: ' + viewData.AutoRefreshScreenTime);
+                    var refreshTime = parseInt(viewData.AutoRefreshScreenTime);
+                    if (refreshTime > 0)
+                    {
+                        console.log('starting refresh for screen ' + viewData.Title);
+                        startRefreshTimer(model, refreshTime);
+                    }
+                }
                 return Promise.resolve(model);
             });
         });
     };
+
+    function startRefreshTimer(model, refreshTime)
+    {
+        setTimeout(function ()
+        {
+            if (views.currentView == model.id)
+            {
+                console.log('refreshing: ' + model.viewTitle());
+                model.filterSearchClick();
+                startRefreshTimer(model, refreshTime);
+            }
+            else
+            {
+                console.log('stopping auto refresh for ' + model.viewTitle() + ' because id is no longer the same');
+            }
+        }, refreshTime);
+    }
 
     function columnModel(id, label, visible, colSpan)
     {
@@ -331,6 +362,8 @@
 
         self.gotoPage = function (pageNum)
         {
+            console.log('setting current view id to ' + self.id);
+            views.currentView = self.id;
             var data =
                         {
                             viewSettings:
