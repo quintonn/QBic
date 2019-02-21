@@ -1,4 +1,6 @@
-﻿using WebsiteTemplate.Menus.BaseItems;
+﻿using NHibernate;
+using System;
+using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Menus.BasicCrudItems
 {
@@ -6,5 +8,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
     {
         int Id { get; set; }
         string ItemName { get; set; }
+
+        Action<ISession, object> OnDeleteInternal { get; set; }
     }
 }

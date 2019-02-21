@@ -1,9 +1,9 @@
-﻿using QBic.Core.Models;
+﻿using NHibernate;
+using QBic.Core.Models;
 using System;
 using System.Collections.Generic;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
-using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Menus.BasicCrudItems
 {
@@ -26,6 +26,8 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
         string GetBaseItemName();
 
         void OnModifyInternal(object item, bool isNew);
+
+        void OnDeleteInternal(ISession session, object item);
     }
 
     public abstract class BasicCrudMenuItem<T> : Event, IBasicCrudMenuItem where T : BaseClass
@@ -89,5 +91,14 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 
         }
 
+        public void OnDeleteInternal(ISession session, object item)
+        {
+            OnDelete(session, item as T);
+        }
+
+        public virtual void OnDelete(ISession session, T item)
+        {
+
+        }
     }
 }

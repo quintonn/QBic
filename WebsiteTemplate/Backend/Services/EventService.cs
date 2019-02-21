@@ -156,6 +156,7 @@ namespace WebsiteTemplate.Backend.Services
                         var deleteInstance = (IBasicCrudDelete)Container.Resolve(deleteType);
                         deleteInstance.Id = subType.GetBaseMenuId() + 2;
                         deleteInstance.ItemName = subType.GetBaseItemName();
+                        deleteInstance.OnDeleteInternal = subType.OnDeleteInternal;
                         if (!EventList.ContainsKey(deleteInstance.GetId()))
                         {
                             EventList.Add(deleteInstance.GetId(), deleteInstance as Event);

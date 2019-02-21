@@ -1,4 +1,6 @@
-﻿using QBic.Core.Models;
+﻿using NHibernate;
+using QBic.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
@@ -39,6 +41,8 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             DataService = dataService;
         }
 
+        public Action<ISession, object> OnDeleteInternal { get; set; }
+
         public override async Task<IList<IEvent>> ProcessAction()
         {
             var id = GetValue<string>("Id");
@@ -46,6 +50,8 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             using (var session = DataService.OpenSession())
             {
                 var item = session.Get<T>(id);
+
+                OnDeleteInternal(session, item);
 
                 DataService.TryDelete(session, item);
                 
