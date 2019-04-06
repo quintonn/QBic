@@ -29,6 +29,7 @@ namespace WebsiteTemplate.Test.MenuItems
             var res = new Dictionary<string, string>();
             res.Add("ChildName", "Name");
             res.Add("SomeInt", "Number");
+            res.Add("ChildTypeDescription", "Child Type");
             return res;
         }
 
@@ -37,6 +38,7 @@ namespace WebsiteTemplate.Test.MenuItems
             var res = new Dictionary<string, string>();
             res.Add("ChildName", "Name");
             res.Add("SomeInt", "Number");
+            res.Add("ChildType", "Child Type");
             return res;
         }
     }

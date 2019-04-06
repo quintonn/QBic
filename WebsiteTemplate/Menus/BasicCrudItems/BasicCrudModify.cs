@@ -89,6 +89,14 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                         MultiLineText = true
                     });
                 }
+                else if (baseType.IsEnum == true)
+                {
+                    var cmbBaseType = typeof(EnumComboBoxInput<>);
+                    var cmbType = cmbBaseType.MakeGenericType(baseType);
+                    var ctor  = cmbType.GetConstructors().First();
+                    var item = ctor.Invoke(new object[] { input.Key, input.Value, false, null, null, defaultValue?.ToString(), null });
+                    list.Add(item as InputField);
+                }
                 else if (baseType.IsSubclassOf(typeof(DynamicClass)))
                 {
                     var type = typeof(DataSourceComboBoxInput<>);
@@ -106,7 +114,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                 }
                 else
                 {
-                    throw new NotImplementedException();
+                    throw new NotImplementedException($"Input type {baseType.ToString()} is not handled yet");
                 }
 
             }

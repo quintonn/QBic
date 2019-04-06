@@ -10,9 +10,25 @@ namespace WebsiteTemplate.Test.MenuItems
 
         public virtual SuperCause SuperCause { get; set; }
 
+        public virtual ChildType ChildType { get; set; }
+
+        public string ChildTypeDescription
+        {
+            get
+            {
+                return ChildType.ToString();
+            }
+        }
+
         //public override string ToString()
         //{
         //    return ChildName;
         //}
+    }
+
+    public enum ChildType
+    {
+        Boy,
+        Girl
     }
 }

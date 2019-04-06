@@ -189,6 +189,8 @@ namespace QBic.Core.Mappings
                 typeof(decimal),
                 typeof(DateTime),
                 typeof(DateTime?),
+                typeof(TimeSpan),
+                typeof(TimeSpan?),
                 typeof(LongString)
             }.Contains(t) || t.IsPrimitive || t.IsEnum;
         }
