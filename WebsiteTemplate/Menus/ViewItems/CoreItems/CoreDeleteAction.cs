@@ -25,6 +25,7 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
         {
             var id = GetValue("Id");
             using (var session = DataService.OpenSession())
+            using (var transaction = session.BeginTransaction()) 
             {
                 var dbItem = session.Get<T>(id);
 
@@ -40,6 +41,7 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
                 DataService.TryDelete(session, dbItem);
 
                 session.Flush();
+                transaction.Commit();
             }
 
             return new List<IEvent>()
