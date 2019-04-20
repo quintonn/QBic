@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using WebsiteTemplate.Menus.BaseItems;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.ViewItems
 {
@@ -160,6 +162,53 @@ namespace WebsiteTemplate.Menus.ViewItems
                 result = result.Replace("\r", "<br/>").Replace("\n", "<br/>");
                 return result;
             }
+        }
+
+        protected string GetParameter(string parameterName, string alternateName, GetDataSettings settings, bool allowNull = true)
+        {
+            var item = GetParameter(parameterName, settings, true);
+            if (String.IsNullOrWhiteSpace(item))
+            {
+                item = GetParameter(alternateName, settings, allowNull);
+            }
+            return item;
+        }
+
+        protected string GetParameter(string parameterName, GetDataSettings settings, bool allowNull = true)
+        {
+            var data = settings.ViewData;
+            var json = JsonHelper.Parse(data);
+            var tmpData = json.GetValue("data");
+            var result = String.Empty;
+            if (!String.IsNullOrWhiteSpace(tmpData))
+            {
+                var x = JsonHelper.Parse(tmpData);
+                result = x.GetValue(parameterName);
+                if (String.IsNullOrWhiteSpace(result))
+                {
+                    result = tmpData;
+                }
+            }
+            else
+            {
+                var eventParams = json.GetValue("eventParameters");
+                if (!String.IsNullOrWhiteSpace(eventParams))
+                {
+                    var x = JsonHelper.Parse(eventParams);
+                    result = x.GetValue(parameterName);
+                }
+                else if (!String.IsNullOrWhiteSpace(data))
+                {
+                    result = data;
+                }
+            }
+
+            if (!allowNull && String.IsNullOrWhiteSpace(result))
+            {
+                throw new Exception("Parameter " + parameterName + " should not be null");
+            }
+
+            return result;
         }
 
         public int Pages { get; set; }

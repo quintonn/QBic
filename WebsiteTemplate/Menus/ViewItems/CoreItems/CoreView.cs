@@ -1,6 +1,6 @@
-﻿using QBic.Core.Models;
-using NHibernate;
+﻿using NHibernate;
 using NHibernate.Criterion;
+using QBic.Core.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +8,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using WebsiteTemplate.Backend.Services;
-using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.ViewItems.CoreItems
 {
@@ -138,53 +137,6 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
             {
                 return ViewParams;
             }
-        }
-
-        protected string GetParameter(string parameterName, string alternateName, GetDataSettings settings, bool allowNull = true)
-        {
-            var item = GetParameter(parameterName, settings, true);
-            if (String.IsNullOrWhiteSpace(item))
-            {
-                item = GetParameter(alternateName, settings, allowNull);
-            }
-            return item;
-        }
-
-        protected string GetParameter(string parameterName, GetDataSettings settings, bool allowNull = true)
-        {
-            var data = settings.ViewData;
-            var json = JsonHelper.Parse(data);
-            var tmpData = json.GetValue("data");
-            var result = String.Empty;
-            if (!String.IsNullOrWhiteSpace(tmpData))
-            {
-                var x = JsonHelper.Parse(tmpData);
-                result = x.GetValue(parameterName);
-                if (String.IsNullOrWhiteSpace(result))
-                {
-                    result = tmpData;
-                }
-            }
-            else
-            {
-                var eventParams = json.GetValue("eventParameters");
-                if (!String.IsNullOrWhiteSpace(eventParams))
-                {
-                    var x = JsonHelper.Parse(eventParams);
-                    result = x.GetValue(parameterName);
-                }
-                else if (!String.IsNullOrWhiteSpace(data))
-                {
-                    result = data;
-                }
-            }
-
-            if (!allowNull && String.IsNullOrWhiteSpace(result))
-            {
-                throw new Exception("Parameter " + parameterName + " should not be null");
-            }
-
-            return result;
         }
 
         public virtual IQueryOver<T> OrderQuery(IQueryOver<T, T> query)

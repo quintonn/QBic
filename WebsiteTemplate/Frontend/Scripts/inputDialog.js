@@ -219,6 +219,8 @@
             return Promise.all(tabs.map(getInputsFunc));
         }
 
+        // to use form data-https://stackoverflow.com/questions/21044798/how-to-use-formdata-for-ajax-file-upload
+        // xxxxxxx
         self.buttonClick = function(btn, evt)
         {
             dialog.showBusyDialog("Processing...").then(function ()
