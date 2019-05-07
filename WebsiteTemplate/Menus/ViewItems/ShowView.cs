@@ -184,10 +184,20 @@ namespace WebsiteTemplate.Menus.ViewItems
             {
                 var x = JsonHelper.Parse(tmpData);
                 result = x.GetValue(parameterName);
-                if (String.IsNullOrWhiteSpace(result))
-                {
-                    result = tmpData;
-                }
+                //if (String.IsNullOrWhiteSpace(result))
+                //{
+                //    var parameters = json.GetValue("parameters");
+                //    if (!String.IsNullOrWhiteSpace(parameters))
+                //    {
+                //        var paramJson = JsonHelper.Parse(parameters);
+                //        result = paramJson.GetValue(parameterName);
+                //    }
+                //    else if (!String.IsNullOrWhiteSpace(data))
+                //    {
+                //        result = tmpData;
+                //    }
+                //    //result = tmpData;
+                //}
             }
             else
             {
@@ -197,10 +207,29 @@ namespace WebsiteTemplate.Menus.ViewItems
                     var x = JsonHelper.Parse(eventParams);
                     result = x.GetValue(parameterName);
                 }
-                else if (!String.IsNullOrWhiteSpace(data))
+                //else if (!String.IsNullOrWhiteSpace(data))
+                //{
+                //    result = data;
+                //}
+            }
+
+            if (String.IsNullOrWhiteSpace(result))
+            {
+                var parameters = json.GetValue("parameters");
+                if (!String.IsNullOrWhiteSpace(parameters))
+                {
+                    var paramJson = JsonHelper.Parse(parameters);
+                    result = paramJson.GetValue(parameterName);
+                }
+                else if (!String.IsNullOrWhiteSpace(tmpData))
+                {
+                    result = tmpData;
+                }
+                else
                 {
                     result = data;
                 }
+                //result = tmpData;
             }
 
             if (!allowNull && String.IsNullOrWhiteSpace(result))
