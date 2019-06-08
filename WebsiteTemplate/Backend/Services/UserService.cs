@@ -1,6 +1,8 @@
 ﻿using BasicAuthentication.Users;
+using log4net;
 using NHibernate;
 using NHibernate.Criterion;
+using QBic.Core.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +20,7 @@ namespace WebsiteTemplate.Backend.Services
     {
         private DataService DataService { get; set; }
         private ApplicationSettingsCore ApplicationSettings { get; set; }
+        private static readonly ILog Logger = SystemLogger.GetLogger<UserService>();
 
         private DefaultUserManager UserManager { get; set; }
 
@@ -174,6 +177,8 @@ namespace WebsiteTemplate.Backend.Services
                 throw new Exception("No system settings have been setup.");
             }
 
+            Logger.Info("Sending account confirmation email to " + emailAddress);
+
             var emailToken = theUserManager.GenerateEmailConfirmationTokenAsync(userId).Result;
 
             var myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
@@ -199,12 +204,15 @@ namespace WebsiteTemplate.Backend.Services
                     smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
                     smtpClient.EnableSsl = settings.EmailEnableSsl;
 
+                    Logger.Info("Sending email...");
                     smtpClient.Send(mailMessage);
+                    Logger.Info("Email sent...");
                 }
                 catch (Exception e)
                 {
                     var message = e.Message + "\n" + e.ToString();
                     Console.WriteLine(message);
+                    Logger.Error("Error sending email:\n" + message, e);
                     System.Diagnostics.Trace.WriteLine(message);
                     System.Diagnostics.Debug.WriteLine(message);
                     return message;

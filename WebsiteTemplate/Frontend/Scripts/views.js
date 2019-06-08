@@ -149,6 +149,7 @@
     function cellModel(value, cellIsVisible, columnType, columnSpan)
     {
         var self = this;
+        self.format = "";
         self.value = ko.observable(value);
 
         self.showCell = ko.observable(cellIsVisible);
@@ -161,16 +162,18 @@
         {
             if (self.columnType() == 5)
             {
-                var date = formatDate(value);
+                var date = formatDate(value, self.format);
                 return date;
             }
             return "";
         }, self);
     }
 
-    function formatDate(dateString)
+    function formatDate(dateString, format)
     {
-       return dateString;
+        console.log('formatting date');
+        console.log(dateString);
+        return dateString;
     }
 
     function rowModel(data, id)
@@ -459,6 +462,7 @@
                 var cellIsVisible = col.ColumnType != 4 && processing.cellIsVisible(col, data);
 
                 var cell = new cellModel(value, cellIsVisible, col.ColumnType, col.ColumnSpan);
+
                 rowItem.cells.push(cell);
             }
             self.rows.push(rowItem);

@@ -130,6 +130,19 @@ namespace WebsiteTemplate.Menus.InputItems
                         value = 0f;
                     }
                 }
+                else if (typeof(T) == typeof(double))
+                {
+                    var tempValue = inputData[propertyName];
+                    double doubleValue;
+                    if (double.TryParse(tempValue?.ToString(), out doubleValue))
+                    {
+                        value = doubleValue;
+                    }
+                    else
+                    {
+                        value = 0f;
+                    }
+                }
                 else
                 {
                     value = (T)inputData[propertyName];

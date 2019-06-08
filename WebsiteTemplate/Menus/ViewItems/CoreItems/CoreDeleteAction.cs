@@ -46,11 +46,13 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
 
             return new List<IEvent>()
             {
-                new ShowMessage(EntityName+" deleted successfully"),
+                new ShowMessage(EntityName + " deleted successfully"),
                 new CancelInputDialog(),
-                new ExecuteAction(ViewNumber)
+                new ExecuteAction(ViewNumber, ParametersToPassToView)
             };
         }
+
+        public virtual string ParametersToPassToView => "";
 
         public virtual void DeleteOtherItems(ISession session, T mainItem)
         {
