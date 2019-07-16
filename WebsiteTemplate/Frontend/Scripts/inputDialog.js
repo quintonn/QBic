@@ -639,13 +639,17 @@
                                     fileData = e.target.result;
                                     //console.log(fileData);
                                     fileData = window.btoa(fileData);  // base 64 encode
+                                    
                                     var filename = theFile.name;
+                                    
                                     var parts = filename.split('.');
+                                    
                                     var extension = "";
                                     if (parts.length > 1)
                                     {
-                                        extension = parts[1];
+                                        extension = parts[parts.length - 1];
                                     }
+                                    
                                     filename = parts[0];
 
                                     var filex =
@@ -655,7 +659,8 @@
                                             MimeType: theFile.type,
                                             FileExtension: extension,
                                             Size: theFile.size
-                                        };
+                                    };
+                                    
                                     resolve(filex);
                                 };
                             })(file);
