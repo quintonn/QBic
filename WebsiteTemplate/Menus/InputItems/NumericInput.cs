@@ -88,6 +88,18 @@ namespace WebsiteTemplate.Menus.InputItems
                     return 0L;
                 }
             }
+            else if (typeof(T) == typeof(double))
+            {
+                double doubleValue;
+                if (double.TryParse(value, out doubleValue))
+                {
+                    return doubleValue;
+                }
+                else
+                {
+                    return 0.0;
+                }
+            }
             else
             {
                 throw new Exception("Unhandled numeric type: " + typeof(T).ToString().Split(".".ToCharArray()).Last());

@@ -126,6 +126,7 @@ namespace WebsiteTemplate.Backend.Services
                         viewInstance.Id = subType.GetBaseMenuId();
                         viewInstance.ItemName = subType.GetBaseItemName();
                         viewInstance.ColumnsToShowInView = subType.GetColumnsToShowInView();
+                        viewInstance.OrderQuery = subType.OrderQueryInternal;
                         var columnConfig = new ColumnConfiguration();
                         subType.ConfigureAdditionalColumns(columnConfig);
                         viewInstance.AdditionalColumns = columnConfig.GetColumns();

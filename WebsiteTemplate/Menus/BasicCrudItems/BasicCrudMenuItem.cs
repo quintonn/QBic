@@ -28,6 +28,8 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
         void OnModifyInternal(object item, bool isNew);
 
         void OnDeleteInternal(ISession session, object item);
+
+        IQueryOver OrderQueryInternal(IQueryOver query);
     }
 
     public abstract class BasicCrudMenuItem<T> : Event, IBasicCrudMenuItem where T : BaseClass
@@ -67,6 +69,16 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             {
                 return String.Empty;
             }
+        }
+
+        public IQueryOver OrderQueryInternal(IQueryOver query)
+        {
+            return OrderQuery(query as IQueryOver<T, T>);
+        }
+
+        public virtual IQueryOver<T> OrderQuery(IQueryOver<T, T> query)
+        {
+            return query;
         }
 
         public abstract Dictionary<string, string> GetColumnsToShowInView();

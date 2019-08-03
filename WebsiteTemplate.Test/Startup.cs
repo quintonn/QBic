@@ -29,6 +29,7 @@ namespace WebsiteTemplate.Test
 
         public override void SetupDefaults()
         {
+            WebsiteUtils.SetCurrentUser("System");
             //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
             using (var session = DataService.OpenSession())
             {

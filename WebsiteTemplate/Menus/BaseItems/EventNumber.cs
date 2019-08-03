@@ -64,6 +64,10 @@ namespace WebsiteTemplate.Menus.BaseItems
         public static EventNumber ViewSystemLog = new EventNumber(1730);
         public static EventNumber ClearSystemLog = new EventNumber(1731);
 
+        public static EventNumber CsvUploadColumnsView = new EventNumber(1740);
+        public static EventNumber EditCsvColumnMapping = new EventNumber(1741);
+        public static EventNumber ShowCsvProcessResult = new EventNumber(1742);
+
         public static implicit operator EventNumber(int value)
         {
             return new EventNumber(value);

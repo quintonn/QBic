@@ -1,4 +1,5 @@
-﻿using QBic.Core.Data;
+﻿using NHibernate;
+using QBic.Core.Data;
 using QBic.Core.Models;
 using System;
 using System.Collections;
@@ -81,13 +82,21 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
         {
             using (var session = Store.OpenSession())
             {
-                var result = session.QueryOver<T>()
-                                    .Skip((settings.CurrentPage-1)*settings.LinesPerPage)
-                                    .Take(settings.LinesPerPage)
-                                    .List<T>().ToList();
+                var query = session.QueryOver<T>();
+                (this as IBasicCrudView).OrderQuery(query);
+                //OrderQuery(query);
+                var result = query.Skip((settings.CurrentPage-1)*settings.LinesPerPage)
+                                  .Take(settings.LinesPerPage)
+                                  .List<T>().ToList();
                 return result;
             }
         }
+
+        Func<IQueryOver, IQueryOver> IBasicCrudView.OrderQuery { get; set; }
+        //public virtual IQueryOver<T> OrderQuery(IQueryOver<T, T> query)
+        //{
+        //    return query;
+        //}
 
         public override int GetDataCount(GetDataSettings settings)
         {
@@ -102,6 +111,8 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
         {
             return Id;
         }
+
+        
 
         public override IList<MenuItem> GetViewMenu(Dictionary<string, string> dataForMenu)
         {

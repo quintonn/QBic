@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using NHibernate;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.BasicCrudItems;
 
@@ -40,6 +41,11 @@ namespace WebsiteTemplate.Test.MenuItems
             res.Add("SomeInt", "Number");
             res.Add("ChildType", "Child Type");
             return res;
+        }
+
+        public override IQueryOver<CauseChild> OrderQuery(IQueryOver<CauseChild, CauseChild> query)
+        {
+            return query.OrderBy(x => x.ChildName).Asc;
         }
     }
 }

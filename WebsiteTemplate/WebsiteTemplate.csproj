@@ -280,6 +280,13 @@
     <Compile Include="Backend\BackgroundInfo\ViewBackgroundStatusInfo.cs" />
     <Compile Include="Backend\Backups\CreateBackup.cs" />
     <Compile Include="Backend\Backups\RestoreBackup.cs" />
+    <Compile Include="Backend\CsvUpload\ColumnSetting.cs" />
+    <Compile Include="Backend\CsvUpload\CsvFileUploader.cs" />
+    <Compile Include="Backend\CsvUpload\EditCsvMapping.cs" />
+    <Compile Include="Backend\CsvUpload\MappedColumn.cs" />
+    <Compile Include="Backend\CsvUpload\MappedRow.cs" />
+    <Compile Include="Backend\CsvUpload\MappingView.cs" />
+    <Compile Include="Backend\CsvUpload\ShowCsvProcessResult.cs" />
     <Compile Include="Backend\Logs\ClearLog.cs" />
     <Compile Include="Backend\Logs\ViewLogs.cs" />
     <Compile Include="Backend\Menus\DecrementMenuOrder.cs" />

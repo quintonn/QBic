@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using NHibernate;
+using System;
+using System.Collections.Generic;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
 
@@ -11,5 +13,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
         Dictionary<string, string> ColumnsToShowInView { get; set; }
 
         IList<ViewColumn> AdditionalColumns { get; set; }
+
+        Func<IQueryOver, IQueryOver> OrderQuery { get; set; }
     }
 }

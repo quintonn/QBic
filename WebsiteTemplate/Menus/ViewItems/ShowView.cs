@@ -227,7 +227,9 @@ namespace WebsiteTemplate.Menus.ViewItems
                 }
                 else
                 {
-                    result = data;
+                    result = data; // I don't think this is working
+                                   // If I expect to have "ClientId" for example, and i open a edit screen and come back, 
+                                   // it does not parse the client id correctly
                 }
                 //result = tmpData;
             }
