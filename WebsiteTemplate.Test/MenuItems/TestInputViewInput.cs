@@ -31,9 +31,20 @@ namespace WebsiteTemplate.Test.MenuItems
         {
             var result = new List<InputField>();
 
-            result.Add(new StringInput("Name", "Name"));
+            result.Add(new StringInput("Name", "Name")
+            {
+                TabName = "Main"
+            });
 
-            result.Add(new ViewInput("Items", "Items", new TestInputView()));
+            result.Add(new FileInput("File", "File")
+            {
+                TabName = "Main"
+            });
+
+            result.Add(new ViewInput("Items", "Items", new TestInputView())
+            {
+                TabName = "View"
+            });
 
             return result;
         }
@@ -46,6 +57,10 @@ namespace WebsiteTemplate.Test.MenuItems
         public override async Task<IList<IEvent>> ProcessAction(int actionNumber)
         {
             var result = new List<IEvent>();
+
+            var name = GetValue("Name");
+            var file = GetValue<FileInfo>("File");
+
             result.Add(new ShowMessage("Done"));
             return result;
         }

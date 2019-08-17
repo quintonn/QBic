@@ -473,6 +473,7 @@
 
         self.inputLabel = ko.observable(inputSetting.InputLabel);
         self.inputValue = ko.observable();
+        self.inputFileName = ko.observable('No file selected');
 
         self.dateFormat = 'dd-mm-yy'; // Not the usual format. Specific format for datepicker
         
@@ -566,6 +567,10 @@
                     break;
                 case 9: // File input
                     self.inputValue(value);
+                    if (value != null && value.name != null)
+                    {
+                        self.inputFileName(value.name);
+                    }
                     break;
                 default:
                     self.inputValue(value);
