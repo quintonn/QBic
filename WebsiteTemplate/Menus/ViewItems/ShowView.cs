@@ -227,7 +227,9 @@ namespace WebsiteTemplate.Menus.ViewItems
                 }
                 else
                 {
-                    result = data; // I don't think this is working
+                    // this is not right i don't think, if the data is just 1 value then the calling code should check for it i think.
+
+                    //result = data; // I don't think this is working
                                    // If I expect to have "ClientId" for example, and i open a edit screen and come back, 
                                    // it does not parse the client id correctly
                 }
