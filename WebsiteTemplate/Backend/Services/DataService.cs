@@ -50,5 +50,15 @@ namespace WebsiteTemplate.Backend.Services
         {
             return Store.OpenStatelessSession();
         }
+
+        public ISession OpenAuditSession()
+        {
+            return Store.OpenAuditSession();
+        }
+
+        public IStatelessSession OpenAuditStatelessSession()
+        {
+            return Store.OpenAuditStatelessSession();
+        }
     }
 }
