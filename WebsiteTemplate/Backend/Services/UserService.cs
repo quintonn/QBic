@@ -255,7 +255,7 @@ namespace WebsiteTemplate.Backend.Services
                 var dbUser = session.Get<User>(userId);
                 dbUser.UserName = userName;
 
-                dbUser.EmailConfirmed = dbUser.Email == email;
+                //dbUser.EmailConfirmed = dbUser.Email == email;
                 dbUser.Email = email;
                 DataService.SaveOrUpdate(session, dbUser);
 
