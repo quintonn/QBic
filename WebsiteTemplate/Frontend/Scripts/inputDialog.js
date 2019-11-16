@@ -303,8 +303,15 @@
             
             var models = $.grep(tabs, function (tab)
             {
-                var models = tab.findInputModelWithName(inputName);
-                return models.length > 0;
+                if (tab != null)
+                {
+                    var models = tab.findInputModelWithName(inputName);
+                    return models.length > 0;
+                }
+                else
+                {
+                    return false;
+                }
             });
 
             if (models.length == 0)
