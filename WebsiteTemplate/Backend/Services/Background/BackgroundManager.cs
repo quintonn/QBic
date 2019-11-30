@@ -75,7 +75,7 @@ namespace WebsiteTemplate.Backend.Services.Background
             //Logger.Info("adding job " + job.Event.Description + " to backgorund queue");
             BackgroundWorkerQueue.Enqueue(job);
             MainEvent.Set();
-            //MainEvent.Reset();
+            MainEvent.Reset(); // must call reset right after set, else the next call to WaitOne will not block
         }
 
         public static BackgroundJob Dequeue()

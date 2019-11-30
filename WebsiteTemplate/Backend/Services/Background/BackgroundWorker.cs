@@ -47,9 +47,11 @@ namespace WebsiteTemplate.Backend.Services.Background
                 //object item;
                 //Logger.Info("Dequeing background job " + Thread.CurrentThread.ManagedThreadId);
                 var backgroundJob = BackgroundManager.Dequeue();
-                if (backgroundJob ==null)
+                if (backgroundJob == null)
                 {
                     //Logger.Info("Background job is null for " + Thread.CurrentThread.ManagedThreadId);
+
+                    break;
                 }
                 while (backgroundJob != null)
                 {
