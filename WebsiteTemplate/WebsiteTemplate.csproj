@@ -48,11 +48,11 @@
       <HintPath>..\packages\Antlr3.Runtime.3.5.1\lib\net40-client\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="BasicAuthentication, Version=1.1.1.25521, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BasicAuthentication.1.1.1.25521\lib\net461\BasicAuthentication.dll</HintPath>
+    <Reference Include="BasicAuthentication, Version=1.1.2.28050, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicAuthentication.1.1.2.28050\lib\net461\BasicAuthentication.dll</HintPath>
     </Reference>
-    <Reference Include="BasicAuthentication.Core, Version=1.1.1.25521, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BasicAuthentication.Core.1.1.1.25521\lib\net461\BasicAuthentication.Core.dll</HintPath>
+    <Reference Include="BasicAuthentication.Core, Version=1.1.2.28050, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicAuthentication.Core.1.1.2.28050\lib\net461\BasicAuthentication.Core.dll</HintPath>
     </Reference>
     <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.2.0.4\lib\net46\CommonServiceLocator.dll</HintPath>
