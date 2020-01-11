@@ -37,7 +37,7 @@
 <script type="text/html" id="inputRowTemplate">
     <div data-bind="visible: visible" class="w3-row">
         <!-- ko if: inputType != 8 && inputType != 5 -->
-        <div class="w3-col " style="width:200px"><b class="w3-label w3-small" data-bind="html:inputLabel"></b></div>
+        <div class="w3-col " style="width:200px"><b class="w3-label w3-small" data-bind="html:inputLabel" style="white-space:pre"></b></div>
         <!-- /ko -->
 
         <div class="w3-rest ">
@@ -121,7 +121,7 @@
             <!-- /ko -->
             <!-- ko if: inputType == 11 -->
             <!--<input class="w3-label" data-bind="value:inputValue, enable:false" style="width:100%"/>-->
-            <b class="w3-label w3-small" data-bind="html:inputValue"></b>
+            <b class="w3-label w3-small" data-bind="html:inputValue" style="white-space:pre"></b>
             <!-- /ko -->
         </div>
     </div>
