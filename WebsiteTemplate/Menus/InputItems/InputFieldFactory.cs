@@ -1,18 +1,26 @@
 ﻿using System;
+using WebsiteTemplate.Models.NonDatabase;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
     public class InputFieldFactory
     {
-        public static InputField CreateInputField(InputType inputType, string name, string label, string tabName, bool mandatory, object defaultValue = null)
+        public static InputField CreateInputField(SystemSettingItem setting, object defaultValue = null)
         {
-            switch (inputType)
+            var name = setting.Key;
+            var tabName = setting.TabNameOnInputScreen;
+            var mandatory = setting.Mandatory;
+            var label = setting.Description;
+            switch (setting.InputType)
             {
                 case InputType.Boolean:
                     var defaultBool = Convert.ToBoolean(defaultValue);
                     return new BooleanInput(name, label, defaultBool, tabName, mandatory);
                 case InputType.ComboBox:
-                    return new ComboBoxInput(name, label, defaultValue, tabName, mandatory);
+                    return new ComboBoxInput(name, label, defaultValue, tabName, mandatory)
+                    {
+                        ListItems = setting.ComboBoxListSource
+                    };
                 case InputType.Date:
                     return new DateInput(name, label, defaultValue, tabName, mandatory);
                 case InputType.File:
@@ -28,7 +36,7 @@ namespace WebsiteTemplate.Menus.InputItems
                 case InputType.Text:
                     return new StringInput(name, label, defaultValue, tabName, mandatory);
                 default:
-                    throw new Exception("Unknown input type in input field factory: " + inputType);
+                    throw new Exception("Unknown input type in input field factory: " + setting.InputType);
             }
         }
     }

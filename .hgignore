@@ -27,3 +27,4 @@ WebsiteTemplateCore/obj/Release/*
 .vs/*
 *.csproj.user
 WebsiteTemplate.Test/Data/auditData.db
+.git/*

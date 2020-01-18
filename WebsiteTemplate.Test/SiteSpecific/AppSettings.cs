@@ -8,6 +8,7 @@ using WebsiteTemplate.Models.NonDatabase;
 using WebsiteTemplate.Backend.Users;
 using WebsiteTemplate.Test.MenuItems.Users;
 using log4net.Core;
+using NHibernate;
 
 namespace WebsiteTemplate.Test.SiteSpecific
 {
@@ -65,7 +66,7 @@ namespace WebsiteTemplate.Test.SiteSpecific
             container.RegisterType<UserInjector, TestUserInjector>();
         }
 
-        public override List<SystemSettingItem> GetAdditionalSystemSettings()
+        public override List<SystemSettingItem> GetAdditionalSystemSettings(ISession session)
         {
             return new List<SystemSettingItem>()
             {

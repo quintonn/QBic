@@ -1,4 +1,5 @@
-﻿using WebsiteTemplate.Menus.InputItems;
+﻿using System.Collections.Generic;
+using WebsiteTemplate.Menus.InputItems;
 
 namespace WebsiteTemplate.Models.NonDatabase
 {
@@ -10,6 +11,7 @@ namespace WebsiteTemplate.Models.NonDatabase
         public InputType InputType { get; set; }
         public string TabNameOnInputScreen { get; set; }
         public bool Mandatory { get; set; }
+        public Dictionary<string, object> ComboBoxListSource { get; set; }
 
         public SystemSettingItem(string key, string description, InputType inputType, bool mandatory, string tabNameOnInputScreen = "Other Settings", object defaultValue = null)
         {
@@ -19,6 +21,7 @@ namespace WebsiteTemplate.Models.NonDatabase
             TabNameOnInputScreen = tabNameOnInputScreen;
             DefaultValue = defaultValue;
             Mandatory = mandatory;
+            ComboBoxListSource = new Dictionary<string, object>();
         }
     }
 }

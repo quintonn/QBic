@@ -62,17 +62,19 @@ namespace WebsiteTemplate.Backend.SystemSettings
             result.Add(new StringInput("WebsiteUrl", "Website Base Url", SystemSettings?.WebsiteBaseUrl, "Website", true));
             result.Add(new LabelInput("64Bit", "Is 64 bit", Environment.Is64BitOperatingSystem.ToString(), "Website"));
             result.Add(new LabelInput("Time", "System Time", DateTime.Now.ToString("HH:mm:ss")));
-
-            var additionalSettings = AppSettings.GetAdditionalSystemSettings();
-            foreach (var setting in additionalSettings)
+            using (var session = DataService.OpenSession())
             {
-                var defaultValue = SystemSettingValues[setting.Key];
-                if (defaultValue == null)
+                var additionalSettings = AppSettings.GetAdditionalSystemSettings(session);
+                foreach (var setting in additionalSettings)
                 {
-                    defaultValue = setting.DefaultValue;
+                    var defaultValue = SystemSettingValues[setting.Key];
+                    if (defaultValue == null)
+                    {
+                        defaultValue = setting.DefaultValue;
+                    }
+                    var input = InputFieldFactory.CreateInputField(setting, defaultValue);
+                    result.Add(input);
                 }
-                var input = InputFieldFactory.CreateInputField(setting.InputType, setting.Key, setting.Description, setting.TabNameOnInputScreen, setting.Mandatory, defaultValue);
-                result.Add(input);
             }
 
             return result;
@@ -85,7 +87,7 @@ namespace WebsiteTemplate.Backend.SystemSettings
             {
                 SystemSettings = session.QueryOver<Models.SystemSettings>().List<Models.SystemSettings>().FirstOrDefault();
 
-                var additionalSettings = AppSettings.GetAdditionalSystemSettings();
+                var additionalSettings = AppSettings.GetAdditionalSystemSettings(session);
                 foreach (var setting in additionalSettings)
                 {
                     var dbSetting = session.QueryOver<SystemSettingValue>().Where(s => s.KeyName == setting.Key).SingleOrDefault();
@@ -148,7 +150,7 @@ namespace WebsiteTemplate.Backend.SystemSettings
 
                     DataService.SaveOrUpdate(session, systemSettings);
 
-                    var additionalSettings = AppSettings.GetAdditionalSystemSettings();
+                    var additionalSettings = AppSettings.GetAdditionalSystemSettings(session);
                     foreach (var setting in additionalSettings)
                     {
 

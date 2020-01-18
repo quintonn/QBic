@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using WebsiteTemplate.Models.NonDatabase;
 using log4net.Core;
+using NHibernate;
 
 namespace WebsiteTemplate.Utilities
 {
@@ -81,7 +82,7 @@ namespace WebsiteTemplate.Utilities
 
         }
 
-        public virtual List<SystemSettingItem> GetAdditionalSystemSettings()
+        public virtual List<SystemSettingItem> GetAdditionalSystemSettings(ISession session)
         {
             return new List<SystemSettingItem>();
         }
