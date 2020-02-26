@@ -110,7 +110,7 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
                 using (var session = DataService.OpenSession())
                 using (var transaction = session.BeginTransaction())
                 {
-                    var res = PerformModify(isNew, id, session);
+                    var res = await PerformModify(isNew, id, session);
                     if (res != null && res.Count > 0)
                     {
                         return res;
@@ -183,7 +183,7 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
 
         public abstract EventNumber GetViewNumber();
 
-        public abstract IList<IEvent> PerformModify(bool isNew, string id, ISession session);
+        public abstract Task<IList<IEvent>> PerformModify(bool isNew, string id, ISession session);
 
         protected IList<IEvent> ErrorMessage(string message)
         {

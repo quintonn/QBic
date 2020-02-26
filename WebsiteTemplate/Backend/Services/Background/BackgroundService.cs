@@ -97,7 +97,15 @@ namespace WebsiteTemplate.Backend.Services.Background
             AddBackgroundInformation("Background jobs", "Background jobs initialized successfully");
         }
 
-        private void BackgroundWork(object jobObject)
+        /// <summary>
+        /// This methods runs for each registered background process and either runs it or adds it to the queue of jobs to run.
+        /// This runs an infinite while loop for all background events and sleeps the amount of time determined by CalculateNextRunTime.
+        /// Then it either executes the event or adds it to the queue of jobs to be done.
+        /// The difference is that the first will wait for the result before sleeping the time allocated.
+        /// Whereas the second will schedule the job as soon as it is done sleeping.
+        /// </summary>
+        /// <param name="jobObject"></param>
+        private void RunBackgroundEventLoop(object jobObject)
         {
             //AddBackgroundInformation("Background jobs", "Background work 1");
             var job = (BackgroundJob)jobObject;
@@ -134,7 +142,6 @@ namespace WebsiteTemplate.Backend.Services.Background
                     Thread.Sleep(sleepTime);
                 }
 
-
                 job.LastRunTime = DateTime.Now;
                 if (BackupService.BusyWithBackups == true)
                 {
@@ -169,11 +176,11 @@ namespace WebsiteTemplate.Backend.Services.Background
             //AddBackgroundInformation("Background jobs", "Starting background jobs 2");
             foreach (var backgroundJob in BackgroundJobs)
             {
-                var thread = new Thread(new ParameterizedThreadStart(BackgroundWork));
+                var thread = new Thread(new ParameterizedThreadStart(RunBackgroundEventLoop));
                 BackgroundThreads.Add(thread);
                 thread.Start(backgroundJob);
             }
-            BackgroundManager.StartWorkers();
+            BackgroundManager.StartWorkers(); // starts background timers that process jobs in the queue
             AddBackgroundInformation("Background jobs", "Background jobs started");
         }
 

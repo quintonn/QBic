@@ -23,12 +23,12 @@ namespace QBic.Core.Utilities
             var result = String.Empty;
             while (exception != null)
             {
-                result = exception.Message + "\n" + exception.Message;
+                result = result  + exception.Message + "\n";
 
                 exception = exception.InnerException;
             }
 
-            return result;
+            return result.Trim();
         }
 
         public static void LogError<T>(string message, Exception error)
