@@ -30,28 +30,31 @@ You can either choose to setup a new QBic project manually, or using my custom V
 
 ## Creating a project Manually
 1. Create a new Visual Studio ASP.Net Web Application (.NET Framework)
-2. Make sure to choose .NET 4.6.1 or greater
-3. Choose an Empty Web Application
-4. Install the WebsiteTemplateCore nuget package 
-5. Create a new class that inherits from **ApplicationStartup**
-6. Implement the mandatory functions and create the constructor required by **ApplicationStartup** parent class  
+1. Make sure to choose .NET 4.6.1 or greater
+1. Choose an Empty Web Application
+1. Install the WebsiteTemplateCore nuget package 
+1. Create a new class that inherits from **ApplicationStartup**
+1. Implement the mandatory functions and create the constructor required by **ApplicationStartup** parent class  
    The **SetupDefaults** is a good place to create your default, or admin, user  
    This is actually required, else you will not be able to log into your application when it starts for the first time
-5. Add a class that inherits from **ApplicationSettingsCore**  
+1. Add a class that inherits from **ApplicationSettingsCore**  
    I usually call this file **AppSettings**, but it can be anything
-6. Implement the mandatory properties and methods of the **ApplicationSettingsCore** class  
+1. Implement the mandatory properties and methods of the **ApplicationSettingsCore** class  
    **GetApplicationStartupType** should return the type of class you created in step #5
-7. Set the override field **UpdateDatabase** to **true**  
+1. Set the override field **UpdateDatabase** to **true**  
    This will create the database and tables, and can be set to false once you have your database set up and read
-8. Next, you need to register **Unity** in the web.config file, which is used for DependencyInjection  
+1. Next, you need to register **Unity** in the web.config file, which is used for DependencyInjection  
    This is done by adding the following into the web.config file, beneath the **configuration** element  
+   
    ```html
    <configSections>
-    <section name="unity" type="Microsoft.Practices.Unity.Configuration.UnityConfigurationSection, Unity.Configuration" />
-  </configSections>
-  ```  
-9. The Application Settings file should also be registered in the web.config file.  
+      <section name="unity" type="Microsoft.Practices.Unity.Configuration.UnityConfigurationSection, Unity.Configuration" />
+   </configSections>
+   ```
+   
+1. The Application Settings file should also be registered in the web.config file.  
    This is done by adding a **<unity>** section beneath **configuration**, similar to the following example:  
+   
    ```html
    <unity xmlns="http://schemas.microsoft.com/practices/2010/unity">
      <alias alias="ApplicationSettingsCore" type="WebsiteTemplate.Utilities.ApplicationSettingsCore,  WebsiteTemplate.Utilities" />
@@ -63,33 +66,37 @@ You can either choose to setup a new QBic project manually, or using my custom V
      </container>
    </unity>
    ```  
+   
   Make sure to update the name of your application settings class and namespace in the html example provided.
-10. Add connection string value to the web.config file as well  
+1. Add connection string value to the web.config file as well  
    This can be done by adding the following right below the previous unity section (without any changes required):  
+   
    ```html
    <connectionStrings>
      <add name="MainDataStore" connectionString="Data Source=##CurrentDirectory##\Data\appData.db;Version=3;Journal Mode=Off;Connection Timeout=12000" />
      <add name="AuditDataStore" connectionString="Data Source=##CurrentDirectory##\Data\auditData.db;Version=3;Journal Mode=Off;Connection Timeout=12000" />
    </connectionStrings>
    ```  
-11. Create a new folder (for you sqlite database) in your project called **Data**  
+   
+1. Create a new folder (for you sqlite database) in your project called **Data**  
     If you have modified the connection string values from this example, you may need to specify a different folder
-12. Create a new file called "siteOverrides.css" in **FrontEnd/css**  
-    You can populate it as follows to start with:  
-	```css
-	.w3-app-color, .w3-hover-app-color {
-		color: #fff !important;
-		background-color: #2196F3 !important;
-	}
-	.w3-hover-app-color {
-		-webkit-transition: background-color .3s,color .15s,box-shadow .3s,opacity 0.3s;
-		transition: background-color .3s,color .15s,box-shadow .3s,opacity 0.3s;
-	}
-	```  
-13. You should now be ready to run the application  
-    It might take a couple of minutes (but not more than 5) to run the first time as it sets up the database  
-	But eventually you should be presented with a login screen if you have followed all the steps correctly, as follows:  
-	![Login Prompt](First_Login.png "Successful Login Prompt")
+1. Create a new file called "siteOverrides.css" in **FrontEnd/css**  
+   You can populate it as follows to start with:  
+   
+   ```css
+   .w3-app-color, .w3-hover-app-color {
+   	color: #fff !important;
+   	background-color: #2196F3 !important;
+   }
+   .w3-hover-app-color {
+   	-webkit-transition: background-color .3s,color .15s,box-shadow .3s,opacity 0.3s;
+   	transition: background-color .3s,color .15s,box-shadow .3s,opacity 0.3s;
+   }
+   ```  
+1. You should now be ready to run the application  
+   It might take a couple of minutes (but not more than 5) to run the first time as it sets up the database  
+   But eventually you should be presented with a login screen if you have followed all the steps correctly, as follows:  
+   ![Login Prompt](First_Login.png "Successful Login Prompt")
 	
 ## Using the Custom QBic Project Template
 **Coming Soon**  
