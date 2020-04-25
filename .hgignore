@@ -28,3 +28,4 @@ WebsiteTemplateCore/obj/Release/*
 *.csproj.user
 WebsiteTemplate.Test/Data/auditData.db
 .git/*
+BasicAuthentication/obj/*

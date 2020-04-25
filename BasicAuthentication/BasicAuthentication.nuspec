@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<package >
+	<metadata>
+		<id>$id$</id>
+		<version>$version$</version>
+		<title>$title$</title>
+		<authors>$author$</authors>
+		<owners>$author$</owners>
+		<licenseUrl>http://www.example.com</licenseUrl>
+		<projectUrl>http://www.example.com</projectUrl>
+		<iconUrl>http://www.example.com</iconUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>$description$</description>
+		<releaseNotes>TODO</releaseNotes>
+		<copyright>Copyright 2015</copyright>
+		<tags>Basic Authentication Owin</tags>
+		<dependencies> 
+			<group>
+				<dependency id="Microsoft.AspNet.Cors" version="5.2.7"  />
+				<dependency id="Microsoft.AspNet.Identity.Core" version="2.2.2"  />
+				<dependency id="Microsoft.AspNet.Identity.Owin" version="2.2.2"  />
+				<dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.7"  />
+				<dependency id="Microsoft.AspNet.WebApi.Core" version="5.2.7"  />
+				<dependency id="Microsoft.AspNet.WebApi.Owin" version="5.2.7"  />
+				<dependency id="Microsoft.Owin" version="4.0.0"  />
+				<dependency id="Microsoft.Owin.Cors" version="4.0.0"  />
+				<dependency id="Microsoft.Owin.Host.SystemWeb" version="4.0.0"  />
+				<dependency id="Microsoft.Owin.Security" version="4.0.0"  />
+				<dependency id="Microsoft.Owin.Security.Cookies" version="4.0.0"  />
+				<dependency id="Microsoft.Owin.Security.OAuth" version="4.0.0"  />
+				<dependency id="Newtonsoft.Json" version="12.0.1"  />
+				<dependency id="Owin" version="1.0"  />
+			</group>
+		</dependencies>
+	</metadata>  
+</package>
