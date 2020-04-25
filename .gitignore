@@ -29,3 +29,8 @@ BasicAuthentication.WebTest/obj
 DocumentGenerator/obj
 BasicAuthentication.WebTest/BasicAuthentication.WebTest.csproj.user
 BasicAuthentication/BasicAuthentication.csproj.user
+BasicAuthentication.WebTest/bin
+DocumentGenerator/bin
+BasicAuthentication.Core/BasicAuthentication.Core.csproj.user
+DocumentGenerator/DocumentGenerator.csproj.user
+QBic.Core/QBic.Core.csproj.user

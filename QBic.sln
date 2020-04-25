@@ -4,13 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsiteTemplate", "WebsiteTemplate\WebsiteTemplate.csproj", "{1547BF19-E581-44E9-B509-8CEF08276652}"
-	ProjectSection(ProjectDependencies) = postProject
-		{569AD0E8-2A62-4534-984D-263437908696} = {569AD0E8-2A62-4534-984D-263437908696}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildHelper", "BuildHelper\BuildHelper.csproj", "{569AD0E8-2A62-4534-984D-263437908696}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsiteTemplateCore", "WebsiteTemplateCore\WebsiteTemplateCore.csproj", "{342B90FD-09F9-4C4E-9944-C22405884DBB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsiteTemplate.Test", "WebsiteTemplate.Test\WebsiteTemplate.Test.csproj", "{6A7A76CD-F5D3-45EF-B98E-D06DBD23311E}"
 EndProject
@@ -36,14 +29,6 @@ Global
 		{1547BF19-E581-44E9-B509-8CEF08276652}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1547BF19-E581-44E9-B509-8CEF08276652}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1547BF19-E581-44E9-B509-8CEF08276652}.Release|Any CPU.Build.0 = Release|Any CPU
-		{569AD0E8-2A62-4534-984D-263437908696}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{569AD0E8-2A62-4534-984D-263437908696}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{569AD0E8-2A62-4534-984D-263437908696}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{569AD0E8-2A62-4534-984D-263437908696}.Release|Any CPU.Build.0 = Release|Any CPU
-		{342B90FD-09F9-4C4E-9944-C22405884DBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{342B90FD-09F9-4C4E-9944-C22405884DBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{342B90FD-09F9-4C4E-9944-C22405884DBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{342B90FD-09F9-4C4E-9944-C22405884DBB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6A7A76CD-F5D3-45EF-B98E-D06DBD23311E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6A7A76CD-F5D3-45EF-B98E-D06DBD23311E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A7A76CD-F5D3-45EF-B98E-D06DBD23311E}.Release|Any CPU.ActiveCfg = Release|Any CPU
