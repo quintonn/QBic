@@ -37,7 +37,7 @@ You can either choose to setup a new QBic project manually, or using my custom V
 1. Implement the mandatory functions and create the constructor required by **ApplicationStartup** parent class  
    The **SetupDefaults** is a good place to create your default, or admin, user  
    This is actually required, else you will not be able to log into your application when it starts for the first time  
-   The Test project's [AppSettings](WebsiteTemplate.Test/SiteSpecific/AppSettings.cs) file can be used to see a basic example of adding an admin/first user
+   The Test project's [Startup](WebsiteTemplate.Test/Startup.cs) file can be used to see a basic example of adding an admin/first user
 1. Add a class that inherits from **ApplicationSettingsCore**  
    I usually call this file **AppSettings**, but it can be anything
 1. Implement the mandatory properties and methods of the **ApplicationSettingsCore** class  
@@ -68,7 +68,7 @@ You can either choose to setup a new QBic project manually, or using my custom V
    </unity>
    ```  
    
-  Make sure to update the name of your application settings class and namespace in the html example provided.
+   Make sure to update the name of your application settings class and namespace in the html example provided.
 1. Add connection string value to the web.config file as well  
    This can be done by adding the following right below the previous unity section (without any changes required):  
    
