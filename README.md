@@ -44,12 +44,12 @@ You can either choose to setup a new QBic project manually, or using my custom V
 7. Set the override field **UpdateDatabase** to **true**  
    This will create the database and tables, and can be set to false once you have your database set up and read
 8. Next, you need to register **Unity** in the web.config file, which is used for DependencyInjection  
-   This is done by adding the following into the web.config file, beneath the **configuration** element
+   This is done by adding the following into the web.config file, beneath the **configuration** element  
    ```html
    <configSections>
     <section name="unity" type="Microsoft.Practices.Unity.Configuration.UnityConfigurationSection, Unity.Configuration" />
   </configSections>
-  ```
+  ```  
 9. The Application Settings file should also be registered in the web.config file.  
    This is done by adding a **<unity>** section beneath **configuration**, similar to the following example:  
    ```html
@@ -62,38 +62,37 @@ You can either choose to setup a new QBic project manually, or using my custom V
        <register type="ApplicationSettingsCore" mapTo="WebApplication1.Settings.AppSettings, WebApplication1" />
      </container>
    </unity>
-  ```
+   ```  
   Make sure to update the name of your application settings class and namespace in the html example provided.
 10. Add connection string value to the web.config file as well  
-   This can be done by adding the following right below the previous unity section (without any changes required):
+   This can be done by adding the following right below the previous unity section (without any changes required):  
    ```html
    <connectionStrings>
      <add name="MainDataStore" connectionString="Data Source=##CurrentDirectory##\Data\appData.db;Version=3;Journal Mode=Off;Connection Timeout=12000" />
      <add name="AuditDataStore" connectionString="Data Source=##CurrentDirectory##\Data\auditData.db;Version=3;Journal Mode=Off;Connection Timeout=12000" />
    </connectionStrings>
-   ```
+   ```  
 11. Create a new folder (for you sqlite database) in your project called **Data**  
     If you have modified the connection string values from this example, you may need to specify a different folder
 12. Create a new file called "siteOverrides.css" in **FrontEnd/css**  
-    You can populate it as follows to start with:
+    You can populate it as follows to start with:  
 	```css
 	.w3-app-color, .w3-hover-app-color {
 		color: #fff !important;
 		background-color: #2196F3 !important;
 	}
-
 	.w3-hover-app-color {
 		-webkit-transition: background-color .3s,color .15s,box-shadow .3s,opacity 0.3s;
 		transition: background-color .3s,color .15s,box-shadow .3s,opacity 0.3s;
 	}
-	```
+	```  
 13. You should now be ready to run the application  
     It might take a couple of minutes (but not more than 5) to run the first time as it sets up the database  
 	But eventually you should be presented with a login screen if you have followed all the steps correctly, as follows:  
-	![Login Prompt](https://github.com/quintonn/QBic/First_Login.png "Successful Login Prompt")
+	![Login Prompt](First_Login.png "Successful Login Prompt")
 	
 ## Using the Custom QBic Project Template
-**Coming Soon**
+**Coming Soon**  
 The QBic project template will have a once-off fee of $10, to help me maintain the template and this repo
 
 # Documentation
