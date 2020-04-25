@@ -2,17 +2,18 @@
 using SquishIt.AspNet.Caches;
 using SquishIt.AspNet.Utilities;
 using SquishIt.Framework;
-using SquishIt.Framework.Utilities;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Configuration;
 
 namespace BuildHelper
 {
+    /// <summary>
+    /// This program takes the html, js and css files, combines then and minifies them producing smaller files.
+    /// This program also updates the index.html file and replaces all the references and adds references to the final output.
+    /// </summary>
     class Program
     {
         static void Main(string[] args)
