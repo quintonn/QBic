@@ -29,3 +29,4 @@ WebsiteTemplateCore/obj/Release/*
 WebsiteTemplate.Test/Data/auditData.db
 .git/*
 BasicAuthentication/obj/*
+git_repo/*
