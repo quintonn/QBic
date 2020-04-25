@@ -48,17 +48,17 @@
       <HintPath>..\packages\Antlr3.Runtime.3.5.1\lib\net40-client\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="BasicAuthentication, Version=1.1.2.28050, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BasicAuthentication.1.1.2.28050\lib\net461\BasicAuthentication.dll</HintPath>
+    <Reference Include="BasicAuthentication, Version=1.1.3.21860, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicAuthentication.1.1.3.21860\lib\net461\BasicAuthentication.dll</HintPath>
     </Reference>
-    <Reference Include="BasicAuthentication.Core, Version=1.1.2.28050, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BasicAuthentication.Core.1.1.2.28050\lib\net461\BasicAuthentication.Core.dll</HintPath>
+    <Reference Include="BasicAuthentication.Core, Version=1.1.3.21860, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicAuthentication.Core.1.1.3.21860\lib\net461\BasicAuthentication.Core.dll</HintPath>
     </Reference>
     <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.2.0.4\lib\net46\CommonServiceLocator.dll</HintPath>
     </Reference>
-    <Reference Include="DocumentGenerator, Version=0.0.6963.21445, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DocumentGenerator.0.0.6963.21445\lib\net46\DocumentGenerator.dll</HintPath>
+    <Reference Include="DocumentGenerator, Version=0.0.7369.21762, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentGenerator.0.0.7369.21762\lib\net46\DocumentGenerator.dll</HintPath>
     </Reference>
     <Reference Include="FluentNHibernate, Version=2.1.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\FluentNHibernate.2.1.2\lib\net461\FluentNHibernate.dll</HintPath>
