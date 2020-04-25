@@ -21,3 +21,11 @@ WebsiteTemplate/Temp
 WebsiteTemplate.UnitTests/bin
 WebsiteTemplate.UnitTests/obj
 WebsiteTemplateCore/bin
+BasicAuthentication/bin
+BasicAuthentication/obj
+BasicAuthentication.Core/bin
+BasicAuthentication.Core/obj
+BasicAuthentication.WebTest/obj
+DocumentGenerator/obj
+BasicAuthentication.WebTest/BasicAuthentication.WebTest.csproj.user
+BasicAuthentication/BasicAuthentication.csproj.user
