@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package >
+	<metadata>
+		<id>$id$</id>
+		<version>$version$</version>
+		<title>$title$</title>
+		<authors>$author$</authors>
+		<owners>$author$</owners>
+		<licenseUrl>http://www.example.com</licenseUrl>
+		<projectUrl>http://www.example.com</projectUrl>
+		<iconUrl>http://www.example.com</iconUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>$description$</description>
+		<releaseNotes>TODO</releaseNotes>
+		<copyright>Copyright 2016</copyright>
+		<tags>DocumentGenerator</tags>
+		<dependencies> 
+			<group>
+				<dependency id="PDFsharp-MigraDoc-GDI" version="1.32.4334.0" />
+			</group>
+		</dependencies>
+	</metadata>  
+</package>
