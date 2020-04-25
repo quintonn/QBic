@@ -36,7 +36,8 @@ You can either choose to setup a new QBic project manually, or using my custom V
 1. Create a new class that inherits from **ApplicationStartup**
 1. Implement the mandatory functions and create the constructor required by **ApplicationStartup** parent class  
    The **SetupDefaults** is a good place to create your default, or admin, user  
-   This is actually required, else you will not be able to log into your application when it starts for the first time
+   This is actually required, else you will not be able to log into your application when it starts for the first time  
+   The Test project's [AppSettings](WebsiteTemplate.Test/SiteSpecific/AppSettings.cs) file can be used to see a basic example of adding an admin/first user
 1. Add a class that inherits from **ApplicationSettingsCore**  
    I usually call this file **AppSettings**, but it can be anything
 1. Implement the mandatory properties and methods of the **ApplicationSettingsCore** class  
