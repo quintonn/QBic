@@ -16,6 +16,7 @@
 		<tags>Basic Authentication Owin</tags>
 		<dependencies> 
 			<group>
+				<dependency id="BasicAuthentication.Core" version="1.0.0.0"  />
 				<dependency id="Microsoft.AspNet.Cors" version="5.2.7"  />
 				<dependency id="Microsoft.AspNet.Identity.Core" version="2.2.2"  />
 				<dependency id="Microsoft.AspNet.Identity.Owin" version="2.2.2"  />

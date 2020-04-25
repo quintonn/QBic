@@ -17,10 +17,10 @@
 		<dependencies> 
 			<group>
 				<dependency id="Antlr3.Runtime" version="3.5.1" />
-				<dependency id="BasicAuthentication" version="1.1.1.25521" />
-				<dependency id="BasicAuthentication.Core" version="1.1.1.25521" />
+				<dependency id="BasicAuthentication" version="1.0.0.0" />
+				<dependency id="BasicAuthentication.Core" version="1.0.0.0" />
 				<dependency id="CommonServiceLocator" version="2.0.4" />
-				<dependency id="DocumentGenerator" version="0.0.6963.21445" />
+				<dependency id="DocumentGenerator" version="1.0.0.0" />
 				<dependency id="FluentNHibernate" version="2.1.2" />
 				<dependency id="Iesi.Collections" version="4.0.4" />
 				<dependency id="JsonDiffPatch.Net" version="2.1.0" />
@@ -43,7 +43,7 @@
 				<dependency id="NHibernate" version="5.2.3" />
 				<dependency id="Owin" version="1.0" />
 				<dependency id="PDFsharp-MigraDoc-GDI" version="1.32.4334.0" />
-				<dependency id="QBic.Core" version="0.5.6963.25141" />
+				<dependency id="QBic.Core" version="1.0.0.0" />
 				<dependency id="Remotion.Linq" version="2.2.0" />
 				<dependency id="Remotion.Linq.EagerFetching" version="2.2.0" />
 				<dependency id="System.Data.SQLite.Core" version="1.0.109.2" />

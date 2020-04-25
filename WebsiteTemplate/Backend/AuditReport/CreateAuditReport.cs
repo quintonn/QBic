@@ -1,5 +1,4 @@
-﻿using BasicAuthentication.Users;
-using DocumentGenerator.DocumentTypes;
+﻿using DocumentGenerator.DocumentTypes;
 using DocumentGenerator.Settings;
 using DocumentGenerator.Styles;
 using JsonDiffPatchDotNet;
@@ -10,7 +9,6 @@ using QBic.Core.Data;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
