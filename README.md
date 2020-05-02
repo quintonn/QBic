@@ -2,7 +2,7 @@
 A .NET platform for creating Web Servers or CMS systems in .Net  
 The front-end, part is dynamically created based on .Net code-configuration.  
 This does not rely on blazor, silverlight, web-assembly or any of those frameworks, but uses normal JS, HTML and CSS underneath.  
-The easiest way to show what QBic offers, is by showing an [some sample code](#Features).  
+The easiest way to show what QBic offers, is by showing [some sample code](#Sample Code).  
 
 # Goal
 The goal of this framework/platform is to never have to worry about the front-end, web, code.  
