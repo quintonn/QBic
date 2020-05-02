@@ -2,6 +2,7 @@
 A .NET platform for creating Web Servers or CMS systems in .Net  
 The front-end, part is dynamically created based on .Net code-configuration.  
 This does not rely on blazor, silverlight, web-assembly or any of those frameworks, but uses normal JS, HTML and CSS underneath.  
+The easiest way to show what QBic offers, is by [showing an example](#Sample Code)
 
 # Goal
 The goal of this framework/platform is to never have to worry about the front-end, web, code.  
@@ -117,8 +118,8 @@ Documentation will be added over the course of time.
 But, for the time being, there will be a **QBicSamples** repository with examples of how to use the QBic platform. Link to be added soon.
 
 # Sample Code
-The easiest way to show what QBic offers, is by using an example.  
-Consider the following code. This is all the code required to build view, add, edit and delete (CRUD) functionality for a **Category** class.  
+Consider the following code.  
+This is all the code required to build view, add, edit and delete (CRUD) functionality for a **Category** class.  
 ```c#
 public class CategoryCrudItem : BasicCrudMenuItem<Category>
 {
