@@ -119,7 +119,7 @@ But, for the time being, there will be a **QBicSamples** repository with example
 
 # Sample Code
 Consider the following code.  
-This is all the code required to build view, add, edit and delete (CRUD) functionality for a **Category** class.  
+This is all the code required to create basic CRUD functionality for a **Category** class, including the view and input screens and **all** the logic to actually view, create, edit and delete a category.  
 ```c#
 public class CategoryCrudItem : BasicCrudMenuItem<Category>
 {
@@ -136,7 +136,7 @@ public class CategoryCrudItem : BasicCrudMenuItem<Category>
 
     public override EventNumber GetBaseMenuId()
     {
-        return 6530;
+        return 6530; // An internal number to uniquely identify this activity/event
     }
 
     public override Dictionary<string, string> GetColumnsToShowInView()
@@ -157,6 +157,7 @@ public class CategoryCrudItem : BasicCrudMenuItem<Category>
 }    
 ```
 And below is the view and the input screen this code generates:  
-![View of Categories](Category_View.png "View of categories")
-
+### Screen View
+![View of Categories](Category_View.png "View of categories")  
+### Input Screen
 ![Categories input screen](Edit_Category.png "Modifying a category")
