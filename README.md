@@ -115,7 +115,7 @@ The QBic project template will have a once-off fee of $10, to help me maintain t
 # Documentation
 Documentation will be added over the course of time.  
 
-But, for the time being, there will be a **QBicSamples** repository with examples of how to use the QBic platform. Link to be added soon.
+But, for the time being, there is a [QBic Samples](https://github.com/quintonn/QBicSamples) repository with examples of using the QBic platform. 
 
 # Sample Code
 Consider the following code.  
