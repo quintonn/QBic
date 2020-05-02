@@ -170,7 +170,7 @@ Sometimes you might see this error when you try and run your QBic application
 There are many reasons for seeing this error and we have made many efforts to fix them, but some reasons still persist:
 1. The **Identity** of the **AppPool** in **IIS** that runs the QBic website does not have access to the location the project was created in.  
 
-   This might be happen if the **AppPool** is **DefaultAppPool** and the **Identity** is **NetworkService** and the project is created inside the **C:\Users\XXXX\source\repos** folder which are the defaults for Visual IIS and Studio.  
+   This might be happen if the **AppPool** is **DefaultAppPool** and the **Identity** is **NetworkService** and the project is created inside the **C:\Users\XXXX\source\repos** folder which are the defaults for Visual Studio and IIS.  
 
    The easiest fix for this is to create or move the project into a different location (e.g. c:\MyProjects\).  
    Another solution might be to change the **Identity** of the appPool, or give it access to the source\repos folder.
