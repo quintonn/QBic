@@ -162,7 +162,7 @@ And below is the view and the input screen this code generates:
 ### Input Screen
 ![Categories input screen](Edit_Category.png "Modifying a category")
 
-# Known Issues
+# Known Problems
 ### SQLite.Interop.dll
 Sometimes you might see this error when you try and run your QBic application  
 > Unable to load DLL 'SQLite.Interop.dll': The specified module could not be found  
