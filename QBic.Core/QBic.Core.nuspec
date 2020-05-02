@@ -6,7 +6,7 @@
 		<title>$title$</title>
 		<authors>$author$</authors>
 		<owners>$author$</owners>
-    <!--<licenseUrl>http://www.example.com</licenseUrl>-->
+    <licenseUrl>https://raw.githubusercontent.com/quintonn/QBic/master/LICENSE.txt?token=ACMGTPOVFPRCOUQWPIYUUBC6VWETY</licenseUrl>
     <projectUrl>https://github.com/quintonn/QBic</projectUrl>
     <iconUrl>https://raw.githubusercontent.com/quintonn/QBic/master/QBic.png?token=ACMGTPLRUNVEUD5RPKL4S7S6VWDNE</iconUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
