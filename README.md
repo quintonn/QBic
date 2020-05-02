@@ -161,3 +161,16 @@ And below is the view and the input screen this code generates:
 ![View of Categories](Category_View.png "View of categories")  
 ### Input Screen
 ![Categories input screen](Edit_Category.png "Modifying a category")
+
+# Known Issues
+### SQLite.Interop.dll
+Sometimes you might see this error when you try and run your QBic application  
+> Unable to load DLL 'SQLite.Interop.dll': The specified module could not be found  
+
+There are many reasons for seeing this error and we have made many efforts to fix them, but some reasons still persist:
+1. The **Identity** of the **AppPool** in **IIS** that runs the QBic website does not have access to the location the project was created in.  
+
+   This might be happen if the **AppPool** is **DefaultAppPool** and the **Identity** is **NetworkService** and the project is created inside the **C:\Users\XXXX\source\repos** folder which are the defaults for Visual IIS and Studio.  
+
+   The easiest fix for this is to create or move the project into a different location (e.g. c:\MyProjects\).  
+   Another solution might be to change the **Identity** of the appPool, or give it access to the source\repos folder.
