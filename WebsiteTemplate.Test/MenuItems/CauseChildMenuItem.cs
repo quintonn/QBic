@@ -17,13 +17,14 @@ namespace WebsiteTemplate.Test.MenuItems
             return 131;
         }
 
-        public override bool AllowInMenu
-        {
-            get
-            {
-                return false;// return true;
-            }
-        }
+        public override bool AllowInMenu => true;
+        //public override bool AllowInMenu
+        //{
+        //    get
+        //    {
+        //        return false;// return true;
+        //    }
+        //}
 
         public override Dictionary<string, string> GetColumnsToShowInView()
         {

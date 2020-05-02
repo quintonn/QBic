@@ -267,8 +267,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MenuItems\CategoryCrudItem.cs" />
     <Compile Include="MenuItems\TestFileOpen.cs" />
     <Compile Include="MenuItems\Users\TestUserInjector.cs" />
+    <Compile Include="Models\Category.cs" />
     <Compile Include="Models\FilterItem.cs" />
     <Compile Include="Models\FilterItemParentBase.cs" />
     <Compile Include="Models\NewsFilterItem.cs" />
