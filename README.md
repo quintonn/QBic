@@ -115,3 +115,47 @@ The QBic project template will have a once-off fee of $10, to help me maintain t
 Documentation will be added over the course of time.  
 
 But, for the time being, there will be a **QBicSamples** repository with examples of how to use the QBic platform. Link to be added soon.
+
+# Sample Code
+The easiest way to show what QBic offers, is by using an example.  
+Consider the following code. This is all the code required to build view, add, edit and delete (CRUD) functionality for a **Category** class.  
+```c#
+public class CategoryCrudItem : BasicCrudMenuItem<Category>
+{
+    public CategoryCrudItem()
+    {
+    }
+
+    public override bool AllowInMenu => true;
+
+    public override string GetBaseItemName()
+    {
+        return "Category";
+    }
+
+    public override EventNumber GetBaseMenuId()
+    {
+        return 6530;
+    }
+
+    public override Dictionary<string, string> GetColumnsToShowInView()
+    {
+        var res = new Dictionary<string, string>();
+        res.Add("Name", "Name");
+        res.Add("Description", "Description");
+        return res;
+    }
+
+    public override Dictionary<string, string> GetInputProperties()
+    {
+        var res = new Dictionary<string, string>();
+        res.Add("Name", "Name");
+        res.Add("Description", "Description");
+        return res;
+    }
+}    
+```
+And below is the view and the input screen this code generates:  
+![View of Categories](Category_View.png "View of categories")
+
+![Categories input screen](Edit_Category.png "Modifying a category")
