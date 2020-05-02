@@ -12,8 +12,9 @@ Not only did I make this framework create the UI for me, but it also adds a numb
 
 # Introduction
 With QBic, you can create admin portals, dashboards, CMS sites, identity servers, and much more.  
-All of this while only writing C# code.  
+All of this while only writing .Net code.  
 No HTML, JavaScript or CSS.  
+A lot of the **magic** is driven by abstract classes and inheritance.  
 
 # Features
 Any **QBic Application** will get all of the following features out of the box, without having to write any extra code:
