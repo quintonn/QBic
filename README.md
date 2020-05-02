@@ -1,5 +1,13 @@
 # QBic
-A .NET framework for building web applications without having to write any front-end code.
+A .NET platform for creating Web Servers or CMS systems in .Net  
+The front-end, part is dynamically created based on .Net code-configuration.  
+This does not rely on blazor, silverlight, web-assembly or any of those frameworks, but uses normal JS, HTML and CSS underneath.  
+
+# Goal
+The goal of this framework/platform is to never have to worry about the front-end, web, code.  
+I wasn't very good with JavaScript or HTML when I started this project, and I disliked having to write and debug code in the browser when all I wanted to do was work on the back-end C# code.  
+So I created this Framework so I didn't have to repeat same work over and over again.  
+Not only did I make this framework create the UI for me, but it also adds a number of commonly used [features](#Features).  
 
 # Introduction
 With QBic, you can create admin portals, dashboards, CMS sites, identity servers, and much more.  
