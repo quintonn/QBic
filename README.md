@@ -10,6 +10,9 @@ I wasn't very good with JavaScript or HTML when I started this project, and I di
 So I created this Framework so I didn't have to repeat same work over and over again.  
 Not only did I make this framework create the UI for me, but it also adds a number of commonly used [features](#Features).  
 
+One of my main goals was to allow **a single developer** to build a relatively large and complex system.  
+And I believe QBic has achieved that.
+
 # Introduction
 With QBic, you can create admin portals, dashboards, CMS sites, identity servers, and much more.  
 All of this while only writing .Net code.  
@@ -174,3 +177,13 @@ There are many reasons for seeing this error and we have made many efforts to fi
 
    The easiest fix for this is to create or move the project into a different location (e.g. c:\MyProjects\).  
    Another solution might be to change the **Identity** of the appPool, or give it access to the source\repos folder.
+
+# Projects using QBic
+Some projects that have used, or are using, QBic are listed below.  
+Feel free to add your project too:  
+1. A custom mobile application for Bargain Books in South Africa
+   *This has been discontinued*
+2. [Repo Castle](https://repocastle.com/)
+   A private NuGet repository with fine-grained access control
+3. The [QBic Samples](https://github.com/quintonn/QBicSamples) application
+   This project shows example of features of QBic
