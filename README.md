@@ -8,7 +8,9 @@
 5.2. [Using the Custom QBic Project Template](#using-the-custom-qbic-project-template)  
 1. [Documentation](#documentation)
 1. [Sample Code](#sample-code)
-1. [Known Problems](#known-problems)
+1. [Known Problems](#known-problems)  
+8.1 [SQLite.Interop.dll](#sqLiteinteropdll)  
+8.2 [Unable to delete SQLite dll](#unable-to-delete-sqLite-dll)  
 1. [Projects using QBic](#projects-using-qbic)
 
 # Introduction
@@ -179,7 +181,7 @@ And below is the view and the input screen this code generates:
 
 # Known Problems
 ### SQLite.Interop.dll
-Sometimes you might see this error when you try and run your QBic application  
+Sometimes you might see this error when you try and run your QBic application while using SQLite 
 > Unable to load DLL 'SQLite.Interop.dll': The specified module could not be found  
 
 There are many reasons for seeing this error and we have made many efforts to fix them, but some reasons still persist:
@@ -189,6 +191,13 @@ There are many reasons for seeing this error and we have made many efforts to fi
 
    The easiest fix for this is to create or move the project into a different location (e.g. c:\MyProjects\).  
    Another solution might be to change the **Identity** of the appPool, or give it access to the source\repos folder.
+
+### Unable to delete SQLite dll
+When using SQLite (instead of MS-SQL) you might see an error when building your applicatio that the SQLite dll could not be removed.  
+As mentioned above, many steps have been taken to eliminate this error, but it might still ocurr from time to time.  
+
+The simplest solution for this has been to run the following command in an elevated command prompt:  
+> iisreset
 
 # Projects using QBic
 Some projects that have used, or are using, QBic are listed below.  
