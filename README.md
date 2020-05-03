@@ -1,11 +1,26 @@
 ##### Table of Contents  
-[Introduction](#Introduction)  
+1. [Introduction](#Introduction)  
+1. [Goal](#Goal)  
+1. [Features](#Features)  
+1. [Prerequisites](#Prerequisites)  
+1. [Creating a new QBic Project](#creating-a-new-qbic-project)  
+5.1. [Creating a project Manually](#creating-a-project-manually)
+5.2. [Using the Custom QBic Project Template](#using-the-custom-qbic-project-template)
+1. [Documentation](#Documentation)
+1. [Sample Code](#sample-code)
+1. [Known Problems](#known-problems)
+1. [Projects using QBic](#projects-using-qbic)
 
 # Introduction
 A .NET platform for creating Web Servers or CMS systems in .Net  
 The front-end, part is dynamically created based on .Net code-configuration.  
 This does not rely on blazor, silverlight, web-assembly or any of those frameworks, but uses normal JS, HTML and CSS underneath.  
 The easiest way to demonstrate what QBic offers, is by showing [an example](#sample-code).  
+
+With QBic, you can create admin portals, dashboards, CMS sites, identity servers, and much more.  
+All of this while only writing .Net code.  
+No HTML, JavaScript or CSS.  
+A lot of the **magic** is driven by abstract classes and inheritance.  
 
 # Goal
 The goal of this framework/platform is to never have to worry about the front-end, web, code.  
@@ -15,12 +30,6 @@ Not only did I make this framework create the UI for me, but it also adds a numb
 
 One of my main goals was to allow **a single developer** to build a relatively large and complex system.  
 And I believe QBic has achieved that.
-
-# Introduction
-With QBic, you can create admin portals, dashboards, CMS sites, identity servers, and much more.  
-All of this while only writing .Net code.  
-No HTML, JavaScript or CSS.  
-A lot of the **magic** is driven by abstract classes and inheritance.  
 
 # Features
 Any **QBic Application** will get all of the following features out of the box, without having to write any extra code:
