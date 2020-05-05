@@ -204,7 +204,7 @@ Some projects that have used, or are using, QBic are listed below.
 Feel free to add your project too:  
 1. The back-end for a custom mobile application for Bargain Books in South Africa  
    *This has been discontinued*
-2. [Repo Castle](https://repocastle.com/)
+2. [Repo Castle](https://repocastle.com/)  
    A private NuGet repository with fine-grained access control
-3. The [QBic Samples](https://github.com/quintonn/QBicSamples) application
+3. The [QBic Samples](https://github.com/quintonn/QBicSamples) application  
    This project shows example of features of QBic
