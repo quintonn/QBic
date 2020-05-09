@@ -127,7 +127,7 @@ You can support me an purchase my custom [Visual Studio Project Template](https:
    ![Login Prompt](First_Login.png "Successful Login Prompt")
 	
 ## Using the Custom QBic Project Template
-You can purchase the Visual Studio Template [here <img src="QBic.png" width="30px">](https://gum.co/sWqnR) for **$10**.  
+You can purchase the Visual Studio Template [<img src="QBic.png" width="30px">](https://gum.co/sWqnR) for **$10** from [Gumroad](https://gum.co/sWqnR).  
 
 
 # Documentation
