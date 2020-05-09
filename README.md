@@ -208,3 +208,6 @@ Feel free to add your project too:
    A private NuGet repository with fine-grained access control
 3. The [QBic Samples](https://github.com/quintonn/QBicSamples) application  
    This project shows example of features of QBic
+4. A custom school CMS.  
+   The system keeps track of studendts' attendance & grades, and also generate and prints report cards.  
+   
