@@ -52,7 +52,8 @@ Before using and running QBic, the following should be installed or adhered to:
 4. Install [URL REWRITE](https://www.iis.net/downloads/microsoft/url-rewrite) module into IIS.  
 
 # Creating a new QBic Project
-You can either choose to setup a new QBic project manually, or using my custom Visual Studio Project Template ($10).
+You can either choose to setup a new QBic project [manually](#creating-a-project-manually) , or  
+You can support me an purchase my custom [Visual Studio Project Template](https://github.com/quintonn/QBic#using-the-custom-qbic-project-template).  
 
 ## Creating a project Manually
 1. Create a new Visual Studio ASP.Net Web Application (.NET Framework)
@@ -126,8 +127,7 @@ You can either choose to setup a new QBic project manually, or using my custom V
    ![Login Prompt](First_Login.png "Successful Login Prompt")
 	
 ## Using the Custom QBic Project Template
-**Coming Soon**  
-The QBic project template will have a once-off fee, to help me maintain the template and this repo
+You can purchase the Visual Studio template [here](https://gum.co/sWqnR).  
 
 # Documentation
 Documentation will be added over the course of time.  
