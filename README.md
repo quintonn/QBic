@@ -24,7 +24,7 @@ All of this while only writing .Net code.
 No HTML, JavaScript or CSS.  
 A lot of the **magic** is driven by abstract classes and inheritance.  
 
-A sample of how quick and easy it is to create a new .Net project using QBic: 
+A sample of how quick and easy it is to create a new .Net project using QBic:  
 ![Quick QBic Demo](https://github.com/quintonn/QBic/raw/master/Images/QBicQuickDemo.gif "Quick QBic Demo")
 
 # Goal
