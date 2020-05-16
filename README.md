@@ -24,6 +24,9 @@ All of this while only writing .Net code.
 No HTML, JavaScript or CSS.  
 A lot of the **magic** is driven by abstract classes and inheritance.  
 
+A sample of how quick and easy it is to create a new .Net project using QBic: 
+![Quick QBic Demo](Images\QBicQuickDemo.gif "Quick QBic Demo")
+
 # Goal
 The goal of this framework/platform is to never have to worry about the front-end, web, code.  
 I wasn't very good with JavaScript or HTML when I started this project, and I disliked having to write and debug code in the browser when all I wanted to do was work on the back-end C# code.  
@@ -53,7 +56,7 @@ Before using and running QBic, the following should be installed or adhered to:
 
 # Creating a new QBic Project
 You can either choose to setup a new QBic project [manually](#creating-a-project-manually) , or  
-You can support me an purchase my custom [Visual Studio Project Template](https://github.com/quintonn/QBic#using-the-custom-qbic-project-template).  
+You can support me and purchase my custom [Visual Studio Project Template](https://github.com/quintonn/QBic#using-the-custom-qbic-project-template).  
 
 ## Creating a project Manually
 1. Create a new Visual Studio ASP.Net Web Application (.NET Framework)
@@ -128,6 +131,8 @@ You can support me an purchase my custom [Visual Studio Project Template](https:
 	
 ## Using the Custom QBic Project Template
 You can purchase the Visual Studio Template [<img src="QBic.png" width="30px">](https://gum.co/sWqnR) for **$10** from [Gumroad](https://gum.co/sWqnR).  
+
+The default username and password is admin/password.  
 
 
 # Documentation
