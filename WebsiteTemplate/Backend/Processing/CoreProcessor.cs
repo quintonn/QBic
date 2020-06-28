@@ -1,5 +1,4 @@
 ﻿using QBic.Core.Utilities;
-using log4net;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -8,10 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
-using System.Web.Script.Serialization;
 using Unity;
 using WebsiteTemplate.Controllers;
-using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Processing
 {

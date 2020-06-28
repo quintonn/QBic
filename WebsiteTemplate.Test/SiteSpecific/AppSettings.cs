@@ -16,7 +16,7 @@ namespace WebsiteTemplate.Test.SiteSpecific
     {
         public override bool EnableAuditing => true; // Will audit everything
 
-        public override bool DebugStartup => true; //  will create a window to allow debugging when starting if true
+        public override bool DebugStartup => false; //  will create a window to allow debugging when starting if true
 
         public override bool UpdateDatabase => true; // Set to true first time to create tables. Also set to true after making changes
 
