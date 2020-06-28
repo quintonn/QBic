@@ -5,12 +5,115 @@ using System;
 using System.Configuration;
 using System.Diagnostics;
 using WebsiteTemplate.UnitTests.Models;
+using NHibernate.Linq;
+using System.Linq;
+using NHibernate.Exceptions;
+using System.Globalization;
 
 namespace WebsiteTemplate.UnitTests
 {
     [TestClass]
     public class DBTests
     {
+        [TestMethod]
+        public void DeleteInheritanceTest()
+        {
+            var store = DataStore.GetInstance(true);
+
+            using (var session = store.OpenSession())
+            {
+                var item = new ChildClass()
+                {
+                    Name = "John",
+                    Number = 10,
+                };
+                session.SaveOrUpdate(item);
+                session.Flush();
+            }
+
+            using (var session = store.OpenSession())
+            {
+                var childCount = session.QueryOver<ChildClass>().RowCount();
+                var parentCount = session.QueryOver<ParentClass>().RowCount();
+                Assert.AreEqual(1, childCount);
+                Assert.AreEqual(1, parentCount);
+
+                var child = session.QueryOver<ChildClass>().Take(1).List().ToList().FirstOrDefault();
+                // also works if I delete parent class
+                session.Delete(child);
+                session.Flush();
+
+
+                childCount = session.QueryOver<ChildClass>().RowCount();
+                parentCount = session.QueryOver<ParentClass>().RowCount();
+                Assert.AreEqual(0, childCount);
+                Assert.AreEqual(0, parentCount);
+            }
+        }
+
+        [TestMethod]
+        public void DeleteTest()
+        {
+            var store = DataStore.GetInstance(true);
+
+            using (var session = store.OpenSession())
+            {
+                session.Query<Department>().Delete();
+                session.Query<Employee>().Delete();
+
+                session.Flush();
+
+                var dept = new Department()
+                {
+                    Name = "Home"
+                };
+                session.SaveOrUpdate(dept);
+
+                var emply = new Employee()
+                {
+                    Name = "John",
+                    Department = dept
+                };
+
+                session.SaveOrUpdate(emply);
+
+                session.Flush();
+            }
+            
+            using (var session = store.OpenSession())
+            {
+                var demptCount = session.QueryOver<Department>().RowCount();
+                var empCount = session.QueryOver<Employee>().RowCount();
+                Assert.AreEqual(1, demptCount);
+                Assert.AreEqual(1, empCount);
+
+                var dept = session.QueryOver<Department>().Take(1).List().ToList().FirstOrDefault();
+
+                var couldNotDelete = false;
+                var deptTable = false;
+                try
+                {
+                    session.Delete(dept);
+                    //session.Query<Department>().Delete(); // this will delete without being caught
+                    session.Flush();
+                }
+                catch (GenericADOException ex)
+                {
+                    couldNotDelete = ex.Message.Contains("could not delete");
+                    deptTable = ex.Message.Contains("DELETE FROM Department WHERE");
+                }
+
+                // make sure we did get the error
+                Assert.IsTrue(couldNotDelete && deptTable);
+
+                // make sure nothing was deleted
+                demptCount = session.QueryOver<Department>().RowCount();
+                empCount = session.QueryOver<Employee>().RowCount();
+                Assert.AreEqual(1, demptCount);
+                Assert.AreEqual(1, empCount);
+            }
+        }
+
         [TestMethod]
         public void BasicTest()
         {

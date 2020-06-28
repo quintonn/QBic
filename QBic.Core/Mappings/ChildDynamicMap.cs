@@ -1,6 +1,5 @@
-﻿using QBic.Core.Models;
-using FluentNHibernate.Mapping;
-using System;
+﻿using FluentNHibernate.Mapping;
+using QBic.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -9,6 +8,7 @@ namespace QBic.Core.Mappings
 {
     public class ChildDynamicMap<T> : SubclassMap<T> where T : DynamicClass
     {
+        private string TableName = typeof(T).Name.Split(".".ToCharArray()).Last();
         private IList<PropertyInfo> Properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public)
                                                             .Where(p => p.GetMethod.IsVirtual && p.GetMethod.IsAbstract == false)
                                                             .ToList();
@@ -16,8 +16,7 @@ namespace QBic.Core.Mappings
         public ChildDynamicMap()
             :base()
         {
-            var parentProperties = BaseMap.GetParentProperties(typeof(T).BaseType).Select(p => p.Name)
-                                                                          .ToList();
+            var parentProperties = BaseMap.GetParentProperties(typeof(T).BaseType).Select(p => p.Name).ToList();
 
             var properties = Properties.Where(p => !parentProperties.Contains(p.Name)).ToList();
 
@@ -27,7 +26,7 @@ namespace QBic.Core.Mappings
 
             this.MapPrimitiveTypes(primitiveColumns, properties);
 
-            this.MapNonPrimitiveTypes(nonPrimitiveColumns, false);
+            this.MapNonPrimitiveTypes(TableName, nonPrimitiveColumns, false);
 
             this.MapLists(listColumns);
         }

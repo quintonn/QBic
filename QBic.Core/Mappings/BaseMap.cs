@@ -77,7 +77,7 @@ namespace QBic.Core.Mappings
             return false; // value-type
         }
 
-        public static void MapNonPrimitiveTypes<T>(this ClasslikeMapBase<T> dynamicMap, IList<PropertyInfo> nonPrimitiveColumns, bool nullableReference) where T : DynamicClass
+        public static void MapNonPrimitiveTypes<T>(this ClasslikeMapBase<T> dynamicMap, string tableName, IList<PropertyInfo> nonPrimitiveColumns, bool nullableReference) where T : DynamicClass
         {
             foreach (var column in nonPrimitiveColumns)
             {
@@ -90,11 +90,12 @@ namespace QBic.Core.Mappings
 
                 dynamic tmp = generic.Invoke(dynamicMap, new object[] { column.Name });
 
-                if (nullableReference == false)
+                if (nullableReference == false) // this is always false at the moment.
                 {
                     dynamicMap.References(tmp)
                                .Not.Nullable()
-                               .NotFound.Ignore()
+                               .NotFound.Exception()
+                               .ForeignKey("FK_" + tableName + "_" + column.Name) // Will prevent deleting child object without deleting parent object
                                .LazyLoad(Laziness.False);
                 }
                 else

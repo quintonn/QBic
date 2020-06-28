@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
@@ -21,8 +20,7 @@ namespace WebsiteTemplate.Backend.SystemSettings
         /// </summary>
         private Dictionary<string, object> SystemSettingValues { get; set; }
         private ApplicationSettingsCore AppSettings { get; set; }
-        private DataService DataService { get; set; }
-
+        
         public ModifySystemSettings(DataService dataService, ApplicationSettingsCore appSettings)
         {
             DataService = dataService;

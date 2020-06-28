@@ -88,6 +88,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                 var result = query.Skip((settings.CurrentPage-1)*settings.LinesPerPage)
                                   .Take(settings.LinesPerPage)
                                   .List<T>().ToList();
+
                 return result;
             }
         }

@@ -115,6 +115,18 @@ namespace WebsiteTemplate.Utilities
                         value = 0m;
                     }
                 }
+                else if (typeof(T) == typeof(double))
+                {
+                    double doubleValue;
+                    if (double.TryParse(item.ToString(), out doubleValue))
+                    {
+                        value = doubleValue;
+                    }
+                    else
+                    {
+                        value = 0m;
+                    }
+                }
                 else if (typeof(T) == typeof(float))
                 {
                     float floatValue;

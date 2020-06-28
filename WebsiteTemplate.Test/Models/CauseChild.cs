@@ -1,4 +1,5 @@
 ﻿using QBic.Core.Models;
+using System;
 
 namespace WebsiteTemplate.Test.MenuItems
 {
@@ -11,6 +12,8 @@ namespace WebsiteTemplate.Test.MenuItems
         public virtual SuperCause SuperCause { get; set; }
 
         public virtual ChildType ChildType { get; set; }
+
+        public virtual DateTime? NullDateTest { get; set; }
 
         public string ChildTypeDescription
         {

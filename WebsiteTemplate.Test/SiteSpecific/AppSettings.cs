@@ -14,29 +14,13 @@ namespace WebsiteTemplate.Test.SiteSpecific
 {
     public class AppSettings : ApplicationSettingsCore
     {
-        public override bool DebugStartup
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public override bool EnableAuditing => true; // Will audit everything
 
-        public override bool UpdateDatabase
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool DebugStartup => true; //  will create a window to allow debugging when starting if true
 
-        public override string ApplicationPassPhrase
-        {
-            get
-            {
-                return "8375743900958305380983509";
-            }
-        }
+        public override bool UpdateDatabase => true; // Set to true first time to create tables. Also set to true after making changes
+
+        public override string ApplicationPassPhrase => "8375743900958305380983509";
 
         public override Type GetApplicationStartupType
         {
@@ -80,14 +64,6 @@ namespace WebsiteTemplate.Test.SiteSpecific
             get
             {
                 return Level.Debug;
-            }
-        }
-
-        public override bool EnableAuditing
-        {
-            get
-            {
-                return true;
             }
         }
     }

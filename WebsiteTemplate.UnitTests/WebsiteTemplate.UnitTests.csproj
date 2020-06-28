@@ -72,6 +72,8 @@
     <Compile Include="Models\AcmeData.cs" />
     <Compile Include="Models\BasicDataClass.cs" />
     <Compile Include="Models\ChildClass.cs" />
+    <Compile Include="Models\Department.cs" />
+    <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\ParentClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

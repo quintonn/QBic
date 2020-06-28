@@ -8,7 +8,7 @@ namespace QBic.Core.Mappings
 {
     public class DynamicMap<T> : ClassMap<T> where T : DynamicClass
     {
-        public string TableName = typeof(T).Name.Split(".".ToCharArray()).Last();
+        private string TableName = typeof(T).Name.Split(".".ToCharArray()).Last();
         private IList<PropertyInfo> Properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public)
                                                             .Where(p => p.GetMethod.IsVirtual && !p.GetMethod.IsAbstract)
                                                             .ToList();
@@ -35,7 +35,7 @@ namespace QBic.Core.Mappings
 
             this.MapPrimitiveTypes(primitiveColumns, Properties);
 
-            this.MapNonPrimitiveTypes(nonPrimitiveColumns, true);
+            this.MapNonPrimitiveTypes(TableName, nonPrimitiveColumns, false);
 
             this.MapLists(listColumns);
         }
