@@ -1,11 +1,11 @@
-﻿using Unity;
+﻿using log4net.Core;
+using NHibernate;
 using Owin;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Unity;
 using WebsiteTemplate.Models.NonDatabase;
-using log4net.Core;
-using NHibernate;
 
 namespace WebsiteTemplate.Utilities
 {
@@ -86,5 +86,10 @@ namespace WebsiteTemplate.Utilities
         {
             return new List<SystemSettingItem>();
         }
+
+        public virtual string AccessControlAllowOrigin { get; } = "*";
+        public virtual TimeSpan AccessTokenExpireTimeSpan { get; } = TimeSpan.FromHours(1); //Access token expires after 60min
+        public virtual TimeSpan RefreshTokenExpireTimeSpan { get; } = TimeSpan.FromDays(7); //Refresh token expires after 7 days
+        public virtual string TokenEndpointPath { get; } = "/api/v1/token";
     }
 }

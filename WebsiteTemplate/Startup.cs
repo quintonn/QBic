@@ -7,7 +7,6 @@ using Microsoft.Practices.Unity.Configuration;
 using Owin;
 using QBic.Core.Data;
 using QBic.Core.Utilities;
-using System;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using Unity;
@@ -26,11 +25,11 @@ namespace WebsiteTemplate
 
             var options = new UserAuthenticationOptions()
             {
-                AccessControlAllowOrigin = "*",
-                AccessTokenExpireTimeSpan = TimeSpan.FromHours(1), //Access token expires after 60min
-                RefreshTokenExpireTimeSpan = TimeSpan.FromDays(7), //Refresh token expires after 7 days
+                AccessControlAllowOrigin = appSettings.AccessControlAllowOrigin,
+                AccessTokenExpireTimeSpan = appSettings.AccessTokenExpireTimeSpan,
+                RefreshTokenExpireTimeSpan = appSettings.RefreshTokenExpireTimeSpan,
                 AllowInsecureHttp = false,
-                TokenEndpointPath = new PathString("/api/v1/token"),
+                TokenEndpointPath = new PathString(appSettings.TokenEndpointPath),
                 UserContext = Container.Resolve<UserContext>(),
                 ClientId = appSettings.ClientId
             };
