@@ -127,7 +127,13 @@ namespace QBic.Core.Services
         {
             var cnt = 1;
             var backupName = "Backup_" + DateTime.Now.ToString("dd_MM_yyyy") + ".db";
+
             var currentDirectory = QBicUtils.GetCurrentDirectory() + "\\Data\\";
+            if (!Directory.Exists(currentDirectory))
+            {
+                Directory.CreateDirectory(currentDirectory); // try create the directory if it doesn't exist, else it would crash anyway
+            }
+            
             while (File.Exists(currentDirectory + backupName))
             {
                 backupName = "Backup_" + DateTime.Now.ToString("dd_MM_yyyy") + "_" + cnt + ".db";
