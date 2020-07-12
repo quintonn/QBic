@@ -70,6 +70,7 @@ namespace WebsiteTemplate.Backend.CsvUpload
             {
                 if (rowIndex < linesToSkip)
                 {
+                    parser.ReadFields(); // move cursor to next line
                     rowIndex++;
                     continue;
                 }
