@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.VisualBasic.FileIO;
+using Newtonsoft.Json.Linq;
 using QBic.Core.Utilities;
 using System;
 using System.Collections.Generic;
@@ -59,23 +60,31 @@ namespace WebsiteTemplate.Backend.CsvUpload
 
         public abstract FileInfo ProcessMappingResults(List<MappedRow> mappedData, List<string> mappedErrors);
 
-        private List<MappedRow> MapData(List<string> lines, string separator, bool isQuoted, List<ColumnSetting> mappings, List<string> errors)
+        private List<MappedRow> MapData(TextFieldParser parser, int linesToSkip, List<ColumnSetting> mappings, List<string> errors)
         {
             var results = new List<MappedRow>();
 
-            var rowIndex = 1;
+            var rowIndex = 0;
 
-            foreach (var line in lines)
+            while (!parser.EndOfData)
             {
-                List<string> columnValues;
-                if (isQuoted)
+                if (rowIndex > linesToSkip)
                 {
-                    columnValues = line.Split($"\"{separator}\"".ToCharArray()).ToList();
+                    rowIndex++;
+                    continue;
                 }
-                else
-                {
-                    columnValues = line.Split(separator.ToCharArray()).ToList();
-                }
+                var fields = parser.ReadFields().ToList();
+                    
+                //List<string> columnValues;
+                
+                //if (isQuoted)
+                //{
+                //    columnValues = line.Split($"\"{separator}\"".ToCharArray()).ToList();
+                //}
+                //else
+                //{
+                //    columnValues = line.Split(separator.ToCharArray()).ToList();
+                //}
                 
                 var row = new MappedRow(rowIndex);
 
@@ -83,7 +92,7 @@ namespace WebsiteTemplate.Backend.CsvUpload
                 foreach (var mapping in mappings)
                 {
                     var cols = mapping.ColumnNumbers;
-                    var columnValue = MapColumnData(mapping.ColumnName, columnValues, mapping.ColumnNumbers, rowIndex, errors);
+                    var columnValue = MapColumnData(mapping.ColumnName, fields, mapping.ColumnNumbers, rowIndex, errors);
                     row.Columns.Add(new MappedColumn(mapping.ColumnName, columnIndex, columnValue));
                 }
 
@@ -187,15 +196,13 @@ namespace WebsiteTemplate.Backend.CsvUpload
                     columnSettings.Add(new ColumnSetting(field, columns));
                 }
 
-                var lines = QBicUtils.GetString(file.Data)
-                                     .Split("\r".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-                                     .Select(x => x.Trim())
-                                     .Where(x => !String.IsNullOrWhiteSpace(x))
-                                     .Skip(linesToSkip)
-                                     .ToList();
+                var parser = new TextFieldParser(new System.IO.StringReader(QBicUtils.GetString(file.Data)));
+                parser.HasFieldsEnclosedInQuotes = isQuoted;
+                parser.SetDelimiters(separator);
 
                 var errors = new List<string>();
-                var mappedData = MapData(lines, separator, isQuoted, columnSettings, errors);
+                var mappedData = MapData(parser, linesToSkip, columnSettings, errors);
+                parser.Close();
 
                 var fileData = ProcessMappingResults(mappedData, errors);
 
