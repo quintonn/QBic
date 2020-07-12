@@ -68,7 +68,7 @@ namespace WebsiteTemplate.Backend.CsvUpload
 
             while (!parser.EndOfData)
             {
-                if (rowIndex > linesToSkip)
+                if (rowIndex < linesToSkip)
                 {
                     rowIndex++;
                     continue;
