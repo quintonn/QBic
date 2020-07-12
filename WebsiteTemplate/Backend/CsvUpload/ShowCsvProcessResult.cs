@@ -24,10 +24,10 @@ namespace WebsiteTemplate.Backend.CsvUpload
 
             var result = new FileInfo();
 
-            result.FileName = "Bulk Invite Results";
-            result.FileExtension = "txt";
+            result.FileName = fileName;
+            result.FileExtension = extension;
             result.Data = System.IO.File.ReadAllBytes(filePath);
-            result.MimeType = "text/plain";
+            result.MimeType = mimeType;
 
             _FileName = result.GetFullFileName();
 

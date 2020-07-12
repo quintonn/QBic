@@ -35,6 +35,7 @@ namespace WebsiteTemplate.Backend.CsvUpload
             results.Add(new StringInput("Separator", "Column Separator", ColumnSeparator, mandatory: true, tabName: tabName));
             results.Add(new NumericInput<int>("Skip", "Lines to Skip", 0, tabName: tabName));
             results.Add(new ViewInput("Mappings", "ColumnMappings", new MappingView(), GetParameters(), mandatory: true, tabName: tabName));
+            results.Add(new BooleanInput("IsQuoted", "Are values in quotes", false, null, false));
 
             results.AddRange(extraInputs);
 
@@ -58,7 +59,7 @@ namespace WebsiteTemplate.Backend.CsvUpload
 
         public abstract FileInfo ProcessMappingResults(List<MappedRow> mappedData, List<string> mappedErrors);
 
-        private List<MappedRow> MapData(List<string> lines, string separator, List<ColumnSetting> mappings, List<string> errors)
+        private List<MappedRow> MapData(List<string> lines, string separator, bool isQuoted, List<ColumnSetting> mappings, List<string> errors)
         {
             var results = new List<MappedRow>();
 
@@ -66,8 +67,16 @@ namespace WebsiteTemplate.Backend.CsvUpload
 
             foreach (var line in lines)
             {
-                var columnValues = line.Split(separator.ToCharArray()).ToList();
-
+                List<string> columnValues;
+                if (isQuoted)
+                {
+                    columnValues = line.Split($"\"{separator}\"".ToCharArray()).ToList();
+                }
+                else
+                {
+                    columnValues = line.Split(separator.ToCharArray()).ToList();
+                }
+                
                 var row = new MappedRow(rowIndex);
 
                 var columnIndex = 1;
@@ -151,6 +160,7 @@ namespace WebsiteTemplate.Backend.CsvUpload
                     };
                 }
                 var separator = GetValue("Separator");
+                var isQuoted = GetValue<bool>("IsQuoted");
                 var linesToSkip = GetValue<int>("Skip");
                 if (linesToSkip < 0)
                 {
@@ -185,7 +195,7 @@ namespace WebsiteTemplate.Backend.CsvUpload
                                      .ToList();
 
                 var errors = new List<string>();
-                var mappedData = MapData(lines, separator, columnSettings, errors);
+                var mappedData = MapData(lines, separator, isQuoted, columnSettings, errors);
 
                 var fileData = ProcessMappingResults(mappedData, errors);
 
