@@ -256,6 +256,7 @@
     <Compile Include="Backend\BackgroundInfo\ViewBackgroundStatusInfo.cs" />
     <Compile Include="Backend\Backups\CreateBackup.cs" />
     <Compile Include="Backend\Backups\RestoreBackup.cs" />
+    <Compile Include="Backend\CsvDownload\CsvFileDownloader.cs" />
     <Compile Include="Backend\CsvUpload\ColumnSetting.cs" />
     <Compile Include="Backend\CsvUpload\CsvFileUploader.cs" />
     <Compile Include="Backend\CsvUpload\EditCsvMapping.cs" />
