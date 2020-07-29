@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Utilities;
@@ -26,7 +27,10 @@ namespace WebsiteTemplate.Backend.Processing
             //var eventId = json.GetValue<int>("EventId");
             var propertyName = json.GetValue("PropertyName");
             var propertyValue = json.GetValue<object>("PropertyValue");
-            var eventItem = EventList[eventId] as GetInput;
+            //var eventItem = EventList[eventId] as GetInput;
+            //var eventItemType = EventList[eventId];
+            //var eventItem = Container.Resolve(eventItemType) as GetInput;
+            var eventItem = Container.Resolve<EventService>().GetEventItem(eventId) as GetInput;
 
             var result = await eventItem.OnPropertyChanged(propertyName, propertyValue);
             return result;

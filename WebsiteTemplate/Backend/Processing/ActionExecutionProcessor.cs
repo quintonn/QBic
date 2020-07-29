@@ -8,6 +8,8 @@ using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Utilities;
+using WebsiteTemplate.Backend.Services;
+using System.Web.UI.WebControls;
 
 namespace WebsiteTemplate.Backend.Processing
 {
@@ -54,15 +56,16 @@ namespace WebsiteTemplate.Backend.Processing
             var parameters = tmpJson.GetValue("parameters");
 
             var id = eventId;
-
-            if (!EventList.ContainsKey(id))
+            var eventItem = Container.Resolve<EventService>().GetEventItem(eventId);
+            if (eventItem == null)
             {
                 throw new Exception("No action has been found for event number: " + id);
             }
 
             var result = new List<IEvent>();
-
-            var eventItem = EventList[id];
+            //var eventItem = Container.Resolve<EventService>().GetEventItem(id);
+            //var eventItemType = EventList[id];
+            //var eventItem = Container.Resolve(eventItemType) as IEvent;
 
             if (eventItem is ShowView)
             {
@@ -171,6 +174,7 @@ namespace WebsiteTemplate.Backend.Processing
                         (input as ViewInput).ViewForInput.Columns = columns;
                     }
                 }
+                inputFields.Add(new HiddenInput("__init_data__", data));
                 inputResult.InputFields = inputFields;
                 result.Add(inputResult);
             }

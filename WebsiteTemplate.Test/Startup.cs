@@ -157,7 +157,7 @@ namespace WebsiteTemplate.Test
                     DataService.SaveOrUpdate(session, settingsMenu);
                 }
 
-                var allEvents = EventService.EventList.Where(e => e.Value.ActionType != EventType.InputDataView).Select(e => e.Value.GetEventId())
+                var allEvents = EventService.EventMenuList.Where(e => e.Value.ActionType != EventType.InputDataView).Select(e => e.Value.GetEventId())
                                       .ToList();
 
                 var eras = session.CreateCriteria<EventRoleAssociation>()

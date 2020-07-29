@@ -194,7 +194,7 @@ namespace WebsiteTemplate.Backend.Menus
             {
                 Name = r.Name,
                 Id = r.Id,
-                Event = r.Event == null ? "" : EventService.EventList.ContainsKey(r.Event.Value) ? EventService.EventList[r.Event.Value].Description : "",
+                Event = r.Event == null ? "" : EventService.EventMenuList.ContainsKey(r.Event.Value) ? EventService.EventDescriptions[r.Event.Value] : "",
                 ParentMenu = r.ParentMenu,
                 CanDelete = r.CanDelete,
                 Position = r.Position

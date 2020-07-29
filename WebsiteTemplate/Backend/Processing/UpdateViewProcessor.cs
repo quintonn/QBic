@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 using WebsiteTemplate.Menus.ViewItems;
+using WebsiteTemplate.Backend.Services;
 
 namespace WebsiteTemplate.Backend.Processing
 {
@@ -52,12 +53,16 @@ namespace WebsiteTemplate.Backend.Processing
 
             var id = eventId;
 
-            if (!EventList.ContainsKey(id))
+            var eventItem = Container.Resolve<EventService>().GetEventItem(eventId);
+
+            //if (!EventList.ContainsKey(id))
+            if (eventItem == null)
             {
                 throw new Exception("No action has been found for event number: " + id);
             }
 
-            var eventItem = EventList[id];
+            //var eventItemType = EventList[id];
+            //var eventItem = Container.Resolve(eventItemType) as IEvent;
 
             if (!(eventItem is ShowView))
             {

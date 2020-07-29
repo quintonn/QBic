@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using NHibernate.Criterion;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,9 +34,10 @@ namespace WebsiteTemplate.Backend.Processing
         {
             lock (LockObject)
             {
+                Container = container;
                 if (SetupDone == false)
                 {
-                    Container = container;
+                    //Container = container;
 
                     //TODO: maybe all of thse should go outside of the "SetupDone" check and run everytime.
                     ApplicationStartup = container.Resolve<ApplicationStartup>();
@@ -83,13 +85,13 @@ namespace WebsiteTemplate.Backend.Processing
             }
         }
 
-        public IDictionary<int, IEvent> EventList
-        {
-            get
-            {
-                return EventService.EventList;
-            }
-        }
+        //public IDictionary<int, Type> EventList
+        //{
+        //    get
+        //    {
+        //        return EventService.EventList;
+        //    }
+        //}
 
         protected string GetRequestData()
         {

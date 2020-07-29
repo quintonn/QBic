@@ -18,14 +18,14 @@ namespace WebsiteTemplate.Backend.SystemSettings
         /// <summary>
         /// This is for additional settings inputs obtained from ApplicationSettingsCore instance for each project.
         /// </summary>
-        private Dictionary<string, object> SystemSettingValues { get; set; }
+        //private Dictionary<string, object> SystemSettingValues { get; set; }
         private ApplicationSettingsCore AppSettings { get; set; }
         
         public ModifySystemSettings(DataService dataService, ApplicationSettingsCore appSettings)
         {
             DataService = dataService;
             AppSettings = appSettings;
-            SystemSettingValues = new Dictionary<string, object>();
+            //SystemSettingValues = new Dictionary<string, object>();
         }
         public override string Description
         {
@@ -65,13 +65,17 @@ namespace WebsiteTemplate.Backend.SystemSettings
                 var additionalSettings = AppSettings.GetAdditionalSystemSettings(session);
                 foreach (var setting in additionalSettings)
                 {
-                    var defaultValue = SystemSettingValues[setting.Key];
-                    if (defaultValue == null)
-                    {
-                        defaultValue = setting.DefaultValue;
-                    }
-                    var input = InputFieldFactory.CreateInputField(setting, defaultValue);
-                    result.Add(input);
+                    var dbSetting = session.QueryOver<SystemSettingValue>().Where(s => s.KeyName == setting.Key).SingleOrDefault();
+                    //if (SystemSettingValues.ContainsKey(setting.Key))
+                    //{
+                      object defaultValue = dbSetting?.Value;
+                        if (defaultValue == null)
+                        {
+                            defaultValue = setting.DefaultValue;
+                        }
+                        var input = InputFieldFactory.CreateInputField(setting, defaultValue);
+                        result.Add(input);
+                    //}
                 }
             }
 
@@ -80,17 +84,17 @@ namespace WebsiteTemplate.Backend.SystemSettings
 
         public override async Task<InitializeResult> Initialize(string data)
         {
-            SystemSettingValues.Clear();
+            //SystemSettingValues.Clear();
             using (var session = DataService.OpenSession())
             {
                 SystemSettings = session.QueryOver<Models.SystemSettings>().List<Models.SystemSettings>().FirstOrDefault();
 
-                var additionalSettings = AppSettings.GetAdditionalSystemSettings(session);
-                foreach (var setting in additionalSettings)
-                {
-                    var dbSetting = session.QueryOver<SystemSettingValue>().Where(s => s.KeyName == setting.Key).SingleOrDefault();
-                    SystemSettingValues.Add(setting.Key, dbSetting?.Value);
-                }
+                //var additionalSettings = AppSettings.GetAdditionalSystemSettings(session);
+                //foreach (var setting in additionalSettings)
+                //{
+                //    var dbSetting = session.QueryOver<SystemSettingValue>().Where(s => s.KeyName == setting.Key).SingleOrDefault();
+                //    SystemSettingValues.Add(setting.Key, dbSetting?.Value);
+                //}
             }
             return new InitializeResult(true);
         }
@@ -151,18 +155,20 @@ namespace WebsiteTemplate.Backend.SystemSettings
                     var additionalSettings = AppSettings.GetAdditionalSystemSettings(session);
                     foreach (var setting in additionalSettings)
                     {
-
-                        var value = InputData[setting.Key]?.ToString();
-                        var dbSetting = session.QueryOver<SystemSettingValue>().Where(s => s.KeyName == setting.Key).SingleOrDefault();
-                        if (dbSetting == null)
+                        if (InputData.ContainsKey(setting.Key))
                         {
-                            dbSetting = new SystemSettingValue()
+                            var value = InputData[setting.Key]?.ToString();
+                            var dbSetting = session.QueryOver<SystemSettingValue>().Where(s => s.KeyName == setting.Key).SingleOrDefault();
+                            if (dbSetting == null)
                             {
-                                KeyName = setting.Key
-                            };
+                                dbSetting = new SystemSettingValue()
+                                {
+                                    KeyName = setting.Key
+                                };
+                            }
+                            dbSetting.Value = value;
+                            DataService.SaveOrUpdate(session, dbSetting);
                         }
-                        dbSetting.Value = value;
-                        DataService.SaveOrUpdate(session, dbSetting);
                     }
 
                     session.Flush();
