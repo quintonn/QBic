@@ -9,6 +9,7 @@ using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Utilities;
 using WebsiteTemplate.Backend.Services;
+using System.Web.UI.WebControls;
 
 namespace WebsiteTemplate.Backend.Processing
 {
@@ -173,6 +174,7 @@ namespace WebsiteTemplate.Backend.Processing
                         (input as ViewInput).ViewForInput.Columns = columns;
                     }
                 }
+                inputFields.Add(new HiddenInput("__init_data__", data));
                 inputResult.InputFields = inputFields;
                 result.Add(inputResult);
             }

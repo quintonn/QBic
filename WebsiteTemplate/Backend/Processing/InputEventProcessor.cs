@@ -53,6 +53,14 @@ namespace WebsiteTemplate.Backend.Processing
 
             //await eventItem.Initialize(formData); //TODO: Do i need to call this here???? WHY!! If it's a must, maybe i should pass a flag that it's not the real initialize.
             //TODO: One instance where this causes errors is if an input screen is open and I rebuild the back-end, then clicking cancel results in error.
+
+            //TODO: getInputFields doesn't return consistent data
+            //      it needs to be sent the same info it was sent when the screen was created so it knows how to get inputs
+            //      means i also need to call initialize.
+            //
+            
+            var initData = jsonData.GetValue("__init_data__")?.ToString();
+            await eventItem.Initialize(initData);
             foreach (var inputField in eventItem.GetInputFields())
             {
                 var value = inputField.GetValue(jsonData.GetValue<JToken>(inputField.InputName));
