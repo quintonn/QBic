@@ -230,7 +230,7 @@ namespace QBic.Core.Services
             }
             finally
             {
-                DynamicClass.SetIdsToBeAssigned = true;
+                DynamicClass.SetIdsToBeAssigned = false; // change it back.
 
                 File.Delete(currentDirectory + backupName);
             }
@@ -464,7 +464,7 @@ namespace QBic.Core.Services
             }
             finally
             {
-                DynamicClass.SetIdsToBeAssigned = true;
+                DynamicClass.SetIdsToBeAssigned = false;
                 if (File.Exists(currentDirectory + backupName))
                 {
                     File.Delete(currentDirectory + backupName);

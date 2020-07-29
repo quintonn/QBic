@@ -92,11 +92,22 @@ namespace QBic.Core.Mappings
 
                 if (nullableReference == false) // this is always false at the moment.
                 {
-                    dynamicMap.References(tmp)
-                               .Not.Nullable()
-                               .NotFound.Exception()
-                               .ForeignKey("FK_" + tableName + "_" + column.Name) // Will prevent deleting child object without deleting parent object
-                               .LazyLoad(Laziness.False);
+                    if (DynamicClass.SetIdsToBeAssigned == true)  //means we are doing a backup
+                    {
+                        dynamicMap.References(tmp)
+                                   .Nullable()
+                                   .NotFound.Ignore()
+                                   .ForeignKey("FK_" + tableName + "_" + column.Name) // Will prevent deleting child object without deleting parent object
+                                   .LazyLoad(Laziness.False);
+                    }
+                    else
+                    {
+                        dynamicMap.References(tmp)
+                                   .Not.Nullable()
+                                   .NotFound.Exception()
+                                   .ForeignKey("FK_" + tableName + "_" + column.Name) // Will prevent deleting child object without deleting parent object
+                                   .LazyLoad(Laziness.False);
+                    }
                 }
                 else
                 {
