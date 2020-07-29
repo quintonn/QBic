@@ -13,7 +13,7 @@ namespace WebsiteTemplate.Controllers
             var eventIdString = actionContext.Request.RequestUri.Segments.Last();
             var eventId = Convert.ToInt32(eventIdString);
 
-            var iEvent = EventService.EventList[eventId];
+            var iEvent = EventService.EventMenuList[eventId];
             if (iEvent.RequiresAuthorization)
             {
                 base.OnAuthorization(actionContext);

@@ -41,10 +41,10 @@ namespace WebsiteTemplate.Backend.Menus
         {
             var list = new List<InputField>();
 
-            list.Add(new StringInput("Name", "Menu Name", DataItem.Name, null, true));
-            list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", DataItem.Event == null && IsNew == false));
+            list.Add(new StringInput("Name", "Menu Name", DataItem?.Name, null, true));
+            list.Add(new BooleanInput("HasSubmenus", "Has Sub-menus", DataItem?.Event == null && IsNew == false));
 
-            list.Add(new ComboBoxInput("Event", "Menu Action", DataItem.Event?.ToString(), null, true)
+            list.Add(new ComboBoxInput("Event", "Menu Action", DataItem?.Event?.ToString(), null, true)
             {
                 ListItems = MenuService.GetEventList(),
                 VisibilityConditions = new List<Condition>()

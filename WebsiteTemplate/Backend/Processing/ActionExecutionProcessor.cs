@@ -8,6 +8,7 @@ using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Utilities;
+using WebsiteTemplate.Backend.Services;
 
 namespace WebsiteTemplate.Backend.Processing
 {
@@ -54,15 +55,16 @@ namespace WebsiteTemplate.Backend.Processing
             var parameters = tmpJson.GetValue("parameters");
 
             var id = eventId;
-
-            if (!EventList.ContainsKey(id))
+            var eventItem = Container.Resolve<EventService>().GetEventItem(eventId);
+            if (eventItem == null)
             {
                 throw new Exception("No action has been found for event number: " + id);
             }
 
             var result = new List<IEvent>();
-
-            var eventItem = EventList[id];
+            //var eventItem = Container.Resolve<EventService>().GetEventItem(id);
+            //var eventItemType = EventList[id];
+            //var eventItem = Container.Resolve(eventItemType) as IEvent;
 
             if (eventItem is ShowView)
             {

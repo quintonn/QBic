@@ -1,13 +1,12 @@
-﻿using Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using WebsiteTemplate.Menus;
 using System.Threading.Tasks;
-using WebsiteTemplate.Utilities;
+using Unity;
+using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.ViewItems;
-using WebsiteTemplate.Models;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Processing
 {
@@ -29,12 +28,16 @@ namespace WebsiteTemplate.Backend.Processing
                 data = json.GetValue("data");
             }
 
-            if (!EventList.ContainsKey(eventId))
+            var eventItem = Container.Resolve<EventService>().GetEventItem(eventId) as ShowView;
+            if (eventItem == null)
             {
                 throw new Exception("No action has been found for event number: " + eventId);
             }
 
-            var eventItem = EventList[eventId] as ShowView;
+            //var eventItem = EventList[eventId] as ShowView;
+            //var eventItemType = EventList[eventId];
+            //var eventItem = Container.Resolve(eventItemType) as ShowView;
+            //var eventItem = Container.Resolve<EventService>().GetEventItem(eventId) as ShowView;
 
             var dataForMenu = new Dictionary<string, string>();
             if (!String.IsNullOrWhiteSpace(data))

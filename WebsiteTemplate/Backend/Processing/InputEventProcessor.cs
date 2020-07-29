@@ -8,6 +8,7 @@ using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Utilities;
+using WebsiteTemplate.Backend.Services;
 
 namespace WebsiteTemplate.Backend.Processing
 {
@@ -28,7 +29,9 @@ namespace WebsiteTemplate.Backend.Processing
             var actionId = json.GetValue<int>("ActionId");
 
             var id = eventId;
-            var eventItem = EventList[id] as GetInput;
+            var eventItem = Container.Resolve<EventService>().GetEventItem(eventId) as GetInput;
+            //var eventItemType = EventList[id];
+            //var eventItem = Container.Resolve(eventItemType) as GetInput;
 
             var inputButtons = eventItem.InputButtons;
             if (inputButtons.Where(i => i.ActionNumber == actionId).Count() == 0)
