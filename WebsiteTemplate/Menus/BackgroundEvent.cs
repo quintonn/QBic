@@ -2,6 +2,8 @@
 using System;
 using WebsiteTemplate.Backend.Services.Background;
 using WebsiteTemplate.Menus.BaseItems;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace WebsiteTemplate.Menus
 {
@@ -41,7 +43,7 @@ namespace WebsiteTemplate.Menus
             }
         }
 
-        public abstract void DoWork();
+        public abstract Task DoWork(CancellationToken token);
 
         /// <summary>
         /// Set this to true if the next run time should only be determined after successfully running doing the work.

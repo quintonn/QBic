@@ -2,6 +2,8 @@
 using System;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace WebsiteTemplate.Test.MenuItems
 {
@@ -27,9 +29,14 @@ namespace WebsiteTemplate.Test.MenuItems
             return DateTime.Now.AddDays(10);
         }
 
-        public override void DoWork()
+        public override async Task DoWork(CancellationToken token)
         {
-            Console.WriteLine("whooo");
+            Console.WriteLine("X");
+            await Task.Run(async () =>
+            {
+                Thread.Sleep(5000);
+                Console.WriteLine("whooo");
+            });
         }
 
         public override EventNumber GetId()

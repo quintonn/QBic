@@ -16,7 +16,8 @@ namespace WebsiteTemplate.Backend.Services.Background
     {
         internal static ManualResetEvent MainEvent { get; set; }
         private static ConcurrentQueue<BackgroundJob> BackgroundWorkerQueue { get; set; }
-        private static CancellationTokenSource CancelToken { get; set; }
+        private static CancellationTokenSource CancelToken = new CancellationTokenSource();
+        public static CancellationToken Token => CancelToken.Token;
 
         //protected static readonly ILog Logger = SystemLogger.GetLogger<BackgroundManager>();
 
@@ -29,7 +30,6 @@ namespace WebsiteTemplate.Backend.Services.Background
         {
             MainEvent = new ManualResetEvent(false);
             BackgroundWorkerQueue = new ConcurrentQueue<BackgroundJob>();
-            CancelToken = new CancellationTokenSource();
 
             Tasks = new List<Task>();
         }

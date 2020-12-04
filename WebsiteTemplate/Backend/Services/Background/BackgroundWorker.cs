@@ -1,5 +1,4 @@
 ﻿using QBic.Core.Utilities;
-using log4net;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,17 +17,18 @@ namespace WebsiteTemplate.Backend.Services.Background
             BackgroundService = backgroundService;
         }
 
-        public CancellationToken CancelToken { get; set; }
+        //public CancellationToken CancelToken { get; set; }
 
         public Task CreateNew(CancellationToken token)
         {
-            CancelToken = token;
-            var task = Task.Factory.StartNew(Run, token);
+            //CancelToken = token;
+            //var task = Task.Factory.StartNew(Run, token);
+            var task = Task.Run(async () => await Run(token), token);
 
             return task;
         }
 
-        void Run()
+        async Task Run(CancellationToken token)
         {
             //Logger.Info("Running background worker " + Thread.CurrentThread.ManagedThreadId);
             while (true)
@@ -37,10 +37,10 @@ namespace WebsiteTemplate.Backend.Services.Background
                 BackgroundManager.MainEvent.WaitOne();
                 //Logger.Info("WaitOne passed in" + Thread.CurrentThread.ManagedThreadId);
 
-                if (CancelToken.IsCancellationRequested)
+                if (token.IsCancellationRequested)
                 {
                     //Logger.Info("Cancellation token received for " + Thread.CurrentThread.ManagedThreadId);
-                    CancelToken.ThrowIfCancellationRequested(); // sets task status to cancel
+                    token.ThrowIfCancellationRequested(); // sets task status to cancel
                     break; // or sets task as RanToCompletion (i like this option).
                 }
 
@@ -61,7 +61,7 @@ namespace WebsiteTemplate.Backend.Services.Background
                     if (backgroundJob != null)
                     {
                         //Logger.Info("Doing work in " + Thread.CurrentThread.ManagedThreadId + " for " + backgroundJob.Event.Description);
-                        DoWork(backgroundJob);
+                        await DoWork(backgroundJob, token);
                         backgroundJob = BackgroundManager.Dequeue();
                     }
                     else
@@ -72,7 +72,7 @@ namespace WebsiteTemplate.Backend.Services.Background
             }
         }
 
-        public void DoWork(BackgroundJob job)
+        public async Task DoWork(BackgroundJob job, CancellationToken token)
         {
             var result = new BackgroundJobResult()
             {
@@ -82,7 +82,7 @@ namespace WebsiteTemplate.Backend.Services.Background
 
             try
             {
-                job.Event.DoWork();
+                await job.Event.DoWork(token);
                 result.Status = "Success";
 
                 BackgroundService.AddBackgroundInformation(job.Event.Description, String.Format("Ran background process {0} : {1} -> {2}", job.Event.Description, result.Status, result.ExecutionInformation));

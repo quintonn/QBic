@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
+using System.Threading.Tasks;
 
 namespace WebsiteTemplate.Backend.Services.Background
 {
@@ -20,10 +21,11 @@ namespace WebsiteTemplate.Backend.Services.Background
         public static bool Started { get; set; }
 
         protected static readonly ILog Logger = SystemLogger.GetLogger<BackgroundService>();
+        private CancellationToken CancelToken { get; set; }
 
         static BackgroundService()
         {
-            BackgroundThreads = new List<Thread>();
+            BackgroundThreads = new List<Task>();
             Started = false;
         }
 
@@ -32,6 +34,7 @@ namespace WebsiteTemplate.Backend.Services.Background
             DataService = dataService;
             UserContext = userContext;
             BackgroundManager = manager;
+            CancelToken = BackgroundManager.Token;
 
             if (Started == false)
             {
@@ -46,7 +49,7 @@ namespace WebsiteTemplate.Backend.Services.Background
             Started = true;
         }
 
-        private static List<Thread> BackgroundThreads { get; set; }
+        private static List<Task> BackgroundThreads { get; set; }
         private static List<BackgroundJob> BackgroundJobs { get; set; }
         private static User SystemUser { get; set; }
         internal void SaveBackgroundJobResult(BackgroundJobResult jobResult)
@@ -105,7 +108,7 @@ namespace WebsiteTemplate.Backend.Services.Background
         /// Whereas the second will schedule the job as soon as it is done sleeping.
         /// </summary>
         /// <param name="jobObject"></param>
-        private void RunBackgroundEventLoop(object jobObject)
+        private async Task RunBackgroundEventLoop(object jobObject)
         {
             //AddBackgroundInformation("Background jobs", "Background work 1");
             var job = (BackgroundJob)jobObject;
@@ -150,7 +153,7 @@ namespace WebsiteTemplate.Backend.Services.Background
 
                 if (job.Event.RunSynchronously == true)
                 {
-                    worker.DoWork(job);
+                    await worker.DoWork(job, CancelToken);
                 }
                 else
                 {
@@ -176,9 +179,10 @@ namespace WebsiteTemplate.Backend.Services.Background
             //AddBackgroundInformation("Background jobs", "Starting background jobs 2");
             foreach (var backgroundJob in BackgroundJobs)
             {
-                var thread = new Thread(new ParameterizedThreadStart(RunBackgroundEventLoop));
-                BackgroundThreads.Add(thread);
-                thread.Start(backgroundJob);
+                //var thread = new Thread(new ParameterizedThreadStart(RunBackgroundEventLoop));
+                var task = Task.Run(async () => RunBackgroundEventLoop(backgroundJob));
+                BackgroundThreads.Add(task);
+                //thread.Start(backgroundJob);
             }
             BackgroundManager.StartWorkers(); // starts background timers that process jobs in the queue
             AddBackgroundInformation("Background jobs", "Background jobs started");
@@ -244,17 +248,22 @@ namespace WebsiteTemplate.Backend.Services.Background
             try
             {
                 Started = false;
-                BackgroundManager.StopWorkers();
-                if (BackgroundThreads != null)
-                {
-                    foreach (var t in BackgroundThreads)
-                    {
-                        if (t.IsAlive)
-                        {
-                            t.Abort();
-                        }
-                    }
-                }
+                BackgroundManager.StopWorkers(); // this call cancellation token . cancel
+                
+                //if (BackgroundThreads != null)
+                //{
+                //    foreach (var t in BackgroundThreads)
+                //    {
+                //        //if (t.IsAlive)
+                //        //{
+                //        //    t.Abort();
+                //        //}
+                //        if (t != null)
+                //        {
+                //            t.c
+                //        }
+                //    }
+                //}
             }
             catch (Exception e)
             {
