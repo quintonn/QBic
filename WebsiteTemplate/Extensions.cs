@@ -130,12 +130,10 @@ namespace WebsiteTemplate
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // Authentication needs a default scheme
             }).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
-                Console.WriteLine("Call app.UseQBic(IServiceProvider); from your Startup Configure(IApplicationBuilder app, IServiceProvider serviceProvider) method.");
-
-                SystemLogger.GetLogger(typeof(Extensions)).Error("Call app.UseQBic(IServiceProvider); from your Startup Configure(IApplicationBuilder app, IServiceProvider serviceProvider) method.");
-
                 if (ConfigureCalled == false)
                 {
+                    Console.WriteLine("Call app.UseQBic(IServiceProvider); from your Startup Configure(IApplicationBuilder app, IServiceProvider serviceProvider) method.");
+                    SystemLogger.GetLogger(typeof(Extensions)).Error("Call app.UseQBic(IServiceProvider); from your Startup Configure(IApplicationBuilder app, IServiceProvider serviceProvider) method.");
                     throw new Exception("Call app.UseQBic(IServiceProvider); from your Startup Configure(IApplicationBuilder app, IServiceProvider serviceProvider) method.");
                 }
 
@@ -186,7 +184,7 @@ namespace WebsiteTemplate
             var appSettings = app.ApplicationServices.GetService<ApplicationSettingsCore>();
 
             //app.ApplicationServices.GetService<SystemLogger>().Setup(appSettings.LogLevel);
-            new SystemLogger().Setup(appSettings.LogLevel);
+            //new SystemLogger().Setup(appSettings.LogLevel);
 
             app.UseHttpsRedirection();
             //app.UsePathBase("/test");  // will add /test to all my routes, regardless of their paths

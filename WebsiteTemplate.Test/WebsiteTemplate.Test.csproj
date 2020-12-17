@@ -3,65 +3,16 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UserSecretsId>30c0ab0f-3097-45eb-8684-8c3a2ccfd075</UserSecretsId>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <!-- This is needed to have the website run with ISS -->
+    <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\Default.html" />
-    <Content Remove="wwwroot\Frontend\css\busyIndicator.css" />
-    <Content Remove="wwwroot\Frontend\css\font-awesome.min.css" />
-    <Content Remove="wwwroot\Frontend\css\images\ui-icons_444444_256x240.png" />
-    <Content Remove="wwwroot\Frontend\css\images\ui-icons_555555_256x240.png" />
-    <Content Remove="wwwroot\Frontend\css\images\ui-icons_777620_256x240.png" />
-    <Content Remove="wwwroot\Frontend\css\images\ui-icons_777777_256x240.png" />
-    <Content Remove="wwwroot\Frontend\css\images\ui-icons_cc0000_256x240.png" />
-    <Content Remove="wwwroot\Frontend\css\images\ui-icons_ffffff_256x240.png" />
-    <Content Remove="wwwroot\Frontend\css\inputDialog.css" />
-    <Content Remove="wwwroot\Frontend\css\inputView.css" />
-    <Content Remove="wwwroot\Frontend\css\jquery-ui.min.css" />
-    <Content Remove="wwwroot\Frontend\css\login.css" />
-    <Content Remove="wwwroot\Frontend\css\main.css" />
-    <Content Remove="wwwroot\Frontend\css\menu.css" />
-    <Content Remove="wwwroot\Frontend\css\normalize.css" />
-    <Content Remove="wwwroot\Frontend\css\siteOverrides.css" />
-    <Content Remove="wwwroot\Frontend\css\siteSpecific.css" />
-    <Content Remove="wwwroot\Frontend\css\spinner1.css" />
-    <Content Remove="wwwroot\Frontend\css\views.css" />
-    <Content Remove="wwwroot\Frontend\css\w3.css" />
-    <Content Remove="wwwroot\Frontend\fonts\fontawesome-webfont.eot" />
-    <Content Remove="wwwroot\Frontend\fonts\fontawesome-webfont.svg" />
-    <Content Remove="wwwroot\Frontend\fonts\fontawesome-webfont.ttf" />
-    <Content Remove="wwwroot\Frontend\fonts\fontawesome-webfont.woff" />
-    <Content Remove="wwwroot\Frontend\fonts\fontawesome-webfont.woff2" />
-    <Content Remove="wwwroot\Frontend\Pages\confirmation.html" />
-    <Content Remove="wwwroot\Frontend\Pages\DetailsView.html" />
-    <Content Remove="wwwroot\Frontend\Pages\dialog.html" />
-    <Content Remove="wwwroot\Frontend\Pages\Home.html" />
-    <Content Remove="wwwroot\Frontend\Pages\InputDialog.html" />
-    <Content Remove="wwwroot\Frontend\Pages\ListView.html" />
-    <Content Remove="wwwroot\Frontend\Pages\Login.html" />
-    <Content Remove="wwwroot\Frontend\Pages\Menu.html" />
-    <Content Remove="wwwroot\Frontend\Pages\MessageDialog.html" />
-    <Content Remove="wwwroot\Frontend\Pages\PasswordResetRequest.html" />
-    <Content Remove="wwwroot\Frontend\Pages\Views.html" />
-    <Content Remove="wwwroot\Frontend\Scripts\applicationModel.js" />
-    <Content Remove="wwwroot\Frontend\Scripts\auth.js" />
-    <Content Remove="wwwroot\Frontend\Scripts\base64.js" />
-    <Content Remove="wwwroot\Frontend\Scripts\date.js" />
-    <Content Remove="wwwroot\Frontend\Scripts\dialog.js" />
-    <Content Remove="wwwroot\Frontend\Scripts\inputDialog.js" />
-    <Content Remove="wwwroot\Frontend\Scripts\jquery-3.1.0.min.js" />
-    <Content Remove="wwwroot\Frontend\Scripts\jquery-ui.min.js" />
-    <Content Remove="wwwroot\Frontend\Scripts\knockout-3.4.0.js" />
-    <Content Remove="wwwroot\Frontend\Scripts\knockout-jqueryui.min.js" />
-    <Content Remove="wwwroot\Frontend\Scripts\mainApplication.js" />
-    <Content Remove="wwwroot\Frontend\Scripts\menus.js" />
-    <Content Remove="wwwroot\Frontend\Scripts\modernizr.js" />
-    <Content Remove="wwwroot\Frontend\Scripts\processing.js" />
-    <Content Remove="wwwroot\Frontend\Scripts\promise-7.0.4.min.js" />
-    <Content Remove="wwwroot\Frontend\Scripts\promise-done-7.0.4.min.js" />
-    <Content Remove="wwwroot\Frontend\Scripts\views.js" />
-    <Content Remove="wwwroot\Frontend\Scripts\_references.js" />
-    <Content Remove="wwwroot\Index.html" />
+    <None Include="wwwroot\*" />
   </ItemGroup>
 
   <ItemGroup>
