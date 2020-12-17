@@ -1,4 +1,4 @@
-﻿using Unity;
+﻿using System;
 using WebsiteTemplate.Backend.Services;
 
 namespace WebsiteTemplate.Utilities
@@ -12,7 +12,7 @@ namespace WebsiteTemplate.Utilities
             DataService = dataService;
         }
 
-        public abstract void RegisterUnityContainers(IUnityContainer container);
+        public abstract void RegisterUnityContainers(IServiceProvider container);
 
         public abstract void SetupDefaults();
 

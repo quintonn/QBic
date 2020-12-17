@@ -1,17 +1,15 @@
-﻿using Unity;
-using NHibernate;
+﻿using NHibernate;
 using NHibernate.Criterion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Processing
 {
     public class UserMenuProcessor : CoreProcessor<IList<Menu>>
     {
-        public UserMenuProcessor(IUnityContainer container)
+        public UserMenuProcessor(IServiceProvider container)
             : base(container)
         {
 

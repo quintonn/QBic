@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using Qactus.Authorization.Core;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
-using WebsiteTemplate.SiteSpecific.DefaultsForTest;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.PasswordReset
@@ -14,11 +15,11 @@ namespace WebsiteTemplate.Backend.PasswordReset
     {
         private UserService UserService { get; set; }
         private ApplicationSettingsCore AppSettings { get; set; }
-        private DefaultUserManager UserManager { get; set; }
+        private UserManager<IUser> UserManager { get; set; }
         private string UserId { get; set; }
         private string PasswordToken { get; set; }
 
-        public ResetPassword(UserService userService, ApplicationSettingsCore appSettings, DefaultUserManager userManager)
+        public ResetPassword(UserService userService, ApplicationSettingsCore appSettings, UserManager<IUser> userManager)
         {
             UserService = userService;
             AppSettings = appSettings;
@@ -120,8 +121,9 @@ namespace WebsiteTemplate.Backend.PasswordReset
                         new ShowMessage("Unable to reset password. The password reset link is no longer valid")
                     };
                 }*/
+                
 
-                var idResult = await UserManager.ResetPasswordAsync(userId, passwordToken, newPassword);
+                var idResult = await UserManager.ResetPasswordAsync(await UserManager.FindByIdAsync(userId), passwordToken, newPassword);
                 if (idResult.Succeeded == false)
                 {
                     var errorMessage = "Unable to reset password:\n" + String.Join("\n", idResult.Errors);

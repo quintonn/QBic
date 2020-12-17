@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Qactus.Authorization.Core;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
-using System.Web;
+using System.Threading.Tasks;
 
 namespace QBic.Core.Utilities
 {
@@ -13,6 +16,18 @@ namespace QBic.Core.Utilities
     /// </summary>
     public static class QBicUtils
     {
+        public static async Task<IUser> GetLoggedInUserAsync(UserManager<IUser> userContext, IHttpContextAccessor httpContextAccessor)
+        {
+            var userName = httpContextAccessor.HttpContext.User?.Identity?.Name;
+            if (!String.IsNullOrWhiteSpace(userName))
+            {
+                var user = await userContext.FindByNameAsync(userName);
+                return user;
+            }
+            return null;
+
+        }
+
         public static byte[] GetBytes(string str)
         {
             return Encoding.UTF8.GetBytes(str);
@@ -35,11 +50,16 @@ namespace QBic.Core.Utilities
             }
         }
 
-        public static string GetCurrentDirectory()
+        public static string GetCurrentDirectory()//IHostingEnvironment env)
         {
             try
             {
-                return HttpRuntime.AppDomainAppPath;
+                //return HttpRuntime.AppDomainAppPath;
+                //string contentRootPath = _env.ContentRootPath;
+                //string webRootPath = _env.WebRootPath;
+
+                //return contentRootPath + "\n" + webRootPath;
+                return Directory.GetCurrentDirectory();
             }
             catch (ArgumentNullException)
             {

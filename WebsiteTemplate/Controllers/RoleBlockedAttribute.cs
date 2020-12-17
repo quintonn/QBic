@@ -1,11 +1,10 @@
-﻿using System.Web.Http.Controllers;
-using System.Web.Http.Filters;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace WebsiteTemplate.Controllers
 {
-    public class RoleBlockedAttribute : AuthorizationFilterAttribute
+    public class RoleBlockedAttribute : IAuthorizationFilter
     {
-        public override void OnAuthorization(HttpActionContext actionContext)
+        public void OnAuthorization(AuthorizationFilterContext actionContext)
         {
             /// 
             /*var user = Methods.GetLoggedInUser(actionContext.RequestContext);

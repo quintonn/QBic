@@ -1,4 +1,4 @@
-﻿using Unity;
+﻿using System;
 using System.Threading.Tasks;
 using WebsiteTemplate.Utilities;
 
@@ -6,7 +6,7 @@ namespace WebsiteTemplate.Backend.Processing
 {
     public class PingProcessor : EventProcessor<PingResult>
     {
-        public PingProcessor(IUnityContainer container)
+        public PingProcessor(IServiceProvider container)
             : base(container)
         {
 
@@ -14,7 +14,7 @@ namespace WebsiteTemplate.Backend.Processing
 
         public override async Task<PingResult> ProcessEvent(int eventId)
         {
-            var data = GetRequestData();
+            var data = await GetRequestData();
             var json = JsonHelper.Parse(data);
 
             return new PingResult("good job");

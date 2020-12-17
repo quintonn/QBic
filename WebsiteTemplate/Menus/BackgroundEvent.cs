@@ -1,21 +1,21 @@
-﻿using Unity;
-using System;
-using WebsiteTemplate.Backend.Services.Background;
-using WebsiteTemplate.Menus.BaseItems;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using WebsiteTemplate.Backend.Services.Background;
+using WebsiteTemplate.Menus.BaseItems;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WebsiteTemplate.Menus
 {
     public abstract class BackgroundEvent : Event
     {
-        private IUnityContainer Container { get; set; }
+        private IServiceProvider Container { get; set; }
 
         //TODO: I don't like having to pass container around.
         //      But I can't pass BackgroundService because background service's constructor calls UserManager, which is not yet defined 
         //      when background events are obtained.
         //      A fix could be to ignore background event types when loading events.
-        public BackgroundEvent(IUnityContainer container)
+        public BackgroundEvent(IServiceProvider container)
         {
             Container = container;
         }
@@ -63,13 +63,13 @@ namespace WebsiteTemplate.Menus
 
         public void AddBackgroundInfo(string info)
         {
-            var backgroundService = Container.Resolve<BackgroundService>();
+            var backgroundService = Container.GetService<BackgroundService>();
             backgroundService.AddBackgroundInformation(this.Description, info);
         }
 
         public void AddBackgroundError(string error)
         {
-            var backgroundService = Container.Resolve<BackgroundService>();
+            var backgroundService = Container.GetService<BackgroundService>();
             backgroundService.AddBackgroundError(Description, new Exception(error));
         }
     }

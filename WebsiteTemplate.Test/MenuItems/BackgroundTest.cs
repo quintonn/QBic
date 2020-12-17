@@ -9,7 +9,7 @@ namespace WebsiteTemplate.Test.MenuItems
 {
     public class BackgroundTest : BackgroundEvent
     {
-        public BackgroundTest(IUnityContainer container)
+        public BackgroundTest(IServiceProvider container)
             : base(container)
         {
 

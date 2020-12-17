@@ -8,7 +8,10 @@ using System;
 using System.Configuration;
 using System.Data;
 using System.Data.Common;
-using System.Data.SQLite;
+
+using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace QBic.Core.Data
 {
@@ -27,6 +30,8 @@ namespace QBic.Core.Data
         public static bool SetCustomSqlTypes { get; set; }
 
         private static bool UpdateDatabase { get; set; }
+
+        private static IConfiguration Config { get; set; }
         
         private DataStore(bool updateDatabase)
         {
@@ -34,11 +39,19 @@ namespace QBic.Core.Data
             init();
         }
 
-        public static DataStore GetInstance(bool updateDatabase)
+        public static DataStore GetInstance(bool updateDatabase, IConfiguration config, IServiceCollection serviceProvider = null)
         {
             if (_instance == null)
             {
+                Config = config;
                 _instance = new DataStore(updateDatabase);
+                if (serviceProvider != null)
+                {
+                    serviceProvider.AddTransient<ISessionFactory>((x) =>
+                    {
+                        return Store;
+                    });
+                }
             }
             return _instance;
         }
@@ -68,7 +81,9 @@ namespace QBic.Core.Data
         {
             var container = new FluentMappingsContainer();
 
-            var mainConnectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
+
+            var mainConnectionString = Config.GetConnectionString("MainDataStore");
+            //var mainConnectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
             //mainConnectionString = Encryption.Encrypt(mainConnectionString, AppSettings.ApplicationPassPhrase);
 
             //mainConnectionString = Encryption.Decrypt(mainConnectionString, AppSettings.ApplicationPassPhrase);
@@ -94,7 +109,7 @@ namespace QBic.Core.Data
 
         private ISessionFactory CreateAuditSessionFactory()
         {
-            var connectionString = ConfigurationManager.ConnectionStrings["AuditDataStore"]?.ConnectionString;
+            var connectionString = Config.GetConnectionString("AuditDataStore");// ConfigurationManager.ConnectionStrings["AuditDataStore"]?.ConnectionString;
 
             if (String.IsNullOrWhiteSpace(connectionString))
             {
@@ -210,7 +225,7 @@ namespace QBic.Core.Data
             if (connectionString.Contains("##CurrentDirectory##") || connectionString.Contains(":memory:"))
             {
                 connectionString = connectionString.Replace("##CurrentDirectory##", QBicUtils.GetCurrentDirectory());
-                return new SQLiteConnection(connectionString);
+                return new SqliteConnection(connectionString);
             }
             else if (ConfigurationManager.ConnectionStrings["MainDataStore"]?.ProviderName.Contains("MySql") == true)
             {
@@ -219,7 +234,7 @@ namespace QBic.Core.Data
             }
             else
             {
-                return new System.Data.SqlClient.SqlConnection(connectionString);
+                return new SqliteConnection(connectionString);
             }
         }
     }

@@ -1,5 +1,5 @@
-﻿using Ionic.Zlib;
-using System.IO;
+﻿using System.IO;
+using System.IO.Compression;
 
 namespace WebsiteTemplate.Controllers
 {
@@ -11,7 +11,7 @@ namespace WebsiteTemplate.Controllers
         /// <param name="data"></param>
         /// <param name="compressionLevel"></param>
         /// <returns></returns>
-        public static byte[] DeflateByte(byte[] data, CompressionLevel compressionLevel = CompressionLevel.BestSpeed)
+        public static byte[] DeflateByte(byte[] data, CompressionLevel compressionLevel = CompressionLevel.Fastest)
         {
             if (data == null)
             {
@@ -20,7 +20,7 @@ namespace WebsiteTemplate.Controllers
 
             using (var output = new MemoryStream())
             {
-                using (var compressor = new DeflateStream(output, CompressionMode.Compress, compressionLevel))
+                using (var compressor = new DeflateStream(output, CompressionMode.Compress))//, compressionLevel))
                 {
                     compressor.Write(data, 0, data.Length);
                 }
@@ -29,7 +29,7 @@ namespace WebsiteTemplate.Controllers
             }
         }
 
-        public static byte[] InflateByte(byte[] data, CompressionLevel compressionLevel = CompressionLevel.BestSpeed)
+        public static byte[] InflateByte(byte[] data, CompressionLevel compressionLevel = CompressionLevel.Fastest)
         {
             if (data == null)
             {
@@ -38,7 +38,7 @@ namespace WebsiteTemplate.Controllers
 
             using (var output = new MemoryStream())
             {
-                using (var compressor = new DeflateStream(output, CompressionMode.Decompress, compressionLevel))
+                using (var compressor = new DeflateStream(output, CompressionMode.Decompress))//, compressionLevel))
                 {
                     compressor.Write(data, 0, data.Length);
                 }

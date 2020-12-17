@@ -1,4 +1,4 @@
-﻿using Unity;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Menus.BaseItems;
@@ -7,7 +7,7 @@ namespace WebsiteTemplate.Backend.Processing
 {
     public class InitializationProcessor : CoreProcessor<IList<IEvent>>
     {
-        public InitializationProcessor(IUnityContainer container)
+        public InitializationProcessor(IServiceProvider container)
             :base(container)
         {
 

@@ -3,7 +3,6 @@ using DocumentGenerator.Styles;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.Rendering;
-using MigraDoc.RtfRendering;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -123,18 +122,18 @@ namespace DocumentGenerator.DocumentTypes
         {
             switch (DocumentSettings.DocumentType)
             {
-                case DocumentType.Rtf:
-                    var renderer = new RtfDocumentRenderer();
-                    var documentString = renderer.RenderToString(Document, null);
-                    using (var stream = new MemoryStream())
-                    using (var writer = new StreamWriter(stream))
-                    {
-                        writer.Write(documentString);
-                        writer.Flush();
-                        //stream.Position = 0;
-                        stream.Seek(0, SeekOrigin.Begin);
-                        return stream;
-                    }
+                //case DocumentType.Rtf:
+                //    var renderer = new RtfDocumentRenderer();
+                //    var documentString = renderer.RenderToString(Document, null);
+                //    using (var stream = new MemoryStream())
+                //    using (var writer = new StreamWriter(stream))
+                //    {
+                //        writer.Write(documentString);
+                //        writer.Flush();
+                //        //stream.Position = 0;
+                //        stream.Seek(0, SeekOrigin.Begin);
+                //        return stream;
+                //    }
                 case DocumentType.Pdf:
                     var pdfRenderer = new PdfDocumentRenderer(true);
                     pdfRenderer.Document = Document;

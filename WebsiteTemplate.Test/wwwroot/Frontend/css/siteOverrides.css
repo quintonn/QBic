@@ -1,0 +1,9 @@
+﻿.w3-app-color, .w3-hover-app-color {
+    color: #fff !important;
+    background-color: #2196F3 !important;
+}
+
+.w3-hover-app-color {
+    -webkit-transition: background-color .3s,color .15s,box-shadow .3s,opacity 0.3s;
+    transition: background-color .3s,color .15s,box-shadow .3s,opacity 0.3s;
+}

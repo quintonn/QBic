@@ -1,6 +1,8 @@
-﻿using BasicAuthentication.Users;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Qactus.Authorization.Core;
+using QBic.Core.Utilities;
 using System.Threading.Tasks;
-using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
@@ -9,12 +11,13 @@ namespace WebsiteTemplate.Backend.Services
     public class ApplicationService
     {
         private static ApplicationSettingsCore ApplicationSettings { get; set; }
-        private UserContext UserContext { get; set; }
-
-        public ApplicationService(ApplicationSettingsCore applicationSettings, UserContext userContext)
+        private UserManager<IUser> UserContext { get; set; }
+        private IHttpContextAccessor HttpContextAccessor { get; set; }
+        public ApplicationService(ApplicationSettingsCore applicationSettings, UserManager<IUser> userContext, IHttpContextAccessor httpContextAccessor)
         {
             ApplicationSettings = applicationSettings;
             UserContext = userContext;
+            HttpContextAccessor = httpContextAccessor;
         }
 
         
@@ -36,7 +39,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public async Task<object> InitializeSession()
         {
-            var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync(UserContext) as User;
+            var user = await QBicUtils.GetLoggedInUserAsync(UserContext, HttpContextAccessor) as User;
             if (user == null)
             {
                 return new

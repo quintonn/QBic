@@ -1,22 +1,39 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
+using System;
 using System.Linq;
-using System.Web.Http;
 using WebsiteTemplate.Backend.Services;
-using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Controllers
 {
-    public class ConditionalAuthorizeAttribute : AuthorizeAttribute
+    //TODO: This is not working correctly anymore. It just authorizes everything
+    public class ConditionalAuthorizeAttribute : AuthorizeAttribute, IAuthorizationFilter
     {
-        public override void OnAuthorization(System.Web.Http.Controllers.HttpActionContext actionContext)
+        //public void OnAuthorization(System.Web.Http.Controllers.HttpActionContext actionContext)
+        //{
+        //    var eventIdString = actionContext.Request.RequestUri.Segments.Last();
+        //    var eventId = Convert.ToInt32(eventIdString);
+
+        //    var iEvent = EventService.EventMenuList[eventId];
+        //    if (iEvent.RequiresAuthorization)
+        //    {
+        //        base.OnAuthorization(actionContext);
+        //    }
+        //    //else
+        //    //{
+        //    //    //XXXUtils.SetCurrentUser("System");
+        //    //}
+        //}
+        public void OnAuthorization(AuthorizationFilterContext context)
         {
-            var eventIdString = actionContext.Request.RequestUri.Segments.Last();
+            var eventIdString = context.HttpContext.Request.Path.Value.Split("/").Last();
             var eventId = Convert.ToInt32(eventIdString);
 
             var iEvent = EventService.EventMenuList[eventId];
             if (iEvent.RequiresAuthorization)
             {
-                base.OnAuthorization(actionContext);
+                Console.WriteLine("X");
+                //base.OnAuthorization(actionContext);
             }
             //else
             //{

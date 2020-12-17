@@ -1,24 +1,26 @@
-﻿using DocumentGenerator.DocumentTypes;
-using DocumentGenerator.Settings;
-using DocumentGenerator.Styles;
-using Unity;
+﻿using Microsoft.AspNetCore.Identity;
 using MigraDoc.DocumentObjectModel;
+using Qactus.Authorization.Core;
+using QBic.Core.Utilities;
 using System;
-using System.Globalization;
 using System.Threading.Tasks;
-using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
+using Microsoft.Extensions.DependencyInjection;
+using DocumentGenerator.DocumentTypes;
+using DocumentGenerator.Styles;
+using DocumentGenerator.Settings;
+using Microsoft.AspNetCore.Http;
 
 namespace WebsiteTemplate.Test.MenuItems
 {
     public class TestPdf : OpenFile
     {
-        private IUnityContainer Container { get; set; }
+        private IServiceProvider Container { get; set; }
 
-        public TestPdf(IUnityContainer container)
+        public TestPdf(IServiceProvider container)
         {
             Container = container;
         }
@@ -48,7 +50,7 @@ namespace WebsiteTemplate.Test.MenuItems
         {
             var result = new FileInfo();
 
-            var document = new BasicTableLayoutDocument(Container.Resolve<StyleSetup>(), new DocumentSettings(DocumentType.Pdf, Orientation.Landscape));
+            var document = new BasicTableLayoutDocument(Container.GetService<StyleSetup>(), new DocumentSettings(DocumentType.Pdf, Orientation.Landscape));
 
             document.SetDocumentTitle("This is a test PDF document");
 
@@ -62,9 +64,8 @@ namespace WebsiteTemplate.Test.MenuItems
                 document.AddRowUsingParams("Jack", "Black");
             }
 
-            var userTask = BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync(Container.Resolve<UserContext>());
-            userTask.Wait();
-            var user = userTask.Result as User;
+            var user = await QBicUtils.GetLoggedInUserAsync(Container.GetService<UserManager<IUser>>(), Container.GetService<IHttpContextAccessor>());
+            
             var formats = DateTime.Now.GetDateTimeFormats();
             
             var footer = "Printed by " + user.UserName + " on " + System.DateTime.Now.ToString("yyyy-MM-dd");

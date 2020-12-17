@@ -1,11 +1,12 @@
-﻿using Newtonsoft.Json;
-using NHibernate;
+﻿using NHibernate;
 using NHibernate.Engine;
 using NHibernate.SqlTypes;
 using NHibernate.UserTypes;
 using System;
 using System.Data;
 using System.Data.Common;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace QBic.Core.Data.BaseTypes
 {
@@ -184,22 +185,22 @@ namespace QBic.Core.Data.BaseTypes
         #endregion
     }
 
-    public class LongStringConverter : JsonConverter
+    public class LongStringConverter : JsonConverter<LongString>
     {
         public override bool CanConvert(Type objectType)
         {
             return true;
         }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override LongString Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            var value = reader.Value?.ToString();
+            var value = reader.Read().ToString();
             return new LongString(value);
         }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void Write(Utf8JsonWriter writer, LongString value, JsonSerializerOptions options)
         {
-            serializer.Serialize(writer, value.ToString());
+            //serializer.Serialize(writer, value.ToString());
+            writer.WriteStringValue(value?.ToString());
 
             return;
             /* To return an entire json object, use something like this */

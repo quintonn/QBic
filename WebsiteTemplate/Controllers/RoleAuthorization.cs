@@ -1,14 +1,16 @@
-﻿using QBic.Core.Data;
+﻿using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using NHibernate.Criterion;
+using QBic.Core.Data;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Web.Http.Filters;
+using System.Net;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Controllers
 {
-    public class RoleAuthorization : AuthorizationFilterAttribute
+    public class RoleAuthorization : IAuthorizationFilter
     {
         private List<string> Roles { get; set; }
 
@@ -17,21 +19,23 @@ namespace WebsiteTemplate.Controllers
             Roles = roles.ToList();
         }
 
-        public override void OnAuthorization(System.Web.Http.Controllers.HttpActionContext actionContext)
+        public void OnAuthorization(AuthorizationFilterContext actionContext)
         {
             if (Roles == null || Roles.Count == 0)
             {
-                actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden)
-                {
-                    ReasonPhrase = "No roles set for RoleAuthorozation"
-                };
+                //actionContext.Result = new  BadRequestObjectResult.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden)
+                //{
+                //    ReasonPhrase = "No roles set for RoleAuthorozation"
+                //};
+                actionContext.Result = new StatusCodeResult((int)HttpStatusCode.Forbidden);
+                actionContext.HttpContext.Response.HttpContext.Features.Get<IHttpResponseFeature>().ReasonPhrase = "No roles set for RoleAuthorozation";
                 return;
             }
 
-            var identity = actionContext.RequestContext.Principal.Identity as System.Security.Claims.ClaimsIdentity;
+            var identity = actionContext.HttpContext.User.Identity;//.RequestContext.Principal.Identity as System.Security.Claims.ClaimsIdentity;
 
             User user;
-            var store = DataStore.GetInstance(false);
+            var store = DataStore.GetInstance(false, null);
             using (var session = store.OpenSession())
             {
                 user = session.CreateCriteria<User>()
@@ -39,10 +43,12 @@ namespace WebsiteTemplate.Controllers
                               .UniqueResult<User>();
                 if (user == null)
                 {
-                    actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden)
-                    {
-                        ReasonPhrase = "Invalid user (unknown user)"
-                    };
+                    //actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden)
+                    //{
+                    //    ReasonPhrase = "Invalid user (unknown user)"
+                    //};
+                    actionContext.Result = new StatusCodeResult((int)HttpStatusCode.Forbidden);
+                    actionContext.HttpContext.Response.HttpContext.Features.Get<IHttpResponseFeature>().ReasonPhrase = "Invalid user (unknown user)";
                     return;
                 }
             }
@@ -55,7 +61,7 @@ namespace WebsiteTemplate.Controllers
             //    };
             //}
 
-            base.OnAuthorization(actionContext);
+            //base.OnAuthorization(actionContext);
         }
     }
 }

@@ -16,6 +16,7 @@ using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
+using System.IO.Compression;
 
 namespace WebsiteTemplate.Test.MenuItems
 {
@@ -67,11 +68,11 @@ namespace WebsiteTemplate.Test.MenuItems
             base64 = base64.Replace("data:;base64,", "").Replace("\0", "");
             bytes = Convert.FromBase64String(base64);
 
-            bytes = CompressionHelper.InflateByte(bytes, Ionic.Zlib.CompressionLevel.BestCompression);
+            bytes = CompressionHelper.InflateByte(bytes, CompressionLevel.Optimal);
 
             if (connectionString.Contains("##CurrentDirectory##"))
             {
-                var currentDirectory = HttpRuntime.AppDomainAppPath;
+                var currentDirectory = Environment.CurrentDirectory;// HttpRuntime.AppDomainAppPath;
                 var filePath = currentDirectory + "\\Data\\appData_test.db";
                 File.WriteAllBytes(filePath, bytes);
                 

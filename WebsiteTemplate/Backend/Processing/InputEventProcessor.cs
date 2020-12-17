@@ -1,20 +1,20 @@
-﻿using Unity;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebsiteTemplate.Backend.Services;
+using Microsoft.Extensions.DependencyInjection;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Utilities;
-using WebsiteTemplate.Backend.Services;
 
 namespace WebsiteTemplate.Backend.Processing
 {
     public class InputEventProcessor : EventProcessor<IList<IEvent>>
     {
-        public InputEventProcessor(IUnityContainer container)
+        public InputEventProcessor(IServiceProvider container)
             : base(container)
         {
 
@@ -22,14 +22,14 @@ namespace WebsiteTemplate.Backend.Processing
 
         public async override Task<IList<IEvent>> ProcessEvent(int eventId)
         {
-            var data = GetRequestData();
+            var data = await GetRequestData();
             var json = JsonHelper.Parse(data);
 
             var formData = json.GetValue("Data");
             var actionId = json.GetValue<int>("ActionId");
 
             var id = eventId;
-            var eventItem = Container.Resolve<EventService>().GetEventItem(eventId) as GetInput;
+            var eventItem = Container.GetService<EventService>().GetEventItem(eventId) as GetInput;
             //var eventItemType = EventList[id];
             //var eventItem = Container.Resolve(eventItemType) as GetInput;
 

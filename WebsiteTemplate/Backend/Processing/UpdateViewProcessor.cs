@@ -1,20 +1,17 @@
-﻿using Unity;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Web;
-using WebsiteTemplate.Menus.BaseItems;
 using System.Threading.Tasks;
-using WebsiteTemplate.Models;
-using WebsiteTemplate.Utilities;
-using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Menus.BaseItems;
+using WebsiteTemplate.Menus.ViewItems;
+using WebsiteTemplate.Utilities;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WebsiteTemplate.Backend.Processing
 {
     public class UpdateViewProcessor : CoreProcessor<Event>
     {
-        public UpdateViewProcessor(IUnityContainer container)
+        public UpdateViewProcessor(IServiceProvider container)
             : base(container)
         {
 
@@ -23,7 +20,7 @@ namespace WebsiteTemplate.Backend.Processing
         public async override Task<Event> ProcessEvent(int eventId)
         {
             var user = await GetLoggedInUser();
-            var originalData = GetRequestData();
+            var originalData = await GetRequestData();
 
             var json = JsonHelper.Parse(originalData);
             originalData = json.GetValue("Data");
@@ -53,7 +50,7 @@ namespace WebsiteTemplate.Backend.Processing
 
             var id = eventId;
 
-            var eventItem = Container.Resolve<EventService>().GetEventItem(eventId);
+            var eventItem = Container.GetService<EventService>().GetEventItem(eventId);
 
             //if (!EventList.ContainsKey(id))
             if (eventItem == null)

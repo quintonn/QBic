@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Unity;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
+using Microsoft.Extensions.DependencyInjection;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Utilities;
 
@@ -12,7 +12,7 @@ namespace WebsiteTemplate.Backend.Processing
 {
     public class ViewMenuProcessor : CoreProcessor<IList<MenuItem>>
     {
-        public ViewMenuProcessor(IUnityContainer container)
+        public ViewMenuProcessor(IServiceProvider container)
             : base(container)
         {
 
@@ -20,7 +20,7 @@ namespace WebsiteTemplate.Backend.Processing
 
         public async override Task<IList<MenuItem>> ProcessEvent(int eventId)
         {
-            var postData = GetRequestData();
+            var postData = await GetRequestData();
             var data = String.Empty;
             if (!String.IsNullOrWhiteSpace(postData))
             {
@@ -28,7 +28,7 @@ namespace WebsiteTemplate.Backend.Processing
                 data = json.GetValue("data");
             }
 
-            var eventItem = Container.Resolve<EventService>().GetEventItem(eventId) as ShowView;
+            var eventItem = Container.GetService<EventService>().GetEventItem(eventId) as ShowView;
             if (eventItem == null)
             {
                 throw new Exception("No action has been found for event number: " + eventId);
@@ -37,7 +37,7 @@ namespace WebsiteTemplate.Backend.Processing
             //var eventItem = EventList[eventId] as ShowView;
             //var eventItemType = EventList[eventId];
             //var eventItem = Container.Resolve(eventItemType) as ShowView;
-            //var eventItem = Container.Resolve<EventService>().GetEventItem(eventId) as ShowView;
+            //var eventItem = Container.GetService<EventService>().GetEventItem(eventId) as ShowView;
 
             var dataForMenu = new Dictionary<string, string>();
             if (!String.IsNullOrWhiteSpace(data))

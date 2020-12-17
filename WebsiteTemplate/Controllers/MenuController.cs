@@ -1,54 +1,54 @@
-﻿using BasicAuthentication.Security;
-using BasicAuthentication.Users;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Qactus.Authorization.Core;
 using System;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Web;
-using System.Web.Http;
 using WebsiteTemplate.Backend.Services;
-using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
-using WebsiteTemplate.SiteSpecific.DefaultsForTest;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Controllers
 {
-    [RoutePrefix("api/v1/menu")]
-    public class MenuController : ApiController
+    [Route("api/v1/menu")]
+    public class MenuController : ControllerBase
     {
         //private DataStore Store { get; set; }
         private DataService DataService { get; set; }
 
         private UserService UserService { get; set; }
-        private DefaultUserManager UserManager { get; set; }
+        private UserManager<IUser> UserManager { get; set; }
+        private IHttpContextAccessor HttpContextAccessor { get; set; }
 
-        public MenuController(DataService dataService, UserService userService, DefaultUserManager userManager)
+        public MenuController(DataService dataService, UserService userService, UserManager<IUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
             DataService = dataService;
             UserService = userService;
             UserManager = userManager;
+            HttpContextAccessor = httpContextAccessor;
         }
 
         private string GetCurrentUrl()
         {
-            var request = Request.GetRequestContext();
-            var uri = request.Url.Request.RequestUri;
-            var result = uri.Scheme + "://" + uri.Host + request.VirtualPathRoot;
+            //var request = Request.GetRequestContext();
+            var uri = Request.Path;// request.Url.Request.RequestUri;
+            var result = Request.Scheme + "://" + Request.Host + Request.PathBase;
             return result;
         }
 
         [AllowAnonymous]
         [HttpPost]
         [Route("RequestPasswordReset")]
-        [RequireHttps]
-        public async Task<IHttpActionResult> RequestPasswordReset()
+        [Microsoft.AspNetCore.Mvc.RequireHttps]
+        public async Task<IActionResult> RequestPasswordReset()
         {
             //XXXUtils.SetCurrentUser("System");
 
-            var data = GetRequestData();
+            var data = await GetRequestDataAsync();
             var json = JsonHelper.Parse(data);
             var usernameOrEmail = json.GetValue("usernameOrEmail");
 
@@ -56,7 +56,7 @@ namespace WebsiteTemplate.Controllers
             {
                 var result = await UserService.SendPasswordResetLink(usernameOrEmail);
 
-                return Json(result);
+                return new JsonResult(result);
             }
             catch (Exception error)
             {
@@ -67,18 +67,24 @@ namespace WebsiteTemplate.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("ConfirmEmail")]
-        [RequireHttps]
-        public async Task<IHttpActionResult> ConfirmEmail()
+        [Microsoft.AspNetCore.Mvc.RequireHttps]
+        public async Task<IActionResult> ConfirmEmail()
         {
             try
             {
                 // Set current user to 'System' user for auditing purposes. Because no user will be logged in at the moment.
                 //XXXUtils.SetCurrentUser("System");
 
-                var queryString = this.Request.GetQueryNameValuePairs();
+                var queryString = this.Request.Query;// .GetQueryNameValuePairs();
                 var userId = queryString.Single(q => q.Key == "userId").Value;
                 var emailToken = queryString.Single(q => q.Key == "token").Value;
-                var verifyToken = await UserManager.ConfirmEmailAsync(userId, emailToken);
+
+                IdentityResult verifyToken;
+                using (var session = DataService.OpenSession())
+                {
+                    var dbUser = session.Get<User>(userId);
+                    verifyToken = await UserManager.ConfirmEmailAsync(dbUser, emailToken);
+                }
                 
                 if (verifyToken.Succeeded)
                 {
@@ -105,15 +111,9 @@ namespace WebsiteTemplate.Controllers
             }
         }
 
-        protected string GetRequestData()
+        protected async Task<string> GetRequestDataAsync()
         {
-            using (var stream = HttpContext.Current.Request.InputStream)
-            using (var mem = new MemoryStream())
-            {
-                stream.CopyTo(mem);
-                var res = System.Text.Encoding.UTF8.GetString(mem.ToArray());
-                return res;
-            }
+            return await WebsiteUtils.GetCurrentRequestData(HttpContextAccessor);
         }
     }
 }

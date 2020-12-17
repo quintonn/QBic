@@ -1,7 +1,7 @@
-﻿using QBic.Core.Services;
+﻿using Microsoft.Extensions.DependencyInjection;
+using QBic.Core.Services;
 using System;
 using System.Threading.Tasks;
-using Unity;
 using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Utilities;
@@ -10,11 +10,11 @@ namespace WebsiteTemplate.Backend.Processing
 {
     public class BackupProcessor : CoreProcessor<FileActionResult>
     {
-        public BackupProcessor(IUnityContainer container)
+        public BackupProcessor(IServiceProvider container)
             : base(container)
         {
-            BackupService = container.Resolve<BackupService>();
-            AppSettings = container.Resolve<ApplicationSettingsCore>();
+            BackupService = Container.GetService<BackupService>();
+            AppSettings = Container.GetService<ApplicationSettingsCore>();
         }
 
         private BackupService BackupService { get; set; }
@@ -22,12 +22,12 @@ namespace WebsiteTemplate.Backend.Processing
 
         public override async Task<FileActionResult> ProcessEvent(int eventId)
         {
-            var originalData = GetRequestData();
+            var originalData = await GetRequestData();
             var jData = JsonHelper.Parse(originalData);
             //var jsonString = Encryption.Decrypt(originalData, AppSettings.ApplicationPassPhrase);
             //var json = JsonHelper.Parse(jsonString);
 
-            var requestBackupTypeString = System.Web.HttpContext.Current.Request.Headers[BackupService.BACKUP_HEADER_KEY];
+            //var requestBackupTypeString = Container.GetService<IHttpContextAccessor>().HttpContext.Request.Headers[BackupService.BACKUP_HEADER_KEY];
 
             //Todo: decrypt data and check for a certain value to confirm this request is legit
 

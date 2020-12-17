@@ -122,16 +122,6 @@
     <Compile Include="Startup.cs" />
     <Compile Include="UserContext.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\BasicAuthentication.Core\BasicAuthentication.Core.csproj">
-      <Project>{5a4528c9-3289-4c3f-b165-eec464e2dbd9}</Project>
-      <Name>BasicAuthentication.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BasicAuthentication\BasicAuthentication.csproj">
-      <Project>{6408e8e4-1d66-4b44-a3a8-b3fd391faf72}</Project>
-      <Name>BasicAuthentication</Name>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

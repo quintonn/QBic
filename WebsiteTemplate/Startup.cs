@@ -1,76 +1,74 @@
-﻿using BasicAuthentication.Authentication;
-using BasicAuthentication.Security;
-using BasicAuthentication.Startup;
-using Microsoft.Owin;
-using Microsoft.Owin.Security.DataProtection;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Practices.Unity.Configuration;
-using Owin;
 using QBic.Core.Data;
 using QBic.Core.Utilities;
-using System.Web.Http;
-using System.Web.Http.Cors;
 using Unity;
 using WebsiteTemplate.Backend.Users;
-using WebsiteTemplate.Data;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate
 {
-    public class Startup : IStartup
+    public class Startup// : Microsoft.AspNetCore.Hosting.IStartup
     {
-        private static IUnityContainer Container { get; set; }
-        public void Configuration(IAppBuilder app)
+        //private static IServiceProvider Container { get; set; }
+        public void Configure(IApplicationBuilder app)
         {
-            var appSettings = Container.Resolve<ApplicationSettingsCore>();
-
-            var options = new UserAuthenticationOptions()
-            {
-                AccessControlAllowOrigin = appSettings.AccessControlAllowOrigin,
-                AccessTokenExpireTimeSpan = appSettings.AccessTokenExpireTimeSpan,
-                RefreshTokenExpireTimeSpan = appSettings.RefreshTokenExpireTimeSpan,
-                AllowInsecureHttp = false,
-                TokenEndpointPath = new PathString(appSettings.TokenEndpointPath),
-                UserContext = Container.Resolve<UserContext>(),
-                ClientId = appSettings.ClientId
-            };
-
-            app.UseBasicUserTokenAuthentication(options);
             
-            appSettings.PerformAdditionalStartupConfiguration(app, Container);
+            var appSettings = app.ApplicationServices.GetService<ApplicationSettingsCore>();
 
-            Container.Resolve<SystemLogger>().Setup(appSettings.LogLevel);
+            //var options = new UserAuthenticationOptions()
+            //{
+            //    AccessControlAllowOrigin = appSettings.AccessControlAllowOrigin,
+            //    AccessTokenExpireTimeSpan = appSettings.AccessTokenExpireTimeSpan,
+            //    RefreshTokenExpireTimeSpan = appSettings.RefreshTokenExpireTimeSpan,
+            //    AllowInsecureHttp = false,
+            //    TokenEndpointPath = new PathString(appSettings.TokenEndpointPath),
+            //    UserContext = Container.GetService<UserContext>(),
+            //    ClientId = appSettings.ClientId
+            //};
+
+            //app.UseBasicUserTokenAuthentication(options);
+            
+           // appSettings.PerformAdditionalStartupConfiguration(app, Container);
+
+            app.ApplicationServices.GetService<SystemLogger>().Setup(appSettings.LogLevel);
 
         }
 
-        public void Register(HttpConfiguration config, IAppBuilder app)
+        public void ConfigureServices(IServiceCollection services)
         {
-            Container = new UnityContainer();
+            var Container = new UnityContainer();
             Container.LoadConfiguration();
 
             var appSettings = Container.Resolve<ApplicationSettingsCore>();
 
-            #if (DEBUG)
+#if (DEBUG)
             if (appSettings.DebugStartup)
             {
                 if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
             }
-            #endif
-            Container.RegisterInstance(DataStore.GetInstance(appSettings.UpdateDatabase));
+#endif
 
-            Container.RegisterType(typeof(ApplicationStartup), appSettings.GetApplicationStartupType);
+            services.AddSingleton(DataStore.GetInstance(false, null));// appSettings.UpdateDatabase));
 
-            Container.RegisterType<UserInjector, DefaultUserInjector>();
+            //services.AddScoped(typeof(ApplicationStartup), appSettings.GetApplicationStartupType);
 
-            Container.RegisterInstance(app.GetDataProtectionProvider());
+            services.AddScoped<UserInjector, DefaultUserInjector>();
 
-            var appStartup = Container.Resolve<ApplicationStartup>();
-            appStartup.RegisterUnityContainers(Container);
+            //services.AddTransient(app.GetDataProtectionProvider());
 
-            config.DependencyResolver = new UnityDependencyResolver(Container);
+            var container = services.BuildServiceProvider();
+            var appStartup = container.GetService<ApplicationStartup>();
+            appStartup.RegisterUnityContainers(container);
 
-            var cors = new EnableCorsAttribute("*", "*", "*");
+            appSettings.PerformAdditionalStartupConfiguration(services);
 
-            config.EnableCors(cors);
+            //config.DependencyResolver = new UnityDependencyResolver(Container);
+
+            //var cors = new EnableCorsAttribute("*", "*", "*");
+
+            //config.EnableCors(cors);
         }
     }
 }

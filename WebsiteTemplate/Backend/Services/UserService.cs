@@ -1,7 +1,9 @@
-﻿using BasicAuthentication.Users;
-using log4net;
+﻿using log4net;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using NHibernate;
 using NHibernate.Criterion;
+using Qactus.Authorization.Core;
 using QBic.Core.Utilities;
 using System;
 using System.Collections.Generic;
@@ -13,6 +15,7 @@ using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.SiteSpecific.DefaultsForTest;
 using WebsiteTemplate.Utilities;
+using ISession = NHibernate.ISession;
 
 namespace WebsiteTemplate.Backend.Services
 {
@@ -22,13 +25,15 @@ namespace WebsiteTemplate.Backend.Services
         private ApplicationSettingsCore ApplicationSettings { get; set; }
         private static readonly ILog Logger = SystemLogger.GetLogger<UserService>();
 
-        private DefaultUserManager UserManager { get; set; }
+        private UserManager<IUser> UserManager { get; set; }
+        private IHttpContextAccessor HttpContextAccessor { get; set; }
 
-        public UserService(DataService dataService, ApplicationSettingsCore appSettings, DefaultUserManager userManager)
+        public UserService(DataService dataService, ApplicationSettingsCore appSettings, UserManager<IUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
             DataService = dataService;
             ApplicationSettings = appSettings;
             UserManager = userManager;
+            HttpContextAccessor = httpContextAccessor;
         }
 
         public List<UserRole> GetUserRoles()
@@ -107,9 +112,9 @@ namespace WebsiteTemplate.Backend.Services
 
             if (user != null)
             {
-                var passwordResetLink = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var passwordResetLink = await UserManager.GeneratePasswordResetTokenAsync(user);
 
-                var myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
+                var myuri = new Uri(HttpContextAccessor.HttpContext.Request.Path.ToString()); //System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
 
                 var body = "Hi " + user.UserName;
 
@@ -158,17 +163,13 @@ namespace WebsiteTemplate.Backend.Services
             return emailStatus;
         }
 
-        public async Task<string> SendAcccountFonfirmationEmail(string userId, string userName, string emailAddress, CoreUserManager userManager = null)
+        public async Task<string> SendAcccountFonfirmationEmail(string userId, string userName, string emailAddress)
         {
-            CoreUserManager theUserManager = UserManager;
-            if (userManager != null)
-            {
-                theUserManager = userManager;
-            }
-            
             Models.SystemSettings settings;
+            User dbUser;
             using (var session = DataService.OpenSession())
             {
+                dbUser = session.Get<User>(userId);
                 settings = session.QueryOver<Models.SystemSettings>().SingleOrDefault<Models.SystemSettings>();
             }
 
@@ -179,9 +180,10 @@ namespace WebsiteTemplate.Backend.Services
 
             Logger.Info("Sending account confirmation email to " + emailAddress);
 
-            var emailToken = theUserManager.GenerateEmailConfirmationTokenAsync(userId).Result;
+            var emailToken = UserManager.GenerateEmailConfirmationTokenAsync(dbUser).Result;
 
-            var myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
+            //var myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
+            var myuri = new Uri(HttpContextAccessor.HttpContext.Request.Path.ToString());
 
             var body = "Hi " + userName;
 
@@ -224,11 +226,12 @@ namespace WebsiteTemplate.Backend.Services
 
         private string GetCurrentUrl()
         {
-            var request = HttpContext.Current.Request.RequestContext.HttpContext.Request;
+            //var request = HttpContext.Current.Request.RequestContext.HttpContext.Request;
+            var request = HttpContextAccessor.HttpContext.Request;
 
-            var uri = request.Url;
+            var uri = request.Path;
 
-            var result = uri.Scheme + "://" + uri.Host + request.ApplicationPath;
+            var result = request.Scheme + "://" + request.Host + request.PathBase;//.ApplicationPath;
             return result;
         }
 

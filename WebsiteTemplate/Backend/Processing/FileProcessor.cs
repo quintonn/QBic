@@ -1,17 +1,17 @@
 ﻿using QBic.Core.Utilities;
 using System;
 using System.Threading.Tasks;
-using System.Web;
-using Unity;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Menus;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Http;
 
 namespace WebsiteTemplate.Backend.Processing
 {
     public class FileProcessor : CoreProcessor<FileActionResult>
     {
-        public FileProcessor(IUnityContainer container)
+        public FileProcessor(IServiceProvider container)
             : base(container)
         {
 
@@ -19,10 +19,10 @@ namespace WebsiteTemplate.Backend.Processing
 
         public async override Task<FileActionResult> ProcessEvent(int eventId)
         {
-            var data = GetRequestData();
+            var data = await GetRequestData();
             if (String.IsNullOrWhiteSpace(data))
             {
-                data = HttpContext.Current.Request.Params["requestData"];
+                data = Container.GetService<IHttpContextAccessor>().HttpContext.Request.Query["requestData"];
             }
 
             if (!String.IsNullOrWhiteSpace(data))
@@ -30,7 +30,7 @@ namespace WebsiteTemplate.Backend.Processing
                 data = QBicUtils.Base64Decode(data);
             }
 
-            var eventItem = Container.Resolve<EventService>().GetEventItem(eventId) as OpenFile;
+            var eventItem = Container.GetService<EventService>().GetEventItem(eventId) as OpenFile;
             if (eventItem == null)
             {
                 throw new Exception("No OpenFile action has been found for event number: " + eventId);

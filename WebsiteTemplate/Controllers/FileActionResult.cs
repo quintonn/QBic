@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.IO;
-using System.Net.Http;
+using System.IO.Compression;
 using System.Net.Http.Headers;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Web.Http;
 
 namespace WebsiteTemplate.Controllers
 {
-    public class FileActionResult : IHttpActionResult
+    public class FileActionResult : IActionResult
     {
         public FileActionResult(Menus.InputItems.FileInfo fileInfo)
         {
@@ -17,14 +16,21 @@ namespace WebsiteTemplate.Controllers
 
         private Menus.InputItems.FileInfo FileInfo { get; set; }
 
-        public Task<HttpResponseMessage> ExecuteAsync(CancellationToken cancellationToken)
+        public Task ExecuteResultAsync(ActionContext context)
         {
+            context.HttpContext.Response.Headers.Add("Content-Disposition", new ContentDispositionHeaderValue("inline") /// Tells the browser to try and display the file instead of downloading it.
+            {
+                FileName = FileInfo.GetFullFileName()
+            }.ToString());
+
+            context.HttpContext.Response.Headers.Add("Content-Type", FileInfo.MimeType);
+            context.HttpContext.Response.Headers.Add("FileName", FileInfo.GetFullFileName());
+
             if (String.IsNullOrWhiteSpace(FileInfo.MimeType))
             {
                 throw new ArgumentNullException("MimeType", "FileInfo.MimeType cannot be empty. This is returned by types of OpenFile");
             }
-            var response = new HttpResponseMessage();
-
+            
             if (FileInfo.Data == null || FileInfo.Data.Length == 0)
             {
                 throw new ArgumentNullException("FileInfo.Data", "FileInfo.Data cannot be null or empty. This is returned by types of OpenFile");
@@ -33,48 +39,52 @@ namespace WebsiteTemplate.Controllers
             {
                 //var base64 = Convert.ToBase64String(FileInfo.Data); //data too big
                 //response.Content = new StringContent(base64);
-                response.Content = new ByteArrayContent(FileInfo.Data);
+                context.HttpContext.Response.Body.Write(FileInfo.Data);// = new ByteArrayContent(FileInfo.Data);
             }
             else // zipped content
             {
-                response.Content = new PushStreamContent(async (stream, content, context) =>
+                using (var msi = new MemoryStream(FileInfo.Data))
+                using (var mso = new MemoryStream())
                 {
-                    try
+                    using (var gs = new GZipStream(mso, CompressionMode.Compress))
                     {
-                        var bufferSize = 65536;
-                        var length = FileInfo.Size;
-                        var bytesDone = 0;
+                        msi.CopyTo(gs);
+                    }
 
-                        while (length > 0)
-                        {
-                            var bytesToSend = Math.Min(bufferSize, FileInfo.Size - bytesDone);
-                            await stream.WriteAsync(FileInfo.Data, bytesDone, bytesToSend);
-                            length -= bytesToSend;
-                            bytesDone += bytesToSend;
-                        }
-                    }
-                    catch (Exception ee)
-                    {
-                        //Console.WriteLine(ee.Message);
-                        throw;
-                    }
-                    finally
-                    {
-                        stream.Close();
-                    }
-                });
+                    context.HttpContext.Response.Headers.Add("Content-Encoding", "gzip");
+                    context.HttpContext.Response.Body.WriteAsync(mso.ToArray());
+                }
+                //response.Content = new PushStreamContent(async (stream, content, context) =>
+                //{
+                //    try
+                //    {
+                //        var bufferSize = 65536;
+                //        var length = FileInfo.Size;
+                //        var bytesDone = 0;
+
+                //        while (length > 0)
+                //        {
+                //            var bytesToSend = Math.Min(bufferSize, FileInfo.Size - bytesDone);
+                //            await stream.WriteAsync(FileInfo.Data, bytesDone, bytesToSend);
+                //            length -= bytesToSend;
+                //            bytesDone += bytesToSend;
+                //        }
+                //    }
+                //    catch (Exception ee)
+                //    {
+                //        //Console.WriteLine(ee.Message);
+                //        throw;
+                //    }
+                //    finally
+                //    {
+                //        stream.Close();
+                //    }
+                //});
             }
-
-            response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("inline") /// Tells the browser to try and display the file instead of downloading it.
-            {
-                FileName = FileInfo.GetFullFileName()
-            };
-
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue(FileInfo.MimeType);
-
-            response.Headers.Add("FileName", FileInfo.GetFullFileName());
-
-            return Task.FromResult(response);
+            
+            return Task.FromResult(0);
         }
+
+       
     }
 }

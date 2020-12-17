@@ -1,10 +1,12 @@
-﻿using QBic.Core.Data;
-using QBic.Core.Models;
+﻿using Microsoft.AspNetCore.Identity;
 using NHibernate;
+using Qactus.Authorization.Core;
+using QBic.Core.Data;
+using QBic.Core.Models;
+using QBic.Core.Utilities;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using WebsiteTemplate.Data;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
@@ -13,14 +15,16 @@ namespace WebsiteTemplate.Backend.Services
     public class AuditService
     {
         private DataStore DataStore { get; set; }
-        private UserContext UserContext { get; set; }
+        private UserManager<IUser> UserContext { get; set; }
 
         private ApplicationSettingsCore AppSettings { get; set; }
-        public AuditService(DataStore dataStore, UserContext userContext, ApplicationSettingsCore appSettings)
+        private Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor { get; set; }
+        public AuditService(DataStore dataStore, UserManager<IUser> userContext, ApplicationSettingsCore appSettings, Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor)
         {
             DataStore = dataStore;
             UserContext = userContext;
             AppSettings = appSettings;
+            HttpContextAccessor = httpContextAccessor;
         }
 
         public async Task LogUserEvent(int eventId)
@@ -40,7 +44,7 @@ namespace WebsiteTemplate.Backend.Services
             // I think this covers everything
         }
 
-        public void AuditChange<T>(ISession session, string itemId, T item, AuditAction action, string entityName, User user = null) where T : BaseClass
+        public void AuditChange<T>(ISession session, string itemId, T item, AuditAction action, string entityName, IUser user = null) where T : BaseClass
         {
             //return; // Globally disable auditing for now because it does not work properly.
             if (AppSettings.EnableAuditing == false)
@@ -50,7 +54,7 @@ namespace WebsiteTemplate.Backend.Services
 
             if (user == null)
             {
-                var userTask = BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync(UserContext);
+                var userTask = QBicUtils.GetLoggedInUserAsync(UserContext, HttpContextAccessor);
                 userTask.Wait();
                 user = userTask.Result as User;
             }

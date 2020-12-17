@@ -1,58 +1,90 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using NHibernate.Criterion;
+using Qactus.Authorization.Core;
+using QBic.Core.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Unity;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Backend.Services.Background;
-using WebsiteTemplate.Data;
-using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Processing
 {
+    public class DateTimeConverter : JsonConverter<DateTime>
+    {
+        private string DateFormat { get; set; }
+
+        public DateTimeConverter(string dateFormat)
+        {
+
+        }
+        public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            return DateTime.Parse(reader.GetString());
+        }
+
+        public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+        {
+            //writer.WriteStringValue(value.ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ"));
+            writer.WriteStringValue(value.ToUniversalTime().ToString(DateFormat));
+        }
+    }
     public abstract class CoreProcessorBase
     {
-        protected static JsonSerializerSettings JSON_SETTINGS;
+        protected static JsonSerializerOptions JSON_SETTINGS;
         protected static ApplicationStartup ApplicationStartup { get; set; }
-        protected static IUnityContainer Container { get; set; }
+        protected static IServiceProvider Container { get; set; }
         protected static EventService EventService { get; set; }
         protected static DataService DataService { get; set; }
         protected static AuditService AuditService { get; set; }
         protected static BackgroundService BackgroundService { get; set; }
 
-        protected static UserContext UserContext { get; set; }
+        protected static UserManager<IUser> UserManager { get; set; }
 
         private static bool SetupDone = false;
 
         private static object LockObject = new object();
 
-        public CoreProcessorBase(IUnityContainer container)
+        public CoreProcessorBase(IServiceProvider container)
         {
-            lock (LockObject)
+            try
             {
-                Container = container;
-                if (SetupDone == false)
+                lock (LockObject)
                 {
-                    //Container = container;
+                    Container = container;
 
-                    //TODO: maybe all of thse should go outside of the "SetupDone" check and run everytime.
-                    ApplicationStartup = container.Resolve<ApplicationStartup>();
-                    EventService = container.Resolve<EventService>();
-                    DataService = container.Resolve<DataService>();
-                    AuditService = container.Resolve<AuditService>();
-                    BackgroundService = container.Resolve<BackgroundService>();
-                    UserContext = container.Resolve<UserContext>();
+                    ApplicationStartup = container.GetService<ApplicationStartup>();
+                    EventService = container.GetService<EventService>();
+                    DataService = container.GetService<DataService>();
+                    AuditService = container.GetService<AuditService>();
+                    BackgroundService = container.GetService<BackgroundService>();
+                    UserManager = Container.GetService<UserManager<IUser>>();
 
-                    PopulateDefaultValues();
-                    SetupDone = true;
-                    BackgroundService.StartBackgroundJobs();
+                    if (SetupDone == false)
+                    {
+                        PopulateDefaultValues();
+                        SetupDone = true;
+                        BackgroundService.StartBackgroundJobs();
+                    }
+
+                    JSON_SETTINGS = new JsonSerializerOptions
+                    {
+                        //DateFormatString = WebsiteUtils.DateFormat 
+                    };
+                    JSON_SETTINGS.Converters.Add(new DateTimeConverter(WebsiteUtils.DateFormat));
                 }
 
-                JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = WebsiteUtils.DateFormat };
+            }
+            catch (Exception error)
+            {
+                Console.WriteLine(error.Message);
             }
         }
 
@@ -72,7 +104,7 @@ namespace WebsiteTemplate.Backend.Processing
                     var systemUser = new User()
                     {
                         CanDelete = false,
-                        Email = Container.Resolve<ApplicationSettingsCore>().SystemEmailAddress,
+                        Email = Container.GetService<ApplicationSettingsCore>().SystemEmailAddress,
                         EmailConfirmed = true,
                         UserName = "System",
                         UserStatus = UserStatus.Active,
@@ -93,9 +125,9 @@ namespace WebsiteTemplate.Backend.Processing
         //    }
         //}
 
-        protected string GetRequestData()
+        protected async Task<string> GetRequestData()
         {
-            return WebsiteUtils.GetCurrentRequestData();
+            return await WebsiteUtils.GetCurrentRequestData(Container.GetService<IHttpContextAccessor>());
         }
 
         protected List<int> GetAllowedEventsForUser(string userId)
@@ -121,8 +153,10 @@ namespace WebsiteTemplate.Backend.Processing
 
         protected async Task<User> GetLoggedInUser()
         {
-            var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync(UserContext) as User;
+            var user = await QBicUtils.GetLoggedInUserAsync(UserManager, Container.GetService<IHttpContextAccessor>()) as User;
             return user;
         }
+
+        
     }
 }

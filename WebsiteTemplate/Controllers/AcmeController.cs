@@ -1,17 +1,13 @@
-﻿using System.Web.Http;
-using System.Linq;
-using System.Net.Http;
-using System.Net;
-using WebsiteTemplate.Utilities;
-using System.IO;
-using System;
-using log4net;
+﻿using log4net;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QBic.Core.Utilities;
+using System.Linq;
 
 namespace WebsiteTemplate.Controllers
 {
-    [RoutePrefix(".well-known/acme-challenge")]
-    public class AcmeController : ApiController
+    [Route(".well-known/acme-challenge")]
+    public class AcmeController : ControllerBase
     {
         private static readonly ILog Logger = SystemLogger.GetLogger<AcmeController>();
 
@@ -21,13 +17,13 @@ namespace WebsiteTemplate.Controllers
         [HttpGet]
         [Route("{*path}")]
         [AllowAnonymous]
-        public IHttpActionResult Test(string path)
+        public IActionResult Test(string path)
         {
             //TODO: Not sure if I even need this. Maybe the other request can set the file in the correct path.
             //      No! Do it this way, can clear challenge path and response after request is made
 
-            var request = System.Web.HttpContext.Current.Request.Url.ToString();
-            var challenge = request.Split("/".ToCharArray()).Last();
+            //var request = System.Web.HttpContext.Current.Request.Url.ToString();
+            var challenge = Request.Path.ToString().Split("/".ToCharArray()).Last();
 
             Logger.Info("Received ACME challenge on path: " + path + " and challenge = " + challenge);
             
@@ -44,9 +40,10 @@ namespace WebsiteTemplate.Controllers
             {
                 var dir = QBicUtils.GetCurrentDirectory();
                 var physicallPath = dir + "\\.well-known\\acme-challenge\\" + challenge;
-                if (File.Exists(physicallPath))
+                
+                if (System.IO.File.Exists(physicallPath))
                 {
-                    resp = File.ReadAllText(physicallPath);
+                    resp = System.IO.File.ReadAllText(physicallPath);
                 }
                 else
                 {
@@ -60,12 +57,12 @@ namespace WebsiteTemplate.Controllers
             //ChallengePath = String.Empty;
             //ChallengeResponse = String.Empty;
 
-            var response = new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent(resp)
-            };
+            //var response = new HttpResponseMessage(HttpStatusCode.OK)
+            //{
+            //    Content = new StringContent(resp)
+            //};
 
-            return ResponseMessage(response);
+            return new OkObjectResult(resp);
         }
     }
 }

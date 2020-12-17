@@ -1,10 +1,10 @@
 ﻿using log4net.Core;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
-using Owin;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Unity;
 using WebsiteTemplate.Models.NonDatabase;
 
 namespace WebsiteTemplate.Utilities
@@ -77,7 +77,7 @@ namespace WebsiteTemplate.Utilities
             }
         }
 
-        public virtual void PerformAdditionalStartupConfiguration(IAppBuilder app, IUnityContainer container)
+        public virtual void PerformAdditionalStartupConfiguration(IServiceCollection services)
         {
 
         }

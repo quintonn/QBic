@@ -1,14 +1,10 @@
-﻿using Unity;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
-using WebsiteTemplate.Menus;
-using QBic.Core.Utilities;
-using log4net;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WebsiteTemplate.Backend.Services.Background
 {
@@ -24,7 +20,7 @@ namespace WebsiteTemplate.Backend.Services.Background
         private static List<Task> Tasks { get; set; }
 
         //private BackgroundWorker BackgroundWorker { get; set; }
-        private IUnityContainer Container { get; set; }
+        private IServiceProvider Container { get; set; }
 
         static BackgroundManager()
         {
@@ -34,14 +30,14 @@ namespace WebsiteTemplate.Backend.Services.Background
             Tasks = new List<Task>();
         }
 
-        public BackgroundManager(IUnityContainer container) /* Can't put background service here because it results in circult loop and stack overflow */
+        public BackgroundManager(IServiceProvider container) /* Can't put background service here because it results in circult loop and stack overflow */
         {
             Container = container;
         }
 
         public void StartWorkers()
         {
-            var backgroundWorker = Container.Resolve<BackgroundWorker>();
+            var backgroundWorker = Container.GetService<BackgroundWorker>();
             var numberOfWorkers = 5; // This could come from a setting
             var token = CancelToken.Token;
 

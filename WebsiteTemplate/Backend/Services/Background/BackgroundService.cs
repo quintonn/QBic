@@ -1,20 +1,21 @@
-﻿using QBic.Core.Services;
+﻿using log4net;
+using Microsoft.AspNetCore.Identity;
+using Qactus.Authorization.Core;
+using QBic.Core.Services;
 using QBic.Core.Utilities;
-using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using WebsiteTemplate.Data;
-using WebsiteTemplate.Models;
 using System.Threading.Tasks;
+using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Services.Background
 {
     public class BackgroundService : IDisposable
     {
         private DataService DataService { get; set; }
-        private UserContext UserContext { get; set; }
+        private UserManager<IUser> UserContext { get; set; }
         private BackgroundManager BackgroundManager { get; set; }
 
         private static object Locker = new object();
@@ -29,7 +30,7 @@ namespace WebsiteTemplate.Backend.Services.Background
             Started = false;
         }
 
-        public BackgroundService(DataService dataService, UserContext userContext, BackgroundManager manager)
+        public BackgroundService(DataService dataService, UserManager<IUser> userContext, BackgroundManager manager)
         {
             DataService = dataService;
             UserContext = userContext;
@@ -45,13 +46,13 @@ namespace WebsiteTemplate.Backend.Services.Background
         private async void Setup()
         {
             Logger.Debug("Starting background service");
-            SystemUser = await UserContext.FindUserByNameAsync("System");
+            SystemUser = await UserContext.FindByNameAsync("System");
             Started = true;
         }
 
         private static List<Task> BackgroundThreads { get; set; }
         private static List<BackgroundJob> BackgroundJobs { get; set; }
-        private static User SystemUser { get; set; }
+        private static IUser SystemUser { get; set; }
         internal void SaveBackgroundJobResult(BackgroundJobResult jobResult)
         {
             lock (Locker)

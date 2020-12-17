@@ -31,7 +31,7 @@ namespace QBic.Core.Services
 
         public BackupService()
         {
-            DataService = DataStore.GetInstance(false);
+            DataService = DataStore.GetInstance(false, null);
 
             if (SystemTypes == null)
             {
@@ -149,7 +149,7 @@ namespace QBic.Core.Services
                 CreateBackupFile(currentDirectory + backupName);
 
                 var connectionString = String.Format(@"Data Source=##CurrentDirectory##\Data\{0};Version=3;Journal Mode=Off;Connection Timeout=12000", backupName);
-                var store = DataStore.GetInstance(false);
+                var store = DataStore.GetInstance(false, null);
                 var config = store.CreateNewConfigurationUsingConnectionString(connectionString);
                 new SchemaUpdate(config).Execute(false, true); // Build the tables etc.
                 var factory = config.BuildSessionFactory();
@@ -238,7 +238,7 @@ namespace QBic.Core.Services
 
         public void CreateNewDatabaseSchema(string connectionString)
         {
-            var store = DataStore.GetInstance(false);
+            var store = DataStore.GetInstance(false, null);
 
             DynamicClass.SetIdsToBeAssigned = true; // This will set the Fluent NHibernate mappings' id's to be assigned and not GUID's for the restore.
 
@@ -358,7 +358,7 @@ namespace QBic.Core.Services
                 File.WriteAllBytes(currentDirectory + backupName, data);
 
                 var connectionString = String.Format(@"Data Source=##CurrentDirectory##\Data\{0};Version=3;Journal Mode=Off;Connection Timeout=12000", backupName);
-                var store = DataStore.GetInstance(false);
+                var store = DataStore.GetInstance(false, null);
                 var backupConfig = store.CreateNewConfigurationUsingConnectionString(connectionString);
                 var backupFactory = backupConfig.BuildSessionFactory();
 
