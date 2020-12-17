@@ -60,15 +60,17 @@ namespace WebsiteTemplate.Backend.Processing
                 {
                     Container = container;
 
-                    ApplicationStartup = container.GetService<ApplicationStartup>();
-                    EventService = container.GetService<EventService>();
-                    DataService = container.GetService<DataService>();
-                    AuditService = container.GetService<AuditService>();
-                    BackgroundService = container.GetService<BackgroundService>();
                     UserManager = Container.GetService<UserManager<IUser>>();
 
                     if (SetupDone == false)
                     {
+                        ApplicationStartup = container.GetService<ApplicationStartup>();
+                        EventService = container.GetService<EventService>();
+                        DataService = container.GetService<DataService>();
+                        AuditService = container.GetService<AuditService>();
+                        BackgroundService = container.GetService<BackgroundService>();
+
+
                         PopulateDefaultValues();
                         SetupDone = true;
                         BackgroundService.StartBackgroundJobs();

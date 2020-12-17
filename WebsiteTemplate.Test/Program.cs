@@ -12,7 +12,6 @@ namespace WebsiteTemplate.Test
     {
         public static void Main(string[] args)
         {
-            //TestSettingUpStuffWithoutWebServer();
             CreateHostBuilder(args).Build().Run();
 
             Console.WriteLine("Done");
@@ -39,7 +38,6 @@ namespace WebsiteTemplate.Test
                 x.AddConsole();
             });
             builder.UseStartup<Startup>();
-            //builder.UseStaticWebAssets();
 
             return builder;
         }

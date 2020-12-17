@@ -10,12 +10,20 @@ namespace QBic.Core.Utilities
 {
     public class SystemLogger
     {
-        public static ILog GetLogger<T>()
+        public static ILog GetLogger(Type type)
         {
-            var typeString = typeof(T).ToString().Split(".".ToCharArray()).Last();
+            var typeString = type.ToString().Split(".".ToCharArray()).Last();
             var result = LogManager.GetLogger(typeString);
 
             return result;
+        }
+        public static ILog GetLogger<T>()
+        {
+            //var typeString = typeof(T).ToString().Split(".".ToCharArray()).Last();
+            //var result = LogManager.GetLogger(typeString);
+
+            //return result;
+            return GetLogger(typeof(T));
         }
 
         public static string GetMessageStack(Exception exception)
