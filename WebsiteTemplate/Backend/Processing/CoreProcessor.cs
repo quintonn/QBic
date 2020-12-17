@@ -27,10 +27,10 @@ namespace WebsiteTemplate.Backend.Processing
                 await AuditService.LogUserEvent(eventId);
                 var result = await ProcessEvent(eventId);
 
-                if (result is FileActionResult)
-                {
-                    return result as FileActionResult;
-                }
+                //if (result is FileActionResult)
+                //{
+                //    return result as FileActionResult;
+                //}
 
                 if (result is FileContentResult)
                 {

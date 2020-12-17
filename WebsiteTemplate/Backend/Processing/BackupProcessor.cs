@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using QBic.Core.Services;
 using System;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Processing
 {
-    public class BackupProcessor : CoreProcessor<FileActionResult>
+    public class BackupProcessor : CoreProcessor<FileContentResult>
     {
         public BackupProcessor(IServiceProvider container)
             : base(container)
@@ -20,7 +21,7 @@ namespace WebsiteTemplate.Backend.Processing
         private BackupService BackupService { get; set; }
         private ApplicationSettingsCore AppSettings { get; set; }
 
-        public override async Task<FileActionResult> ProcessEvent(int eventId)
+        public override async Task<FileContentResult> ProcessEvent(int eventId)
         {
             var originalData = await GetRequestData();
             var jData = JsonHelper.Parse(originalData);
@@ -45,7 +46,7 @@ namespace WebsiteTemplate.Backend.Processing
             result.FileExtension = "dat";
             result.FileName = "Backup-" + DateTime.UtcNow.ToString("dd-MM-yyyy");
             result.MimeType = "application/octet-stream";  //"application/zip"
-            return new FileActionResult(result);
+            return new FileContentResult(result.Data, result.MimeType);
         }
     }
 }
