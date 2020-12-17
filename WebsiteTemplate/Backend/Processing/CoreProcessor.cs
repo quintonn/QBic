@@ -32,7 +32,11 @@ namespace WebsiteTemplate.Backend.Processing
                     return result as FileActionResult;
                 }
 
-                var tmp = JsonSerializer.Serialize<object>(result);
+                if (result is FileContentResult)
+                {
+                    return result as FileContentResult;
+                }
+
                 //jsonResult = new JsonResult<T>(result, JSON_SETTINGS, Encoding.UTF8, requestMessage);
                 jsonResult = new OkObjectResult (result);
                 //{

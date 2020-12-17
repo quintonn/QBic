@@ -23,6 +23,7 @@ namespace WebsiteTemplate.Backend.Processing
         public async override Task<IList<IEvent>> ProcessEvent(int eventId)
         {
             var data = await GetRequestData();
+           
             var json = JsonHelper.Parse(data);
 
             var formData = json.GetValue("Data");

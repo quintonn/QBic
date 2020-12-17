@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Qactus.Authorization.Core;
 using Qactus.Authorization.Jwt;
@@ -60,6 +62,14 @@ namespace WebsiteTemplate.Test
             }
 #endif
 
+
+            services.Configure<FormOptions>(options =>
+            {
+                options.ValueCountLimit = int.MaxValue;
+                // Form key length limit 2048 exceeded
+                options.KeyLengthLimit = int.MaxValue;
+            });
+
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.AddResponseCompression(options =>
             {
@@ -74,6 +84,9 @@ namespace WebsiteTemplate.Test
             {
                 options.UseCamelCasing(true);
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                //options.SerializerSettings.TypeNameHandling = includeTypeInfo == true ? TypeNameHandling.All : TypeNameHandling.None;
+                options.SerializerSettings.TypeNameHandling = TypeNameHandling.None;
             })
             .AddJsonOptions(options =>
             {

@@ -98,7 +98,6 @@ namespace WebsiteTemplate.Controllers
         [Route("systemPing")]
         [AllowAnonymous]
         [Microsoft.AspNetCore.Mvc.RequireHttps]
-        [DeflateCompression]// - not sure how to deflate
         public async Task<IActionResult> SystemPing()
         {
             return await Container.GetService<PingProcessor>().Process(-1, this.Request);
@@ -108,7 +107,6 @@ namespace WebsiteTemplate.Controllers
         [Route("initializeSystem")]
         //[AllowAnonymous]
         [Microsoft.AspNetCore.Mvc.RequireHttps]
-        [DeflateCompression]
         public async Task<IActionResult> InitializeSystem()
         {
             try
@@ -145,7 +143,6 @@ namespace WebsiteTemplate.Controllers
         [Route("initialize")]
         [Microsoft.AspNetCore.Mvc.RequireHttps]
         [Authorize]
-        [DeflateCompression]
         public async Task<IActionResult> Initialize()
         {
             await Container.GetService<InitializationProcessor>().Process(0, Request); // Just to initialize core processor
@@ -171,7 +168,6 @@ namespace WebsiteTemplate.Controllers
         [Route("propertyChanged/{*eventId}")]
         [Microsoft.AspNetCore.Mvc.RequireHttps]
         [ConditionalAuthorize]
-        [DeflateCompression]
         public async Task<IActionResult> OnPropertyChanged(int eventId)
         {
             return await Container.GetService<PropertyChangeProcessor>().Process(eventId, Request);
@@ -181,7 +177,6 @@ namespace WebsiteTemplate.Controllers
         [Route("processEvent/{*eventId}")]
         [Microsoft.AspNetCore.Mvc.RequireHttps]
         [ConditionalAuthorize]
-        [DeflateCompression]
         public async Task<IActionResult> ProcessEvent(int eventId)
         {
             return await Container.GetService<InputEventProcessor>().Process(eventId, Request);
@@ -192,17 +187,22 @@ namespace WebsiteTemplate.Controllers
         [Route("GetFile/{*eventId}")]
         [Microsoft.AspNetCore.Mvc.RequireHttps]
         [Authorize]
-        //[DeflateCompression] // Converts data to json which doesn't work for files
+        ////[DeflateCompression] // Converts data to json which doesn't work for files
         public async Task<IActionResult> GetFile(int eventId)
         {
-            return await Container.GetService<FileProcessor>().Process(eventId, Request);
+            var result = await Container.GetService<FileProcessor>().Process(eventId, Request);
+            if (result is FileContentResult)
+            {
+                var f = result as FileContentResult;
+                Response.Headers.Add("filename", f.FileDownloadName);
+            }
+            return result;
         }
 
         [HttpPost]
         [Route("updateViewData/{*eventId}")]
         [Microsoft.AspNetCore.Mvc.RequireHttps]
         [ConditionalAuthorize]
-        [DeflateCompression]
         public async Task<IActionResult> UpdateViewData(int eventId)
         {
             return await Container.GetService<UpdateViewProcessor>().Process(eventId, Request);
@@ -212,7 +212,6 @@ namespace WebsiteTemplate.Controllers
         [Route("getViewMenu/{*eventId}")]
         [Microsoft.AspNetCore.Mvc.RequireHttps]
         [ConditionalAuthorize]
-        [DeflateCompression]
         public async Task<IActionResult> GetViewMenu(int eventId)
         {
             return await Container.GetService<ViewMenuProcessor>().Process(eventId, Request);
@@ -222,11 +221,8 @@ namespace WebsiteTemplate.Controllers
         [Route("executeUIAction/{*eventId}")]
         [Microsoft.AspNetCore.Mvc.RequireHttps]
         [ConditionalAuthorize]
-        [DeflateCompression]
         public async Task<IActionResult> ExecuteUIAction(int eventId)
         {
-            var tmp = WebsiteUtils.GetCurrentRequestData(this.HttpContextAccessor);
-            
             return await Container.GetService<ActionExecutionProcessor>().Process(eventId, Request);
         }
 
@@ -234,7 +230,6 @@ namespace WebsiteTemplate.Controllers
         [Route("getUserMenu")]
         [Microsoft.AspNetCore.Mvc.RequireHttps]
         [Authorize] // TODO: We need a way to have menu's for when we don't require a logged in user.
-        [DeflateCompression]
         public async Task<IActionResult> GetUserMenu()
         {
             var result = await Container.GetService<UserMenuProcessor>().Process(-1, Request);
@@ -246,7 +241,7 @@ namespace WebsiteTemplate.Controllers
         [Route("performBackup")]
         [Microsoft.AspNetCore.Mvc.RequireHttps]
         //[Authorize] //Not sure if we can have authorization. should  be possible
-        //[DeflateCompression]
+        ////[DeflateCompression]
         public async Task<IActionResult> PerformBackup()
         {
             return await Container.GetService<BackupProcessor>().Process(-1, Request);

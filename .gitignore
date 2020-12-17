@@ -34,3 +34,4 @@ DocumentGenerator/bin
 BasicAuthentication.Core/BasicAuthentication.Core.csproj.user
 DocumentGenerator/DocumentGenerator.csproj.user
 QBic.Core/QBic.Core.csproj.user
+WebsiteTemplate.Test/Data/appDataCore.db

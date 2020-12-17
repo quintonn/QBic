@@ -6,10 +6,11 @@ using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Menus;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebsiteTemplate.Backend.Processing
 {
-    public class FileProcessor : CoreProcessor<FileActionResult>
+    public class FileProcessor : CoreProcessor<FileContentResult>
     {
         public FileProcessor(IServiceProvider container)
             : base(container)
@@ -17,7 +18,7 @@ namespace WebsiteTemplate.Backend.Processing
 
         }
 
-        public async override Task<FileActionResult> ProcessEvent(int eventId)
+        public async override Task<FileContentResult> ProcessEvent(int eventId)
         {
             var data = await GetRequestData();
             if (String.IsNullOrWhiteSpace(data))
@@ -44,7 +45,12 @@ namespace WebsiteTemplate.Backend.Processing
             //var __ignore__ = eventItem.FileName; /* Leave this here -> this initializes the filename */
             var fileInfo = await eventItem.GetFileInfo(data);
             //return fileInfo;
-            return new FileActionResult(fileInfo);
+            //new Microsoft.AspNetCore.Mvc.FileContentResult()
+
+            //return new FileActionResult(fileInfo);
+            var result = new FileContentResult(fileInfo.Data, "application/octet-stream");
+            result.FileDownloadName = fileInfo.GetFullFileName();
+            return result;
         }
     }
 }
