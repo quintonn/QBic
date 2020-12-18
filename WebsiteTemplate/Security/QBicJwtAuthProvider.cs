@@ -1,5 +1,4 @@
-﻿using Qactus.Authorization.Core;
-using Qactus.Authorization.Jwt.Default;
+﻿using QBic.Authentication;
 using System;
 using WebsiteTemplate.Utilities;
 

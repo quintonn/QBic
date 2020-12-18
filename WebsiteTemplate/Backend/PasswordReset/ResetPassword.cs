@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Qactus.Authorization.Core;
+using QBic.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

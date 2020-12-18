@@ -1,18 +1,17 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using DocumentGenerator.DocumentTypes;
+using DocumentGenerator.Settings;
+using DocumentGenerator.Styles;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using MigraDoc.DocumentObjectModel;
-using Qactus.Authorization.Core;
+using QBic.Authentication;
 using QBic.Core.Utilities;
 using System;
 using System.Threading.Tasks;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
-using WebsiteTemplate.Models;
-using Microsoft.Extensions.DependencyInjection;
-using DocumentGenerator.DocumentTypes;
-using DocumentGenerator.Styles;
-using DocumentGenerator.Settings;
-using Microsoft.AspNetCore.Http;
 
 namespace WebsiteTemplate.Test.MenuItems
 {

@@ -2,9 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Qactus.Authorization.Core;
+using QBic.Authentication;
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;

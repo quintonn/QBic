@@ -1,4 +1,4 @@
-﻿using Qactus.Authorization.Core;
+﻿using QBic.Authentication;
 using QBic.Core.Models;
 using System;
 

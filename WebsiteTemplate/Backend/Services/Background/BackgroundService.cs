@@ -1,6 +1,6 @@
 ﻿using log4net;
 using Microsoft.AspNetCore.Identity;
-using Qactus.Authorization.Core;
+using QBic.Authentication;
 using QBic.Core.Services;
 using QBic.Core.Utilities;
 using System;

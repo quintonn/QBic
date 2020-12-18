@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Qactus.Authorization.Core;
+using QBic.Authentication;
 using QBic.Core.Utilities;
 using System.Threading.Tasks;
 using WebsiteTemplate.Models;

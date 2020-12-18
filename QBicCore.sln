@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsiteTemplate", "WebsiteTemplate\WebsiteTemplate.csproj", "{1547BF19-E581-44E9-B509-8CEF08276652}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsiteTemplate", "WebsiteTemplate\WebsiteTemplate.csproj", "{1547BF19-E581-44E9-B509-8CEF08276652}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsiteTemplate.Test", "WebsiteTemplate.Test\WebsiteTemplate.Test.csproj", "{6A7A76CD-F5D3-45EF-B98E-D06DBD23311E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsiteTemplate.Test", "WebsiteTemplate.Test\WebsiteTemplate.Test.csproj", "{6A7A76CD-F5D3-45EF-B98E-D06DBD23311E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsiteTemplate.UnitTests", "WebsiteTemplate.UnitTests\WebsiteTemplate.UnitTests.csproj", "{408B0C11-BB4E-4E9E-87F2-1B2A4D0D05A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QBic.Core", "QBic.Core\QBic.Core.csproj", "{39FDCBFC-A698-49DA-9C9D-3E7858E49BE0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QBic.Core", "QBic.Core\QBic.Core.csproj", "{39FDCBFC-A698-49DA-9C9D-3E7858E49BE0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentGenerator", "DocumentGenerator\DocumentGenerator.csproj", "{6C64F46D-75A1-4892-A089-73E4D928AC29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocumentGenerator", "DocumentGenerator\DocumentGenerator.csproj", "{6C64F46D-75A1-4892-A089-73E4D928AC29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QBic.Authentication", "QBic.Authentication\QBic.Authentication.csproj", "{A2C11423-BD1A-4C4E-BFC2-4483A22B67AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{6C64F46D-75A1-4892-A089-73E4D928AC29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C64F46D-75A1-4892-A089-73E4D928AC29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C64F46D-75A1-4892-A089-73E4D928AC29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2C11423-BD1A-4C4E-BFC2-4483A22B67AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2C11423-BD1A-4C4E-BFC2-4483A22B67AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2C11423-BD1A-4C4E-BFC2-4483A22B67AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2C11423-BD1A-4C4E-BFC2-4483A22B67AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

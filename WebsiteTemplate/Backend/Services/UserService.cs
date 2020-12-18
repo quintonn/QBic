@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using NHibernate;
 using NHibernate.Criterion;
-using Qactus.Authorization.Core;
+using QBic.Authentication;
 using QBic.Core.Utilities;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using System.Web;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
-using WebsiteTemplate.SiteSpecific.DefaultsForTest;
 using WebsiteTemplate.Utilities;
 using ISession = NHibernate.ISession;
 

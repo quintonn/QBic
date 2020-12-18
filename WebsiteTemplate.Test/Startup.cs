@@ -1,24 +1,19 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Qactus.Authorization.Jwt;
 using System;
-using System.Collections.Generic;
 using WebsiteTemplate.Test.SiteSpecific;
 
 namespace WebsiteTemplate.Test
 {
     public class Startup
     {
-        private IServiceProvider Container { get; set; }
         private IConfiguration Config;
 
         public Startup(IConfiguration config)
         {
             Config = config;
         }
-
-        private List<IJwtAuthenticationProvider> optionsProviders = new List<IJwtAuthenticationProvider>();
 
         public void ConfigureServices(IServiceCollection services)
         {

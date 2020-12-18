@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using NHibernate;
-using Qactus.Authorization.Core;
+using QBic.Authentication;
 using QBic.Core.Data;
 using QBic.Core.Models;
 using QBic.Core.Utilities;

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NHibernate.Criterion;
-using Qactus.Authorization.Core;
+using QBic.Authentication;
 using System;
 using System.Linq;
 using WebsiteTemplate.Backend.Services;
