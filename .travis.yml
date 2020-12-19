@@ -3,9 +3,10 @@ mono: none
 dist: xenial
 dotnet: 5.0
 solution: Build.sln
+warnings_are_errors: false
 install:
   - dotnet restore QBicCore.sln
-script: dotnet build -v diagnostic -c Release QBicCore.sln
+script: dotnet build -v detailed -c Release QBicCore.sln
 deploy:
   skip_cleanup: true
   provider: script
