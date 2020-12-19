@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsiteTemplate", "WebsiteTemplate\WebsiteTemplate.csproj", "{1547BF19-E581-44E9-B509-8CEF08276652}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsiteTemplate.Test", "WebsiteTemplate.Test\WebsiteTemplate.Test.csproj", "{6A7A76CD-F5D3-45EF-B98E-D06DBD23311E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsiteTemplate.UnitTests", "WebsiteTemplate.UnitTests\WebsiteTemplate.UnitTests.csproj", "{408B0C11-BB4E-4E9E-87F2-1B2A4D0D05A0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QBic.Core", "QBic.Core\QBic.Core.csproj", "{39FDCBFC-A698-49DA-9C9D-3E7858E49BE0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocumentGenerator", "DocumentGenerator\DocumentGenerator.csproj", "{6C64F46D-75A1-4892-A089-73E4D928AC29}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QBic.Authentication", "QBic.Authentication\QBic.Authentication.csproj", "{A2C11423-BD1A-4C4E-BFC2-4483A22B67AD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1547BF19-E581-44E9-B509-8CEF08276652}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1547BF19-E581-44E9-B509-8CEF08276652}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1547BF19-E581-44E9-B509-8CEF08276652}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1547BF19-E581-44E9-B509-8CEF08276652}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A7A76CD-F5D3-45EF-B98E-D06DBD23311E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A7A76CD-F5D3-45EF-B98E-D06DBD23311E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A7A76CD-F5D3-45EF-B98E-D06DBD23311E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A7A76CD-F5D3-45EF-B98E-D06DBD23311E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{408B0C11-BB4E-4E9E-87F2-1B2A4D0D05A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{408B0C11-BB4E-4E9E-87F2-1B2A4D0D05A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{408B0C11-BB4E-4E9E-87F2-1B2A4D0D05A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{408B0C11-BB4E-4E9E-87F2-1B2A4D0D05A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39FDCBFC-A698-49DA-9C9D-3E7858E49BE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39FDCBFC-A698-49DA-9C9D-3E7858E49BE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39FDCBFC-A698-49DA-9C9D-3E7858E49BE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39FDCBFC-A698-49DA-9C9D-3E7858E49BE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C64F46D-75A1-4892-A089-73E4D928AC29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C64F46D-75A1-4892-A089-73E4D928AC29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C64F46D-75A1-4892-A089-73E4D928AC29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C64F46D-75A1-4892-A089-73E4D928AC29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2C11423-BD1A-4C4E-BFC2-4483A22B67AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2C11423-BD1A-4C4E-BFC2-4483A22B67AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2C11423-BD1A-4C4E-BFC2-4483A22B67AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2C11423-BD1A-4C4E-BFC2-4483A22B67AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06C72CFB-0B5B-43ED-BB32-3DABAAE9D175}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06C72CFB-0B5B-43ED-BB32-3DABAAE9D175}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06C72CFB-0B5B-43ED-BB32-3DABAAE9D175}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{06C72CFB-0B5B-43ED-BB32-3DABAAE9D175}.Release|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1B4DF753-0BE2-48F1-89A6-6ACFF8F5D9F5}
+	EndGlobalSection
+EndGlobal

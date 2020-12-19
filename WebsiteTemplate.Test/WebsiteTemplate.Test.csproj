@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UserSecretsId>30c0ab0f-3097-45eb-8684-8c3a2ccfd075</UserSecretsId>
   </PropertyGroup>
   

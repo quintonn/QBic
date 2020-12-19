@@ -1,0 +1,16 @@
+language: csharp
+mono: none
+dist: xenial
+dotnet: 5.0
+solution: Build.sln
+install:
+  - dotnet restore
+script:
+  - dotnet build Build.sln
+deploy:
+  skip_cleanup: true
+  provider: script
+  #script: chmod +x ./deploy/deploy.sh && ./deploy/deploy.sh $NUGET_API_KEY $NUGET_SOURCE
+  script: dotnet nuget push *.nupkg --api-key $NUGET_API_KEY --source $NUGET_SOURCE
+  on:
+    branch: net_core
