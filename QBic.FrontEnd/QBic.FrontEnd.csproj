@@ -12,8 +12,9 @@
     <IsPackable>true</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IncludeSymbols>false</IncludeSymbols>
+    <NoPackageAnalysis>false</NoPackageAnalysis>
     <NoWarn>1701;1702;NU5128;NU5017</NoWarn>
-    <NoError></NoError>
+    <NoError>NU5017</NoError>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

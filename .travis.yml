@@ -6,7 +6,7 @@ solution: Build.sln
 warnings_are_errors: false
 install:
   - dotnet restore QBicCore.sln
-script: dotnet build -v normal -c Release QBicCore.sln -nowarn:NU5017
+script: dotnet build -c Release QBicCore.sln -nowarn:NU5017
 deploy:
   skip_cleanup: true
   provider: script
