@@ -21,7 +21,7 @@
     <Content Remove="package*.json" />
   </ItemGroup>-->
   <ItemGroup>
-    <!--<None Include="wwwroot/**/*" Pack="True" />-->
-    <None Include="wwwroot/qbic.css"  Pack="True"/>
+    <None Include="wwwroot/**/*" Pack="True" />
+    <!--<None Include="wwwroot/qbic.css"  Pack="True"/>-->
   </ItemGroup>
 </Project>
