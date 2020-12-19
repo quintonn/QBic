@@ -6,15 +6,14 @@ solution: Build.sln
 install:
   - dotnet restore Build.sln
 script:
+  - nuget pack QBic.FrontEnd/QBic.FrontEnd.nuspec -OutputDirectory QBic.FrontEnd    
   - dotnet build Build.sln
 deploy:
   skip_cleanup: true
   provider: script
   # script: chmod +x ./deploy/deploy.sh && ./deploy/deploy.sh $NUGET_API_KEY $NUGET_SOURCE
   # script: dotnet nuget push DocumentGenerator/bin/Debug/*.nupkg --api-key $NUGET_API_KEY --source $NUGET_SOURCE
-  script: 
-    - nuget pack QBic.FrontEnd/QBic.FrontEnd.nuspec -OutputDirectory QBic.FrontEnd    
-    - dotnet nuget push "**/*.nupkg" --api-key $NUGET_API_KEY --source $NUGET_SOURCE
+  script: dotnet nuget push "**/*.nupkg" --api-key $NUGET_API_KEY --source $NUGET_SOURCE
   on:
     branch: net_core
 branches:
