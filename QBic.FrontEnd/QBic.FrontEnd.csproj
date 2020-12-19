@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <Authors>Quintonn Rothmann</Authors>
@@ -13,17 +13,9 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IncludeSymbols>false</IncludeSymbols>
     <NoPackageAnalysis>false</NoPackageAnalysis>
-    <NoWarn>1701;1702;NU5128;NU5017</NoWarn>
-    <NoError>NU5017</NoError>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <NoWarn>1701;1702;NU5128;NU5017</NoWarn>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <NoWarn>1701;1702;NU5128;NU5017</NoWarn>
-  </PropertyGroup>
+  
 
   <ItemGroup>
     <None Include="wwwroot/**/*" Pack="True" PackagePath="content/wwwroot" />
