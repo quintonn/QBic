@@ -5,7 +5,7 @@
     <Authors>Quintonn Rothmann</Authors>
     <Company>Quintonn Rothmann</Company>
     <Copyright>Copyright �  2018</Copyright>
-    <Version>5.0.0.10</Version>
+    <Version>5.0.0.11</Version>
     <RepositoryUrl>https://github.com/quintonn/QBic</RepositoryUrl>
     <Product>QBic.FrontEnd</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -20,10 +20,8 @@
     <None Include="wwwroot/**/*" Pack="True" PackagePath="content/wwwroot" />
     <Content Remove="package*.json" />
   </ItemGroup>-->
-  <ItemGroup>    
-    <Content Include="wwwroot/**/*">
-      <Pack>true</Pack>
-      <PackagePath>content\www</PackagePath>
-    </Content>
+  <ItemGroup Label="Packaging">
+    <Content Include="test.targets" PackagePath="test.targets" />
+    <Content Include="wwwroot\**\*.*" PackagePath="content\wwwroot;contentFiles\wwwroot" />
   </ItemGroup>
 </Project>

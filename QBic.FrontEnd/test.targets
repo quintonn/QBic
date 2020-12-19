@@ -1,0 +1,9 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Target Name="CopyScriptsToProject" BeforeTargets="Build">
+        <Message Text="Copying wwwroot to project" />
+        <ItemGroup>
+            <SourceScripts Include="$(MSBuildThisFileDirectory)..\..\content\wwwroot\**\*.*"/>
+        </ItemGroup>
+        <Copy SourceFiles="@(SourceScripts)" DestinationFiles="@(SourceScripts -> '$(MSBuildProjectDirectory)\wwwroot\js\%(RecursiveDir)%(Filename)%(Extension)')" Condition="!Exists('$(MSBuildProjectDirectory)\wwwroot\%(RecursiveDir)%(Filename)%(Extension)')" />
+    </Target>
+</Project>
