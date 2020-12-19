@@ -4,10 +4,10 @@ dist: xenial
 dotnet: 5.0
 solution: Build.sln
 install:
-  - dotnet restore Build.sln
+  - dotnet restore QBicCore.sln
 script:
   - nuget pack QBic.FrontEnd/QBic.FrontEnd.nuspec -OutputDirectory QBic.FrontEnd    
-  - dotnet build Build.sln
+  - dotnet build QBicCore.sln
 deploy:
   skip_cleanup: true
   provider: script

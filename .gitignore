@@ -39,3 +39,5 @@ QBic.Authentication/bin
 QBic.Authentication/obj
 QBic.FrontEnd/node_modules
 QBic.FrontEnd/wwwroot
+QBic.FrontEnd/bin
+QBic.FrontEnd/obj
