@@ -1,3 +1,5 @@
+https://travis-ci.com/quintonn/QBic.svg?branch=master
+
 ##### Table of Contents  
 1. [Introduction](#introduction)  
 1. [Goal](#goal)  
