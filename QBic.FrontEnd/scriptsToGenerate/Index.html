@@ -1,0 +1,41 @@
+<!doctype html><html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width,initial-scale=1"/><link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png"><link rel="manifest" href="manifest.json"><link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5"><meta name="theme-color" content="#ffffff"><link rel="icon" href="favicon.ico" type="image/x-icon"/><link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/><link href="qbic.css" rel="stylesheet"/><link href="siteOverrides.css" rel="stylesheet"/><title></title></head><body><script type="text/html" id="largeHeadingTemplate"><h1 class="w3-xxxlarge" data-bind="text: applicationName"></h1>
+
+        <div class="w3-navbar">
+            <div class="w3-container w3-left" style="text-align:left">
+                <button class="w3-btn w3-app-color" data-bind="text: menuContainer().home().name, click: menuContainer().home().menuClick"></button>
+                <button class="w3-btn w3-app-color" data-bind="text: menuContainer().back().name, click: menuContainer().back().menuClick, visible: menuContainer().currentParent() != null"></button>
+                <span data-bind="foreach: menuContainer().currentMenuList">
+                    <button class="w3-btn w3-app-color " data-bind="text: name, click: menuClick"></button>
+                </span>
+            </div>
+            <div class="w3-container w3-right">
+                <span data-bind="visible: showUser">
+                    <button class="w3-btn w3-app-color " data-bind="text: user().name"></button>
+                    <button class="w3-btn w3-app-color " data-bind="click: logoutClick">Logout</button>
+                </span>
+            </div>
+        </div></script><script type="text/html" id="smallHeadingTemplate"><ul class="w3-navbar w3-large w3-app-color w3-left-align">
+            <li class="w3-app-color w3-opennav">
+                <a href="javascript:void(0);" data-bind="click: toggleNavBar">☰</a>
+            </li>
+            <li>
+                <a href="javascript:void(0);" data-bind="text: applicationName, click: menuContainer().home().menuClick"></a>
+            </li>
+            <li class="w3-right">
+                <a href="javascript:void(0);" data-bind="click: logoutClick">Logout</a>
+            </li>
+            <li class="w3-right">
+                <a href="javascript:void(0);" data-bind="text: user().name"></a>
+            </li>
+        </ul>
+
+        <span id="smallNavbar" class="w3-hide ">
+            <nav class="w3-sidenav w3-left-align w3-large w3-app-color">
+                <a class="w3-large w3-right" href="#" data-bind="click: toggleNavBar">&times;</a>
+                <a class="w3-small" href="#" data-bind="text: menuContainer().home().name, click: menuContainer().home().menuClick"></a>
+                <a class="w3-small" href="#" data-bind="text: menuContainer().back().name, click: menuContainer().back().menuClick, visible: menuContainer().currentParent() != null"></a>
+                <!-- ko foreach: menuContainer().currentMenuList -->
+                <a href="#" class="w3-small" data-bind="text: name, click: menuClick"></a>
+                <!-- /ko -->
+            </nav>
+        </span></script><div class="w3-container w3-app-color w3-center w3-hide-small w3-top" data-bind="template: { name: 'largeHeadingTemplate'}"></div><div class="w3-container w3-app-color w3-center w3-top w3-hide-medium w3-hide-large" data-bind="template: { name: 'smallHeadingTemplate'}"></div><div data-bind="foreach: modalDialogs"><div class="w3-modal" style="display:block"><div class="w3-modal-content" data-bind="html: html, attr: { id: 'modalDlg_' + myid() }"></div></div></div><div data-bind="foreach: busyContainers"><div class="w3-modal w3-app-color" style="display:block"><p></p><div class="w3-container" style="top:0; left:0; bottom:0; right:0; margin: auto; position:absolute; height:5%"><div class="w3-center"><i class="fa fa-hourglass-half w3-xlarge w3-spin"></i><p data-bind="text: busyText"></p></div></div><p></p></div></div><div class="w3-hide-large w3-hide-medium" style="height:43px; color:white; background-color:white"></div><div class="w3-hide-small" style="height:126.023px; color:white; background-color:white"></div><div data-bind="foreach: currentView"><div class="w3-container"><div class="w3-container" data-bind="html: html"></div></div></div><div id="inputContent"></div><div id="messageContent"><div id="dlgMessage"></div></div><script src="qbic.js"></script></body></html>

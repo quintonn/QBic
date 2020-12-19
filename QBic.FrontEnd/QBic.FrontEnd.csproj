@@ -5,7 +5,7 @@
     <Authors>Quintonn Rothmann</Authors>
     <Company>Quintonn Rothmann</Company>
     <Copyright>Copyright �  2018</Copyright>
-    <Version>5.0.0.11</Version>
+    <Version>5.0.0.12</Version>
     <RepositoryUrl>https://github.com/quintonn/QBic</RepositoryUrl>
     <Product>QBic.FrontEnd</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -16,12 +16,12 @@
     <EnableDefaultItems>false</EnableDefaultItems>
   </PropertyGroup>
 
-  <!-- <ItemGroup>
-    <None Include="wwwroot/**/*" Pack="True" PackagePath="content/wwwroot" />
-    <Content Remove="package*.json" />
-  </ItemGroup>-->
   <ItemGroup Label="Packaging">
-    <Content Include="test.targets" PackagePath="test.targets" />
-    <Content Include="wwwroot\**\*.*" PackagePath="content\wwwroot;contentFiles\wwwroot" />
+    <Content Include="build\test.targets" PackagePath="build\test.targets" />
+
+    <Content Include="scriptsToGenerate/*.css">
+      <Pack>true</Pack>
+    </Content>
   </ItemGroup>
+  
 </Project>
