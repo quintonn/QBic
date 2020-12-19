@@ -47,6 +47,8 @@ namespace WebsiteTemplate
             ConfigureServicesCalled = true;
             services.AddSingleton<ApplicationSettingsCore, T>();
 
+            var appSettings = Activator.CreateInstance<T>();
+
             services.AddTransient<AuditService>();
 
             // registrations because Unity was removed and auto resolving doesn't work anymore
@@ -116,7 +118,7 @@ namespace WebsiteTemplate
 
             services.AddSingleton<IJwtAuthenticationProvider, QBicJwtAuthProvider>();
 
-            var dataStore = DataStore.GetInstance(true, configuration, services);
+            var dataStore = DataStore.GetInstance(appSettings.UpdateDatabase, configuration, services);
             services.AddSingleton(dataStore);// appSettings.UpdateDatabase));
 
             // This is required for authentication to work

@@ -1,5 +1,4 @@
 ﻿using log4net.Core;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
 using System;
@@ -11,6 +10,10 @@ namespace WebsiteTemplate.Utilities
 {
     public abstract class ApplicationSettingsCore
     {
+        public ApplicationSettingsCore()
+        {
+
+        }
         public abstract string GetApplicationName();
 
         public abstract string ApplicationPassPhrase { get; }
