@@ -12,6 +12,7 @@
     <IsPackable>true</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NoWarn>1701;1702;NU5128;NU5017</NoWarn>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
   </PropertyGroup>
   
 
