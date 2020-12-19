@@ -13,6 +13,15 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IncludeSymbols>false</IncludeSymbols>
     <NoWarn>1701;1702;NU5128;NU5017</NoWarn>
+    <NoError></NoError>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <NoWarn>1701;1702;NU5128;NU5017</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <NoWarn>1701;1702;NU5128;NU5017</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
