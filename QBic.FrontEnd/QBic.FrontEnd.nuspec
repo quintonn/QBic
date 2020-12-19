@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+	<metadata>
+		<id>QBic.FrontEnd</id>
+		<version>5.0.0</version>
+		<title>QBic FrontEnd</title>
+		<authors>Quintonn Rothmann</authors>
+		<owners>Quintonn Rothmann</owners>
+    <licenseUrl>https://raw.githubusercontent.com/quintonn/QBic/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/quintonn/QBic</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/quintonn/QBic/master/QBic.png</iconUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>QBic Front End</description>
+		<releaseNotes>First Release</releaseNotes>
+		<copyright>Copyright 2016</copyright>
+		<tags>QBic.FrontEnd</tags>
+	</metadata>  
+	<files>
+		<file src="wwwroot\**\*.*" target="content\\wwwroot" />
+	</files>
+</package>
