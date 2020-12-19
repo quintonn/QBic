@@ -5,7 +5,7 @@ dotnet: 5.0
 solution: Build.sln
 install:
   - dotnet restore QBicCore.sln
-script: dotnet build -c Release QBicCore.sln
+script: dotnet build -v diagnostic -c Release QBicCore.sln
 deploy:
   skip_cleanup: true
   provider: script
