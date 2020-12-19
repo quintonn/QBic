@@ -14,3 +14,6 @@ deploy:
   script: dotnet nuget push *.nupkg --api-key $NUGET_API_KEY --source $NUGET_SOURCE
   on:
     branch: net_core
+branches:
+  only:
+    - net_core
