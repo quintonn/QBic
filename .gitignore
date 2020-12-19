@@ -37,3 +37,5 @@ QBic.Core/QBic.Core.csproj.user
 WebsiteTemplate.Test/Data/appDataCore.db
 QBic.Authentication/bin
 QBic.Authentication/obj
+QBic.FrontEnd/node_modules
+QBic.FrontEnd/wwwroot

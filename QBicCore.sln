@@ -7,13 +7,35 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsiteTemplate", "WebsiteT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsiteTemplate.Test", "WebsiteTemplate.Test\WebsiteTemplate.Test.csproj", "{6A7A76CD-F5D3-45EF-B98E-D06DBD23311E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsiteTemplate.UnitTests", "WebsiteTemplate.UnitTests\WebsiteTemplate.UnitTests.csproj", "{408B0C11-BB4E-4E9E-87F2-1B2A4D0D05A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsiteTemplate.UnitTests", "WebsiteTemplate.UnitTests\WebsiteTemplate.UnitTests.csproj", "{408B0C11-BB4E-4E9E-87F2-1B2A4D0D05A0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QBic.Core", "QBic.Core\QBic.Core.csproj", "{39FDCBFC-A698-49DA-9C9D-3E7858E49BE0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocumentGenerator", "DocumentGenerator\DocumentGenerator.csproj", "{6C64F46D-75A1-4892-A089-73E4D928AC29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QBic.Authentication", "QBic.Authentication\QBic.Authentication.csproj", "{A2C11423-BD1A-4C4E-BFC2-4483A22B67AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QBic.Authentication", "QBic.Authentication\QBic.Authentication.csproj", "{A2C11423-BD1A-4C4E-BFC2-4483A22B67AD}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "QBic.FrontEnd", "QBic.FrontEnd\", "{06C72CFB-0B5B-43ED-BB32-3DABAAE9D175}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.5"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_51296"
+		Debug.AspNetCompiler.PhysicalPath = "QBic.FrontEnd\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51296\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_51296"
+		Release.AspNetCompiler.PhysicalPath = "QBic.FrontEnd\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51296\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "51296"
+		SlnRelativePath = "QBic.FrontEnd\"
+		DefaultWebSiteLanguage = "Visual Basic"
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +67,10 @@ Global
 		{A2C11423-BD1A-4C4E-BFC2-4483A22B67AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2C11423-BD1A-4C4E-BFC2-4483A22B67AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2C11423-BD1A-4C4E-BFC2-4483A22B67AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06C72CFB-0B5B-43ED-BB32-3DABAAE9D175}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06C72CFB-0B5B-43ED-BB32-3DABAAE9D175}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06C72CFB-0B5B-43ED-BB32-3DABAAE9D175}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{06C72CFB-0B5B-43ED-BB32-3DABAAE9D175}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -17,17 +17,7 @@ namespace WebsiteTemplate.Test
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var appSettings = new AppSettings();
-            
             services.UseQBic<AppSettings, AppStartup>(Config);
-
-#if (DEBUG)
-            if (appSettings.DebugStartup)
-            {
-                if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
-            }
-#endif
-
             //services.AddScoped<UserInjector, DefaultUserInjector>(); // can i override the default one?
             //User can override UserInjector with their own injector class
         }

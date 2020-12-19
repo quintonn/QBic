@@ -25,7 +25,6 @@ $(document).ready(function ()
         dialog.showBusyDialog("Initializing...");
         return mainApp.makeWebCall(mainApp.apiURL + "initializeSystem").then(function(data)
         {
-
             var appName = data['ApplicationName'];
             var version = data['Version'];
             var error = data['ConstructorError'];

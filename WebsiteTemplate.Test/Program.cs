@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using QBic.Core.Utilities;
 using System;
 using System.IO;
-using System.Security.Cryptography.X509Certificates;
 
 namespace WebsiteTemplate.Test
 {
@@ -63,7 +62,9 @@ namespace WebsiteTemplate.Test
 
 
             builder.UseContentRoot(Directory.GetCurrentDirectory());
+#if (DEBUG)
             builder.UseUrls("https://*:5001", "http://*:5000");
+#endif
             var config = new ConfigurationBuilder();
             config.AddJsonFile("appsettings.json", true, true);
             builder.UseConfiguration(config.Build());

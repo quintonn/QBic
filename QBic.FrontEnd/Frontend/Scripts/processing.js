@@ -320,7 +320,6 @@
     {
         if (column.ColumnSetting != null)
         {
-            console.log(column.ColumnSetting);
             if (column.ColumnSetting.ColumnSettingType == 0) /// Show/Hide column
             {
                 var show = column.ColumnSetting.Display == 0;

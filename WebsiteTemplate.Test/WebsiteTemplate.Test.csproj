@@ -16,6 +16,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\Frontend\**" />
+    <Content Remove="wwwroot\Frontend\**" />
+    <EmbeddedResource Remove="wwwroot\Frontend\**" />
+    <None Remove="wwwroot\Frontend\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.1" />
@@ -28,77 +35,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WebsiteTemplate\WebsiteTemplate.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Qactus.Authorization.Core">
-      <HintPath>..\..\Qactus\Qactus.Authorization.Core\bin\Debug\net5.0\Qactus.Authorization.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Qactus.Authorization.Jwt">
-      <HintPath>..\..\Qactus\Qactus.Authorization.Jwt\bin\Debug\net5.0\Qactus.Authorization.Jwt.dll</HintPath>
-    </Reference>
-    <Reference Include="Qactus.Authorization.Jwt.Default">
-      <HintPath>..\..\Qactus\Qactus.Authorization.Jwt.Default\bin\Debug\net5.0\Qactus.Authorization.Jwt.Default.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\Default.html" />
-    <None Include="wwwroot\Frontend\css\busyIndicator.css" />
-    <None Include="wwwroot\Frontend\css\font-awesome.min.css" />
-    <None Include="wwwroot\Frontend\css\images\ui-icons_444444_256x240.png" />
-    <None Include="wwwroot\Frontend\css\images\ui-icons_555555_256x240.png" />
-    <None Include="wwwroot\Frontend\css\images\ui-icons_777620_256x240.png" />
-    <None Include="wwwroot\Frontend\css\images\ui-icons_777777_256x240.png" />
-    <None Include="wwwroot\Frontend\css\images\ui-icons_cc0000_256x240.png" />
-    <None Include="wwwroot\Frontend\css\images\ui-icons_ffffff_256x240.png" />
-    <None Include="wwwroot\Frontend\css\inputDialog.css" />
-    <None Include="wwwroot\Frontend\css\inputView.css" />
-    <None Include="wwwroot\Frontend\css\jquery-ui.min.css" />
-    <None Include="wwwroot\Frontend\css\login.css" />
-    <None Include="wwwroot\Frontend\css\main.css" />
-    <None Include="wwwroot\Frontend\css\menu.css" />
-    <None Include="wwwroot\Frontend\css\normalize.css" />
-    <None Include="wwwroot\Frontend\css\siteOverrides.css" />
-    <None Include="wwwroot\Frontend\css\siteSpecific.css" />
-    <None Include="wwwroot\Frontend\css\spinner1.css" />
-    <None Include="wwwroot\Frontend\css\views.css" />
-    <None Include="wwwroot\Frontend\css\w3.css" />
-    <None Include="wwwroot\Frontend\fonts\fontawesome-webfont.eot" />
-    <None Include="wwwroot\Frontend\fonts\fontawesome-webfont.svg" />
-    <None Include="wwwroot\Frontend\fonts\fontawesome-webfont.ttf" />
-    <None Include="wwwroot\Frontend\fonts\fontawesome-webfont.woff" />
-    <None Include="wwwroot\Frontend\fonts\fontawesome-webfont.woff2" />
-    <None Include="wwwroot\Frontend\Pages\confirmation.html" />
-    <None Include="wwwroot\Frontend\Pages\DetailsView.html" />
-    <None Include="wwwroot\Frontend\Pages\dialog.html" />
-    <None Include="wwwroot\Frontend\Pages\Home.html" />
-    <None Include="wwwroot\Frontend\Pages\InputDialog.html" />
-    <None Include="wwwroot\Frontend\Pages\ListView.html" />
-    <None Include="wwwroot\Frontend\Pages\Login.html" />
-    <None Include="wwwroot\Frontend\Pages\Menu.html" />
-    <None Include="wwwroot\Frontend\Pages\MessageDialog.html" />
-    <None Include="wwwroot\Frontend\Pages\PasswordResetRequest.html" />
-    <None Include="wwwroot\Frontend\Pages\Views.html" />
-    <None Include="wwwroot\Frontend\Scripts\applicationModel.js" />
-    <None Include="wwwroot\Frontend\Scripts\auth.js" />
-    <None Include="wwwroot\Frontend\Scripts\base64.js" />
-    <None Include="wwwroot\Frontend\Scripts\date.js" />
-    <None Include="wwwroot\Frontend\Scripts\dialog.js" />
-    <None Include="wwwroot\Frontend\Scripts\inputDialog.js" />
-    <None Include="wwwroot\Frontend\Scripts\jquery-3.1.0.min.js" />
-    <None Include="wwwroot\Frontend\Scripts\jquery-ui.min.js" />
-    <None Include="wwwroot\Frontend\Scripts\knockout-3.4.0.js" />
-    <None Include="wwwroot\Frontend\Scripts\knockout-jqueryui.min.js" />
-    <None Include="wwwroot\Frontend\Scripts\mainApplication.js" />
-    <None Include="wwwroot\Frontend\Scripts\menus.js" />
-    <None Include="wwwroot\Frontend\Scripts\modernizr.js" />
-    <None Include="wwwroot\Frontend\Scripts\processing.js" />
-    <None Include="wwwroot\Frontend\Scripts\promise-7.0.4.min.js" />
-    <None Include="wwwroot\Frontend\Scripts\promise-done-7.0.4.min.js" />
-    <None Include="wwwroot\Frontend\Scripts\views.js" />
-    <None Include="wwwroot\Frontend\Scripts\_references.js" />
-    <None Include="wwwroot\index.html" />
   </ItemGroup>
 
  

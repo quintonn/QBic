@@ -1,3 +1,8 @@
+.w3-app-color, .w3-hover-app-color {
+    color: white;
+    background-color: black;
+}
+
 .koHidden {
         display: none!important;  /* http://stackoverflow.com/questions/12775766/knockout-js-stop-divs-binded-to-visible-from-flashing-on-screen */
     }

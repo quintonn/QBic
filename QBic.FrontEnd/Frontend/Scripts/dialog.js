@@ -57,7 +57,7 @@
 
     dialog.showDialogWithId = function (pageId, viewModel)
     {
-        return mainApp.makeWebCall("frontend/pages/" + pageId + ".html").then(function (data)
+        return mainApp.makeWebCall("pages/" + pageId + ".html").then(function (data)
         {
             return dialog.showDialog(data, viewModel);
         });
@@ -75,7 +75,7 @@
     {
         if (loginHtml.length == 0)
         {
-            return mainApp.makeWebCall("Frontend/Pages/Login.html").then(function (data)
+            return mainApp.makeWebCall("pages/Login.html").then(function (data)
             {
                 loginHtml = data;
                 return addLoginModel();
@@ -89,7 +89,7 @@
 
     dialog.showPasswordResetDialog = function ()
     {
-        return mainApp.makeWebCall("Frontend/Pages/PasswordResetRequest.html").then(function (data)
+        return mainApp.makeWebCall("pages/PasswordResetRequest.html").then(function (data)
         {
             return addPasswordResetModel(data);
         });
