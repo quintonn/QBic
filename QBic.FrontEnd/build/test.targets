@@ -1,9 +1,18 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <SourceScriptFiles Include="$(MSBuildThisFileDirectory)..\content\scriptsToGenerate\*.*" />
+    <Content Include="$(MSBuildThisFileDirectory)\..\content\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)\..\contentFiles\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <SourceScriptFiles Include="$(MSBuildThisFileDirectory)..\contentFiles\**\*.*" />
   </ItemGroup>
   <Target Name="CopyScriptsToProject" BeforeTargets="Build">
-    <Copy SourceFiles="@(SourceScriptFiles)" DestinationFolder="$(ProjectDir)\wwwroot\css\scriptsToGenerate\"
-        />
+    <Copy SourceFiles="@(SourceScriptFiles)" DestinationFolder="$(ProjectDir)\wwwroot\" />
   </Target>
 </Project>
