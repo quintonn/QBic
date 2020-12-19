@@ -16,6 +16,6 @@
 		<tags>QBic.FrontEnd</tags>
 	</metadata>  
 	<files>
-		<file src="wwwroot\**\*.*" target="content\\wwwroot" />
+		<file src="wwwroot\**\*.*" target="content\wwwroot" />
 	</files>
 </package>
