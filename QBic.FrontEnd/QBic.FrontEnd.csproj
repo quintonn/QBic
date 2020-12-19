@@ -21,6 +21,6 @@
     <Content Remove="package*.json" />
   </ItemGroup>-->
   <ItemGroup>
-    <Content Include="wwwroot/**/*" Pack="True" />
+    <None Include="wwwroot/**/*" Pack="True" />
   </ItemGroup>
 </Project>
