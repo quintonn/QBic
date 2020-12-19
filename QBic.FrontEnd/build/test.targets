@@ -1,6 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <SourceScriptFiles Include="$(MSBuildThisFileDirectory)..\content\scriptsToGenerate\*.css" />
+    <SourceScriptFiles Include="$(MSBuildThisFileDirectory)..\content\scriptsToGenerate\*.*" />
   </ItemGroup>
   <Target Name="CopyScriptsToProject" BeforeTargets="Build">
     <Copy SourceFiles="@(SourceScriptFiles)" DestinationFolder="$(ProjectDir)\wwwroot\css\scriptsToGenerate\"
