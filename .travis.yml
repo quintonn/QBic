@@ -4,7 +4,7 @@ dist: xenial
 dotnet: 5.0
 solution: Build.sln
 install:
-  - dotnet restore
+  - dotnet restore Build.sln
 script:
   - dotnet build Build.sln
 deploy:
