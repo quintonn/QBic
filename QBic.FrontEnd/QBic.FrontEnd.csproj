@@ -16,7 +16,7 @@
     <EnableDefaultItems>false</EnableDefaultItems>
   </PropertyGroup>
 
-  <!--<ItemGroup>
+  <!-- <ItemGroup>
     <None Include="wwwroot/**/*" Pack="True" PackagePath="content/wwwroot" />
     <Content Remove="package*.json" />
   </ItemGroup>-->
