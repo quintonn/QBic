@@ -14,8 +14,7 @@ deploy:
   # script: dotnet nuget push DocumentGenerator/bin/Debug/*.nupkg --api-key $NUGET_API_KEY --source $NUGET_SOURCE
   #script: dotnet nuget push "**/*.nupkg" --api-key $NUGET_API_KEY --source $NUGET_SOURCE --skip-duplicate
   script:
-    - dotnet pack QBicCore.sln -o .
-    - dotnet nuget push "**/*.nupkg" --api-key $NUGET_API_KEY --source $NUGET_SOURCE --skip-duplicate  
+    - dotnet pack QBicCore.sln -o && dotnet nuget push "**/*.nupkg" --api-key $NUGET_API_KEY --source $NUGET_SOURCE --skip-duplicate  
   on:
     branch: net_core
 branches:
