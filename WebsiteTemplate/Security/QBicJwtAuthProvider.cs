@@ -12,6 +12,8 @@ namespace WebsiteTemplate.Security
             AppSettings = appSettings;
         }
 
+        public override bool AllowInsecureHttp => true;
+
         public override string Path => AppSettings.TokenEndpointPath;
 
         public override string ClientId => AppSettings.ClientId;
