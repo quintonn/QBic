@@ -15,7 +15,7 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="readme2.txt" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <None Include="readme.txt" Pack="true" PackagePage=".">
     </None>
@@ -23,8 +23,8 @@
 
   <ItemGroup>
     <Content Include="readme2.txt">
+      <PackageFlatten>true</PackageFlatten>
       <Pack>true</Pack>
-      <PackagePath>\</PackagePath>
     </Content>
   </ItemGroup>
 
