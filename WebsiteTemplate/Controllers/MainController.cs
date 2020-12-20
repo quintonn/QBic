@@ -97,7 +97,7 @@ namespace WebsiteTemplate.Controllers
         [HttpPost]
         [Route("systemPing")]
         [AllowAnonymous]
-        [Microsoft.AspNetCore.Mvc.RequireHttps]
+        //[Microsoft.AspNetCore.Mvc.RequireHttps]
         public async Task<IActionResult> SystemPing()
         {
             return await Container.GetService<PingProcessor>().Process(-1, this.Request);
@@ -106,7 +106,7 @@ namespace WebsiteTemplate.Controllers
         [HttpGet]
         [Route("initializeSystem")]
         //[AllowAnonymous]
-        [Microsoft.AspNetCore.Mvc.RequireHttps]
+        //[Microsoft.AspNetCore.Mvc.RequireHttps]
         public async Task<IActionResult> InitializeSystem()
         {
             try
@@ -141,7 +141,7 @@ namespace WebsiteTemplate.Controllers
 
         [HttpGet]
         [Route("initialize")]
-        [Microsoft.AspNetCore.Mvc.RequireHttps]
+        //[Microsoft.AspNetCore.Mvc.RequireHttps]
         [Authorize]
         public async Task<IActionResult> Initialize()
         {
@@ -166,7 +166,7 @@ namespace WebsiteTemplate.Controllers
 
         [HttpPost]
         [Route("propertyChanged/{*eventId}")]
-        [Microsoft.AspNetCore.Mvc.RequireHttps]
+        //[Microsoft.AspNetCore.Mvc.RequireHttps]
         [ConditionalAuthorize]
         public async Task<IActionResult> OnPropertyChanged(int eventId)
         {
@@ -175,7 +175,7 @@ namespace WebsiteTemplate.Controllers
 
         [HttpPost]
         [Route("processEvent/{*eventId}")]
-        [Microsoft.AspNetCore.Mvc.RequireHttps]
+        //[Microsoft.AspNetCore.Mvc.RequireHttps]
         [ConditionalAuthorize]
         public async Task<IActionResult> ProcessEvent(int eventId)
         {
@@ -185,7 +185,7 @@ namespace WebsiteTemplate.Controllers
 
         [HttpPost]
         [Route("GetFile/{*eventId}")]
-        [Microsoft.AspNetCore.Mvc.RequireHttps]
+        //[Microsoft.AspNetCore.Mvc.RequireHttps]
         [Authorize]
         ////[DeflateCompression] // Converts data to json which doesn't work for files
         public async Task<IActionResult> GetFile(int eventId)
@@ -201,7 +201,7 @@ namespace WebsiteTemplate.Controllers
 
         [HttpPost]
         [Route("updateViewData/{*eventId}")]
-        [Microsoft.AspNetCore.Mvc.RequireHttps]
+        //[Microsoft.AspNetCore.Mvc.RequireHttps]
         [ConditionalAuthorize]
         public async Task<IActionResult> UpdateViewData(int eventId)
         {
@@ -210,7 +210,7 @@ namespace WebsiteTemplate.Controllers
 
         [HttpPost]
         [Route("getViewMenu/{*eventId}")]
-        [Microsoft.AspNetCore.Mvc.RequireHttps]
+        //[Microsoft.AspNetCore.Mvc.RequireHttps]
         [ConditionalAuthorize]
         public async Task<IActionResult> GetViewMenu(int eventId)
         {
@@ -219,7 +219,7 @@ namespace WebsiteTemplate.Controllers
 
         [HttpPost]
         [Route("executeUIAction/{*eventId}")]
-        [Microsoft.AspNetCore.Mvc.RequireHttps]
+        //[Microsoft.AspNetCore.Mvc.RequireHttps]
         [ConditionalAuthorize]
         public async Task<IActionResult> ExecuteUIAction(int eventId)
         {
@@ -228,7 +228,7 @@ namespace WebsiteTemplate.Controllers
 
         [HttpGet]
         [Route("getUserMenu")]
-        [Microsoft.AspNetCore.Mvc.RequireHttps]
+        //[Microsoft.AspNetCore.Mvc.RequireHttps]
         [Authorize] // TODO: We need a way to have menu's for when we don't require a logged in user.
         public async Task<IActionResult> GetUserMenu()
         {
@@ -239,7 +239,7 @@ namespace WebsiteTemplate.Controllers
 
         [HttpPost]
         [Route("performBackup")]
-        [Microsoft.AspNetCore.Mvc.RequireHttps]
+        //[Microsoft.AspNetCore.Mvc.RequireHttps]
         //[Authorize] //Not sure if we can have authorization. should  be possible
         ////[DeflateCompression]
         public async Task<IActionResult> PerformBackup()
@@ -249,7 +249,7 @@ namespace WebsiteTemplate.Controllers
 
         [HttpPost]
         [Route("setAcmeChallenge")]
-        [Microsoft.AspNetCore.Mvc.RequireHttps]
+        //[Microsoft.AspNetCore.Mvc.RequireHttps]
         [AllowAnonymous]
         //[Authorize] //Not sure if we can have authorization. should  be possible
         public async Task<IActionResult> SetAcmeChallenge()

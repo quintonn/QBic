@@ -42,7 +42,7 @@ namespace WebsiteTemplate.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("RequestPasswordReset")]
-        [Microsoft.AspNetCore.Mvc.RequireHttps]
+        //[Microsoft.AspNetCore.Mvc.RequireHttps]
         public async Task<IActionResult> RequestPasswordReset()
         {
             //XXXUtils.SetCurrentUser("System");
@@ -66,7 +66,7 @@ namespace WebsiteTemplate.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("ConfirmEmail")]
-        [Microsoft.AspNetCore.Mvc.RequireHttps]
+        //[Microsoft.AspNetCore.Mvc.RequireHttps]
         public async Task<IActionResult> ConfirmEmail()
         {
             try
