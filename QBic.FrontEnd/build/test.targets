@@ -13,6 +13,9 @@
     <SourceScriptFiles Include="$(MSBuildThisFileDirectory)..\contentFiles\**\*.*" />
   </ItemGroup>
   <Target Name="CopyScriptsToProject" BeforeTargets="Build">
-    <Copy SourceFiles="@(SourceScriptFiles)" DestinationFolder="$(ProjectDir)\wwwroot\" />
+    <Copy SourceFiles="@(SourceScriptFiles)" DestinationFolder="$(ProjectDir)\wwwroot\xyz" />
+  </Target>
+  <Target Name="CopyScriptsToProject" BeforeTargets="Build">
+    <Copy SourceFiles="@(SourceScriptFiles)" DestinationFolder="$(ProjectDir)\test" />
   </Target>
 </Project>
