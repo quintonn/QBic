@@ -5,7 +5,7 @@
     <Authors>Quintonn Rothmann</Authors>
     <Company>Quintonn Rothmann</Company>
     <Copyright>Copyright �  2018</Copyright>
-    <Version>5.0.0.15</Version>
+    <Version>5.0.0.16</Version>
     <RepositoryUrl>https://github.com/quintonn/QBic</RepositoryUrl>
     <Product>QBic.FrontEnd</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -15,6 +15,13 @@
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <EnableDefaultItems>false</EnableDefaultItems>
   </PropertyGroup>
+
+  <ItemGroup>
+    <_CustomFiles Include="$(MSBuildProjectDirectory)/../scriptsToGenerate/**/*" />
+    <DotNetPublishFiles Include="@(_CustomFiles)">
+      <DestinationRelativePath>wwwroot/scripts/%(RecursiveDir)%(Filename)%(Extension)</DestinationRelativePath>
+    </DotNetPublishFiles>
+  </ItemGroup>
   
   <ItemGroup>
     <None Include="wwwroot/**/*.*" Pack="False">
