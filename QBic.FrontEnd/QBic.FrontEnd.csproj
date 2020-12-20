@@ -5,7 +5,7 @@
     <Authors>Quintonn Rothmann</Authors>
     <Company>Quintonn Rothmann</Company>
     <Copyright>Copyright �  2018</Copyright>
-    <Version>5.0.0.18</Version>
+    <Version>5.0.0.19</Version>
     <RepositoryUrl>https://github.com/quintonn/QBic</RepositoryUrl>
     <Product>QBic.FrontEnd</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -19,10 +19,26 @@
     <None Include="xyz.txt">
       <Pack>true</Pack>
       <PackagePath>build</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInPackage>true</IncludeInPackage>
+      <BuildAction>Content</BuildAction>
+      <CopyToOutput>true</CopyToOutput>
     </None>
     <None Include="QBic.FrontEnd.targets">
       <Pack>true</Pack>
       <PackagePath>build</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)yyy.txt">
+      <Link>yyy.txt</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Pack>true</Pack>
+      <PackagePath>build</PackagePath>
+      <IncludeInPackage>true</IncludeInPackage>
+      <BuildAction>Content</BuildAction>
+      <CopyToOutput>true</CopyToOutput>
     </None>
   </ItemGroup>
   
