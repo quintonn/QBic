@@ -175,7 +175,11 @@ namespace WebsiteTemplate
                 return next();
             });
             app.UseDefaultFiles();
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                //FileProvider = new PhysicalFileProvider("mypath"),
+                ServeUnknownFileTypes = true // else I get: The request path /api/v1/initializeSystem does not match a supported file type
+            });
 
             var appStartup = serviceProvider.GetService<ApplicationStartup>();
             appStartup.RegisterUnityContainers(serviceProvider);
