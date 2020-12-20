@@ -11,7 +11,7 @@ namespace WebsiteTemplate.Mappings
 
             Id(x => x.Id).GeneratedBy.Assigned();
 
-            Map(x => x.Token).Not.Nullable().Length(int.MaxValue);
+            Map(x => x.Token).Not.Nullable().CustomType("StringClob").CustomSqlType("nvarchar(max)").Length(int.MaxValue);
             //Map(x => x.ClientId).Not.Nullable().Length(50);
             //Map(x => x.ExpiresUtc).Not.Nullable();
             //Map(x => x.IssuedUtc).Not.Nullable();

@@ -83,7 +83,6 @@ namespace QBic.Core.Data
 
 
             var mainConnectionString = Config.GetConnectionString("MainDataStore");
-            //var mainConnectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
             //mainConnectionString = Encryption.Encrypt(mainConnectionString, AppSettings.ApplicationPassPhrase);
 
             //mainConnectionString = Encryption.Decrypt(mainConnectionString, AppSettings.ApplicationPassPhrase);
@@ -109,7 +108,7 @@ namespace QBic.Core.Data
 
         private ISessionFactory CreateAuditSessionFactory()
         {
-            var connectionString = Config.GetConnectionString("AuditDataStore");// ConfigurationManager.ConnectionStrings["AuditDataStore"]?.ConnectionString;
+            var connectionString = Config.GetConnectionString("AuditDataStore");
 
             if (String.IsNullOrWhiteSpace(connectionString))
             {
@@ -218,24 +217,6 @@ namespace QBic.Core.Data
         public IStatelessSession OpenStatelessSession()
         {
             return Store.OpenStatelessSession();
-        }
-
-        public DbConnection CreateConnection(string connectionString)
-        {
-            if (connectionString.Contains("##CurrentDirectory##") || connectionString.Contains(":memory:"))
-            {
-                connectionString = connectionString.Replace("##CurrentDirectory##", QBicUtils.GetCurrentDirectory());
-                return new SqliteConnection(connectionString);
-            }
-            else if (ConfigurationManager.ConnectionStrings["MainDataStore"]?.ProviderName.Contains("MySql") == true)
-            {
-                throw new NotImplementedException("Code for MySql has not been enabled due to many problems with concurrent database access using MySql");
-                //return new MySql.Data.MySqlClient.MySqlConnection(connectionString);
-            }
-            else
-            {
-                return new SqliteConnection(connectionString);
-            }
         }
     }
 }
