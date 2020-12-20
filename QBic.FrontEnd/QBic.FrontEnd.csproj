@@ -5,7 +5,7 @@
     <Authors>Quintonn Rothmann</Authors>
     <Company>Quintonn Rothmann</Company>
     <Copyright>Copyright �  2018</Copyright>
-    <Version>5.0.0.16</Version>
+    <Version>5.0.0.17</Version>
     <RepositoryUrl>https://github.com/quintonn/QBic</RepositoryUrl>
     <Product>QBic.FrontEnd</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -13,28 +13,38 @@
     <IsPackable>true</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NoPackageAnalysis>true</NoPackageAnalysis>
-    <EnableDefaultItems>false</EnableDefaultItems>
+    <!--<EnableDefaultItems>false</EnableDefaultItems>-->
   </PropertyGroup>
-
   <ItemGroup>
-    <_CustomFiles Include="$(MSBuildProjectDirectory)/../scriptsToGenerate/**/*" />
-    <DotNetPublishFiles Include="@(_CustomFiles)">
-      <DestinationRelativePath>wwwroot/scripts/%(RecursiveDir)%(Filename)%(Extension)</DestinationRelativePath>
-    </DotNetPublishFiles>
+    <None Remove="test\test.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="test\test.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  
+
+  <!--<ItemGroup>
+    <Folder Include="test" Pack="True" />
   </ItemGroup>
   
   <ItemGroup>
     <None Include="wwwroot/**/*.*" Pack="False">
       <Pack>false</Pack>
     </None>
-  </ItemGroup>
+  </ItemGroup>-->
 
-  <ItemGroup Label="Packaging">
-    <Content Include="build\test.targets" PackagePath="build\test.targets" />
+  <!--<ItemGroup Label="Packaging">
+    <Content Include="test\test.txt">
+      <PackagePath>build\test.targets</PackagePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="build\QBic.FrontEnd.targets" PackagePath="build\QBic.FrontEnd.targets" />
     <Content Include="scriptsToGenerate/**/*.*">
       <Pack>true</Pack>
     <PackageCopyToOutput>true</PackageCopyToOutput>
     </Content>
-  </ItemGroup>
+  </ItemGroup>-->
   
 </Project>
