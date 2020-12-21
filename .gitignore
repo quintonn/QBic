@@ -40,3 +40,5 @@ QBic.Authentication/obj
 QBic.FrontEnd/node_modules
 QBic.FrontEnd/bin
 QBic.FrontEnd/obj
+QBic.FrontEnd/Properties/launchSettings.json
+WebsiteTemplate.Test/appsettings.json

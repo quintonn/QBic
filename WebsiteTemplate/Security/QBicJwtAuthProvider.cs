@@ -12,7 +12,7 @@ namespace WebsiteTemplate.Security
             AppSettings = appSettings;
         }
 
-        public override bool AllowInsecureHttp => true;
+        public override bool AllowInsecureHttp => false; // this can be false, even behind reverse proxy if UseForwardedHeaders is setup correctly
 
         public override string Path => AppSettings.TokenEndpointPath;
 
