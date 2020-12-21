@@ -35,7 +35,7 @@ namespace WebsiteTemplate.Controllers
             var identity = actionContext.HttpContext.User.Identity;//.RequestContext.Principal.Identity as System.Security.Claims.ClaimsIdentity;
 
             User user;
-            var store = DataStore.GetInstance(false, null);
+            var store = DataStore.GetInstance(false, false, null);
             using (var session = store.OpenSession())
             {
                 user = session.CreateCriteria<User>()

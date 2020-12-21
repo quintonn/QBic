@@ -1,14 +1,11 @@
-﻿using log4net;
-using log4net.Appender;
-using log4net.Repository.Hierarchy;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
-using WebsiteTemplate.Menus;
 
 namespace WebsiteTemplate.Backend.Logs
 {
@@ -32,28 +29,6 @@ namespace WebsiteTemplate.Backend.Logs
 
         private List<string> GetLogs()
         {
-            var rootAppender = ((Hierarchy)LogManager.GetRepository())
-                                         .Root.Appenders.OfType<FileAppender>()
-                                         .FirstOrDefault();
-            if (rootAppender != null)
-            {
-                return File.ReadAllLines(rootAppender.File).Reverse().ToList();
-
-                //change log level
-                //((Hierarchy)LogManager.GetRepository()).Root.Level
-
-                // Read without locking:
-                //using (var fileStream = new FileStream(rootAppender.File, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                //{
-                //    using (var streamReader = new StreamReader(fileStream))
-                //    {   
-                //        var data = streamReader.ReadToEnd();
-                //        var result = data.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Reverse().ToList();
-                //        return result;
-                //    }
-                //}
-            }
-
             return new List<string>();
         }
 

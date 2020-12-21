@@ -1,6 +1,6 @@
-﻿using log4net;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using NHibernate;
 using NHibernate.Criterion;
 using QBic.Authentication;
@@ -22,7 +22,7 @@ namespace WebsiteTemplate.Backend.Services
     {
         private DataService DataService { get; set; }
         private ApplicationSettingsCore ApplicationSettings { get; set; }
-        private static readonly ILog Logger = SystemLogger.GetLogger<UserService>();
+        private static readonly ILogger Logger = SystemLogger.GetLogger<UserService>();
 
         private UserManager<IUser> UserManager { get; set; }
         private IHttpContextAccessor HttpContextAccessor { get; set; }
@@ -177,7 +177,7 @@ namespace WebsiteTemplate.Backend.Services
                 throw new Exception("No system settings have been setup.");
             }
 
-            Logger.Info("Sending account confirmation email to " + emailAddress);
+            Logger.LogInformation("Sending account confirmation email to " + emailAddress);
 
             var emailToken = UserManager.GenerateEmailConfirmationTokenAsync(dbUser).Result;
 
@@ -205,15 +205,15 @@ namespace WebsiteTemplate.Backend.Services
                     smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
                     smtpClient.EnableSsl = settings.EmailEnableSsl;
 
-                    Logger.Info("Sending email...");
+                    Logger.LogInformation("Sending email...");
                     smtpClient.Send(mailMessage);
-                    Logger.Info("Email sent...");
+                    Logger.LogInformation("Email sent...");
                 }
                 catch (Exception e)
                 {
                     var message = e.Message + "\n" + e.ToString();
                     Console.WriteLine(message);
-                    Logger.Error("Error sending email:\n" + message, e);
+                    Logger.LogError("Error sending email:\n" + message, e);
                     System.Diagnostics.Trace.WriteLine(message);
                     System.Diagnostics.Debug.WriteLine(message);
                     return message;

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -115,10 +116,9 @@ namespace WebsiteTemplate
             });
 
             builder.AddAuthorization(); // This makes the AuthorizeAttribute work. Without this, requests are not authorized at all
-
             services.AddSingleton<IJwtAuthenticationProvider, QBicJwtAuthProvider>();
 
-            var dataStore = DataStore.GetInstance(appSettings.UpdateDatabase, configuration, services);
+            var dataStore = DataStore.GetInstance(appSettings.UpdateDatabase, appSettings.ShowSQL, configuration, services);
             services.AddSingleton(dataStore);// appSettings.UpdateDatabase));
 
             // This is required for authentication to work
@@ -133,7 +133,7 @@ namespace WebsiteTemplate
                 if (ConfigureCalled == false)
                 {
                     Console.WriteLine("Call app.UseQBic(IServiceProvider); from your Startup Configure(IApplicationBuilder app, IServiceProvider serviceProvider) method.");
-                    SystemLogger.GetLogger(typeof(Extensions)).Error("Call app.UseQBic(IServiceProvider); from your Startup Configure(IApplicationBuilder app, IServiceProvider serviceProvider) method.");
+                    SystemLogger.GetLogger(typeof(Extensions)).LogError("Call app.UseQBic(IServiceProvider); from your Startup Configure(IApplicationBuilder app, IServiceProvider serviceProvider) method.");
                     throw new Exception("Call app.UseQBic(IServiceProvider); from your Startup Configure(IApplicationBuilder app, IServiceProvider serviceProvider) method.");
                 }
 
@@ -164,7 +164,7 @@ namespace WebsiteTemplate
             if (ConfigureServicesCalled == false)
             {
                 Console.WriteLine("Call services.UseQBic<AppSettings, AppStartup>(IConfiguration) from your Startup ConfigureServices(IServiceCollection services) method.");
-                SystemLogger.GetLogger(typeof(Extensions)).Error("Call services.UseQBic<AppSettings, AppStartup>(IConfiguration) from your Startup ConfigureServices(IServiceCollection services) method.");
+                SystemLogger.GetLogger(typeof(Extensions)).LogError("Call services.UseQBic<AppSettings, AppStartup>(IConfiguration) from your Startup ConfigureServices(IServiceCollection services) method.");
                 throw new Exception("Call services.UseQBic<AppSettings, AppStartup>(IConfiguration) from your Startup ConfigureServices(IServiceCollection services) method.");
             }
             ConfigureCalled = true;

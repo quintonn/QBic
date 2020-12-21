@@ -1,13 +1,11 @@
-﻿using log4net;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using QBic.Core.Utilities;
 using System;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Processing;
@@ -28,7 +26,7 @@ namespace WebsiteTemplate.Controllers
         private static bool Setup = false;
         private static object _Lock = new object();
 
-        private static readonly ILog Logger = SystemLogger.GetLogger<MainController>();
+        private static readonly ILogger Logger = SystemLogger.GetLogger<MainController>();
 
         private string ConstructorError { get; set; }
         private IHttpContextAccessor HttpContextAccessor { get; set; }
@@ -52,7 +50,7 @@ namespace WebsiteTemplate.Controllers
                     ApplicationService = container.GetService<ApplicationService>();
                     if (Setup == false)
                     {
-                        Logger.Debug("MainController - Setup = false, performing setup");
+                        Logger.LogDebug("MainController - Setup = false, performing setup");
                         var eventService = container.GetService<EventService>(); // This is here to ensure EventService is initialize and it's constructor is called so that EventList is not empty
 
                         var dataService = container.GetService<DataService>();
@@ -268,17 +266,17 @@ namespace WebsiteTemplate.Controllers
                 //    requestData = System.Text.Encoding.UTF8.GetString(mem.ToArray());
                 //}
 
-                Logger.Info("Set Acme Challenge Request data: " + requestData);
+                Logger.LogInformation("Set Acme Challenge Request data: " + requestData);
 
                 var items = requestData.Split("&".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                 var acmeString = items.Where(i => i.Contains("acme")).FirstOrDefault();
                 var acmeValue = acmeString.Split('=').Last();
 
-                Logger.Info("Acme value is: " + acmeValue);
+                Logger.LogInformation("Acme value is: " + acmeValue);
 
                 //TODO:   The below code should also work?
                 //        And, should also be sending full path
-                Logger.Info("Setting acme challenge");
+                Logger.LogInformation("Setting acme challenge");
                 //Logger.Info("RequestData = " + requestData);
                 //try
                 //{

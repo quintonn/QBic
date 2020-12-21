@@ -1,12 +1,12 @@
-﻿using QBic.Core.Data;
-using QBic.Core.Data.BaseTypes;
-using QBic.Core.Models;
-using QBic.Core.Utilities;
-using log4net;
+﻿using Microsoft.Extensions.Logging;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Linq;
 using NHibernate.Tool.hbm2ddl;
+using QBic.Core.Data;
+using QBic.Core.Data.BaseTypes;
+using QBic.Core.Models;
+using QBic.Core.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,7 +22,7 @@ namespace QBic.Core.Services
     {
         private static Dictionary<int, Type> SystemTypes { get; set; }
 
-        private static readonly ILog Logger = SystemLogger.GetLogger<BackupService>();
+        private static readonly ILogger Logger = SystemLogger.GetLogger<BackupService>();
         public static bool BusyWithBackups { get; set; } = false;
 
         private DataStore DataService { get; set; }
@@ -31,7 +31,7 @@ namespace QBic.Core.Services
 
         public BackupService()
         {
-            DataService = DataStore.GetInstance(false, null);
+            DataService = DataStore.GetInstance(false, false, null);
 
             if (SystemTypes == null)
             {
@@ -144,12 +144,12 @@ namespace QBic.Core.Services
             {
                 DynamicClass.SetIdsToBeAssigned = true;
 
-                Logger.Info("About to create backup");
+                Logger.LogInformation("About to create backup");
 
                 CreateBackupFile(currentDirectory + backupName);
 
                 var connectionString = String.Format(@"Data Source=##CurrentDirectory##\Data\{0};Version=3;Journal Mode=Off;Connection Timeout=12000", backupName);
-                var store = DataStore.GetInstance(false, null);
+                var store = DataStore.GetInstance(false, false, null);
                 var config = store.CreateNewConfigurationUsingConnectionString(connectionString);
                 new SchemaUpdate(config).Execute(false, true); // Build the tables etc.
                 var factory = config.BuildSessionFactory();
@@ -164,10 +164,10 @@ namespace QBic.Core.Services
                     foreach (var id in ids)
                     {
                         var type = SystemTypes[id];
-                        Logger.Info("Backing up " + type.ToString());
+                        Logger.LogInformation("Backing up " + type.ToString());
 
                         var items = GetItems(type, session);
-                        Logger.Info("Got items");
+                        Logger.LogInformation("Got items");
 
                         var sameTypeProperties = type.GetProperties().Where(p => p.PropertyType == type).ToList();
                         if (sameTypeProperties.Count > 0)
@@ -194,11 +194,11 @@ namespace QBic.Core.Services
                             total += itemsToAdd.Count();
                             InsertItems(itemsToAdd, factory, type);
                         }
-                        Logger.Info("Items added to backup");
+                        Logger.LogInformation("Items added to backup");
                     }
                 }
 
-                Logger.Info("Closing factory");
+                Logger.LogInformation("Closing factory");
                 factory.Close();
 
                 using (var session = factory.OpenSession())
@@ -214,11 +214,11 @@ namespace QBic.Core.Services
 
                     if (count != total)
                     {
-                        Logger.Info("Backup did not complete successfully.");
+                        Logger.LogInformation("Backup did not complete successfully.");
                         throw new Exception("Backup did not complete successfully. Try again or contact support.");
                     }
                 }
-                Logger.Info("Closing store session");
+                Logger.LogInformation("Closing store session");
 
                 return File.ReadAllBytes(currentDirectory + backupName);
             }
@@ -238,7 +238,7 @@ namespace QBic.Core.Services
 
         public void CreateNewDatabaseSchema(string connectionString)
         {
-            var store = DataStore.GetInstance(false, null);
+            var store = DataStore.GetInstance(false, false, null);
 
             DynamicClass.SetIdsToBeAssigned = true; // This will set the Fluent NHibernate mappings' id's to be assigned and not GUID's for the restore.
 
@@ -358,7 +358,7 @@ namespace QBic.Core.Services
                 File.WriteAllBytes(currentDirectory + backupName, data);
 
                 var connectionString = String.Format(@"Data Source=##CurrentDirectory##\Data\{0};Version=3;Journal Mode=Off;Connection Timeout=12000", backupName);
-                var store = DataStore.GetInstance(false, null);
+                var store = DataStore.GetInstance(false, false, null);
                 var backupConfig = store.CreateNewConfigurationUsingConnectionString(connectionString);
                 var backupFactory = backupConfig.BuildSessionFactory();
 
@@ -452,7 +452,7 @@ namespace QBic.Core.Services
 
                 stopwatch.Stop();
 
-                Logger.Info("Full restore took " + stopwatch.ElapsedMilliseconds + " ms");
+                Logger.LogInformation("Full restore took " + stopwatch.ElapsedMilliseconds + " ms");
 
                 return true;
             }

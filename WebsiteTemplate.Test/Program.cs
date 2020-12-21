@@ -1,5 +1,4 @@
-﻿using log4net.Core;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -13,8 +12,6 @@ namespace WebsiteTemplate.Test
     {
         public static void Main(string[] args)
         {
-            new SystemLogger().Setup(Level.All);
-            SystemLogger.GetLogger<Program>().Info("Starting...");
             CreateHostBuilder(args).Build().Run();
 
             Console.WriteLine("Done");
@@ -22,7 +19,6 @@ namespace WebsiteTemplate.Test
 
         public static IWebHostBuilder CreateHostBuilder(string[] args)
         {
-            SystemLogger.GetLogger<Program>().Info("Starting...");
             var builder = new WebHostBuilder();
 
             builder.UseIISIntegration();

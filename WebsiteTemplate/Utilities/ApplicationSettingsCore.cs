@@ -1,5 +1,4 @@
-﻿using log4net.Core;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
 using System;
 using System.Collections.Generic;
@@ -30,14 +29,6 @@ namespace WebsiteTemplate.Utilities
         public virtual List<Assembly> GetAdditinalAssembliesToMap()
         {
             return new List<Assembly>();
-        }
-
-        public virtual Level LogLevel
-        {
-            get
-            {
-                return Level.Info;
-            }
         }
 
         public virtual bool DebugStartup

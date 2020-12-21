@@ -1,5 +1,4 @@
-﻿using log4net.Core;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
 using System;
 using System.Collections.Generic;
@@ -53,14 +52,6 @@ namespace WebsiteTemplate.Test.SiteSpecific
                 new SystemSettingItem("SystemEmail", "System Email", Menus.InputItems.InputType.Text, true, "Email Settings", ""),
                 new SystemSettingItem("TestCheck", "Test Check", Menus.InputItems.InputType.Boolean, true, "Email Settings", false),
             };
-        }
-
-        public override Level LogLevel
-        {
-            get
-            {
-                return Level.Debug;
-            }
         }
     }
 }

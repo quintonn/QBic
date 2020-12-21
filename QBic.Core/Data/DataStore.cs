@@ -30,21 +30,23 @@ namespace QBic.Core.Data
         public static bool SetCustomSqlTypes { get; set; }
 
         private static bool UpdateDatabase { get; set; }
+        private static bool ShowSql { get; set; }
 
         private static IConfiguration Config { get; set; }
         
-        private DataStore(bool updateDatabase)
+        private DataStore(bool updateDatabase, bool showSql)
         {
             UpdateDatabase = updateDatabase;
+            ShowSql = showSql;
             init();
         }
 
-        public static DataStore GetInstance(bool updateDatabase, IConfiguration config, IServiceCollection serviceProvider = null)
+        public static DataStore GetInstance(bool updateDatabase, bool showSql, IConfiguration config, IServiceCollection serviceProvider = null)
         {
             if (_instance == null)
             {
                 Config = config;
-                _instance = new DataStore(updateDatabase);
+                _instance = new DataStore(updateDatabase, showSql);
                 if (serviceProvider != null)
                 {
                     serviceProvider.AddTransient<ISessionFactory>((x) =>
@@ -169,10 +171,7 @@ namespace QBic.Core.Data
 
             config.ExposeConfiguration(x =>
             {
-                //if (AppSettings.ShowSQL == true)
-                //{
-                //    x.SetInterceptor(new SqlStatementInterceptor());
-                //}
+                x.SetProperty(NHibernate.Cfg.Environment.ShowSql, ShowSql.ToString().ToLower()); // shows sql in console
 
                 // This will set the command_timeout property on factory-level
                 //x.SetProperty(NHibernate.Cfg.Environment.CommandTimeout, "180");

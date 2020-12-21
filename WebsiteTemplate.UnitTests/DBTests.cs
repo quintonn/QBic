@@ -48,7 +48,7 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void DeleteInheritanceTest()
         {
-            var store = DataStore.GetInstance(true, Config, ServiceProvider);
+            var store = DataStore.GetInstance(true, false, Config, ServiceProvider);
 
             using (var session = store.OpenSession())
             {
@@ -84,7 +84,7 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void DeleteTest()
         {
-            var store = DataStore.GetInstance(true, Config, ServiceProvider);
+            var store = DataStore.GetInstance(true, false, Config, ServiceProvider);
 
             using (var session = store.OpenSession())
             {
@@ -147,7 +147,7 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void BasicTest()
         {
-            var store = DataStore.GetInstance(true, Config, ServiceProvider);
+            var store = DataStore.GetInstance(true, false, Config, ServiceProvider);
 
             using (var session = store.OpenSession())
             {
@@ -173,7 +173,7 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void AcmeTest()
         {
-            var store = DataStore.GetInstance(true, Config, ServiceProvider);
+            var store = DataStore.GetInstance(true, false, Config, ServiceProvider);
 
             using (var session = store.OpenSession())
             {
@@ -202,7 +202,7 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void TestAddingManyItems()
         {
-            var store = DataStore.GetInstance(true, Config, ServiceProvider);
+            var store = DataStore.GetInstance(true, false, Config, ServiceProvider);
             var stopwatch = Stopwatch.StartNew();
             var count = 1000;
             using (var session = store.OpenStatelessSession())
@@ -233,7 +233,7 @@ namespace WebsiteTemplate.UnitTests
         {
             //var connection = ConfigurationManager.ConnectionStrings["MainDataStore"];
             var connectionString = Config.GetConnectionString("MainDataStore");
-            var store = DataStore.GetInstance(true, Config, ServiceProvider);
+            var store = DataStore.GetInstance(true, false, Config, ServiceProvider);
             var backupService = new BackupService();
             int preCount = 0;
             int postCount = 0;

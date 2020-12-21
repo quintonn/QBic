@@ -1,5 +1,5 @@
-﻿using log4net;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using QBic.Authentication;
 using QBic.Core.Services;
 using QBic.Core.Utilities;
@@ -21,7 +21,7 @@ namespace WebsiteTemplate.Backend.Services.Background
         private static object Locker = new object();
         public static bool Started { get; set; }
 
-        protected static readonly ILog Logger = SystemLogger.GetLogger<BackgroundService>();
+        protected static readonly ILogger Logger = SystemLogger.GetLogger<BackgroundService>();
         private CancellationToken CancelToken { get; set; }
 
         static BackgroundService()
@@ -45,7 +45,7 @@ namespace WebsiteTemplate.Backend.Services.Background
 
         private async void Setup()
         {
-            Logger.Debug("Starting background service");
+            Logger.LogDebug("Starting background service");
             SystemUser = await UserContext.FindByNameAsync("System");
             Started = true;
         }
@@ -228,7 +228,7 @@ namespace WebsiteTemplate.Backend.Services.Background
 
         internal void AddBackgroundInformation(string task, string statusInfo)
         {
-            Logger.Debug(task + "\n" + statusInfo);
+            Logger.LogDebug(task + "\n" + statusInfo);
             if (BackupService.BusyWithBackups == true)
             {
                 return;

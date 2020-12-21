@@ -1,6 +1,6 @@
-﻿using log4net;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using QBic.Core.Utilities;
 using System.Linq;
 
@@ -9,7 +9,7 @@ namespace WebsiteTemplate.Controllers
     [Route(".well-known/acme-challenge")]
     public class AcmeController : ControllerBase
     {
-        private static readonly ILog Logger = SystemLogger.GetLogger<AcmeController>();
+        private static readonly ILogger Logger = SystemLogger.GetLogger<AcmeController>();
 
         public static string ChallengeResponse { get; set; } = "xxx";
         public static string ChallengePath { get; set; } = "--";
@@ -25,7 +25,7 @@ namespace WebsiteTemplate.Controllers
             //var request = System.Web.HttpContext.Current.Request.Url.ToString();
             var challenge = Request.Path.ToString().Split("/".ToCharArray()).Last();
 
-            Logger.Info("Received ACME challenge on path: " + path + " and challenge = " + challenge);
+            Logger.LogInformation("Received ACME challenge on path: " + path + " and challenge = " + challenge);
             
             //Todo: Challenge should = path also.
             //      But, I should also validate/verify both the path and the request. Could be a hijacker/MiM

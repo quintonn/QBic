@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using QBic.Core.Utilities;
 using System;
 using WebsiteTemplate.Test.SiteSpecific;
 
@@ -23,8 +25,9 @@ namespace WebsiteTemplate.Test
         }
 
 
-        public void Configure(IApplicationBuilder app, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IServiceProvider serviceProvider, ILoggerFactory logFactory)
         {
+            SystemLogger.Setup(logFactory);
             app.UseQBic(serviceProvider);
         }
     }
