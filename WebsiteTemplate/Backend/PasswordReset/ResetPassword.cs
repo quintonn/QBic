@@ -2,6 +2,7 @@
 using QBic.Authentication;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
@@ -126,7 +127,7 @@ namespace WebsiteTemplate.Backend.PasswordReset
                 var idResult = await UserManager.ResetPasswordAsync(await UserManager.FindByIdAsync(userId), passwordToken, newPassword);
                 if (idResult.Succeeded == false)
                 {
-                    var errorMessage = "Unable to reset password:\n" + String.Join("\n", idResult.Errors);
+                    var errorMessage = "Unable to reset password:\n" + String.Join("\n", idResult.Errors.Select(x => x.Description).ToList());
                     return new List<IEvent>()
                     {
                         new ShowMessage(errorMessage)

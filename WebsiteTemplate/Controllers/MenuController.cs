@@ -42,7 +42,6 @@ namespace WebsiteTemplate.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("RequestPasswordReset")]
-        //[Microsoft.AspNetCore.Mvc.RequireHttps]
         public async Task<IActionResult> RequestPasswordReset()
         {
             //XXXUtils.SetCurrentUser("System");
@@ -66,17 +65,13 @@ namespace WebsiteTemplate.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("ConfirmEmail")]
-        //[Microsoft.AspNetCore.Mvc.RequireHttps]
         public async Task<IActionResult> ConfirmEmail()
         {
             try
             {
-                // Set current user to 'System' user for auditing purposes. Because no user will be logged in at the moment.
-                //XXXUtils.SetCurrentUser("System");
-
-                var queryString = this.Request.Query;// .GetQueryNameValuePairs();
-                var userId = queryString.Single(q => q.Key == "userId").Value;
-                var emailToken = queryString.Single(q => q.Key == "token").Value;
+                var queryString = this.Request.Query;
+                var userId = queryString.Single(q => q.Key == "userId").Value.ToString();
+                var emailToken = queryString.Single(q => q.Key == "token").Value.ToString();
 
                 IdentityResult verifyToken;
                 using (var session = DataService.OpenSession())
@@ -97,10 +92,7 @@ namespace WebsiteTemplate.Controllers
                 }
                 else
                 {
-                    var message = String.Join("\n", verifyToken.Errors);
-                    //return BadRequest(message);
-                    //This won't work but is just an example of what to do
-                    //return Redirect("https://localhost/CustomIdentity/Pages/Error.html?Errors=" + verifyToken.Result.Errors.First());
+                    var message = String.Join("\n", verifyToken.Errors.Select(x => x.Description).ToList());
                     return Redirect(GetCurrentUrl() + "?errors=" + HttpUtility.UrlEncode(message));
                 }
             }
@@ -116,8 +108,3 @@ namespace WebsiteTemplate.Controllers
         }
     }
 }
-
-/*
-Next -> 
-     -> Also a forgot username/password button  --> Or maybe not.
-     -> Add a way to prevent certain information from being deleted (eg, admin user).*/

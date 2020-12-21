@@ -57,7 +57,7 @@ namespace WebsiteTemplate.Backend.Services
 
                 if (!result.Succeeded)
                 {
-                    return "Unable to create user:\n" + String.Join("\n", result.Errors);
+                    return "Unable to create user:\n" + String.Join("\n", result.Errors.Select(x => x.Description).ToList());
                 }
 
                 foreach (var role in userRoles)
@@ -113,7 +113,7 @@ namespace WebsiteTemplate.Backend.Services
             {
                 var passwordResetLink = await UserManager.GeneratePasswordResetTokenAsync(user);
 
-                var myuri = new Uri(HttpContextAccessor.HttpContext.Request.Path.ToString()); //System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
+                var myuri = new Uri(Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(HttpContextAccessor.HttpContext.Request));
 
                 var body = "Hi " + user.UserName;
 
@@ -179,10 +179,9 @@ namespace WebsiteTemplate.Backend.Services
 
             Logger.LogInformation("Sending account confirmation email to " + emailAddress);
 
-            var emailToken = UserManager.GenerateEmailConfirmationTokenAsync(dbUser).Result;
+            var emailToken = await UserManager.GenerateEmailConfirmationTokenAsync(dbUser);
 
-            //var myuri = new Uri(System.Web.HttpContext.Current.Request.Url.AbsoluteUri);
-            var myuri = new Uri(HttpContextAccessor.HttpContext.Request.Path.ToString());
+            var myuri = new Uri(Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(HttpContextAccessor.HttpContext.Request));
 
             var body = "Hi " + userName;
 
