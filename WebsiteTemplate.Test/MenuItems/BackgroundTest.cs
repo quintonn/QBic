@@ -24,8 +24,8 @@ namespace WebsiteTemplate.Test.MenuItems
 
         public override DateTime CalculateNextRunTime(DateTime? lastRunTime)
         {
-            //return DateTime.Now.AddMinutes(0.2);
-            return DateTime.Now.AddDays(10);
+            return DateTime.Now.AddMinutes(0.2);
+            //return DateTime.Now.AddDays(10);
         }
 
         public override async Task DoWork(CancellationToken token)
@@ -35,6 +35,7 @@ namespace WebsiteTemplate.Test.MenuItems
             {
                 Thread.Sleep(5000);
                 Console.WriteLine("whooo");
+                AddBackgroundError("this is a test");
             });
         }
 
