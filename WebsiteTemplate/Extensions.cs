@@ -195,7 +195,7 @@ namespace WebsiteTemplate
             //});
 
             var appStartup = serviceProvider.GetService<ApplicationStartup>();
-            appStartup.RegisterUnityContainers(serviceProvider);
+            appStartup?.RegisterUnityContainers(serviceProvider);
             //appSettings.PerformAdditionalStartupConfiguration(services);
 
             var appSettings = app.ApplicationServices.GetService<ApplicationSettingsCore>();
