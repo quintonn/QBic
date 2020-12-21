@@ -24,8 +24,8 @@ namespace WebsiteTemplate.Test.MenuItems
 
         public override DateTime CalculateNextRunTime(DateTime? lastRunTime)
         {
-            return DateTime.Now.AddMinutes(0.2);
-            //return DateTime.Now.AddDays(10);
+            //return DateTime.Now.AddMinutes(0.2);
+            return DateTime.Now.AddDays(10);
         }
 
         public override async Task DoWork(CancellationToken token)
