@@ -1,17 +1,14 @@
-﻿using QBic.Core.Utilities;
-using FluentNHibernate.Cfg;
+﻿using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
+using QBic.Core.Utilities;
 using System;
 using System.Configuration;
 using System.Data;
-using System.Data.Common;
-
-using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace QBic.Core.Data
 {
@@ -27,11 +24,9 @@ namespace QBic.Core.Data
         //-- Long term maybe make my own query language??
         private static DataStore _instance { get; set; }
 
-        public static bool SetCustomSqlTypes { get; set; }
-
         private static bool UpdateDatabase { get; set; }
         private static bool ShowSql { get; set; }
-
+        public static string ProviderName { get; set; }
         private static IConfiguration Config { get; set; }
         
         private DataStore(bool updateDatabase, bool showSql)
@@ -138,22 +133,23 @@ namespace QBic.Core.Data
         private IPersistenceConfigurer CreatePersistenceConfigurer(string connectionString)
         {
             IPersistenceConfigurer configurer;
-            SetCustomSqlTypes = true;
-
+            
             if (connectionString.Contains("##CurrentDirectory##") || connectionString.Contains(":memory:"))
             {
+                ProviderName = "SQLITE";
                 var currentDirectory = QBicUtils.GetCurrentDirectory();
                 connectionString = connectionString.Replace("##CurrentDirectory##", currentDirectory); // for my sqlite connectiontion string
 
                 configurer = SQLiteConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
-                DataStore.SetCustomSqlTypes = false;
             }
             //else if (providerName.Contains("MySql"))
             //{
+            //    ProviderName = "MYSQL";
             //    configurer = MySQLConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
             //}
             else
             {
+                ProviderName = "SQL";
                 configurer = MsSqlConfiguration.MsSql2012.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
             }
 

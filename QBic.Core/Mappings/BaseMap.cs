@@ -30,11 +30,7 @@ namespace QBic.Core.Mappings
 
                 if (propertyType == typeof(byte[]))
                 {
-                    //if (DataStore.ProviderName.Contains("MySql"))
-                    //{
-                    //    dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Not.Nullable().CustomSqlType("LONGBLOB").Length(int.MaxValue);
-                    //}
-                    if (DataStore.SetCustomSqlTypes == true)
+                    if (DataStore.ProviderName == "SQL")
                     {
                         dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Not.Nullable().CustomSqlType("varbinary(max)").Length(int.MaxValue);
                     }
@@ -45,11 +41,12 @@ namespace QBic.Core.Mappings
                 }
                 else if (propertyType == typeof(LongString))
                 {
-                    //if (DataStore.ProviderName.Contains("MySql"))
-                    //{
-                    //    dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomType<LongString>().CustomSqlType("LONGTEXT").Length(int.MaxValue);
-                    //}
-                    if (DataStore.SetCustomSqlTypes == true)
+
+                    if (DataStore.ProviderName == "MYSQL")
+                    {
+                        dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomType<LongString>().CustomSqlType("LONGTEXT").Length(int.MaxValue);
+                    }
+                    else if (DataStore.ProviderName == "SQL")
                     {
                         dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomType<LongString>().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
                     }
@@ -57,6 +54,7 @@ namespace QBic.Core.Mappings
                     {
                         dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomType<LongString>().Length(int.MaxValue);
                     }
+                   
                 }
                 else if (IsNullable(propertyType))
                 {

@@ -7,6 +7,7 @@ using NUnit.Framework;
 using NUnit.Framework.Internal;
 using QBic.Core.Data;
 using QBic.Core.Services;
+using QBic.Core.Utilities;
 using System;
 using System.Configuration;
 using System.Diagnostics;
@@ -43,7 +44,9 @@ namespace WebsiteTemplate.UnitTests
             //serviceCollection.configure
 
             ServiceProvider = serviceCollection;
-            serviceCollection.BuildServiceProvider();
+            var provider = serviceCollection.BuildServiceProvider();
+            var factory = provider.GetService<ILoggerFactory>();
+            SystemLogger.Setup(factory);
         }
         [Test]
         public void DeleteInheritanceTest()

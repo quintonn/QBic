@@ -32,9 +32,6 @@ namespace QBic.Core.Data
                                            .ToList();
                 types.AddRange(tmpBaseTypes);
 
-                Console.WriteLine("Adding RefreshTokenMap to fluent mappings continer");
-                mappings.Add(typeof(RefreshTokenMap));
-
                 var baseMappingTypes = assemblyTypes.Where(t => t.BaseType != null && 
                                                                 t.BaseType.Name.Contains("BaseClassMap") && 
                                                                 !t.Name.Contains("AuditEventMapping")) // Don't map audit table to main data store.
@@ -47,6 +44,8 @@ namespace QBic.Core.Data
                     });
                 }
             }
+
+            mappings.Add(typeof(RefreshTokenMap));
 
             var list = new List<string>();
             foreach (var type in types)
