@@ -1,8 +1,7 @@
 ﻿using QBic.Authentication;
-using QBic.Core.Models;
 using System;
 
-namespace WebsiteTemplate.Models
+namespace QBic.Core.Models
 {
     public class RefreshToken : DynamicClass, IRefreshToken
     {

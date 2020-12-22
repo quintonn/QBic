@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using QBic.Authentication;
 using QBic.Core.Data;
+using QBic.Core.Models;
 using QBic.Core.Services;
 using QBic.Core.Utilities;
 using System;
