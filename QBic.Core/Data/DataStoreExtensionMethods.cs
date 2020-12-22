@@ -37,6 +37,25 @@ namespace QBic.Core.Data
                 {
                     mappings.Add(refreshTokenMapper);
                 }
+                else
+                {
+                    Console.WriteLine("RefreshTokenMap does not exist, or could not be found");
+                    var found = false;
+                    foreach (var t in assemblyTypes)
+                    {
+                        if (t.Name.Contains("RefreshTokenMap", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            Console.WriteLine($"But there is a type called: '{t.Name}'");
+                            mappings.Add(t);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found == false)
+                    {
+                        Console.WriteLine("RefreshTokenMap Still not found");
+                    }
+                }
 
                 var baseMappingTypes = assemblyTypes.Where(t => t.BaseType != null && 
                                                                 t.BaseType.Name.Contains("BaseClassMap") && 
