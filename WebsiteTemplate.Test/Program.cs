@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using QBic.Core.Utilities;
 using System;
 using System.IO;
 
@@ -12,8 +11,6 @@ namespace WebsiteTemplate.Test
     {
         public static void Main(string[] args)
         {
-              Console.WriteLine("ready");
-            Console.ReadLine();
             CreateHostBuilder(args).Build().Run();
 
             Console.WriteLine("Done");

@@ -20,7 +20,7 @@ namespace WebsiteTemplate.Backend.Processing
 
         public async Task<IActionResult> Process(int eventId, HttpRequest requestMessage)
         {
-            OkObjectResult jsonResult;
+            IActionResult jsonResult;
             //JsonResult<T> jsonResult;
             try
             {
@@ -38,11 +38,11 @@ namespace WebsiteTemplate.Backend.Processing
                 }
 
                 //jsonResult = new JsonResult<T>(result, JSON_SETTINGS, Encoding.UTF8, requestMessage);
-                jsonResult = new OkObjectResult (result);
+                jsonResult = new JsonResult(result, JSON_SETTINGS);
                 //{
                 //    ContentType = "application/json",
                 //};
-                jsonResult.ContentTypes.Add("application/json");
+                //jsonResult.ContentTypes.Add("application/json");
                 
                 //Logger.Debug("Result from processing " + eventId + " is:");
                 //Logger.Debug(new JavaScriptSerializer().Serialize(jsonResult.Content));

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using QBic.Core.Utilities;
 using System;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace WebsiteTemplate.Controllers
         private IServiceProvider Container { get; set; }
         private ApplicationService ApplicationService { get; set; }
 
-        private static JsonSerializerOptions JSON_SETTINGS;
+        private static JsonSerializerSettings JSON_SETTINGS;
 
         private static bool Setup = false;
         private static object _Lock = new object();
@@ -72,10 +73,11 @@ namespace WebsiteTemplate.Controllers
                         Setup = true;
                     }
 
-                    JSON_SETTINGS = new JsonSerializerOptions()
+                    JSON_SETTINGS = new JsonSerializerSettings()
                     {
-                        PropertyNameCaseInsensitive = true
-                    };// { DateFormatString = WebsiteUtils.DateFormat };
+                        DateFormatString = WebsiteUtils.DateFormat,
+                        //PropertyNameCaseInsensitive = true,
+                    };
                 }
             }
             catch (Exception error)
@@ -116,7 +118,7 @@ namespace WebsiteTemplate.Controllers
                 JsonResult result;
                 if (JSON_SETTINGS != null)
                 {
-                    result = new JsonResult(json);//, JSON_SETTINGS));
+                    result = new JsonResult(json, JSON_SETTINGS);
                     
                 }
                 else

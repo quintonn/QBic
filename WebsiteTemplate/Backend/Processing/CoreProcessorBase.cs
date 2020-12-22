@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using NHibernate.Criterion;
 using QBic.Authentication;
 using QBic.Core.Utilities;
@@ -17,28 +18,9 @@ using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Processing
 {
-    public class DateTimeConverter : JsonConverter<DateTime>
-    {
-        private string DateFormat { get; set; }
-
-        public DateTimeConverter(string dateFormat)
-        {
-
-        }
-        public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            return DateTime.Parse(reader.GetString());
-        }
-
-        public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
-        {
-            //writer.WriteStringValue(value.ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ"));
-            writer.WriteStringValue(value.ToUniversalTime().ToString(DateFormat));
-        }
-    }
     public abstract class CoreProcessorBase
     {
-        protected static JsonSerializerOptions JSON_SETTINGS;
+        protected static JsonSerializerSettings JSON_SETTINGS;
         protected static ApplicationStartup ApplicationStartup { get; set; }
         protected static IServiceProvider Container { get; set; }
         protected static EventService EventService { get; set; }
@@ -76,11 +58,10 @@ namespace WebsiteTemplate.Backend.Processing
                         BackgroundService.StartBackgroundJobs();
                     }
 
-                    JSON_SETTINGS = new JsonSerializerOptions
+                    JSON_SETTINGS = new JsonSerializerSettings
                     {
-                        //DateFormatString = WebsiteUtils.DateFormat 
+                        DateFormatString = WebsiteUtils.DateFormat,
                     };
-                    JSON_SETTINGS.Converters.Add(new DateTimeConverter(WebsiteUtils.DateFormat));
                 }
 
             }
