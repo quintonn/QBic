@@ -12,6 +12,8 @@ namespace WebsiteTemplate.Test
     {
         public static void Main(string[] args)
         {
+              Console.WriteLine("ready");
+            Console.ReadLine();
             CreateHostBuilder(args).Build().Run();
 
             Console.WriteLine("Done");
