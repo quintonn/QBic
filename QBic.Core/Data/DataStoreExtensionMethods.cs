@@ -32,6 +32,7 @@ namespace QBic.Core.Data
                                            .ToList();
                 types.AddRange(tmpBaseTypes);
 
+                Console.WriteLine("Adding RefreshTokenMap to fluent mappings continer");
                 mappings.Add(typeof(RefreshTokenMap));
 
                 var baseMappingTypes = assemblyTypes.Where(t => t.BaseType != null && 

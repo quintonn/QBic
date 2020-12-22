@@ -1,5 +1,6 @@
 ﻿using FluentNHibernate.Mapping;
 using QBic.Core.Models;
+using System;
 
 namespace QBic.Core.Mappings
 {
@@ -7,11 +8,13 @@ namespace QBic.Core.Mappings
     {
         public RefreshTokenMap()
         {
+            Console.WriteLine("Inside RefreshTokenMap");
             Table("RefreshToken");
 
             Id(x => x.Id).GeneratedBy.Assigned();
 
-            Map(x => x.Token).Not.Nullable().CustomType("StringClob").CustomSqlType("nvarchar(max)").Length(int.MaxValue);
+            Map(x => x.Token).Not.Nullable().Length(int.MaxValue);//.CustomType("StringClob").CustomSqlType("nvarchar(max)").Length(int.MaxValue);
+            Console.WriteLine("End of refresh token map");
             //Map(x => x.ClientId).Not.Nullable().Length(50);
             //Map(x => x.ExpiresUtc).Not.Nullable();
             //Map(x => x.IssuedUtc).Not.Nullable();
