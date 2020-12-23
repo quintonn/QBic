@@ -1,33 +1,33 @@
-https://travis-ci.com/quintonn/QBic.svg?branch=master
+[![Build Status](https://travis-ci.com/quintonn/qBic.svg?branch=master)](https://travis-ci.com/quintonn/qBic)
 
 ##### Table of Contents  
 1. [Introduction](#introduction)  
 1. [Goal](#goal)  
 1. [Features](#features)  
 1. [Prerequisites](#prerequisites)  
-1. [Creating a new QBic Project](#creating-a-new-qbic-project)  
+1. [Creating a new qBic Project](#creating-a-new-qBic-project)  
 5.1. [Creating a project Manually](#creating-a-project-manually)  
-5.2. [Using the Custom QBic Project Template](#using-the-custom-qbic-project-template)  
+5.2. [Using the Custom qBic Project Template](#using-the-custom-qBic-project-template)  
 1. [Documentation](#documentation)
 1. [Sample Code](#sample-code)
 1. [Known Problems](#known-problems)  
 8.1 [SQLite.Interop.dll](#sqLiteinteropdll)  
 8.2 [Unable to delete SQLite dll](#unable-to-delete-sqLite-dll)  
-1. [Projects using QBic](#projects-using-qbic)
+1. [Projects using qBic](#projects-using-qBic)
 
 # Introduction
-A .NET platform for creating Web Servers or CMS systems in .Net  
+A platform for creating Web Servers or CMS systems in .Net 5  
 The front-end, part is dynamically created based on .Net code-configuration.  
 This does not rely on blazor, silverlight, web-assembly or any of those frameworks, but uses normal JS, HTML and CSS underneath.  
-The easiest way to demonstrate what QBic offers, is by showing [an example](#sample-code).  
+The easiest way to demonstrate what qBic offers, is by showing [an example](#sample-code).  
 
-With QBic, you can create admin portals, dashboards, CMS sites, identity servers, and much more.  
+With qBic, you can create admin portals, dashboards, CMS sites, identity servers, and much more.  
 All of this while only writing .Net code.  
 No HTML, JavaScript or CSS.  
 A lot of the **magic** is driven by abstract classes and inheritance.  
 
-A sample of how quick and easy it is to create a new .Net project using QBic:  
-![Quick QBic Demo](https://github.com/quintonn/QBic/raw/master/Images/QBicQuickDemo.gif "Quick QBic Demo")
+A sample of how quick and easy it is to create a new .Net project using qBic:  
+![Quick qBic Demo](https://github.com/quintonn/qBic/raw/master/Images/qBicQuickDemo.gif "Quick qBic Demo")
 
 # Goal
 The goal of this framework/platform is to never have to worry about the front-end, web, code.  
@@ -36,10 +36,10 @@ So I created this Framework so I didn't have to repeat the same work over and ov
 Not only did I make this framework create the UI for me, but it also adds a number of commonly used [features](#Features).  
 
 One of my main goals was to allow **a single developer** to build a relatively large and complex system.  
-And I believe QBic has achieved that.
+And I believe qBic has achieved that.
 
 # Features
-Any **QBic Application** will get all of the following features out of the box, without having to write any extra code:
+Any **qBic Application** will get all of the following features out of the box, without having to write any extra code:
 1. Database synchronization, using NHibernate
 2. Auditing
 3. User repository
@@ -50,21 +50,23 @@ Any **QBic Application** will get all of the following features out of the box, 
 8. Customizable menu system
 
 # Prerequisites
-Before using and running QBic, the following should be installed or adhered to:
-1. You have IIS installed on your development machine.  
-2. You run Visual Studio as an administrator when working on QBic projects.
-3. Add HTTPS binding to IIS for **Default Site**.
-4. Install [URL REWRITE](https://www.iis.net/downloads/microsoft/url-rewrite) module into IIS.  
+Before using and running qBic, the following should be installed or adhered to:
+1. You have .net 5 installed on your development machine.  
+2. You run Visual Studio as an administrator when working on qBic projects.
 
-# Creating a new QBic Project
-You can either choose to setup a new QBic project [manually](#creating-a-project-manually) , or  
-You can support me and purchase my custom [Visual Studio Project Template](https://github.com/quintonn/QBic#using-the-custom-qbic-project-template).  
+**TODO:** Creating a new project from this template is not quite yet possible because the wwwroot code is not transferred yet
+
+# Creating a new qBic Project
+You can either choose to setup a new qBic project [manually](#creating-a-project-manually) , or  
+You can support me and purchase my custom [Visual Studio Project Template](https://github.com/quintonn/qBic#using-the-custom-qBic-project-template).  
 
 ## Creating a project Manually
-1. Create a new Visual Studio ASP.Net Web Application (.NET Framework)
-1. Make sure to choose .NET 4.6.1 or greater
-1. Choose an Empty Web Application
-1. Install the WebsiteTemplateCore nuget package 
+1. Create a new Visual Studio ASP.NET Core Web Application
+1. Choose ASP.NET Core Empty and ASP.NET Core 5.0, and leave all other defaults
+1. Install the WebsiteTemplate nuget package, either from Visual Studio, or by running the following command:  
+   ```
+   Install-Package WebsiteTemplate
+   ```
 1. Create a new class that inherits from **ApplicationStartup**
 1. Implement the mandatory functions and create the constructor required by **ApplicationStartup** parent class  
    The **SetupDefaults** is a good place to create your default, or admin, user  
@@ -76,44 +78,44 @@ You can support me and purchase my custom [Visual Studio Project Template](https
    **GetApplicationStartupType** should return the type of class you created in step #5
 1. Set the override field **UpdateDatabase** to **true**  
    This will create the database and tables, and can be set to false once you have your database set up and read
-1. Next, you need to register **Unity** in the web.config file, which is used for DependencyInjection  
-   This is done by adding the following into the web.config file, beneath the **configuration** element  
+1. Make the generated **Startup.cs** class look as follows (where AppSettings and AppStartup be replaced with the files you created earlier):  
+
+   ```cs
+   using Microsoft.AspNetCore.Builder;
+   using Microsoft.Extensions.Configuration;
+   using Microsoft.Extensions.DependencyInjection;
+   using Microsoft.Extensions.Logging;
+   using qBic.Core.Utilities;
+   using System;
+   using WebsiteTemplate;
    
-   ```html
-   <configSections>
-      <section name="unity" type="Microsoft.Practices.Unity.Configuration.UnityConfigurationSection, Unity.Configuration" />
-   </configSections>
+   namespace SampleProject
+   {
+   	public class Startup
+   	{
+   		public static IConfiguration Config;
+   
+   		public Startup(IConfiguration config)
+   		{
+   			Config = config;
+   		}
+   		public void ConfigureServices(IServiceCollection services)
+   		{
+   			services.UseqBic<AppSettings, AppStartup>(Config);
+   		}
+   
+   		public void Configure(IApplicationBuilder app, IServiceProvider serviceProvider, ILoggerFactory logFactory)
+   		{
+   			// Setup internal logging system. Inherited from .net 4
+   			SystemLogger.Setup(logFactory);
+   
+   			app.UseqBic(serviceProvider);
+   		}
+   	}
+   }
+
    ```
-   
-1. The Application Settings file should also be registered in the web.config file.  
-   This is done by adding a **<unity>** section beneath **configuration**, similar to the following example:  
-   
-   ```html
-   <unity xmlns="http://schemas.microsoft.com/practices/2010/unity">
-     <alias alias="ApplicationSettingsCore" type="WebsiteTemplate.Utilities.ApplicationSettingsCore,  WebsiteTemplate.Utilities" />
-     <namespace name="WebsiteTemplate.Utilities" />
-     <assembly name="WebsiteTemplate" />
-     <container>
-	   <!--Register your specific ApplicationSettingsCore file here-->
-       <register type="ApplicationSettingsCore" mapTo="WebApplication1.Settings.AppSettings, WebApplication1" />
-     </container>
-   </unity>
-   ```  
-   
-   Make sure to update the name of your application settings class and namespace in the html example provided.
-1. Add connection string value to the web.config file as well  
-   This can be done by adding the following right below the previous unity section (without any changes required):  
-   
-   ```html
-   <connectionStrings>
-     <add name="MainDataStore" connectionString="Data Source=##CurrentDirectory##\Data\appData.db;Version=3;Journal Mode=Off;Connection Timeout=12000" />
-     <add name="AuditDataStore" connectionString="Data Source=##CurrentDirectory##\Data\auditData.db;Version=3;Journal Mode=Off;Connection Timeout=12000" />
-   </connectionStrings>
-   ```  
-   
-1. Create a new folder (for you sqlite database) in your project called **Data**  
-    If you have modified the connection string values from this example, you may need to specify a different folder
-1. Create a new file called "siteOverrides.css" in **FrontEnd/css**  
+1. Create a new file called "siteOverrides.css" in **wwwroot/css**  
    You can populate it as follows to start with:  
    
    ```css
@@ -131,16 +133,16 @@ You can support me and purchase my custom [Visual Studio Project Template](https
    But eventually you should be presented with a login screen if you have followed all the steps correctly, as follows:  
    ![Login Prompt](First_Login.png "Successful Login Prompt")
 	
-## Using the Custom QBic Project Template
-You can purchase the Visual Studio Template [<img src="QBic.png" width="30px">](https://gum.co/sWqnR) for **$10** from [Gumroad](https://gum.co/sWqnR).  
+## Using the Custom qBic Project Template
+You can purchase the Visual Studio Template [<img src="qBic.png" width="30px">](https://gum.co/SsWHZE) for **$10** from [Gumroad](https://gum.co/SsWHZE).  
 
-The default username and password is admin/password.  
+The default username and password is admin/password if you've used the qBic Project Template.  
 
 
 # Documentation
 Documentation will be added over the course of time.  
 
-But, for the time being, there is a [QBic Samples](https://github.com/quintonn/QBicSamples) repository with examples of using the QBic platform. 
+But, for the time being, there is a [qBic Samples](https://github.com/quintonn/qBicSamples) repository with examples of using the qBic platform. 
 
 # Sample Code
 Consider the following code.  
@@ -189,11 +191,11 @@ And below is the view and the input screen this code generates:
 
 # Known Problems
 ### SQLite.Interop.dll
-Sometimes you might see this error when you try and run your QBic application while using SQLite 
+Sometimes you might see this error when you try and run your qBic application while using SQLite 
 > Unable to load DLL 'SQLite.Interop.dll': The specified module could not be found  
 
 There are many reasons for seeing this error and we have made many efforts to fix them, but some reasons still persist:
-1. The **Identity** of the **AppPool** in **IIS** that runs the QBic website does not have access to the location the project was created in.  
+1. The **Identity** of the **AppPool** in **IIS** that runs the qBic website does not have access to the location the project was created in.  
 
    This might be happen if the **AppPool** is **DefaultAppPool** and the **Identity** is **NetworkService** and the project is created inside the **C:\Users\XXXX\source\repos** folder which are the defaults for Visual Studio and IIS.  
 
@@ -207,15 +209,15 @@ As mentioned above, many steps have been taken to eliminate this error, but it m
 The simplest solution for this has been to run the following command in an elevated command prompt:  
 > iisreset
 
-# Projects using QBic
-Some projects that have used, or are using, QBic are listed below.  
+# Projects using qBic
+Some projects that have used, or are using, qBic are listed below.  
 Feel free to add your project too:  
 1. The back-end for a custom mobile application for Bargain Books in South Africa  
    *This has been discontinued*
 2. [Repo Castle](https://repocastle.com/)  
    A private NuGet repository with fine-grained access control
-3. The [QBic Samples](https://github.com/quintonn/QBicSamples) application  
-   This project shows example of features of QBic
+3. The [qBic Samples](https://github.com/quintonn/qBicSamples) application  
+   This project shows example of features of qBic
 4. A custom school CMS.  
    The system keeps track of studendts' attendance & grades, and also generate and prints report cards.  
    

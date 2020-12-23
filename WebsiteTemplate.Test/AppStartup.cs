@@ -33,7 +33,7 @@ namespace WebsiteTemplate.Test
         {
             var xx = Container.GetService<IHttpContextAccessor>();
             WebsiteUtils.SetCurrentUser("System", xx);
-            //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
+            
             using (var session = DataService.OpenSession())
             {
                 var adminUser = session.CreateCriteria<User>()
@@ -186,8 +186,6 @@ namespace WebsiteTemplate.Test
                         DataService.SaveOrUpdate(session, era);
                     }
                 }
-
-
 
                 session.Flush();
             }
