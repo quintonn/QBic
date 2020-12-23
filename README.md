@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/quintonn/qBic.svg?branch=master)](https://travis-ci.com/quintonn/qBic)
+[![Build Status](https://travis-ci.com/quintonn/qBic.svg?branch=net_core)](https://travis-ci.com/quintonn/qBic)
 
 ##### Table of Contents  
 1. [Introduction](#introduction)  
