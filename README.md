@@ -27,7 +27,8 @@ No HTML, JavaScript or CSS.
 A lot of the **magic** is driven by abstract classes and inheritance.  
 
 A sample of how quick and easy it is to create a new .Net project using qBic:  
-![Quick qBic Demo](https://github.com/quintonn/qBic/raw/master/Images/qBicQuickDemo.gif "Quick qBic Demo")
+![Quick qBic Demo](https://github.com/quintonn/QBic/raw/master/Images/QBicQuickDemo.gif "Quick qBic Demo")
+                   
 
 # Goal
 The goal of this framework/platform is to never have to worry about the front-end, web, code.  
