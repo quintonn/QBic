@@ -6,8 +6,6 @@
 1. [Features](#features)  
 1. [Prerequisites](#prerequisites)  
 1. [Creating a new qBic Project](#creating-a-new-qBic-project)  
-5.1. [Creating a project Manually](#creating-a-project-manually)  
-5.2. [Using the Custom qBic Project Template](#using-the-custom-qBic-project-template)  
 1. [Documentation](#documentation)
 1. [Sample Code](#sample-code)
 1. [Known Problems](#known-problems)  
@@ -24,11 +22,7 @@ The easiest way to demonstrate what qBic offers, is by showing [an example](#sam
 With qBic, you can create admin portals, dashboards, CMS sites, identity servers, and much more.  
 All of this while only writing .Net code.  
 No HTML, JavaScript or CSS.  
-A lot of the **magic** is driven by abstract classes and inheritance.  
-
-A sample of how quick and easy it is to create a new .Net project using qBic:  
-![Quick qBic Demo](https://github.com/quintonn/QBic/raw/net_core/Images/QBicQuickDemo.gif "Quick qBic Demo")
-                   
+A lot of the **magic** is driven by abstract classes and inheritance.                   
 
 # Goal
 The goal of this framework/platform is to never have to worry about the front-end, web, code.  
@@ -129,7 +123,10 @@ There are many reasons for seeing this error and we have made many efforts to fi
    This might be happen if the **AppPool** is **DefaultAppPool** and the **Identity** is **NetworkService** and the project is created inside the **C:\Users\XXXX\source\repos** folder which are the defaults for Visual Studio and IIS.  
 
    The easiest fix for this is to create or move the project into a different location (e.g. c:\MyProjects\).  
-   Another solution might be to change the **Identity** of the appPool, or give it access to the source\repos folder.
+   Another solution might be to change the **Identity** of the appPool, or give it access to the source\repos folder.  
+1. On Raspberry pi, and possibly other linux distributions, the SQLite binaries need to be compiled and some of the output copied into the root folder to be able to use SQLite.  
+   The exact folder to copy the files into will depend on where the **dotnet run** command is executed from.  
+   Instructions for doing this can be found here: http://blog.wezeku.com/2016/10/09/using-system-data-sqlite-under-linux-and-mono/
 
 ### Unable to delete SQLite dll
 When using SQLite (instead of MS-SQL) you might see an error when building your applicatio that the SQLite dll could not be removed.  
