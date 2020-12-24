@@ -54,90 +54,18 @@ Before using and running qBic, the following should be installed or adhered to:
 1. You have .net 5 installed on your development machine.  
 2. You run Visual Studio as an administrator when working on qBic projects.
 
-**TODO:** Creating a new project from this template is not quite yet possible because the wwwroot code is not transferred yet
-
 # Creating a new qBic Project
-You can either choose to setup a new qBic project [manually](#creating-a-project-manually) , or  
-You can support me and purchase my custom [Visual Studio Project Template](https://github.com/quintonn/qBic#using-the-custom-qBic-project-template).  
+To create and run a new project, simply run the following commands:  
+1. dotnet new -i qbic-dotnet-template
+1. dotnet new qbic-dotnet-template -n myProject  
+1. cd myProject  
+1. dotnet run 
+1. Visit https://localhost:5001
+1. It might take a few seconds before the website is ready, so maybe refresh the web page  
+1. Login with admin/password
 
-## Creating a project Manually
-1. Create a new Visual Studio ASP.NET Core Web Application
-1. Choose ASP.NET Core Empty and ASP.NET Core 5.0, and leave all other defaults
-1. Install the WebsiteTemplate nuget package, either from Visual Studio, or by running the following command:  
-   ```
-   Install-Package WebsiteTemplate
-   ```
-1. Create a new class that inherits from **ApplicationStartup**
-1. Implement the mandatory functions and create the constructor required by **ApplicationStartup** parent class  
-   The **SetupDefaults** is a good place to create your default, or admin, user  
-   This is actually required, else you will not be able to log into your application when it starts for the first time  
-   The Test project's [Startup](WebsiteTemplate.Test/Startup.cs) file can be used to see a basic example of adding an admin/first user
-1. Add a class that inherits from **ApplicationSettingsCore**  
-   I usually call this file **AppSettings**, but it can be anything
-1. Implement the mandatory properties and methods of the **ApplicationSettingsCore** class  
-   **GetApplicationStartupType** should return the type of class you created in step #5
-1. Set the override field **UpdateDatabase** to **true**  
-   This will create the database and tables, and can be set to false once you have your database set up and read
-1. Make the generated **Startup.cs** class look as follows (where AppSettings and AppStartup be replaced with the files you created earlier):  
-
-   ```cs
-   using Microsoft.AspNetCore.Builder;
-   using Microsoft.Extensions.Configuration;
-   using Microsoft.Extensions.DependencyInjection;
-   using Microsoft.Extensions.Logging;
-   using qBic.Core.Utilities;
-   using System;
-   using WebsiteTemplate;
-   
-   namespace SampleProject
-   {
-   	public class Startup
-   	{
-   		public static IConfiguration Config;
-   
-   		public Startup(IConfiguration config)
-   		{
-   			Config = config;
-   		}
-   		public void ConfigureServices(IServiceCollection services)
-   		{
-   			services.UseqBic<AppSettings, AppStartup>(Config);
-   		}
-   
-   		public void Configure(IApplicationBuilder app, IServiceProvider serviceProvider, ILoggerFactory logFactory)
-   		{
-   			// Setup internal logging system. Inherited from .net 4
-   			SystemLogger.Setup(logFactory);
-   
-   			app.UseqBic(serviceProvider);
-   		}
-   	}
-   }
-
-   ```
-1. Create a new file called "siteOverrides.css" in **wwwroot/css**  
-   You can populate it as follows to start with:  
-   
-   ```css
-   .w3-app-color, .w3-hover-app-color {
-   	color: #fff !important;
-   	background-color: #2196F3 !important;
-   }
-   .w3-hover-app-color {
-   	-webkit-transition: background-color .3s,color .15s,box-shadow .3s,opacity 0.3s;
-   	transition: background-color .3s,color .15s,box-shadow .3s,opacity 0.3s;
-   }
-   ```  
-1. You should now be ready to run the application  
-   It might take a couple of minutes (but not more than 5) to run the first time as it sets up the database  
-   But eventually you should be presented with a login screen if you have followed all the steps correctly, as follows:  
-   ![Login Prompt](First_Login.png "Successful Login Prompt")
-	
-## Using the Custom qBic Project Template
-You can purchase the Visual Studio Template [<img src="qBic.png" width="30px">](https://gum.co/SsWHZE) for **$10** from [Gumroad](https://gum.co/SsWHZE).  
-
-The default username and password is admin/password if you've used the qBic Project Template.  
-
+Or, if on Windows, run the following single line:
+> dotnet new -i qbic && dotnet new qbic-dotnet-template -n myProject && cd myProject && start "" "https://localhost:5001" && dotnet run
 
 # Documentation
 Documentation will be added over the course of time.  
