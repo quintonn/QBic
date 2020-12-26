@@ -14,7 +14,7 @@
 1. [Projects using qBic](#projects-using-qBic)
 
 # Introduction
-A platform for creating Web Servers or CMS systems in .Net 5  
+A platform for creating Web Servers, back-end solutions, CRM or CMS systems in .Net 5  
 The front-end, part is dynamically created based on .Net code-configuration.  
 This does not rely on blazor, silverlight, web-assembly or any of those frameworks, but uses normal JS, HTML and CSS underneath.  
 The easiest way to demonstrate what qBic offers, is by showing [an example](#sample-code).  
