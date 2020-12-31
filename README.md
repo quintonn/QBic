@@ -15,8 +15,7 @@
 
 # Introduction
 A platform for creating Web Servers, back-end solutions, CRM or CMS systems in .Net 5  
-The front-end, part is dynamically created based on .Net code-configuration.  
-This does not rely on blazor, silverlight, web-assembly or any of those frameworks, but uses normal JS, HTML and CSS underneath.  
+qBic is powered by code-driven configuration. The entire application is built using C# code.  
 The easiest way to demonstrate what qBic offers, is by showing [an example](#sample-code).  
 
 With qBic, you can create admin portals, dashboards, CMS sites, identity servers, and much more.  
