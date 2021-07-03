@@ -61,6 +61,7 @@ namespace WebsiteTemplate.Backend.Processing
                     JSON_SETTINGS = new JsonSerializerSettings
                     {
                         DateFormatString = WebsiteUtils.DateFormat,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                     };
                 }
 

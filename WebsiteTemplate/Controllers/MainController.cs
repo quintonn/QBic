@@ -76,6 +76,7 @@ namespace WebsiteTemplate.Controllers
                     JSON_SETTINGS = new JsonSerializerSettings()
                     {
                         DateFormatString = WebsiteUtils.DateFormat,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                         //PropertyNameCaseInsensitive = true,
                     };
                 }

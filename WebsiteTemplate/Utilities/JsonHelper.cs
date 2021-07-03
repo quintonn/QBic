@@ -225,6 +225,7 @@ namespace WebsiteTemplate.Utilities
             var jsonSettings = new JsonSerializerSettings()
             {
                 TypeNameHandling = includeTypeInfo == true ? TypeNameHandling.All : TypeNameHandling.None,
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             };
             return JsonConvert.DeserializeObject<T>(value, jsonSettings);
         }
