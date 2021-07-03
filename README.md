@@ -51,7 +51,7 @@ Before using and running qBic, the following should be installed or adhered to:
 # Creating a new qBic Project
 To create and run a new project, simply run the following commands:  
 1. dotnet new -i qbic-dotnet-template
-1. dotnet new qbic-dotnet-template -n myProject  
+1. dotnet new qbic -n myProject  
 1. cd myProject  
 1. dotnet run 
 1. Visit https://localhost:5001
@@ -59,7 +59,7 @@ To create and run a new project, simply run the following commands:
 1. Login with admin/password
 
 Or, if on Windows, run the following single line:
-> dotnet new -i qbic && dotnet new qbic-dotnet-template -n myProject && cd myProject && start "" "https://localhost:5001" && dotnet run
+> dotnet new -i qbic && dotnet new qbic -n myProject && cd myProject && start "" "https://localhost:5001" && dotnet run
 
 # Documentation
 Documentation will be added over the course of time.  
