@@ -4,7 +4,7 @@
     <Authors>Quintonn Rothmann</Authors>
     <Company>Quintonn Rothmann</Company>
     <Copyright>Copyright ©  2018</Copyright>
-    <Version>5.0.0.6</Version>
+    <Version>5.0.0.7</Version>
     <RepositoryUrl>https://github.com/quintonn/QBic</RepositoryUrl>
     <Product>QBic.Core</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -20,6 +20,7 @@
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="5.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="5.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
