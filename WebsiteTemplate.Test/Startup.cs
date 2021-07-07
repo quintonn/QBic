@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using QBic.Core.Utilities;
 using System;
+using WebsiteTemplate.Backend.Users;
+using WebsiteTemplate.Test.MenuItems.Users;
 using WebsiteTemplate.Test.SiteSpecific;
 
 namespace WebsiteTemplate.Test
@@ -33,6 +35,7 @@ namespace WebsiteTemplate.Test
             });
             services.UseQBic<AppSettings, AppStartup>(Config, idOptions);
             //services.AddScoped<UserInjector, DefaultUserInjector>(); // can i override the default one?
+            services.AddScoped<UserInjector, TestUserInjector>();
             //User can override UserInjector with their own injector class
         }
 
