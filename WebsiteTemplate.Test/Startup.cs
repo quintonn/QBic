@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -19,7 +20,18 @@ namespace WebsiteTemplate.Test
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.UseQBic<AppSettings, AppStartup>(Config);
+            var idOptions = new Action<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequiredUniqueChars = 0;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.SignIn.RequireConfirmedAccount = true;
+
+                options.User.AllowedUserNameCharacters += " ";
+            });
+            services.UseQBic<AppSettings, AppStartup>(Config, idOptions);
             //services.AddScoped<UserInjector, DefaultUserInjector>(); // can i override the default one?
             //User can override UserInjector with their own injector class
         }

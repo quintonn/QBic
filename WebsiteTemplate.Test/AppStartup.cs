@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NHibernate.Criterion;
 using QBic.Authentication;
+using QBic.Core.Utilities;
 using System;
 using System.Linq;
 using WebsiteTemplate.Backend.Services;
@@ -18,6 +20,7 @@ namespace WebsiteTemplate.Test
         private IServiceProvider Container { get; set; }
         private IConfiguration Config;
 
+        private static readonly ILogger Logger = SystemLogger.GetLogger<AppStartup>();
 
         private UserManager<IUser> UserManager { get; set; }
 

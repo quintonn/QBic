@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -75,22 +76,12 @@ namespace QBic.Authentication
         public Task SetNormalizedUserNameAsync(USER user, string normalizedName, CancellationToken cancellationToken)
         {
             user.UserName = normalizedName;
-            using (var session = SessionFactory.OpenSession())
-            {
-                session.SaveOrUpdate(user);
-                session.Flush();
-            }
             return Task.FromResult(0);
         }
 
         public Task SetUserNameAsync(USER user, string userName, CancellationToken cancellationToken)
         {
             user.UserName = userName;
-            using (var session = SessionFactory.OpenSession())
-            {
-                session.SaveOrUpdate(user);
-                session.Flush();
-            }
             return Task.FromResult(0);
         }
 
@@ -110,11 +101,6 @@ namespace QBic.Authentication
         public Task SetPasswordHashAsync(USER user, string passwordHash, CancellationToken cancellationToken)
         {
             user.PasswordHash = passwordHash;
-            using (var session = SessionFactory.OpenSession())
-            {
-                session.SaveOrUpdate(user);
-                session.Flush();
-            }
             return Task.FromResult(0);
         }
 
@@ -166,10 +152,9 @@ namespace QBic.Authentication
 
         public Task<USER> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
         {
-            //var user = SessionFactory.RetrieveByKeyValues(Data.Core.SessionFactorysitory.QueryJoinType.And, ("Email", normalizedEmail, QueryMatchType.Equals)).SingleOrDefault();
             using (var session = SessionFactory.OpenSession())
             {
-                var user = session.QueryOver<USER>().WhereRestrictionOn(x => x.Email).IsInsensitiveLike(normalizedEmail).SingleOrDefault();
+                var user = session.QueryOver<USER>().WhereRestrictionOn(x => x.Email).IsInsensitiveLike(normalizedEmail).List().ToList().FirstOrDefault(); // password options will/should prevent duplicates 
                 return Task.FromResult(user);
             }
         }

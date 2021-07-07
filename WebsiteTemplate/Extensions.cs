@@ -39,13 +39,13 @@ namespace WebsiteTemplate
         private static bool ConfigureServicesCalled = false;
         private static bool ConfigureCalled = false;
         //AppStartup
-        public static IServiceCollection UseQBic<T, A>(this IServiceCollection services, IConfiguration configuration) where T : ApplicationSettingsCore
+        public static IServiceCollection UseQBic<T, A>(this IServiceCollection services, IConfiguration configuration, Action<IdentityOptions> identityOptions = null) where T : ApplicationSettingsCore
             where A : ApplicationStartup
         {
             services.AddTransient<ApplicationStartup, A>();
-            return services.UseQBic<T>(configuration);
+            return services.UseQBic<T>(configuration, identityOptions);
         }
-        public static IServiceCollection UseQBic<T>(this IServiceCollection services, IConfiguration configuration) where T: ApplicationSettingsCore
+        public static IServiceCollection UseQBic<T>(this IServiceCollection services, IConfiguration configuration, Action<IdentityOptions> identityOptions = null) where T: ApplicationSettingsCore
         {
             ConfigureServicesCalled = true;
             services.AddSingleton<ApplicationSettingsCore, T>();
@@ -158,16 +158,24 @@ namespace WebsiteTemplate
 
             services.AddScoped<UserInjector, DefaultUserInjector>();
 
-            services.AddIdentityCore<IUser>(options =>
+            if (identityOptions != null)
             {
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequiredUniqueChars = 0;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
+                services.AddIdentityCore<IUser>(identityOptions).AddTokenProvider<DataProtectorTokenProvider<IUser>>(TokenOptions.DefaultProvider);
+            }
+            else
+            {
+                services.AddIdentityCore<IUser>(options =>
+                {
+                    options.Password.RequireDigit = false;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequiredUniqueChars = 0;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                    options.User.RequireUniqueEmail = true;
 
-                options.SignIn.RequireConfirmedAccount = true;
-            }).AddTokenProvider<DataProtectorTokenProvider<IUser>>(TokenOptions.DefaultProvider);
+                    options.SignIn.RequireConfirmedAccount = true;
+                }).AddTokenProvider<DataProtectorTokenProvider<IUser>>(TokenOptions.DefaultProvider);
+            }
 
             return services;
         }
