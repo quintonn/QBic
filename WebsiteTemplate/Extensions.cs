@@ -89,7 +89,8 @@ namespace WebsiteTemplate
             {
                 options.ValueCountLimit = int.MaxValue;
                 // Form key length limit 2048 exceeded
-                options.KeyLengthLimit = int.MaxValue;
+                options.KeyLengthLimit = int.MaxValue;   // i think my data is being sent in the key
+                options.ValueLengthLimit = int.MaxValue; // but without this large files fail too.
             });
 
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);

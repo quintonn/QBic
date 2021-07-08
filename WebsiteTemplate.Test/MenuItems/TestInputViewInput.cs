@@ -38,6 +38,11 @@ namespace WebsiteTemplate.Test.MenuItems
                 TabName = "Main"
             });
 
+            result.Add(new FileInput("File2", "File 2")
+            {
+                TabName = "Main"
+            });
+
             result.Add(new ViewInput("Items", "Items", new TestInputView())
             {
                 TabName = "View"
