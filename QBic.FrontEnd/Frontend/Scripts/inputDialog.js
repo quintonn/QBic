@@ -742,6 +742,7 @@
                 {
                     case 5: // List Source
                         var defaultList = defaultValue || [];
+                        defaultList = defaultList.split(",");
                         var listSource = inputSetting.ListSource; // (Key, Value)
                         listSource = $.map(listSource, function (item)
                         {
