@@ -745,7 +745,7 @@
                         var listSource = inputSetting.ListSource; // (Key, Value)
                         listSource = $.map(listSource, function (item)
                         {
-                            var selected = defaultList.indexOf(item.Key) > -1;
+                            var selected = defaultList == item.Key;
                             return new listSourceItemModel(selected, item.Value, item.Key);
                         });
                         self.listSource(listSource);

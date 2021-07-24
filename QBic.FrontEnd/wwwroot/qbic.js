@@ -11487,7 +11487,7 @@ return((r[1].length===0)?r[0]:null);};};Date.parseExact=function(s,fx){return Da
                         var listSource = inputSetting.ListSource; // (Key, Value)
                         listSource = $.map(listSource, function (item)
                         {
-                            var selected = defaultList.indexOf(item.Key) > -1;
+                            var selected = defaultList == item.Key;
                             return new listSourceItemModel(selected, item.Value, item.Key);
                         });
                         self.listSource(listSource);
