@@ -5,7 +5,7 @@
     <Authors>Quintonn Rothmann</Authors>
     <Company>Quintonn Rothmann</Company>
     <Copyright>Copyright �  2018</Copyright>
-    <Version>5.1.0.0</Version>
+    <Version>5.1.0.2</Version>
     <RepositoryUrl>https://github.com/quintonn/QBic</RepositoryUrl>
     <Product>QBic.FrontEnd</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -13,5 +13,9 @@
     <OutputType>Library</OutputType>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\*" />
+  </ItemGroup>
 
 </Project>
