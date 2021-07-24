@@ -22296,7 +22296,7 @@ function menuContainer()
                                 var listSource = item.ListItems
                                 listSource = $.map(listSource, function (item)
                                 {
-                                    var selected = defaultList.indexOf(item.Key) > -1;
+                                    var selected = defaultList == item.Key;
                                     return new listSourceItemModel(selected, item.Value, item.Key);
                                 });
                                 inp.listSource(listSource);
