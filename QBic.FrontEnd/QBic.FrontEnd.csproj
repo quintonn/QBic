@@ -14,17 +14,12 @@
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="wwwroot\**\*" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="TestFolder\TextFile.txt" />   
+  <ItemGroup>   
     <None Remove="_wwwroot\*" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="TestFolder\TextFile.txt">
+    <Content Include="readme.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
 

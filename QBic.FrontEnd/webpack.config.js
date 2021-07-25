@@ -37,11 +37,12 @@ module.exports = env =>
                     { from: './Frontend/fonts', to: 'fonts' },
                     { from: './Frontend/Pages', to: 'pages' },
                     { from: './Frontend/css/siteOverrides.css' },
+                    { from: './readme.txt' },
                 ]
             }),
             new PostCompile(() =>
             {
-                fs.unlinkSync(__dirname + "/wwwroot/main"); // delete the main file created by webpack
+                fs.unlinkSync(__dirname + "/_wwwroot/main"); // delete the main file created by webpack
 
                 if (env && env.dev && env.dev == true)
                 {
@@ -51,7 +52,7 @@ module.exports = env =>
                     // copy site override css file to temp buffer
                     var tmp = fs.readFileSync(destDir + "/siteOverrides.css");
 
-                    fse.copySync(__dirname + "/wwwroot", destDir, { overwrite: true }, function (err)
+                    fse.copySync(__dirname + "/_wwwroot", destDir, { overwrite: true }, function (err)
                     {
                         if (err)
                         {
@@ -77,7 +78,7 @@ module.exports = env =>
         ],
         output: {
             filename: '[name]',
-            path: path.resolve(__dirname, 'wwwroot'),
+            path: path.resolve(__dirname, '_wwwroot'),
         },
         externals: {
             // fix references to jquery. Without this the build crashes
