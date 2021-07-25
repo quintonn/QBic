@@ -5,7 +5,7 @@
     <Authors>Quintonn Rothmann</Authors>
     <Company>Quintonn Rothmann</Company>
     <Copyright>Copyright �  2018</Copyright>
-    <Version>5.1.0.2</Version>
+    <Version>5.1.0.3</Version>
     <RepositoryUrl>https://github.com/quintonn/QBic</RepositoryUrl>
     <Product>QBic.FrontEnd</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -16,6 +16,16 @@
 
   <ItemGroup>
     <None Include="wwwroot\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="TestFolder\TextFile.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="TestFolder\TextFile.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
