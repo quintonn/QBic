@@ -15,17 +15,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\*" />
+    <None Remove="wwwroot\**\*" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="TestFolder\TextFile.txt" />
+    <None Remove="TestFolder\TextFile.txt" />   
+    <None Remove="_wwwroot\*" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="TestFolder\TextFile.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+
+    <Content Include="_wwwroot\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    
   </ItemGroup>
 
 </Project>
