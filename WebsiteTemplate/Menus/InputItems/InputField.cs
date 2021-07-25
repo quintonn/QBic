@@ -17,6 +17,8 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public List<Condition> VisibilityConditions { get; set; }
 
+        public VisibilityConditionJoinType VisibilityConditionsJoinType { get; set; }
+
         public bool Mandatory { get; set; }
 
         public List<Condition> MandatoryConditions { get; set; }
@@ -32,6 +34,7 @@ namespace WebsiteTemplate.Menus.InputItems
             Mandatory = mandatory;
 
             VisibilityConditions = new List<Condition>();
+            VisibilityConditionsJoinType = VisibilityConditionJoinType.Or;
             MandatoryConditions = new List<Condition>();
         }
 

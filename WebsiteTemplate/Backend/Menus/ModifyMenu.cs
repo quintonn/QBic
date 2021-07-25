@@ -48,9 +48,9 @@ namespace WebsiteTemplate.Backend.Menus
             {
                 ListItems = MenuService.GetEventList(),
                 VisibilityConditions = new List<Condition>()
-                        {
-                            new Condition("HasSubmenus", Comparison.Equals, "false")
-                        }
+                {
+                    new Condition("HasSubmenus", Comparison.Equals, "false")
+                }
             });
 
             list.Add(new HiddenInput("ParentMenuId", ParentMenuId));

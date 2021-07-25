@@ -54,12 +54,16 @@ namespace WebsiteTemplate.Test.MenuItems
                 RaisePropertyChangedEvent = true,
             });
 
+            result.Add(new NumericInput<int>("Number", "Number", 0, null, false));
+
             result.Add(new StringInput("Email", "Email", "q10athome@gmail.com", null, false)
             {
                 VisibilityConditions = new List<Condition>()
                 {
-                    new Condition("User", Comparison.Equals, "q10athome@gmail.com")
-                }
+                    new Condition("Number", Comparison.Equals, "3"),
+                    new Condition("Comparison", Comparison.Equals, FilterComparison.Equals.ToString())
+                },
+                VisibilityConditionsJoinType = VisibilityConditionJoinType.And
             });
 
             result.Add(new ListSelectionInput("List", "List", null, null, false)
