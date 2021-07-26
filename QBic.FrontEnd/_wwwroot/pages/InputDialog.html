@@ -1,0 +1,128 @@
+﻿<div class="w3-modal-content">
+    <header class="w3-container w3-app-color w3-center">
+        <span class="w3-closebtn w3-padding-top" data-bind="click: closeClick">&times;</span>
+        <h2 data-bind="text: title"></h2>
+    </header>
+
+    <div class="w3-container w3-section">
+        <!-- ko if: tabs().length > 1 -->
+        <ul class="w3-navbar w3-light-grey" data-bind="foreach: tabs">
+            <li class="w3-small" style="min-width:100px"><b><a href="#" data-bind="text: tabName, click: setCurrentTab, css: colorClass"></a></b></li>
+        </ul>
+        <!-- /ko -->
+
+        <div class="w3-section">
+            <!-- ko if: currentTab() != null -->
+            <div class="w3-container" data-bind="foreach: currentTab().inputs()">
+                <!-- ko template: { name: 'inputRowTemplate' } -->
+                <!-- /ko -->
+            </div>
+            <!-- /ko -->
+            <!-- ko if: combinedTab() != null -->
+            <div class="w3-container" data-bind="foreach: combinedTab().inputs()">
+                <!-- ko template: { name: 'inputRowTemplate' } -->
+                <!-- /ko -->
+            </div>
+            <!-- /ko -->
+        </div>
+    </div>
+
+    <!-- ko if: buttons().length > 0 -->
+    <div class="w3-container w3-padding w3-center" data-bind="foreach: buttons">
+        <button class="w3-btn w3-app-color w3-border" data-bind="text: label, click: $root.buttonClick"></button>
+    </div>
+    <!-- /ko -->
+</div>
+
+<script type="text/html" id="inputRowTemplate">
+    <div data-bind="visible: visible" class="w3-row">
+        <!-- ko if: inputType != 8 && inputType != 5 -->
+        <div class="w3-col " style="width:200px"><b class="w3-label w3-small" data-bind="html:inputLabel" style="white-space:pre"></b></div>
+        <!-- /ko -->
+
+        <div class="w3-rest ">
+
+            <!-- ko if: inputType == 0 && multiLine == false -->
+            <!--  Text  -->
+            <input class="w3-input" type="text" data-bind="value: inputValue, hasFocus: $index() == 0, event: { change: propertyChanged}" />
+            <!-- /ko -->
+            <!-- ko if: inputType == 0 && multiLine == true -->
+            <!--  Text  -->
+            <textarea class="w3-input" data-bind="value: inputValue, hasFocus: $index() == 0, event: { change: propertyChanged}"></textarea>
+            <!-- /ko -->
+            <!-- ko if: inputType == 1 -->
+            <!--  Password  -->
+            <input class="w3-input" type="password" data-bind="value: inputValue, hasFocus: $index() == 0, event: { change: propertyChanged}" />
+            <!-- /ko -->
+            <!-- ko if: inputType == 2 -->
+            <!--  Hidden  -->
+            <input class="w3-input" type="text" data-bind="value: inputValue, visible: false" />
+            <!-- /ko -->
+            <!-- ko if: inputType == 3 -->
+            <!--  Combobox -->
+            <select class="w3-select" data-bind="options: options, value: inputValue, optionsText: 'displayText', optionsCaption: 'Select a value... ', hasFocus: $index() == 0, event: { change: propertyChanged}"></select>
+            <!-- /ko -->
+            <!-- ko if: inputType == 4 -->
+            <!--  Boolean  -->
+            <input class="w3-input w3-check" type="checkbox" data-bind="checked: inputValue, hasFocus: $index() == 0, event: { change: propertyChanged}" />
+            <br />
+            <!-- /ko -->
+            <!--  List Selection Input -->
+            <div data-bind="if: inputType == 5">
+                <!-- List Selection Input -->
+                <label class="w3-label w3-small"><b data-bind="text: inputLabel"></b></label>
+                <div style="overflow-x:auto; overflow-y: auto; max-height:250px; min-width:310px">
+                    <table class="w3-table-all w3-hoverable ">
+                        <tr>
+                            <th>
+                                <input class="w3-check" type="checkbox" data-bind="checked: selectAll, click: selectAllClicked" />
+                            </th>
+                            <th>
+                                <label class="w3-small">Select All</label>
+                            </th>
+                        </tr>
+                        <tbody data-bind="foreach: listSource">
+                            <tr>
+                                <td>
+                                    <input class="w3-check w3-small" type="checkbox" data-bind="checked: selected, click: $parent.listSourceSelect" />
+                                </td>
+                                <td>
+                                    <span class="w3-small" data-bind="text: label"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- ko if: inputType == 6 -->
+            <!--  Date  -->
+            <input type="text" class="w3-input" data-bind="datepicker: { changeMonth: true, changeYear: true, dateFormat: dateFormat}, value: inputValue, hasFocus: $index() == 0, event: { change: propertyChanged}" placeholder="Select date..." />
+            <!-- /ko -->
+            <!-- ko if: inputType == 7 -->
+            <!-- MaskedInput ->> maybe use jquery UI -->
+            <span>??????</span>
+            <!-- /ko -->
+            <!-- ko if: inputType == 8 -->
+            <!-- View Input -->
+            <label class="w3-label w3-small"><b data-bind="text: inputLabel"></b></label>
+            <div data-bind="html: html" style="overflow-x:auto; overflow-y: auto; max-height:250px; min-width:310px">
+
+            </div>
+            <!-- /ko -->
+            <!-- ko if: inputType == 9 -->
+            <!--  File Input -->
+            <input class="w3-input fileInput" type="file" data-bind="hasFocus: $index() == 0, event: { change: function() { fileSelected($element.files[0]) } }" />
+            <label class="w3-label w3-small fileInputLabel" data-bind="text:inputFileName">No file selected</label>
+            <!-- /ko -->
+            <!-- ko if: inputType == 10 -->
+            <!--  numeric  -->
+            <input id="spinner1" type="text" class="w3-input" data-bind="spinner: { value: inputValue, step: Step }, hasFocus: $index() == 0, event: { change: propertyChanged}" placeholder="Enter numeric value..." style="margin:0" />
+            <label class="w3-label w3-padding-small" data-bind="text: inputValue() == null ? 'Invalid number entered' : '', css : inputValue() == null ? 'w3-red' : '' "></label>
+            <!-- /ko -->
+            <!-- ko if: inputType == 11 -->
+            <!--<input class="w3-label" data-bind="value:inputValue, enable:false" style="width:100%"/>-->
+            <b class="w3-label w3-small" data-bind="html:inputValue" style="white-space:pre"></b>
+            <!-- /ko -->
+        </div>
+    </div>
+</script>
