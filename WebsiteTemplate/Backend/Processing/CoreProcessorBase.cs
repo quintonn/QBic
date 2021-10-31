@@ -28,7 +28,7 @@ namespace WebsiteTemplate.Backend.Processing
         protected static AuditService AuditService { get; set; }
         protected static BackgroundService BackgroundService { get; set; }
 
-        protected static UserManager<IUser> UserManager { get; set; }
+        protected static UserManager<User> UserManager { get; set; }
 
         private static bool SetupDone = false;
 
@@ -42,7 +42,7 @@ namespace WebsiteTemplate.Backend.Processing
                 {
                     Container = container;
 
-                    UserManager = Container.GetService<UserManager<IUser>>();
+                    UserManager = Container.GetService<UserManager<User>>();
 
                     if (SetupDone == false)
                     {

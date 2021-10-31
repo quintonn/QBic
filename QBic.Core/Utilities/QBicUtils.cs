@@ -16,7 +16,7 @@ namespace QBic.Core.Utilities
     /// </summary>
     public static class QBicUtils
     {
-        public static async Task<IUser> GetLoggedInUserAsync(UserManager<IUser> userContext, IHttpContextAccessor httpContextAccessor)
+        public static async Task<USER> GetLoggedInUserAsync<USER>(UserManager<USER> userContext, IHttpContextAccessor httpContextAccessor) where USER: class, IUser
         {
             var userName = httpContextAccessor.HttpContext.User?.Identity?.Name;
             if (!String.IsNullOrWhiteSpace(userName))

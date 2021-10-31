@@ -33,10 +33,10 @@ namespace WebsiteTemplate.Backend.AuditReport
 
         private StyleSetup StyleSetup { get; set; }
         private DataStore DataStore { get; set; }
-        private UserManager<IUser> UserContext { get; set; }
+        private UserManager<User> UserContext { get; set; }
         private IHttpContextAccessor HttpContextAccessor { get; set; }
 
-        public CreateAuditReport(StyleSetup styleSetup, DataStore dataStore, UserManager<IUser> userContext, IHttpContextAccessor httpContextAccessor)
+        public CreateAuditReport(StyleSetup styleSetup, DataStore dataStore, UserManager<User> userContext, IHttpContextAccessor httpContextAccessor)
         {
             StyleSetup = styleSetup;
             DataStore = dataStore;

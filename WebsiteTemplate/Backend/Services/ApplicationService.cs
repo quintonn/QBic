@@ -11,9 +11,9 @@ namespace WebsiteTemplate.Backend.Services
     public class ApplicationService
     {
         private static ApplicationSettingsCore ApplicationSettings { get; set; }
-        private UserManager<IUser> UserContext { get; set; }
+        private UserManager<User> UserContext { get; set; }
         private IHttpContextAccessor HttpContextAccessor { get; set; }
-        public ApplicationService(ApplicationSettingsCore applicationSettings, UserManager<IUser> userContext, IHttpContextAccessor httpContextAccessor)
+        public ApplicationService(ApplicationSettingsCore applicationSettings, UserManager<User> userContext, IHttpContextAccessor httpContextAccessor)
         {
             ApplicationSettings = applicationSettings;
             UserContext = userContext;
@@ -39,7 +39,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public async Task<object> InitializeSession()
         {
-            var user = await QBicUtils.GetLoggedInUserAsync(UserContext, HttpContextAccessor) as User;
+            var user = await QBicUtils.GetLoggedInUserAsync<User>(UserContext, HttpContextAccessor);
             if (user == null)
             {
                 return new

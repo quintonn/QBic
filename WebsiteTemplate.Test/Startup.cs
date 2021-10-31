@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using QBic.Authentication;
 using QBic.Core.Utilities;
 using System;
 using WebsiteTemplate.Backend.Users;
 using WebsiteTemplate.Test.MenuItems.Users;
+using WebsiteTemplate.Test.Models;
 using WebsiteTemplate.Test.SiteSpecific;
 
 namespace WebsiteTemplate.Test
@@ -37,6 +39,11 @@ namespace WebsiteTemplate.Test
             //services.AddScoped<UserInjector, DefaultUserInjector>(); // can i override the default one?
             services.AddScoped<UserInjector, TestUserInjector>();
             //User can override UserInjector with their own injector class
+
+            // Add additional user authentication
+            //services.AddSingleton<IJwtAuthenticationProvider, MobileJwtAuthProvider>();
+            services.RegisterJwtUserProviders<MobileUser>(false);
+
         }
 
 

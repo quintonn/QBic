@@ -15,7 +15,7 @@ namespace WebsiteTemplate.Backend.Services.Background
     public class BackgroundService : IDisposable
     {
         private DataService DataService { get; set; }
-        private UserManager<IUser> UserContext { get; set; }
+        private UserManager<User> UserContext { get; set; }
         private BackgroundManager BackgroundManager { get; set; }
 
         private static object Locker = new object();
@@ -30,7 +30,7 @@ namespace WebsiteTemplate.Backend.Services.Background
             Started = false;
         }
 
-        public BackgroundService(DataService dataService, UserManager<IUser> userContext, BackgroundManager manager)
+        public BackgroundService(DataService dataService, UserManager<User> userContext, BackgroundManager manager)
         {
             DataService = dataService;
             UserContext = userContext;
