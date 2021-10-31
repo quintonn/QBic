@@ -42,7 +42,13 @@ namespace WebsiteTemplate.Test
 
             // Add additional user authentication
             //services.AddSingleton<IJwtAuthenticationProvider, MobileJwtAuthProvider>();
-            services.RegisterJwtUserProviders<MobileUser>(false);
+            services.AddSingleton<IJwtAuthenticationProvider, MobileJwtAuthProvider>();
+            //services.RegisterJwtUserProviders<MobileUser>(false);
+            services.AddTransient<IUserStore<MobileUser>, MobileUserStore>();
+            services.AddTransient<IUserPasswordStore<MobileUser>, MobileUserStore>();
+            services.AddTransient<IUserEmailStore<MobileUser>, MobileUserStore>();
+            services.AddTransient<IPasswordHasher<MobileUser>, PasswordHasher<MobileUser>>();
+            services.AddTransient<UserManager<MobileUser>, UserManager<MobileUser>>();
 
         }
 

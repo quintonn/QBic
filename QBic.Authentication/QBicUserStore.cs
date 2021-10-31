@@ -18,7 +18,7 @@ namespace QBic.Authentication
         }
         #region IUserStore methods
 
-        public async Task<IdentityResult> CreateAsync(USER user, CancellationToken cancellationToken)
+        public virtual async Task<IdentityResult> CreateAsync(USER user, CancellationToken cancellationToken)
         {
             using (var session = SessionFactory.OpenSession())
             {
@@ -28,7 +28,7 @@ namespace QBic.Authentication
             return IdentityResult.Success;
         }
 
-        public Task<IdentityResult> DeleteAsync(USER user, CancellationToken cancellationToken)
+        public virtual Task<IdentityResult> DeleteAsync(USER user, CancellationToken cancellationToken)
         {
             using (var session = SessionFactory.OpenSession())
             {
@@ -39,7 +39,7 @@ namespace QBic.Authentication
             return Task.FromResult(IdentityResult.Success);
         }
 
-        public Task<USER> FindByIdAsync(string userId, CancellationToken cancellationToken)
+        public virtual Task<USER> FindByIdAsync(string userId, CancellationToken cancellationToken)
         {
             using (var session = SessionFactory.OpenSession())
             {
@@ -48,7 +48,7 @@ namespace QBic.Authentication
             }
         }
 
-        public Task<USER> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
+        public virtual Task<USER> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
             using (var session = SessionFactory.OpenSession())
             {
@@ -58,34 +58,34 @@ namespace QBic.Authentication
             }
         }
 
-        public Task<string> GetNormalizedUserNameAsync(USER user, CancellationToken cancellationToken)
+        public virtual Task<string> GetNormalizedUserNameAsync(USER user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user?.UserName);//?.ToLower());
         }
 
-        public Task<string> GetUserIdAsync(USER user, CancellationToken cancellationToken)
+        public virtual Task<string> GetUserIdAsync(USER user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.Id);
         }
 
-        public Task<string> GetUserNameAsync(USER user, CancellationToken cancellationToken)
+        public virtual Task<string> GetUserNameAsync(USER user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.UserName);
         }
 
-        public Task SetNormalizedUserNameAsync(USER user, string normalizedName, CancellationToken cancellationToken)
+        public virtual Task SetNormalizedUserNameAsync(USER user, string normalizedName, CancellationToken cancellationToken)
         {
             user.UserName = normalizedName;
             return Task.FromResult(0);
         }
 
-        public Task SetUserNameAsync(USER user, string userName, CancellationToken cancellationToken)
+        public virtual Task SetUserNameAsync(USER user, string userName, CancellationToken cancellationToken)
         {
             user.UserName = userName;
             return Task.FromResult(0);
         }
 
-        public Task<IdentityResult> UpdateAsync(USER user, CancellationToken cancellationToken)
+        public virtual Task<IdentityResult> UpdateAsync(USER user, CancellationToken cancellationToken)
         {
             using (var session = SessionFactory.OpenSession())
             {
@@ -98,18 +98,18 @@ namespace QBic.Authentication
         #endregion
 
         #region IUserPasswordStore methods
-        public Task SetPasswordHashAsync(USER user, string passwordHash, CancellationToken cancellationToken)
+        public virtual Task SetPasswordHashAsync(USER user, string passwordHash, CancellationToken cancellationToken)
         {
             user.PasswordHash = passwordHash;
             return Task.FromResult(0);
         }
 
-        public Task<string> GetPasswordHashAsync(USER user, CancellationToken cancellationToken)
+        public virtual Task<string> GetPasswordHashAsync(USER user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.PasswordHash);
         }
 
-        public Task<bool> HasPasswordAsync(USER user, CancellationToken cancellationToken)
+        public virtual Task<bool> HasPasswordAsync(USER user, CancellationToken cancellationToken)
         {
             return Task.FromResult(true);
         }
@@ -118,7 +118,7 @@ namespace QBic.Authentication
 
         #region IUserEmailStore methods
 
-        public Task SetEmailAsync(USER user, string email, CancellationToken cancellationToken)
+        public virtual Task SetEmailAsync(USER user, string email, CancellationToken cancellationToken)
         {
             user.Email = email;
             using (var session = SessionFactory.OpenSession())
@@ -129,17 +129,17 @@ namespace QBic.Authentication
             return Task.FromResult(0);
         }
 
-        public Task<string> GetEmailAsync(USER user, CancellationToken cancellationToken)
+        public virtual Task<string> GetEmailAsync(USER user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user?.Email);
         }
 
-        public Task<bool> GetEmailConfirmedAsync(USER user, CancellationToken cancellationToken)
+        public virtual Task<bool> GetEmailConfirmedAsync(USER user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user?.EmailConfirmed == true);
         }
 
-        public Task SetEmailConfirmedAsync(USER user, bool confirmed, CancellationToken cancellationToken)
+        public virtual Task SetEmailConfirmedAsync(USER user, bool confirmed, CancellationToken cancellationToken)
         {
             user.EmailConfirmed = confirmed;
             using (var session = SessionFactory.OpenSession())
@@ -150,7 +150,7 @@ namespace QBic.Authentication
             return Task.FromResult(0);
         }
 
-        public Task<USER> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
+        public virtual Task<USER> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
         {
             using (var session = SessionFactory.OpenSession())
             {
@@ -159,12 +159,12 @@ namespace QBic.Authentication
             }
         }
 
-        public Task<string> GetNormalizedEmailAsync(USER user, CancellationToken cancellationToken)
+        public virtual Task<string> GetNormalizedEmailAsync(USER user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user?.Email?.ToLower());
         }
 
-        public Task SetNormalizedEmailAsync(USER user, string normalizedEmail, CancellationToken cancellationToken)
+        public virtual Task SetNormalizedEmailAsync(USER user, string normalizedEmail, CancellationToken cancellationToken)
         {
             user.Email = normalizedEmail;
             using (var session = SessionFactory.OpenSession())
