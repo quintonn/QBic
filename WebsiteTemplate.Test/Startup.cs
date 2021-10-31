@@ -43,6 +43,8 @@ namespace WebsiteTemplate.Test
             // Add additional user authentication
             //services.AddSingleton<IJwtAuthenticationProvider, MobileJwtAuthProvider>();
             services.AddSingleton<IJwtAuthenticationProvider, MobileJwtAuthProvider>();
+            // would be nice if this did work instead of the many lines below
+            //services.AddSingleton<QBicUserStore<MobileUser>, MobileUserStore>();
             //services.RegisterJwtUserProviders<MobileUser>(false);
             services.AddTransient<IUserStore<MobileUser>, MobileUserStore>();
             services.AddTransient<IUserPasswordStore<MobileUser>, MobileUserStore>();
