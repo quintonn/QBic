@@ -15,11 +15,11 @@ namespace WebsiteTemplate.Backend.Services
     public class AuditService
     {
         private DataStore DataStore { get; set; }
-        private UserManager<IUser> UserContext { get; set; }
+        private UserManager<User> UserContext { get; set; }
 
         private ApplicationSettingsCore AppSettings { get; set; }
         private Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor { get; set; }
-        public AuditService(DataStore dataStore, UserManager<IUser> userContext, ApplicationSettingsCore appSettings, Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor)
+        public AuditService(DataStore dataStore, UserManager<User> userContext, ApplicationSettingsCore appSettings, Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor)
         {
             DataStore = dataStore;
             UserContext = userContext;

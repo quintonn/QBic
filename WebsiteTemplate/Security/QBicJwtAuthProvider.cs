@@ -1,10 +1,11 @@
 ﻿using QBic.Authentication;
 using System;
+using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Security
 {
-    public class QBicJwtAuthProvider : JwtAuthenticationProvider<IRefreshToken, IUser>
+    public class QBicJwtAuthProvider : JwtAuthenticationProvider<IRefreshToken, User>
     {
         private ApplicationSettingsCore AppSettings { get; set; }
         public QBicJwtAuthProvider(IServiceProvider serviceProvider, ApplicationSettingsCore appSettings) : base(serviceProvider)

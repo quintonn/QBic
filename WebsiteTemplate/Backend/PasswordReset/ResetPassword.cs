@@ -8,6 +8,7 @@ using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
+using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.PasswordReset
@@ -16,11 +17,11 @@ namespace WebsiteTemplate.Backend.PasswordReset
     {
         private UserService UserService { get; set; }
         private ApplicationSettingsCore AppSettings { get; set; }
-        private UserManager<IUser> UserManager { get; set; }
+        private UserManager<User> UserManager { get; set; }
         private string UserId { get; set; }
         private string PasswordToken { get; set; }
 
-        public ResetPassword(UserService userService, ApplicationSettingsCore appSettings, UserManager<IUser> userManager)
+        public ResetPassword(UserService userService, ApplicationSettingsCore appSettings, UserManager<User> userManager)
         {
             UserService = userService;
             AppSettings = appSettings;
