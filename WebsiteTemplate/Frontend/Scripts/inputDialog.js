@@ -741,13 +741,11 @@
                 switch (self.inputType)
                 {
                     case 5: // List Source
-                        var defaultList = defaultValue || "";
-                        
-                        defaultList = defaultList.split(",");
+                        var defaultList = defaultValue || [];
                         var listSource = inputSetting.ListSource; // (Key, Value)
                         listSource = $.map(listSource, function (item)
                         {
-                            var selected = defaultList == item.Key;
+                            var selected = defaultList.indexOf(item.Key) > -1;
                             return new listSourceItemModel(selected, item.Value, item.Key);
                         });
                         self.listSource(listSource);
