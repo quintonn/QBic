@@ -43,12 +43,12 @@
         $.each(inputs, function (indx, inp)
         {
             var tabName = $.trim(inp.TabName || "");
-            
+
             if (tabs[tabName] == null)
             {
                 tabs[tabName] = new tabModel(tabName, model);
             }
-            
+
             var inpModel = new inputFieldModel(inp, model);
             inpModel.inputValue.subscribe(function ()
             {
@@ -63,7 +63,7 @@
                         });
                         return conditionList.length > 0;
                     });
-                    
+
                     for (var i = 0; i < inputsToHide.length; i++)
                     {
                         var inp = inputsToHide[i];
@@ -78,7 +78,7 @@
                         });
 
                         // This might need revision - might need a way to have AND, OR, etc in the conditions.
-                        
+
                         //var showInput = matchedConditions1.length == matchedConditions2.length;
                         var showInput = matchedConditions2.length > 0;
 
@@ -97,7 +97,7 @@
                 return inpModel.initialize(inp.DefaultValue);
             };
             setDefaults.push(action); // This is not a great solution - i don't  like it, smells bad
-            
+
             tabs[tabName].inputs.push(inpModel);
         });
 
@@ -124,14 +124,14 @@
             var bModel = new inputButtonModel(button.ActionNumber, button.Label, button.ValidateInput);
             model.buttons.push(bModel);
         });
-        
-        return dialog.showDialogWithId('InputDialog', model).then(function()
+
+        return dialog.showDialogWithId('InputDialog', model).then(function ()
         {
             var act = function (action)
             {
                 return action();
             };
-            
+
             return Promise.all($.map(setDefaults, act)).then(function ()
             {
                 if (model.tabs().length > 0)
@@ -165,7 +165,7 @@
     {
         var modals = _applicationModel.modalDialogs();
         var dialogModel = modals[modals.length - 1];
-        
+
         var inputDlgModel = dialogModel.model;
 
         var inputFldModel = inputDlgModel.findInputModelWithName(inputName);
@@ -221,7 +221,7 @@
 
         // to use form data-https://stackoverflow.com/questions/21044798/how-to-use-formdata-for-ajax-file-upload
         // xxxxxxx
-        self.buttonClick = function(btn, evt)
+        self.buttonClick = function (btn, evt)
         {
             dialog.showBusyDialog("Processing...").then(function ()
             {
@@ -236,23 +236,23 @@
 
                     return mainApp.processEvent(self.eventId, btn.actionNumber, res);
                 })
+                    .catch(function (err)
+                    {
+                        if (err == "X")
+                        {
+                            // This is fine, it means there was a mandatory input and a dialog is shown to the user.
+                        }
+                        else
+                        {
+                            mainApp.handleError(err);
+                        }
+                    });
+            }).then(dialog.closeBusyDialog)
                 .catch(function (err)
                 {
-                    if (err == "X")
-                    {
-                        // This is fine, it means there was a mandatory input and a dialog is shown to the user.
-                    }
-                    else
-                    {
-                        mainApp.handleError(err);
-                    }
+                    console.error(err);
+                    mainApp.handleError(err);
                 });
-            }).then(dialog.closeBusyDialog)
-            .catch(function(err)
-            {
-                console.error(err);
-                mainApp.handleError(err);
-            });
         }
 
         self.toggleInputVisibility = function (inputName, showInput)
@@ -271,14 +271,14 @@
                 {
                     return false;
                 }
-                
+
                 $.each(tab.inputs(), function (indx2, inp)
                 {
                     if (inp == null)
                     {
                         return false;
                     }
-                    
+
                     if (inp.setting.InputName == inputName)
                     {
                         result = inp;
@@ -300,7 +300,7 @@
         {
             var tabs = self.tabs().slice(0) || [];
             tabs.push(self.combinedTab());
-            
+
             var models = $.grep(tabs, function (tab)
             {
                 if (tab != null)
@@ -368,7 +368,7 @@
 
         self.inputs = ko.observableArray([]);
 
-        self.findInputModelWithName = function(inputName)
+        self.findInputModelWithName = function (inputName)
         {
             var models = $.grep(self.inputs(), function (inp)
             {
@@ -378,7 +378,7 @@
             return models;
         }
 
-        self.getInputs = function(validateInput)
+        self.getInputs = function (validateInput)
         {
             var results = {};
 
@@ -414,54 +414,54 @@
                 return new Promise(function (resolve, reject)
                 {
                     /*return*/ inp.getInputValue().then(function (value)
+                {
+                    if (doValidation && (value == null || value.length == 0) && inp.mandatory == true && inp.visible() == true)
                     {
-                        if (doValidation && (value == null || value.length == 0) && inp.mandatory == true && inp.visible() == true)
-                        {
-                            dialog.closeBusyDialog();
+                        dialog.closeBusyDialog();
 
-                            return dialog.showMessage("Warning", inp.setting.InputLabel + ' is mandatory').then(function ()
-                            {
-                                reject('X');
-                            });
-                        }
-                        else if (doValidation && (value == null || value.length == 0) && inp.setting.MandatoryConditions != null && inp.setting.MandatoryConditions.length > 0 && inp.visible() == true)
+                        return dialog.showMessage("Warning", inp.setting.InputLabel + ' is mandatory').then(function ()
                         {
-                            var acts = $.map(inp.setting.MandatoryConditions, mandatoryConditionFunction);
-                            tmpProm = function()
+                            reject('X');
+                        });
+                    }
+                    else if (doValidation && (value == null || value.length == 0) && inp.setting.MandatoryConditions != null && inp.setting.MandatoryConditions.length > 0 && inp.visible() == true)
+                    {
+                        var acts = $.map(inp.setting.MandatoryConditions, mandatoryConditionFunction);
+                        tmpProm = function ()
+                        {
+                            return Promise.all(acts).then(function (actData)
                             {
-                                return Promise.all(acts).then(function (actData)
+                                if (actData.indexOf(false) == -1) // i.e. all mandatory conditions have been met
                                 {
-                                    if (actData.indexOf(false) == -1) // i.e. all mandatory conditions have been met
+                                    dialog.closeBusyDialog();
+                                    return dialog.showMessage("Warning", inp.setting.InputLabel + ' is mandatory').then(function ()
                                     {
-                                        dialog.closeBusyDialog();
-                                        return dialog.showMessage("Warning", inp.setting.InputLabel + ' is mandatory').then(function ()
-                                        {
-                                            console.error("reject " + inp.setting.InputName);
-                                            reject('X');
-                                        });
-                                    }
-                                });
-                            };
-                        }
+                                        console.error("reject " + inp.setting.InputName);
+                                        reject('X');
+                                    });
+                                }
+                            });
+                        };
+                    }
 
-                        results[inp.setting.InputName] = value;
+                    results[inp.setting.InputName] = value;
 
-                        if (tmpProm != null)
-                        {
-                            tmpProm().then(resolve);
-                        }
-                        else
-                        {
-                            resolve();
-                        }
-                    }).catch(function (err)
+                    if (tmpProm != null)
                     {
-                        console.error(err);
-                        reject(err);
-                    });
+                        tmpProm().then(resolve);
+                    }
+                    else
+                    {
+                        resolve();
+                    }
+                }).catch(function (err)
+                {
+                    console.error(err);
+                    reject(err);
+                });
                 });
             };
-            
+
             var inputItems = self.inputs();
             var actions = $.map(inputItems, getInputFunction);
 
@@ -483,7 +483,7 @@
         self.inputFileName = ko.observable('No file selected');
 
         self.dateFormat = 'dd-mm-yy'; // Not the usual format. Specific format for datepicker
-        
+
         if (inputSetting.InputType == 10) // Numeric
         {
             self.Step = inputSetting.Step;
@@ -507,11 +507,11 @@
                     var data =
                     {
                         Data:
-                            {
-                                PropertyName: self.setting.InputName,
-                                PropertyValue: value,
-                                EventId: self.inputDialogModel.eventId
-                            }
+                        {
+                            PropertyName: self.setting.InputName,
+                            PropertyValue: value,
+                            EventId: self.inputDialogModel.eventId
+                        }
                     };
                     return Promise.resolve(data);
                 }).then(function (data)
@@ -616,7 +616,7 @@
                     {
                         return item.value;
                     });
-                    
+
                     value = values;
                     return Promise.resolve(value);
                 case 6: // Date Input
@@ -636,7 +636,7 @@
                     }
                 case 9: // File Input
                     var file = self.inputValue();
-                    
+
                     if (file != null)
                     {
                         return new Promise(function (resolve, reject)
@@ -649,30 +649,30 @@
                                 return function (e)
                                 {
                                     fileData = e.target.result;
-                                    //console.log(fileData);
+                                    
                                     fileData = window.btoa(fileData);  // base 64 encode
-                                    
+
                                     var filename = theFile.name;
-                                    
+
                                     var parts = filename.split('.');
-                                    
+
                                     var extension = "";
                                     if (parts.length > 1)
                                     {
                                         extension = parts[parts.length - 1];
                                     }
-                                    
+
                                     filename = parts[0];
 
                                     var filex =
-                                        {
-                                            Data: fileData,
-                                            FileName: filename,
-                                            MimeType: theFile.type,
-                                            FileExtension: extension,
-                                            Size: theFile.size
+                                    {
+                                        Data: fileData,
+                                        FileName: filename,
+                                        MimeType: theFile.type,
+                                        FileExtension: extension,
+                                        Size: theFile.size
                                     };
-                                    
+
                                     resolve(filex);
                                 };
                             })(file);
@@ -720,7 +720,7 @@
             self.selectAll(self.isAllListSelected());
             return true;
         };
-        self.isAllListSelected = function()
+        self.isAllListSelected = function ()
         {
             var list = self.listSource();
             var newList = $.grep(list, function (item, indx)
@@ -741,11 +741,13 @@
                 switch (self.inputType)
                 {
                     case 5: // List Source
-                        var defaultList = defaultValue || [];
+                        var defaultList = defaultValue || "";
+                        
+                        defaultList = defaultList.split(",");
                         var listSource = inputSetting.ListSource; // (Key, Value)
                         listSource = $.map(listSource, function (item)
                         {
-                            var selected = defaultList.indexOf(item.Key) > -1;
+                            var selected = defaultList == item.Key;
                             return new listSourceItemModel(selected, item.Value, item.Key);
                         });
                         self.listSource(listSource);
@@ -788,7 +790,7 @@
                 console.error(err);
                 mainApp.handleError(err);
             });
-            
+
         }
     }
 

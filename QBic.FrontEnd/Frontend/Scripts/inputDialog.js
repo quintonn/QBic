@@ -649,7 +649,7 @@
                                 return function (e)
                                 {
                                     fileData = e.target.result;
-                                    //console.log(fileData);
+                                    
                                     fileData = window.btoa(fileData);  // base 64 encode
                                     
                                     var filename = theFile.name;
@@ -742,7 +742,7 @@
                 {
                     case 5: // List Source
                         var defaultList = defaultValue || "";
-                        console.log(defaultList);
+                        
                         defaultList = defaultList.split(",");
                         var listSource = inputSetting.ListSource; // (Key, Value)
                         listSource = $.map(listSource, function (item)

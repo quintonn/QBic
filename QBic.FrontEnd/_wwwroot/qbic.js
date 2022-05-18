@@ -11391,7 +11391,7 @@ return((r[1].length===0)?r[0]:null);};};Date.parseExact=function(s,fx){return Da
                                 return function (e)
                                 {
                                     fileData = e.target.result;
-                                    //console.log(fileData);
+                                    
                                     fileData = window.btoa(fileData);  // base 64 encode
                                     
                                     var filename = theFile.name;
@@ -11484,7 +11484,7 @@ return((r[1].length===0)?r[0]:null);};};Date.parseExact=function(s,fx){return Da
                 {
                     case 5: // List Source
                         var defaultList = defaultValue || "";
-                        console.log(defaultList);
+                        
                         defaultList = defaultList.split(",");
                         var listSource = inputSetting.ListSource; // (Key, Value)
                         listSource = $.map(listSource, function (item)
@@ -22295,7 +22295,7 @@ function menuContainer()
                             if (inp.inputType == 5) // List Selection
                             {
                                 var defaultList = inpValue || "";
-                                console.log(defaultList);
+                                
                                 defaultList = defaultList.split(",");
                                 var listSource = item.ListItems
                                 listSource = $.map(listSource, function (item)

@@ -102,7 +102,7 @@
                             if (inp.inputType == 5) // List Selection
                             {
                                 var defaultList = inpValue || "";
-                                console.log(defaultList);
+                                
                                 defaultList = defaultList.split(",");
                                 var listSource = item.ListItems
                                 listSource = $.map(listSource, function (item)
