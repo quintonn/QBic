@@ -213,7 +213,7 @@ namespace WebsiteTemplate
             //app.ApplicationServices.GetService<SystemLogger>().Setup(appSettings.LogLevel);
             //new SystemLogger().Setup(appSettings.LogLevel);
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             //app.UsePathBase("/test");  // will add /test to all my routes, regardless of their paths
 
             app.UseMiddleware<JwtAuthenticationMiddleware>(); // this is for logging-in and getting new tokens

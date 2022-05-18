@@ -12,14 +12,15 @@ $(document).ready(function ()
 {
     var apiVersion = "v1";
 
-    var scheme = "https";
+    var scheme = window.location.protocol;//"https";
+
     
-    mainApp.baseURL = scheme + "://" + window.location.host + window.location.pathname;
+    mainApp.baseURL = scheme + "//" + window.location.host + window.location.pathname;
     
     mainApp.apiURL = "api/" + apiVersion + "/";
     
     mainApp.version = "";
-
+    
     mainApp.initializeApplication = function ()
     {
         dialog.showBusyDialog("Initializing...");
