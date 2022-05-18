@@ -21790,18 +21790,15 @@ $(document).ready(function ()
 {
     var apiVersion = "v1";
 
-    console.log('xxxxxxxxxxxxxxxxxxx');
-    console.log(window.location);
-
     var scheme = window.location.protocol;//"https";
 
-    console.log('scheme = ' + scheme);
+    
     mainApp.baseURL = scheme + "//" + window.location.host + window.location.pathname;
     
     mainApp.apiURL = "api/" + apiVersion + "/";
     
     mainApp.version = "";
-    alert('zzzz');
+    
     mainApp.initializeApplication = function ()
     {
         dialog.showBusyDialog("Initializing...");

@@ -35,6 +35,8 @@ namespace WebsiteTemplate.Test.SiteSpecific
             }
         }
 
+        public override bool TokenEndpointAllowInsecureHttpRequests => true;
+
         public override string GetApplicationName()
         {
             return "QBic";
