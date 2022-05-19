@@ -24,10 +24,10 @@ namespace WebsiteTemplate.Backend.Services
         private ApplicationSettingsCore ApplicationSettings { get; set; }
         private static readonly ILogger Logger = SystemLogger.GetLogger<UserService>();
 
-        private UserManager<IUser> UserManager { get; set; }
+        private UserManager<User> UserManager { get; set; }
         private IHttpContextAccessor HttpContextAccessor { get; set; }
 
-        public UserService(DataService dataService, ApplicationSettingsCore appSettings, UserManager<IUser> userManager, IHttpContextAccessor httpContextAccessor)
+        public UserService(DataService dataService, ApplicationSettingsCore appSettings, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor)
         {
             DataService = dataService;
             ApplicationSettings = appSettings;
