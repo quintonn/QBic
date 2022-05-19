@@ -1,5 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using QBic.Core.Utilities;
 using System;
 using System.IO;
 using WebsiteTemplate.Menus.InputItems;
@@ -8,6 +10,7 @@ namespace WebsiteTemplate.Utilities
 {
     public class JsonHelper
     {
+        private static readonly ILogger Logger = SystemLogger.GetLogger<JsonHelper>();
         private JObject Data { get; set; }
 
         public JsonHelper()
@@ -188,6 +191,7 @@ namespace WebsiteTemplate.Utilities
                 }
                 catch (Exception e)
                 {
+                    Logger.LogError("Error parsing json: " + e.Message, e);
                     data = new JObject();
                 }
             }
