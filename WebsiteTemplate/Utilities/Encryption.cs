@@ -78,11 +78,20 @@ namespace WebsiteTemplate.Utilities
                         {
                             using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
                             {
-                                var plainTextBytes = new byte[cipherTextBytes.Length];
-                                var decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
-                                memoryStream.Close();
-                                cryptoStream.Close();
-                                return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
+                                //var plainTextBytes = new byte[cipherTextBytes.Length];
+                                //var decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+                                //memoryStream.Close();
+                                //cryptoStream.Close();
+                                //return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
+                                // https://github.com/dotnet/runtime/issues/61918 -> https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.cryptostream?view=net-6.0
+                                using (var streamReader = new StreamReader(cryptoStream))
+                                {
+
+                                    // Read the decrypted bytes from the decrypting stream
+                                    // and place them in a string.
+                                    var plaintext = streamReader.ReadToEnd();
+                                    return plaintext;
+                                }
                             }
                         }
                     }
