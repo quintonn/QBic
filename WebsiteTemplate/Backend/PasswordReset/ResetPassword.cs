@@ -76,9 +76,14 @@ namespace WebsiteTemplate.Backend.PasswordReset
         {
             if (!data.Contains("UserId"))
             {
+                Logger.LogInformation("ResetPassword:");
+                Logger.LogInformation("*****************************************");
+                Logger.LogInformation(data);
                 var jsonData = Encryption.Decrypt(data, AppSettings.ApplicationPassPhrase);
                 Logger.LogInformation("JSONData = ");
                 Logger.LogInformation(jsonData);
+                Logger.LogInformation("*****************************************");
+
                 TempJson = jsonData;
                 var json = JsonHelper.Parse(jsonData);
 
