@@ -21,6 +21,7 @@ namespace WebsiteTemplate.Backend.PasswordReset
         private UserManager<User> UserManager { get; set; }
         private string UserId { get; set; }
         private string PasswordToken { get; set; }
+        private string TempJson { get; set; }
 
         private static readonly ILogger Logger = SystemLogger.GetLogger<ResetPassword>();
 
@@ -54,7 +55,7 @@ namespace WebsiteTemplate.Backend.PasswordReset
 
             result.Add(new HiddenInput("UserId", UserId));
             result.Add(new HiddenInput("PassToken", PasswordToken));
-
+            result.Add(new HiddenInput("TempJson", TempJson));
             return result;
         }
 
@@ -78,6 +79,7 @@ namespace WebsiteTemplate.Backend.PasswordReset
                 var jsonData = Encryption.Decrypt(data, AppSettings.ApplicationPassPhrase);
                 Logger.LogInformation("JSONData = ");
                 Logger.LogInformation(jsonData);
+                TempJson = jsonData;
                 var json = JsonHelper.Parse(jsonData);
 
                 UserId = json.GetValue("userId");
@@ -132,6 +134,13 @@ namespace WebsiteTemplate.Backend.PasswordReset
 
                 Logger.LogInformation("Calling reset password async");
                 var user = await UserManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    return new List<IEvent>()
+                    {
+                        new ShowMessage($"Unable to retrieve user '{userId}'")
+                    };
+                }
                 Logger.LogInformation($"User for userId({userId}) = {user?.UserName}");
                 var idResult = await UserManager.ResetPasswordAsync(user, passwordToken, newPassword);
                 Logger.LogInformation("Calling reset password async: " + idResult.Succeeded);
