@@ -39,7 +39,6 @@ namespace WebsiteTemplate.Controllers
         {
             return Ok("hello there\n" + path);
         }
-        public static int XXX = 0;
         public MainController(IServiceProvider container, IHttpContextAccessor httpContextAccessor)
         {
             HttpContextAccessor = httpContextAccessor;

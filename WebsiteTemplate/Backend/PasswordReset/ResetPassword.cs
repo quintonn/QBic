@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+using QBic.Core.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +21,8 @@ namespace WebsiteTemplate.Backend.PasswordReset
         private UserManager<User> UserManager { get; set; }
         private string UserId { get; set; }
         private string PasswordToken { get; set; }
+
+        private static readonly ILogger Logger = SystemLogger.GetLogger<ResetPassword>();
 
         public ResetPassword(UserService userService, ApplicationSettingsCore appSettings, UserManager<User> userManager)
         {
@@ -72,6 +76,8 @@ namespace WebsiteTemplate.Backend.PasswordReset
             if (!data.Contains("UserId"))
             {
                 var jsonData = Encryption.Decrypt(data, AppSettings.ApplicationPassPhrase);
+                Logger.LogInformation("JSONData = ");
+                Logger.LogInformation(jsonData);
                 var json = JsonHelper.Parse(jsonData);
 
                 UserId = json.GetValue("userId");
@@ -83,6 +89,7 @@ namespace WebsiteTemplate.Backend.PasswordReset
 
         public override async Task<IList<IEvent>> ProcessAction(int actionNumber)
         {
+            Logger.LogInformation("Processing reset password action");
             if (actionNumber == 1)
             {
                 return new List<IEvent>()
@@ -122,9 +129,12 @@ namespace WebsiteTemplate.Backend.PasswordReset
                         new ShowMessage("Unable to reset password. The password reset link is no longer valid")
                     };
                 }*/
-                
 
-                var idResult = await UserManager.ResetPasswordAsync(await UserManager.FindByIdAsync(userId), passwordToken, newPassword);
+                Logger.LogInformation("Calling reset password async");
+                var user = await UserManager.FindByIdAsync(userId);
+                Logger.LogInformation($"User for userId({userId}) = {user?.UserName}");
+                var idResult = await UserManager.ResetPasswordAsync(user, passwordToken, newPassword);
+                Logger.LogInformation("Calling reset password async: " + idResult.Succeeded);
                 if (idResult.Succeeded == false)
                 {
                     var errorMessage = "Unable to reset password:\n" + String.Join("\n", idResult.Errors.Select(x => x.Description).ToList());

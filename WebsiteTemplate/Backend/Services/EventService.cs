@@ -151,7 +151,6 @@ namespace WebsiteTemplate.Backend.Services
 
                 foreach (var type in types)
                 {
-                    MainController.XXX++;
                     //if (type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(Event)))
                     //{
                     if (type == typeof(BasicCrudModify<>))
