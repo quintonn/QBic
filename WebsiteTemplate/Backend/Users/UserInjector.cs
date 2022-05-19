@@ -1,5 +1,4 @@
 ﻿using NHibernate;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Processing.InputProcessing;
@@ -30,6 +29,10 @@ namespace WebsiteTemplate.Backend.Users
                 InputData = inputData;
 
                 result = await SaveOrUpdate(session, username);
+                if (result.Success == false)
+                {
+                    return result;
+                }
 
                 session.Flush();
             }

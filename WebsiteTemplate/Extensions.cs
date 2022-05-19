@@ -161,11 +161,11 @@ namespace WebsiteTemplate
 
             if (identityOptions != null)
             {
-                services.AddIdentityCore<IUser>(identityOptions).AddTokenProvider<DataProtectorTokenProvider<IUser>>(TokenOptions.DefaultProvider);
+                services.AddIdentityCore<User>(identityOptions).AddTokenProvider<DataProtectorTokenProvider<User>>(TokenOptions.DefaultProvider);
             }
             else
             {
-                services.AddIdentityCore<IUser>(options =>
+                services.AddIdentityCore<User>(options =>
                 {
                     options.Password.RequireDigit = false;
                     options.Password.RequireLowercase = false;
@@ -175,7 +175,7 @@ namespace WebsiteTemplate
                     options.User.RequireUniqueEmail = true;
 
                     options.SignIn.RequireConfirmedAccount = true;
-                }).AddTokenProvider<DataProtectorTokenProvider<IUser>>(TokenOptions.DefaultProvider);
+                }).AddTokenProvider<DataProtectorTokenProvider<User>>(TokenOptions.DefaultProvider);
             }
 
             return services;
