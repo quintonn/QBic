@@ -20,10 +20,10 @@ namespace WebsiteTemplate.Controllers
         private DataService DataService { get; set; }
 
         private UserService UserService { get; set; }
-        private UserManager<IUser> UserManager { get; set; }
+        private UserManager<User> UserManager { get; set; }
         private IHttpContextAccessor HttpContextAccessor { get; set; }
 
-        public MenuController(DataService dataService, UserService userService, UserManager<IUser> userManager, IHttpContextAccessor httpContextAccessor)
+        public MenuController(DataService dataService, UserService userService, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor)
         {
             DataService = dataService;
             UserService = userService;
