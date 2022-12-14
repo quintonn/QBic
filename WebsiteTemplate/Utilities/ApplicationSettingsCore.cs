@@ -1,16 +1,18 @@
-﻿using log4net.Core;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
-using Owin;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Unity;
 using WebsiteTemplate.Models.NonDatabase;
 
 namespace WebsiteTemplate.Utilities
 {
     public abstract class ApplicationSettingsCore
     {
+        public ApplicationSettingsCore()
+        {
+
+        }
         public abstract string GetApplicationName();
 
         public abstract string ApplicationPassPhrase { get; }
@@ -27,14 +29,6 @@ namespace WebsiteTemplate.Utilities
         public virtual List<Assembly> GetAdditinalAssembliesToMap()
         {
             return new List<Assembly>();
-        }
-
-        public virtual Level LogLevel
-        {
-            get
-            {
-                return Level.Info;
-            }
         }
 
         public virtual bool DebugStartup
@@ -77,7 +71,7 @@ namespace WebsiteTemplate.Utilities
             }
         }
 
-        public virtual void PerformAdditionalStartupConfiguration(IAppBuilder app, IUnityContainer container)
+        public virtual void PerformAdditionalStartupConfiguration(IServiceCollection services)
         {
 
         }
@@ -91,5 +85,6 @@ namespace WebsiteTemplate.Utilities
         public virtual TimeSpan AccessTokenExpireTimeSpan { get; } = TimeSpan.FromHours(1); //Access token expires after 60min
         public virtual TimeSpan RefreshTokenExpireTimeSpan { get; } = TimeSpan.FromDays(7); //Refresh token expires after 7 days
         public virtual string TokenEndpointPath { get; } = "/api/v1/token";
+        public abstract bool TokenEndpointAllowInsecureHttpRequests { get; }
     }
 }

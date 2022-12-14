@@ -1,5 +1,4 @@
 ﻿using WebsiteTemplate.Menus.BaseItems;
-using Unity;
 
 namespace WebsiteTemplate.Menus
 {
@@ -45,7 +44,7 @@ namespace WebsiteTemplate.Menus
 
         public object Data { get; set; }
 
-        [InjectionConstructor]
+        //[InjectionConstructor]
         public UserConfirmation()
         {
 

@@ -1,28 +1,29 @@
 ﻿using QBic.Core.Utilities;
 using System;
 using System.Threading.Tasks;
-using System.Web;
-using Unity;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Menus;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebsiteTemplate.Backend.Processing
 {
-    public class FileProcessor : CoreProcessor<FileActionResult>
+    public class FileProcessor : CoreProcessor<FileContentResult>
     {
-        public FileProcessor(IUnityContainer container)
+        public FileProcessor(IServiceProvider container)
             : base(container)
         {
 
         }
 
-        public async override Task<FileActionResult> ProcessEvent(int eventId)
+        public async override Task<FileContentResult> ProcessEvent(int eventId)
         {
-            var data = GetRequestData();
+            var data = await GetRequestData();
             if (String.IsNullOrWhiteSpace(data))
             {
-                data = HttpContext.Current.Request.Params["requestData"];
+                data = Container.GetService<IHttpContextAccessor>().HttpContext.Request.Query["requestData"];
             }
 
             if (!String.IsNullOrWhiteSpace(data))
@@ -30,7 +31,7 @@ namespace WebsiteTemplate.Backend.Processing
                 data = QBicUtils.Base64Decode(data);
             }
 
-            var eventItem = Container.Resolve<EventService>().GetEventItem(eventId) as OpenFile;
+            var eventItem = Container.GetService<EventService>().GetEventItem(eventId) as OpenFile;
             if (eventItem == null)
             {
                 throw new Exception("No OpenFile action has been found for event number: " + eventId);
@@ -44,7 +45,12 @@ namespace WebsiteTemplate.Backend.Processing
             //var __ignore__ = eventItem.FileName; /* Leave this here -> this initializes the filename */
             var fileInfo = await eventItem.GetFileInfo(data);
             //return fileInfo;
-            return new FileActionResult(fileInfo);
+            //new Microsoft.AspNetCore.Mvc.FileContentResult()
+
+            //return new FileActionResult(fileInfo);
+            var result = new FileContentResult(fileInfo.Data, "application/octet-stream");
+            result.FileDownloadName = fileInfo.GetFullFileName();
+            return result;
         }
     }
 }

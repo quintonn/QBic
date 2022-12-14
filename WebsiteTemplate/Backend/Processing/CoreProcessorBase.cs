@@ -1,14 +1,18 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using NHibernate.Criterion;
+using QBic.Authentication;
+using QBic.Core.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Unity;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Backend.Services.Background;
-using WebsiteTemplate.Data;
-using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
@@ -18,41 +22,53 @@ namespace WebsiteTemplate.Backend.Processing
     {
         protected static JsonSerializerSettings JSON_SETTINGS;
         protected static ApplicationStartup ApplicationStartup { get; set; }
-        protected static IUnityContainer Container { get; set; }
+        protected static IServiceProvider Container { get; set; }
         protected static EventService EventService { get; set; }
         protected static DataService DataService { get; set; }
         protected static AuditService AuditService { get; set; }
         protected static BackgroundService BackgroundService { get; set; }
 
-        protected static UserContext UserContext { get; set; }
+        protected static UserManager<User> UserManager { get; set; }
 
         private static bool SetupDone = false;
 
         private static object LockObject = new object();
 
-        public CoreProcessorBase(IUnityContainer container)
+        public CoreProcessorBase(IServiceProvider container)
         {
-            lock (LockObject)
+            try
             {
-                Container = container;
-                if (SetupDone == false)
+                lock (LockObject)
                 {
-                    //Container = container;
+                    Container = container;
 
-                    //TODO: maybe all of thse should go outside of the "SetupDone" check and run everytime.
-                    ApplicationStartup = container.Resolve<ApplicationStartup>();
-                    EventService = container.Resolve<EventService>();
-                    DataService = container.Resolve<DataService>();
-                    AuditService = container.Resolve<AuditService>();
-                    BackgroundService = container.Resolve<BackgroundService>();
-                    UserContext = container.Resolve<UserContext>();
+                    UserManager = Container.GetService<UserManager<User>>();
 
-                    PopulateDefaultValues();
-                    SetupDone = true;
-                    BackgroundService.StartBackgroundJobs();
+                    if (SetupDone == false)
+                    {
+                        ApplicationStartup = container.GetService<ApplicationStartup>();
+                        EventService = container.GetService<EventService>();
+                        DataService = container.GetService<DataService>();
+                        AuditService = container.GetService<AuditService>();
+                        BackgroundService = container.GetService<BackgroundService>();
+
+
+                        PopulateDefaultValues();
+                        SetupDone = true;
+                        BackgroundService.StartBackgroundJobs();
+                    }
+
+                    JSON_SETTINGS = new JsonSerializerSettings
+                    {
+                        DateFormatString = WebsiteUtils.DateFormat,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    };
                 }
 
-                JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = WebsiteUtils.DateFormat };
+            }
+            catch (Exception error)
+            {
+                Console.WriteLine(error.Message);
             }
         }
 
@@ -72,7 +88,7 @@ namespace WebsiteTemplate.Backend.Processing
                     var systemUser = new User()
                     {
                         CanDelete = false,
-                        Email = Container.Resolve<ApplicationSettingsCore>().SystemEmailAddress,
+                        Email = Container.GetService<ApplicationSettingsCore>().SystemEmailAddress,
                         EmailConfirmed = true,
                         UserName = "System",
                         UserStatus = UserStatus.Active,
@@ -93,9 +109,9 @@ namespace WebsiteTemplate.Backend.Processing
         //    }
         //}
 
-        protected string GetRequestData()
+        protected async Task<string> GetRequestData()
         {
-            return WebsiteUtils.GetCurrentRequestData();
+            return await WebsiteUtils.GetCurrentRequestData(Container.GetService<IHttpContextAccessor>());
         }
 
         protected List<int> GetAllowedEventsForUser(string userId)
@@ -121,8 +137,10 @@ namespace WebsiteTemplate.Backend.Processing
 
         protected async Task<User> GetLoggedInUser()
         {
-            var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync(UserContext) as User;
+            var user = await QBicUtils.GetLoggedInUserAsync(UserManager, Container.GetService<IHttpContextAccessor>()) as User;
             return user;
         }
+
+        
     }
 }

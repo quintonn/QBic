@@ -1,5 +1,4 @@
-﻿using Unity;
-using WebsiteTemplate.Menus.BaseItems;
+﻿using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Menus.PropertyChangedEvents
 {
@@ -37,7 +36,7 @@ namespace WebsiteTemplate.Menus.PropertyChangedEvents
             return EventNumber.UpdateInputVisibility;
         }
 
-        [InjectionConstructor]
+        //[InjectionConstructor]
         public UpdateInputVisibility()
         {
 

@@ -1,5 +1,4 @@
-﻿using Unity;
-using WebsiteTemplate.Menus.BaseItems;
+﻿using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Menus
 {
@@ -9,7 +8,7 @@ namespace WebsiteTemplate.Menus
 
         public string ParametersToPass { get; private set; }
 
-        [InjectionConstructor]
+        //[InjectionConstructor]
         public ExecuteAction()
         {
             

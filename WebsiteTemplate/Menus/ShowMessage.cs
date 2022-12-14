@@ -1,6 +1,5 @@
 ﻿using System;
 using WebsiteTemplate.Menus.BaseItems;
-using Unity;
 
 namespace WebsiteTemplate.Menus
 {
@@ -19,7 +18,7 @@ namespace WebsiteTemplate.Menus
             }
         }
 
-        [InjectionConstructor]
+        //[InjectionConstructor]
         public ShowMessage()
             : base()
         {

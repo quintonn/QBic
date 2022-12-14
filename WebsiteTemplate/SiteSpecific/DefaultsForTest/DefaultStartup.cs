@@ -1,5 +1,6 @@
-﻿using Unity;
+﻿using Microsoft.AspNetCore.Identity;
 using NHibernate.Criterion;
+using QBic.Authentication;
 using System;
 using System.Linq;
 using WebsiteTemplate.Backend.Services;
@@ -11,17 +12,17 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
 {
     public class DefaultStartup : ApplicationStartup
     {
-        private DefaultUserManager UserManager { get; set;  }
+        private UserManager<IUser> UserManager { get; set;  }
 
-        public DefaultStartup(DataService dataService, DefaultUserManager userManager)
+        public DefaultStartup(DataService dataService, UserManager<IUser> userManager)
             : base(dataService)
         {
             UserManager = userManager;
         }
 
-        public override void RegisterUnityContainers(IUnityContainer container)
+        public override void RegisterUnityContainers(IServiceProvider container)
         {
-            //UserManager = container.Resolve<DefaultUserManager>();
+            //UserManager = Container.GetService<DefaultUserManager>();
         }
 
         public override void SetupDefaults()

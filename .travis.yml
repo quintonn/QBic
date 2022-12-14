@@ -1,0 +1,22 @@
+language: csharp
+mono: none
+dist: xenial
+dotnet: 5.0
+solution: Build.sln
+warnings_are_errors: false
+install:
+  - dotnet restore QBicCore.sln
+script: dotnet build QBicCore.sln
+deploy:
+  skip_cleanup: true
+  provider: script
+  # script: chmod +x ./deploy/deploy.sh && ./deploy/deploy.sh $NUGET_API_KEY $NUGET_SOURCE
+  # script: dotnet nuget push DocumentGenerator/bin/Debug/*.nupkg --api-key $NUGET_API_KEY --source $NUGET_SOURCE
+  #script: dotnet nuget push "**/*.nupkg" --api-key $NUGET_API_KEY --source $NUGET_SOURCE --skip-duplicate
+  script:
+    - dotnet pack QBicCore.sln -o . && dotnet nuget push "**/*.nupkg" --api-key $NUGET_API_KEY --source $NUGET_SOURCE --skip-duplicate  
+  on:
+    branch: net_core
+branches:
+  only:
+    - net_core

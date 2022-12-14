@@ -1,24 +1,57 @@
-﻿using QBic.Core.Data;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NHibernate.Exceptions;
+using NHibernate.Linq;
+using NUnit.Framework;
+using NUnit.Framework.Internal;
+using QBic.Core.Data;
 using QBic.Core.Services;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using QBic.Core.Utilities;
 using System;
 using System.Configuration;
 using System.Diagnostics;
-using WebsiteTemplate.UnitTests.Models;
-using NHibernate.Linq;
 using System.Linq;
-using NHibernate.Exceptions;
-using System.Globalization;
+using System.Reflection;
+using WebsiteTemplate.Models;
+using WebsiteTemplate.UnitTests.Models;
 
 namespace WebsiteTemplate.UnitTests
 {
-    [TestClass]
+    [TestFixture]
     public class DBTests
     {
-        [TestMethod]
+        private IConfiguration Config { get; set; }
+        private IServiceCollection ServiceProvider { get; set; }
+        [SetUp]
+        public void Setup()
+        {
+            var types = typeof(User).Assembly.GetTypes().ToList(); // force WebsiteTemplate types to load for datastore initialization
+            Console.WriteLine(types.Count);
+
+            var config = new ConfigurationBuilder();
+            config.AddJsonFile("appsettings.json", true, true);
+
+            Config = config.Build();
+            
+            var serviceCollection = new ServiceCollection()
+            .AddLogging(x =>
+            {
+                x.SetMinimumLevel(LogLevel.Information);
+            })
+            .AddSingleton<IConfiguration>(Config);
+
+            //serviceCollection.configure
+
+            ServiceProvider = serviceCollection;
+            var provider = serviceCollection.BuildServiceProvider();
+            var factory = provider.GetService<ILoggerFactory>();
+            SystemLogger.Setup(factory);
+        }
+        [Test]
         public void DeleteInheritanceTest()
         {
-            var store = DataStore.GetInstance(true);
+            var store = DataStore.GetInstance(true, false, Config, ServiceProvider);
 
             using (var session = store.OpenSession())
             {
@@ -51,10 +84,10 @@ namespace WebsiteTemplate.UnitTests
             }
         }
 
-        [TestMethod]
+        [Test]
         public void DeleteTest()
         {
-            var store = DataStore.GetInstance(true);
+            var store = DataStore.GetInstance(true, false, Config, ServiceProvider);
 
             using (var session = store.OpenSession())
             {
@@ -114,10 +147,10 @@ namespace WebsiteTemplate.UnitTests
             }
         }
 
-        [TestMethod]
+        [Test]
         public void BasicTest()
         {
-            var store = DataStore.GetInstance(true);
+            var store = DataStore.GetInstance(true, false, Config, ServiceProvider);
 
             using (var session = store.OpenSession())
             {
@@ -140,10 +173,10 @@ namespace WebsiteTemplate.UnitTests
             }
         }
 
-        [TestMethod]
+        [Test]
         public void AcmeTest()
         {
-            var store = DataStore.GetInstance(true);
+            var store = DataStore.GetInstance(true, false, Config, ServiceProvider);
 
             using (var session = store.OpenSession())
             {
@@ -169,10 +202,10 @@ namespace WebsiteTemplate.UnitTests
         }
 
 
-        [TestMethod]
+        [Test]
         public void TestAddingManyItems()
         {
-            var store = DataStore.GetInstance(true);
+            var store = DataStore.GetInstance(true, false, Config, ServiceProvider);
             var stopwatch = Stopwatch.StartNew();
             var count = 1000;
             using (var session = store.OpenStatelessSession())
@@ -198,11 +231,13 @@ namespace WebsiteTemplate.UnitTests
             Assert.AreEqual(1, 1);
         }
 
-        [TestMethod]
+        [Test]
         public void TestMakingAndRestoringBackup()
         {
-            var connection = ConfigurationManager.ConnectionStrings["MainDataStore"];
-            var store = DataStore.GetInstance(true);
+            //var connection = ConfigurationManager.ConnectionStrings["MainDataStore"];
+            var connectionString = Config.GetConnectionString("MainDataStore");
+            var store = DataStore.GetInstance(true, false, Config, ServiceProvider);
+            var backupService = new BackupService();
             int preCount = 0;
             int postCount = 0;
             using (var session = store.OpenSession())
@@ -221,7 +256,7 @@ namespace WebsiteTemplate.UnitTests
                 }
             }
 
-            var backupService = new BackupService();
+            
             var backup = backupService.CreateFullBackup();
 
 
@@ -238,7 +273,7 @@ namespace WebsiteTemplate.UnitTests
                 session.Flush();
             }
 
-            backupService.RestoreFullBackup(true, backup, connection.ConnectionString, typeof(ChildClass));
+            backupService.RestoreFullBackup(true, backup, connectionString, typeof(ChildClass));
 
             using (var session = store.OpenSession())
             {

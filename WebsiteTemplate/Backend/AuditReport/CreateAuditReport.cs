@@ -2,14 +2,17 @@
 using DocumentGenerator.Settings;
 using DocumentGenerator.Styles;
 using JsonDiffPatchDotNet;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using MigraDoc.DocumentObjectModel;
 using Newtonsoft.Json.Linq;
 using NHibernate.Criterion;
+using QBic.Authentication;
 using QBic.Core.Data;
+using QBic.Core.Utilities;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using WebsiteTemplate.Data;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
@@ -30,13 +33,15 @@ namespace WebsiteTemplate.Backend.AuditReport
 
         private StyleSetup StyleSetup { get; set; }
         private DataStore DataStore { get; set; }
-        private UserContext UserContext { get; set; }
+        private UserManager<User> UserContext { get; set; }
+        private IHttpContextAccessor HttpContextAccessor { get; set; }
 
-        public CreateAuditReport(StyleSetup styleSetup, DataStore dataStore, UserContext userContext)
+        public CreateAuditReport(StyleSetup styleSetup, DataStore dataStore, UserManager<User> userContext, IHttpContextAccessor httpContextAccessor)
         {
             StyleSetup = styleSetup;
             DataStore = dataStore;
             UserContext = userContext;
+            HttpContextAccessor = httpContextAccessor;
         }
 
         public override async Task<FileInfo> GetFileInfo(string data)
@@ -51,7 +56,7 @@ namespace WebsiteTemplate.Backend.AuditReport
             var document = new BasicTableLayoutDocument(StyleSetup, new DocumentSettings(DocumentType.Pdf, Orientation.Landscape));
             document.SetDocumentTitle("Audit Report: from " + fromDate.ToShortDateString() + " to " + toDate.ToShortDateString()); //TODO: need a subheading in report
 
-            var user = await BasicAuthentication.ControllerHelpers.Methods.GetLoggedInUserAsync(UserContext);
+            var user = await QBicUtils.GetLoggedInUserAsync(UserContext, HttpContextAccessor);
 
             var footer = "Printed by " + user.UserName + " on " + System.DateTime.Now.ToString("yyyy-MM-dd");
             document.SetDocumentFooter(footer);

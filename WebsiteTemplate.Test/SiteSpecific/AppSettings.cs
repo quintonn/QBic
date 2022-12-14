@@ -1,14 +1,11 @@
-﻿using Microsoft.Owin.Security.DataProtection;
-using Unity;
-using Owin;
+﻿using Microsoft.Extensions.DependencyInjection;
+using NHibernate;
 using System;
 using System.Collections.Generic;
-using WebsiteTemplate.Utilities;
-using WebsiteTemplate.Models.NonDatabase;
 using WebsiteTemplate.Backend.Users;
+using WebsiteTemplate.Models.NonDatabase;
 using WebsiteTemplate.Test.MenuItems.Users;
-using log4net.Core;
-using NHibernate;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Test.SiteSpecific
 {
@@ -20,7 +17,7 @@ namespace WebsiteTemplate.Test.SiteSpecific
 
         public override bool UpdateDatabase => true; // Set to true first time to create tables. Also set to true after making changes
 
-        public override string ApplicationPassPhrase => "8375743900958305380983509";
+        public override string ApplicationPassPhrase => "xxxxxxxxxxxxxxxx";
 
         public override Type GetApplicationStartupType
         {
@@ -38,16 +35,16 @@ namespace WebsiteTemplate.Test.SiteSpecific
             }
         }
 
+        public override bool TokenEndpointAllowInsecureHttpRequests => true;
+
         public override string GetApplicationName()
         {
             return "QBic";
         }
 
-        public override void PerformAdditionalStartupConfiguration(IAppBuilder app, IUnityContainer container)
+        public override void PerformAdditionalStartupConfiguration(IServiceCollection services)
         {
-            container.RegisterInstance(app.GetDataProtectionProvider());
-
-            container.RegisterType<UserInjector, TestUserInjector>();
+            services.AddTransient<UserInjector, TestUserInjector>();
         }
 
         public override List<SystemSettingItem> GetAdditionalSystemSettings(ISession session)
@@ -57,14 +54,6 @@ namespace WebsiteTemplate.Test.SiteSpecific
                 new SystemSettingItem("SystemEmail", "System Email", Menus.InputItems.InputType.Text, true, "Email Settings", ""),
                 new SystemSettingItem("TestCheck", "Test Check", Menus.InputItems.InputType.Boolean, true, "Email Settings", false),
             };
-        }
-
-        public override Level LogLevel
-        {
-            get
-            {
-                return Level.Debug;
-            }
         }
     }
 }

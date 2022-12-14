@@ -60,7 +60,7 @@ namespace WebsiteTemplate.Test.MenuItems
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                var resp = await client.PostAsJsonAsync(url, bytes);
+                var resp = await client.PostAsync(url, new ByteArrayContent(bytes));// .PostAsJsonAsync(url, bytes);
                 var backupTypeString = resp.Headers.GetValues(BackupService.BACKUP_HEADER_KEY).FirstOrDefault();
                 //var byteContent = await resp.Content.ReadAsByteArrayAsync();
                 //var byteString = XXXUtils.GetString(byteContent);

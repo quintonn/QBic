@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web;
 
 namespace WebsiteTemplate.Utilities
 {
@@ -13,7 +10,7 @@ namespace WebsiteTemplate.Utilities
     {
         // This constant is used to determine the keysize of the encryption algorithm in bits.
         // We divide this by 8 within the code below to get the equivalent number of bytes.
-        private const int Keysize = 256;
+        private const int Keysize = 128;//256; only 128 supported in dotnet
 
         // This constant determines the number of iterations for the password bytes generation function.
         private const int DerivationIterations = 1000;
@@ -30,7 +27,7 @@ namespace WebsiteTemplate.Utilities
                 var keyBytes = password.GetBytes(Keysize / 8);
                 using (var symmetricKey = new RijndaelManaged())
                 {
-                    symmetricKey.BlockSize = 256;
+                    symmetricKey.BlockSize = 128;
                     symmetricKey.Mode = CipherMode.CBC;
                     symmetricKey.Padding = PaddingMode.PKCS7;
                     using (var encryptor = symmetricKey.CreateEncryptor(keyBytes, ivStringBytes))
@@ -72,7 +69,7 @@ namespace WebsiteTemplate.Utilities
                 var keyBytes = password.GetBytes(Keysize / 8);
                 using (var symmetricKey = new RijndaelManaged())
                 {
-                    symmetricKey.BlockSize = 256;
+                    symmetricKey.BlockSize = 128;
                     symmetricKey.Mode = CipherMode.CBC;
                     symmetricKey.Padding = PaddingMode.PKCS7;
                     using (var decryptor = symmetricKey.CreateDecryptor(keyBytes, ivStringBytes))
@@ -81,11 +78,20 @@ namespace WebsiteTemplate.Utilities
                         {
                             using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
                             {
-                                var plainTextBytes = new byte[cipherTextBytes.Length];
-                                var decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
-                                memoryStream.Close();
-                                cryptoStream.Close();
-                                return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
+                                //var plainTextBytes = new byte[cipherTextBytes.Length];
+                                //var decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+                                //memoryStream.Close();
+                                //cryptoStream.Close();
+                                //return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
+                                // https://github.com/dotnet/runtime/issues/61918 -> https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.cryptostream?view=net-6.0
+                                using (var streamReader = new StreamReader(cryptoStream))
+                                {
+
+                                    // Read the decrypted bytes from the decrypting stream
+                                    // and place them in a string.
+                                    var plaintext = streamReader.ReadToEnd();
+                                    return plaintext;
+                                }
                             }
                         }
                     }
@@ -95,7 +101,7 @@ namespace WebsiteTemplate.Utilities
 
         private static byte[] Generate256BitsOfRandomEntropy()
         {
-            var randomBytes = new byte[32]; // 32 Bytes will give us 256 bits.
+            var randomBytes = new byte[16]; // 32 Bytes will give us 256 bits.
             using (var rngCsp = new RNGCryptoServiceProvider())
             {
                 // Fill the array with cryptographically secure random bytes.

@@ -33,5 +33,7 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
                 return "q10atwork@gmail.com";
             }
         }
+
+        public override bool TokenEndpointAllowInsecureHttpRequests => true;
     }
 }

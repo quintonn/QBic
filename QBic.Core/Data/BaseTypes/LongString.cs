@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using NHibernate;
+﻿using NHibernate;
+using Newtonsoft.Json;
 using NHibernate.Engine;
 using NHibernate.SqlTypes;
 using NHibernate.UserTypes;
@@ -184,43 +184,17 @@ namespace QBic.Core.Data.BaseTypes
         #endregion
     }
 
-    public class LongStringConverter : JsonConverter
+    public class LongStringConverter : JsonConverter<LongString>
     {
-        public override bool CanConvert(Type objectType)
+        public override LongString ReadJson(JsonReader reader, Type objectType, LongString existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
-            return true;
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            var value = reader.Value?.ToString();
+            var value = reader.Read().ToString();
             return new LongString(value);
         }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, LongString value, JsonSerializer serializer)
         {
             serializer.Serialize(writer, value.ToString());
-
-            return;
-            /* To return an entire json object, use something like this */
-
-            /*
-            var jo = new JObject();
-            Type type = value.GetType();
-            jo.Add("type", type.Name);
-
-            foreach (var prop in type.GetProperties())
-            {
-                if (prop.CanRead)
-                {
-                    object propVal = prop.GetValue(value, null);
-                    if (propVal != null)
-                    {
-                        jo.Add(prop.Name, JToken.FromObject(propVal, serializer));
-                    }
-                }
-            }
-            jo.WriteTo(writer);*/
         }
     }
 }

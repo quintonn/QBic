@@ -1,14 +1,14 @@
-﻿using QBic.Core.Utilities;
-using FluentNHibernate.Cfg;
+﻿using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
+using QBic.Core.Utilities;
 using System;
 using System.Configuration;
 using System.Data;
-using System.Data.Common;
-using System.Data.SQLite;
 
 namespace QBic.Core.Data
 {
@@ -24,21 +24,31 @@ namespace QBic.Core.Data
         //-- Long term maybe make my own query language??
         private static DataStore _instance { get; set; }
 
-        public static bool SetCustomSqlTypes { get; set; }
-
         private static bool UpdateDatabase { get; set; }
+        private static bool ShowSql { get; set; }
+        public static string ProviderName { get; set; }
+        private static IConfiguration Config { get; set; }
         
-        private DataStore(bool updateDatabase)
+        private DataStore(bool updateDatabase, bool showSql)
         {
             UpdateDatabase = updateDatabase;
+            ShowSql = showSql;
             init();
         }
 
-        public static DataStore GetInstance(bool updateDatabase)
+        public static DataStore GetInstance(bool updateDatabase, bool showSql, IConfiguration config, IServiceCollection serviceProvider = null)
         {
             if (_instance == null)
             {
-                _instance = new DataStore(updateDatabase);
+                Config = config;
+                _instance = new DataStore(updateDatabase, showSql);
+                if (serviceProvider != null)
+                {
+                    serviceProvider.AddTransient<ISessionFactory>((x) =>
+                    {
+                        return Store;
+                    });
+                }
             }
             return _instance;
         }
@@ -68,7 +78,8 @@ namespace QBic.Core.Data
         {
             var container = new FluentMappingsContainer();
 
-            var mainConnectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
+
+            var mainConnectionString = Config.GetConnectionString("MainDataStore");
             //mainConnectionString = Encryption.Encrypt(mainConnectionString, AppSettings.ApplicationPassPhrase);
 
             //mainConnectionString = Encryption.Decrypt(mainConnectionString, AppSettings.ApplicationPassPhrase);
@@ -94,7 +105,7 @@ namespace QBic.Core.Data
 
         private ISessionFactory CreateAuditSessionFactory()
         {
-            var connectionString = ConfigurationManager.ConnectionStrings["AuditDataStore"]?.ConnectionString;
+            var connectionString = Config.GetConnectionString("AuditDataStore");
 
             if (String.IsNullOrWhiteSpace(connectionString))
             {
@@ -122,22 +133,23 @@ namespace QBic.Core.Data
         private IPersistenceConfigurer CreatePersistenceConfigurer(string connectionString)
         {
             IPersistenceConfigurer configurer;
-            SetCustomSqlTypes = true;
-
+            
             if (connectionString.Contains("##CurrentDirectory##") || connectionString.Contains(":memory:"))
             {
+                ProviderName = "SQLITE";
                 var currentDirectory = QBicUtils.GetCurrentDirectory();
                 connectionString = connectionString.Replace("##CurrentDirectory##", currentDirectory); // for my sqlite connectiontion string
 
                 configurer = SQLiteConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
-                DataStore.SetCustomSqlTypes = false;
             }
             //else if (providerName.Contains("MySql"))
             //{
+            //    ProviderName = "MYSQL";
             //    configurer = MySQLConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
             //}
             else
             {
+                ProviderName = "SQL";
                 configurer = MsSqlConfiguration.MsSql2012.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
             }
 
@@ -155,10 +167,7 @@ namespace QBic.Core.Data
 
             config.ExposeConfiguration(x =>
             {
-                //if (AppSettings.ShowSQL == true)
-                //{
-                //    x.SetInterceptor(new SqlStatementInterceptor());
-                //}
+                x.SetProperty(NHibernate.Cfg.Environment.ShowSql, ShowSql.ToString().ToLower()); // shows sql in console
 
                 // This will set the command_timeout property on factory-level
                 //x.SetProperty(NHibernate.Cfg.Environment.CommandTimeout, "180");
@@ -203,24 +212,6 @@ namespace QBic.Core.Data
         public IStatelessSession OpenStatelessSession()
         {
             return Store.OpenStatelessSession();
-        }
-
-        public DbConnection CreateConnection(string connectionString)
-        {
-            if (connectionString.Contains("##CurrentDirectory##") || connectionString.Contains(":memory:"))
-            {
-                connectionString = connectionString.Replace("##CurrentDirectory##", QBicUtils.GetCurrentDirectory());
-                return new SQLiteConnection(connectionString);
-            }
-            else if (ConfigurationManager.ConnectionStrings["MainDataStore"]?.ProviderName.Contains("MySql") == true)
-            {
-                throw new NotImplementedException("Code for MySql has not been enabled due to many problems with concurrent database access using MySql");
-                //return new MySql.Data.MySqlClient.MySqlConnection(connectionString);
-            }
-            else
-            {
-                return new System.Data.SqlClient.SqlConnection(connectionString);
-            }
         }
     }
 }

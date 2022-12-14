@@ -1,9 +1,11 @@
-﻿using NHibernate;
+﻿using Microsoft.AspNetCore.Http;
+using NHibernate;
 using System.IO;
 using System.Security.Principal;
 using System.Text;
-using System.Web;
+using System.Threading.Tasks;
 using WebsiteTemplate.Models;
+using ISession = NHibernate.ISession;
 
 namespace WebsiteTemplate.Utilities
 {
@@ -38,30 +40,37 @@ namespace WebsiteTemplate.Utilities
             return result;
         }
 
-        public static string GetCurrentRequestData()
+        public static async Task<string> GetCurrentRequestData(IHttpContextAccessor httpContextAccessor)
         {
-            using (var stream = HttpContext.Current.Request.InputStream)
-            using (var mem = new MemoryStream())
+            using (var reader = new StreamReader(httpContextAccessor.HttpContext.Request.Body, Encoding.UTF8, true, 1024, true))
             {
-                stream.CopyTo(mem);
-                var res = Encoding.UTF8.GetString(mem.ToArray());
-                return res;
+                var bodyStr = await reader.ReadToEndAsync();
+                httpContextAccessor.HttpContext.Request.Body.Position = 0;
+                return bodyStr;
             }
+
+            //using (var stream = HttpContext.Current.Request.InputStream)
+            //using (var mem = new MemoryStream())
+            //{
+            //    await httpContextAccessor.HttpContext.Request.Body.CopyToAsync(mem);
+            //    //stream.CopyTo(mem);
+            //    var res = Encoding.UTF8.GetString(mem.ToArray());
+            //    return res;
+            //}
         }
 
-        public static string GetCurrentRequestUrl()
+        public static string GetCurrentRequestUrl(IHttpContextAccessor httpContextAccessor)
         {
-            var request = HttpContext.Current.Request.RequestContext.HttpContext.Request;
+            var request = httpContextAccessor.HttpContext.Request;// HttpContext.Current.Request.RequestContext.HttpContext.Request;
 
-            var uri = request.Url;
-
-            var result = uri.Scheme + "://" + uri.Host + request.ApplicationPath;
+            var result = request.Scheme + "://" + request.Host + request.PathBase;
             return result;
         }
 
-        public static void SetCurrentUser(string userName)
+        public static void SetCurrentUser(string userName, IHttpContextAccessor httpContextAccessor)
         {
-            HttpContext.Current.User = new GenericPrincipal(new GenericIdentity(userName), new string[] { });
+            httpContextAccessor.HttpContext.User = new GenericPrincipal(new GenericIdentity(userName), new string[] { });
+            //HttpContext.Current.User = new GenericPrincipal(new GenericIdentity(userName), new string[] { });
         }
     }
 }

@@ -1,21 +1,20 @@
-﻿using Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Utilities;
-using WebsiteTemplate.Backend.Services;
-using System.Web.UI.WebControls;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WebsiteTemplate.Backend.Processing
 {
     public class ActionExecutionProcessor : EventProcessor<IList<IEvent>>
     {
-        public ActionExecutionProcessor(IUnityContainer container)
+        public ActionExecutionProcessor(IServiceProvider container)
             : base(container)
         {
 
@@ -23,7 +22,7 @@ namespace WebsiteTemplate.Backend.Processing
 
         public async override Task<IList<IEvent>> ProcessEvent(int eventId)
         {
-            var originalData = GetRequestData();
+            var originalData = await GetRequestData();
 
             var json = JsonHelper.Parse(originalData);
             originalData = json.GetValue("Data");
@@ -56,14 +55,14 @@ namespace WebsiteTemplate.Backend.Processing
             var parameters = tmpJson.GetValue("parameters");
 
             var id = eventId;
-            var eventItem = Container.Resolve<EventService>().GetEventItem(eventId);
+            var eventItem = Container.GetService<EventService>().GetEventItem(eventId);
             if (eventItem == null)
             {
                 throw new Exception("No action has been found for event number: " + id);
             }
 
             var result = new List<IEvent>();
-            //var eventItem = Container.Resolve<EventService>().GetEventItem(id);
+            //var eventItem = Container.GetService<EventService>().GetEventItem(id);
             //var eventItemType = EventList[id];
             //var eventItem = Container.Resolve(eventItemType) as IEvent;
 

@@ -1,10 +1,8 @@
-﻿using Unity;
-
-namespace WebsiteTemplate.Menus.BaseItems
+﻿namespace WebsiteTemplate.Menus.BaseItems
 {
     public class UpdateInputView : Event
     {
-        [InjectionConstructor]
+        //[InjectionConstructor]
         public UpdateInputView()
         {
             RowId = -1;

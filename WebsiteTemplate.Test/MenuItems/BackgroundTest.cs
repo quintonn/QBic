@@ -1,15 +1,14 @@
-﻿using Unity;
-using System;
-using WebsiteTemplate.Menus;
-using WebsiteTemplate.Menus.BaseItems;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using WebsiteTemplate.Menus;
+using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Test.MenuItems
 {
     public class BackgroundTest : BackgroundEvent
     {
-        public BackgroundTest(IUnityContainer container)
+        public BackgroundTest(IServiceProvider container)
             : base(container)
         {
 
@@ -36,6 +35,7 @@ namespace WebsiteTemplate.Test.MenuItems
             {
                 Thread.Sleep(5000);
                 Console.WriteLine("whooo");
+                AddBackgroundError("this is a test");
             });
         }
 

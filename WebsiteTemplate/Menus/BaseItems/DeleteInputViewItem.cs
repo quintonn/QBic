@@ -1,6 +1,4 @@
-﻿using Unity;
-
-namespace WebsiteTemplate.Menus.BaseItems
+﻿namespace WebsiteTemplate.Menus.BaseItems
 {
     public class DeleteInputViewItem : Event
     {
@@ -12,7 +10,7 @@ namespace WebsiteTemplate.Menus.BaseItems
             }
         }
 
-        [InjectionConstructor]
+        //[InjectionConstructor]
         public DeleteInputViewItem()
         {
 

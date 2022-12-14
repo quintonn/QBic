@@ -1,193 +1,64 @@
-﻿using Unity;
-using NHibernate.Criterion;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using QBic.Authentication;
+using QBic.Core.Utilities;
 using System;
-using System.Linq;
-using WebsiteTemplate.Backend.Services;
-using WebsiteTemplate.Menus.BaseItems;
-using WebsiteTemplate.Models;
-using WebsiteTemplate.SiteSpecific.DefaultsForTest;
-using WebsiteTemplate.Utilities;
+using WebsiteTemplate.Backend.Users;
+using WebsiteTemplate.Test.MenuItems.Users;
+using WebsiteTemplate.Test.Models;
+using WebsiteTemplate.Test.SiteSpecific;
 
 namespace WebsiteTemplate.Test
 {
-    public class Startup : ApplicationStartup
+    public class Startup
     {
-        private IUnityContainer Container { get; set; }
+        private IConfiguration Config;
 
-        private DefaultUserManager UserManager { get; set; }
-
-        public Startup(DataService dataService, DefaultUserManager userManager)
-            : base(dataService)
+        public Startup(IConfiguration config)
         {
-            UserManager = userManager;
+            Config = config;
         }
 
-        public override void RegisterUnityContainers(IUnityContainer container)
+        public void ConfigureServices(IServiceCollection services)
         {
-            
-        }
-
-        public override void SetupDefaults()
-        {
-            WebsiteUtils.SetCurrentUser("System");
-            //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
-            using (var session = DataService.OpenSession())
+            var idOptions = new Action<IdentityOptions>(options =>
             {
-                var adminUser = session.CreateCriteria<User>()
-                                                   .Add(Restrictions.Eq("UserName", "Admin"))
-                                                   .UniqueResult<User>();
-                if (adminUser == null)
-                {
-                    adminUser = new User(false)
-                    {
-                        Email = "q10athome@gmail.com",
-                        EmailConfirmed = true,
-                        UserName = "Admin",
-                    };
-                    var result = UserManager.CreateAsync(adminUser, "password");
-                    result.Wait();
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequiredUniqueChars = 0;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.SignIn.RequireConfirmedAccount = true;
 
-                    if (!result.Result.Succeeded)
-                    {
-                        throw new Exception("Unable to create user: " + "Admin");
-                    }
-                }
+                options.User.AllowedUserNameCharacters += " ";
+            });
+            services.UseQBic<AppSettings, AppStartup>(Config, idOptions);
+            //services.AddScoped<UserInjector, DefaultUserInjector>(); // can i override the default one?
+            services.AddScoped<UserInjector, TestUserInjector>();
+            //User can override UserInjector with their own injector class
 
-                var adminRole = session.CreateCriteria<UserRole>()
-                                       .Add(Restrictions.Eq("Name", "Admin"))
-                                       .UniqueResult<UserRole>();
-                if (adminRole == null)
-                {
-                    adminRole = new UserRole()
-                    {
-                        Name = "Admin",
-                        Description = "Administrator"
-                    };
-                    DataService.SaveOrUpdate(session, adminRole);
-                }
+            // Add additional user authentication
+            //services.AddSingleton<IJwtAuthenticationProvider, MobileJwtAuthProvider>();
+            services.AddSingleton<IJwtAuthenticationProvider, MobileJwtAuthProvider>();
+            // would be nice if this did work instead of the many lines below
+            //services.AddSingleton<QBicUserStore<MobileUser>, MobileUserStore>();
+            //services.RegisterJwtUserProviders<MobileUser>(false);
+            services.AddTransient<IUserStore<MobileUser>, MobileUserStore>();
+            services.AddTransient<IUserPasswordStore<MobileUser>, MobileUserStore>();
+            services.AddTransient<IUserEmailStore<MobileUser>, MobileUserStore>();
+            services.AddTransient<IPasswordHasher<MobileUser>, PasswordHasher<MobileUser>>();
+            services.AddTransient<UserManager<MobileUser>, UserManager<MobileUser>>();
 
-                var adminRoleAssociation = session.CreateCriteria<UserRoleAssociation>()
-                                                  .CreateAlias("User", "user")
-                                                  .CreateAlias("UserRole", "role")
-                                                  .Add(Restrictions.Eq("user.Id", adminUser.Id))
-                                                  .Add(Restrictions.Eq("role.Id", adminRole.Id))
-                                                  .UniqueResult<UserRoleAssociation>();
-                if (adminRoleAssociation == null)
-                {
-                    adminRoleAssociation = new UserRoleAssociation()
-                    {
-                        User = adminUser,
-                        UserRole = adminRole
-                    };
-                    DataService.SaveOrUpdate(session, adminRoleAssociation);
-                }
+        }
 
-                var systemMenu = session.QueryOver<Menu>().Where(m => m.Name == "System").SingleOrDefault();
-                if (systemMenu == null)
-                {
-                    systemMenu = new Menu()
-                    {
-                        Name = "System",
-                        Position = -1
-                    };
-                    DataService.SaveOrUpdate(session, systemMenu);
-                }
 
-                var menuList1 = session.CreateCriteria<Menu>()
-                                       .Add(Restrictions.Eq("Event", (int)EventNumber.ViewUsers))
-                                       .List<Menu>();
-
-                if (menuList1.Count == 0)
-                {
-                    var menu1 = new Menu()
-                    {
-                        Event = EventNumber.ViewUsers,
-                        Name = "Users",
-                        Position = 0,
-                        ParentMenu = systemMenu
-                    };
-
-                    DataService.SaveOrUpdate(session, menu1);
-                }
-
-                var menuList2 = session.CreateCriteria<Menu>()
-                                       .Add(Restrictions.Eq("Event", (int)EventNumber.ViewMenus))
-                                       .List<Menu>();
-
-                if (menuList2.Count == 0)
-                {
-                    var menu2 = new Menu()
-                    {
-                        Event = EventNumber.ViewMenus,
-                        Name = "Menus",
-                        Position = 1,
-                        ParentMenu = systemMenu
-                    };
-                    DataService.SaveOrUpdate(session, menu2);
-                }
-
-                var userRoleMenu = session.CreateCriteria<Menu>()
-                                          .Add(Restrictions.Eq("Event", (int)EventNumber.ViewUserRoles))
-                                          //.Add(Restrictions.IsNull("ParentMenu"))
-                                          .UniqueResult<Menu>();
-                if (userRoleMenu == null)
-                {
-                    userRoleMenu = new Menu()
-                    {
-                        Event = EventNumber.ViewUserRoles,
-                        Name = "User Roles",
-                        Position = 2,
-                        ParentMenu = systemMenu
-                    };
-                    DataService.SaveOrUpdate(session, userRoleMenu);
-                }
-
-                var settingsMenu = session.CreateCriteria<Menu>()
-                                          .Add(Restrictions.Eq("Event", (int)EventNumber.ModifySystemSettings))
-                                          .UniqueResult<Menu>();
-                if (settingsMenu == null)
-                {
-                    settingsMenu = new Menu()
-                    {
-                        Event = EventNumber.ModifySystemSettings,
-                        Name = "Settings",
-                        Position = 3,
-                        ParentMenu = systemMenu
-                    };
-                    DataService.SaveOrUpdate(session, settingsMenu);
-                }
-
-                var allEvents = EventService.EventMenuList.Where(e => e.Value.ActionType != EventType.InputDataView).Select(e => e.Value.GetEventId())
-                                      .ToList();
-
-                var eras = session.CreateCriteria<EventRoleAssociation>()
-                                  .CreateAlias("UserRole", "role")
-                                  .Add(Restrictions.Eq("role.Id", adminRole.Id))
-                                  .List<EventRoleAssociation>()
-                                  .ToList();
-
-                if (eras.Count != allEvents.Count)
-                {
-                    eras.ForEach(e =>
-                    {
-                        DataService.TryDelete(session, e);
-                    });
-                    session.Flush();
-                    foreach (var evt in allEvents)
-                    {
-                        var era = new EventRoleAssociation()
-                        {
-                            Event = evt,
-                            UserRole = adminRole
-                        };
-                        DataService.SaveOrUpdate(session, era);
-                    }
-                }
-
-                
-
-                session.Flush();
-            }
+        public void Configure(IApplicationBuilder app, IServiceProvider serviceProvider, ILoggerFactory logFactory)
+        {
+            SystemLogger.Setup(logFactory);
+            app.UseQBic(serviceProvider);
         }
     }
 }

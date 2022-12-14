@@ -1,25 +1,25 @@
-﻿using BasicAuthentication.Security;
-using QBic.Core.Utilities;
-using log4net;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using QBic.Core.Utilities;
 using System;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
-using System.Web.Http;
-using Unity;
 using WebsiteTemplate.Backend.Processing;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
-using System.Web;
-using System.Net.Http;
 
 namespace WebsiteTemplate.Controllers
 {
-    [RoutePrefix("api/v1")]
-    public class MainController : ApiController
+    [Route("api/v1")]
+    public class MainController : ControllerBase
     {
-        private IUnityContainer Container { get; set; }
+        private IServiceProvider Container { get; set; }
         private ApplicationService ApplicationService { get; set; }
 
         private static JsonSerializerSettings JSON_SETTINGS;
@@ -27,32 +27,33 @@ namespace WebsiteTemplate.Controllers
         private static bool Setup = false;
         private static object _Lock = new object();
 
-        private static readonly ILog Logger = SystemLogger.GetLogger<MainController>();
+        private static readonly ILogger Logger = SystemLogger.GetLogger<MainController>();
 
         private string ConstructorError { get; set; }
+        private IHttpContextAccessor HttpContextAccessor { get; set; }
 
         [HttpGet]
         [Route("custom/{*path}")]
         [AllowAnonymous]
-        public IHttpActionResult DynamicRouteTest(string path) // This can be for an IEvent to handle exposing "Custom APIs"
+        public IActionResult DynamicRouteTest(string path) // This can be for an IEvent to handle exposing "Custom APIs"
         {
             return Ok("hello there\n" + path);
         }
-
-        public MainController(IUnityContainer container)
+        public MainController(IServiceProvider container, IHttpContextAccessor httpContextAccessor)
         {
+            HttpContextAccessor = httpContextAccessor;
             try
             {
                 lock (_Lock)
                 {
                     Container = container;
-                    ApplicationService = container.Resolve<ApplicationService>();
+                    ApplicationService = container.GetService<ApplicationService>();
                     if (Setup == false)
                     {
-                        Logger.Debug("MainController - Setup = false, performing setup");
-                        var eventService = container.Resolve<EventService>(); // This is here to ensure EventService is initialize and it's constructor is called so that EventList is not empty
+                        Logger.LogDebug("MainController - Setup = false, performing setup");
+                        var eventService = container.GetService<EventService>(); // This is here to ensure EventService is initialize and it's constructor is called so that EventList is not empty
 
-                        var dataService = container.Resolve<DataService>();
+                        var dataService = container.GetService<DataService>();
 
                         using (var session = dataService.OpenSession())
                         {
@@ -71,7 +72,12 @@ namespace WebsiteTemplate.Controllers
                         Setup = true;
                     }
 
-                    JSON_SETTINGS = new JsonSerializerSettings { DateFormatString = WebsiteUtils.DateFormat };
+                    JSON_SETTINGS = new JsonSerializerSettings()
+                    {
+                        DateFormatString = WebsiteUtils.DateFormat,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                        //PropertyNameCaseInsensitive = true,
+                    };
                 }
             }
             catch (Exception error)
@@ -91,36 +97,37 @@ namespace WebsiteTemplate.Controllers
         [HttpPost]
         [Route("systemPing")]
         [AllowAnonymous]
-        [RequireHttps]
-        [DeflateCompression]// - not sure how to deflate
-        public async Task<IHttpActionResult> SystemPing()
+        public async Task<IActionResult> SystemPing()
         {
-            return await Container.Resolve<PingProcessor>().Process(-1, Request);
+            return await Container.GetService<PingProcessor>().Process(-1, this.Request);
         }
 
         [HttpGet]
         [Route("initializeSystem")]
-        [AllowAnonymous]
-        [RequireHttps]
-        [DeflateCompression]
-        public async Task<IHttpActionResult> InitializeSystem()
+        public async Task<IActionResult> InitializeSystem()
         {
             try
             {
                 if (!String.IsNullOrWhiteSpace(ConstructorError))
                 {
-                    return BadRequest(ConstructorError);
+                    return new BadRequestObjectResult(ConstructorError);
                 }
-                await Container.Resolve<InitializationProcessor>().Process(0, Request); // Just to initialize core processor
+                await Container.GetService<InitializationProcessor>().Process(0, Request); // Just to initialize core processor
                 var json = ApplicationService.InitializeApplication(ConstructorError);
+                //json = JsonSerializer.Serialize(json);
+                JsonResult result;
                 if (JSON_SETTINGS != null)
                 {
-                    return Json(json, JSON_SETTINGS);
+                    result = new JsonResult(json, JSON_SETTINGS);
+                    
                 }
                 else
                 {
-                    return Json(json);
+                    result = new JsonResult(json);//JsonSerializer.Serialize(json));
+                    
                 }
+                result.ContentType = "application/json";
+                return result;
             }
             catch (Exception error)
             {
@@ -131,135 +138,130 @@ namespace WebsiteTemplate.Controllers
 
         [HttpGet]
         [Route("initialize")]
-        [RequireHttps]
         [Authorize]
-        [DeflateCompression]
-        public async Task<IHttpActionResult> Initialize()
+        public async Task<IActionResult> Initialize()
         {
-            await Container.Resolve<InitializationProcessor>().Process(0, Request); // Just to initialize core processor
+            await Container.GetService<InitializationProcessor>().Process(0, Request); // Just to initialize core processor
 
             var json = await ApplicationService.InitializeSession();
             if (JSON_SETTINGS != null)
             {
-                return Json(json, JSON_SETTINGS);
+                return new JsonResult(json)
+                {
+                    ContentType = "application/json"
+                };//, JSON_SETTINGS);
             }
             else
             {
-                return Json(json);
+                return new JsonResult(json)
+                {
+                    ContentType = "application/json"
+                };
             }
         }
 
         [HttpPost]
         [Route("propertyChanged/{*eventId}")]
-        [RequireHttps]
         [ConditionalAuthorize]
-        [DeflateCompression]
-        public async Task<IHttpActionResult> OnPropertyChanged(int eventId)
+        public async Task<IActionResult> OnPropertyChanged(int eventId)
         {
-            return await Container.Resolve<PropertyChangeProcessor>().Process(eventId, Request);
+            return await Container.GetService<PropertyChangeProcessor>().Process(eventId, Request);
         }
 
         [HttpPost]
         [Route("processEvent/{*eventId}")]
-        [RequireHttps]
         [ConditionalAuthorize]
-        [DeflateCompression]
-        public async Task<IHttpActionResult> ProcessEvent(int eventId)
+        public async Task<IActionResult> ProcessEvent(int eventId)
         {
-            return await Container.Resolve<InputEventProcessor>().Process(eventId, Request);
+            return await Container.GetService<InputEventProcessor>().Process(eventId, Request);
         }
 
 
         [HttpPost]
         [Route("GetFile/{*eventId}")]
-        [RequireHttps]
-        [Authorize]
-        //[DeflateCompression] // Converts data to json which doesn't work for files
-        public async Task<IHttpActionResult> GetFile(int eventId)
+        [ConditionalAuthorize]
+        public async Task<IActionResult> GetFile(int eventId)
         {
-            return await Container.Resolve<FileProcessor>().Process(eventId, Request);
+            var result = await Container.GetService<FileProcessor>().Process(eventId, Request);
+            if (result is FileContentResult)
+            {
+                var f = result as FileContentResult;
+                Response.Headers.Add("filename", f.FileDownloadName);
+            }
+            return result;
         }
 
         [HttpPost]
         [Route("updateViewData/{*eventId}")]
-        [RequireHttps]
         [ConditionalAuthorize]
-        [DeflateCompression]
-        public async Task<IHttpActionResult> UpdateViewData(int eventId)
+        public async Task<IActionResult> UpdateViewData(int eventId)
         {
-            return await Container.Resolve<UpdateViewProcessor>().Process(eventId, Request);
+            return await Container.GetService<UpdateViewProcessor>().Process(eventId, Request);
         }
 
         [HttpPost]
         [Route("getViewMenu/{*eventId}")]
-        [RequireHttps]
         [ConditionalAuthorize]
-        [DeflateCompression]
-        public async Task<IHttpActionResult> GetViewMenu(int eventId)
+        public async Task<IActionResult> GetViewMenu(int eventId)
         {
-            return await Container.Resolve<ViewMenuProcessor>().Process(eventId, Request);
+            return await Container.GetService<ViewMenuProcessor>().Process(eventId, Request);
         }
 
         [HttpPost]
         [Route("executeUIAction/{*eventId}")]
-        [RequireHttps]
         [ConditionalAuthorize]
-        [DeflateCompression]
-        public async Task<IHttpActionResult> ExecuteUIAction(int eventId)
+        public async Task<IActionResult> ExecuteUIAction(int eventId)
         {
-            return await Container.Resolve<ActionExecutionProcessor>().Process(eventId, Request);
+            return await Container.GetService<ActionExecutionProcessor>().Process(eventId, Request);
         }
 
         [HttpGet]
         [Route("getUserMenu")]
-        [RequireHttps]
         [Authorize] // TODO: We need a way to have menu's for when we don't require a logged in user.
-        [DeflateCompression]
-        public async Task<IHttpActionResult> GetUserMenu()
+        public async Task<IActionResult> GetUserMenu()
         {
-            return await Container.Resolve<UserMenuProcessor>().Process(-1, Request);
+            var result = await Container.GetService<UserMenuProcessor>().Process(-1, Request);
+            
+            return result;
         }
 
         [HttpPost]
         [Route("performBackup")]
-        [RequireHttps]
-        //[Authorize] //Not sure if we can have authorization. should  be possible
-        //[DeflateCompression]
-        public async Task<IHttpActionResult> PerformBackup()
+        public async Task<IActionResult> PerformBackup()
         {
-            return await Container.Resolve<BackupProcessor>().Process(-1, Request);
+            return await Container.GetService<BackupProcessor>().Process(-1, Request);
         }
 
         [HttpPost]
         [Route("setAcmeChallenge")]
-        [RequireHttps]
         [AllowAnonymous]
-        //[Authorize] //Not sure if we can have authorization. should  be possible
-        public async Task<IHttpActionResult> SetAcmeChallenge()
+        public async Task<IActionResult> SetAcmeChallenge()
         {
             //TODO:   1. Verify request using maybe key/value pair.
             //        2. Maybe just save to the correct path here with the correct file (maybe not, I can delete it using other way).
             try
             {
-                string requestData;
-                using (var stream = System.Web.HttpContext.Current.Request.InputStream)
-                using (var mem = new System.IO.MemoryStream())
-                {
-                    stream.CopyTo(mem);
-                    requestData = System.Text.Encoding.UTF8.GetString(mem.ToArray());
-                }
+                var requestData = await WebsiteUtils.GetCurrentRequestData(HttpContextAccessor);
+                
+                //using (var stream = System.Web.HttpContext.Current.Request.InputStream)
+                //using (var mem = new System.IO.MemoryStream())
+                //{
+                //    HttpContextAccessor.HttpContext.Request.Body.CopyTo(mem);
+                //    //stream.CopyTo(mem);
+                //    requestData = System.Text.Encoding.UTF8.GetString(mem.ToArray());
+                //}
 
-                Logger.Info("Set Acme Challenge Request data: " + requestData);
+                Logger.LogInformation("Set Acme Challenge Request data: " + requestData);
 
                 var items = requestData.Split("&".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                 var acmeString = items.Where(i => i.Contains("acme")).FirstOrDefault();
                 var acmeValue = acmeString.Split('=').Last();
 
-                Logger.Info("Acme value is: " + acmeValue);
+                Logger.LogInformation("Acme value is: " + acmeValue);
 
                 //TODO:   The below code should also work?
                 //        And, should also be sending full path
-                Logger.Info("Setting acme challenge");
+                Logger.LogInformation("Setting acme challenge");
                 //Logger.Info("RequestData = " + requestData);
                 //try
                 //{
@@ -286,7 +288,10 @@ namespace WebsiteTemplate.Controllers
                 AcmeController.ChallengeResponse = acmeValue;
                 AcmeController.ChallengePath = challengePath;
 
-                return Json("success: " + acmeValue);
+                return new JsonResult("success: " + acmeValue)
+                {
+                    ContentType = "application/json"
+                };//, JSON_SETTINGS);
             }
             catch (Exception error)
             {

@@ -1,6 +1,7 @@
-﻿using QBic.Core.Data;
+﻿using NHibernate;
+using QBic.Authentication;
+using QBic.Core.Data;
 using QBic.Core.Models;
-using NHibernate;
 using System;
 using WebsiteTemplate.Models;
 
@@ -17,7 +18,7 @@ namespace WebsiteTemplate.Backend.Services
             AuditService = auditService;
         }
 
-        public void SaveOrUpdate<T>(ISession session, T item, User user = null) where T : BaseClass
+        public void SaveOrUpdate<T>(ISession session, T item, IUser user = null) where T : BaseClass
         {
             var action = String.IsNullOrWhiteSpace(item.Id) ? AuditAction.New : AuditAction.Modify;
 

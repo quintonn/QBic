@@ -1,0 +1,33 @@
+.inputViewTable {
+    border: solid 1px black;
+    margin-top:5px;
+    border-radius:5px;
+    border-collapse: separate;
+    border-spacing: 2px;
+}
+
+.inputViewTable th {
+	border-top: none;
+    padding:2px;
+}
+
+.inputViewTable td, th {
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+    text-align: left;   
+    padding: 2px; 
+}
+
+.inputViewTable tr:first-child td {
+    border-left: none;
+    border-top: none;
+    background-color:blue;
+}
+
+.inputViewTable td:first-child {
+    border-left: none;
+}
+
+.inputViewTable th:first-child {
+    border-left: none;
+}

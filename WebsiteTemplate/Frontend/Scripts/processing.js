@@ -15,7 +15,7 @@
                 var actionType = item.ActionType;
 
                 var params = item.Parameters;
-                
+
                 if (params != null && params.length > 0)
                 {
                     //params = JSON.parse(params);
@@ -51,9 +51,9 @@
                         }
                     case 1: // Get Input / User Input
                         return inputDialog.buildInput(item);
-                        //case 2: // Submenu
+                    //case 2: // Submenu
 
-                        //case 3: // DoSomething
+                    //case 3: // DoSomething
 
                     case 4: // Close input dialog -- Not sure i need this anymore.
                         return dialog.closeModalDialog();
@@ -93,7 +93,7 @@
                             return model.deleteRow(rowId);
                         }
                     case 10: // UpdateDataSourceComboBox
-                        
+
                         var dlgs = _applicationModel.modalDialogs();
                         var inputDlg = dlgs[dlgs.length - 1].model;
                         var inp = inputDlg.findInputModelWithName(item.InputName);
@@ -101,8 +101,7 @@
                         {
                             if (inp.inputType == 5) // List Selection
                             {
-                                var defaultList = inpValue || [];
-
+                                var defaultList = defaultValue || [];
                                 var listSource = item.ListItems
                                 listSource = $.map(listSource, function (item)
                                 {
@@ -133,7 +132,7 @@
                             {
                                 // Clear the URL
                                 window.location.href = window.location.href.split("?")[0].split("#")[0];
-                                
+
                                 return Promise.resolve(x);
                             });
                             break;
@@ -224,9 +223,9 @@
                 },
                 dataType: 'binary',
                 beforeSend: function (xhr)
-                    {
-                        xhr.setRequestHeader("Authorization", "Bearer " + auth.accessToken);
-                    }
+                {
+                    xhr.setRequestHeader("Authorization", "Bearer " + auth.accessToken);
+                }
 
             }).done(function (xhr, xx, resp)
             {
@@ -256,7 +255,7 @@
 
                     a.remove();
                 }
-                
+
                 dialog.closeBusyDialog();
                 res();
             }).fail(function (jqXHR, textStatus, error)
@@ -280,9 +279,9 @@
     processing.updateViewData = function (eventId, params)
     {
         var data =
-            {
-                Data: params || ""
-            };
+        {
+            Data: params || ""
+        };
 
         data = JSON.stringify(data);
 
@@ -294,10 +293,10 @@
     {
         dialog.showBusyDialog("Loading view menu...");
         var url = mainApp.apiURL + "getViewMenu/" + eventId;
-        var data = 
-            {
-                data: dataForGettingMenu
-            };
+        var data =
+        {
+            data: dataForGettingMenu
+        };
         data = JSON.stringify(data);
         return mainApp.makeWebCall(url, "POST", data).then(function (data)
         {
@@ -330,7 +329,7 @@
                     var condition = column.ColumnSetting.Conditions[p];
                     var colName = condition.ColumnName;
 
-                    var actualValue = processing.parseColumnName(colName, data)+"";
+                    var actualValue = processing.parseColumnName(colName, data) + "";
 
                     compareResult = compareResult && processing.isConditionMet(condition, actualValue);
                 }
@@ -409,7 +408,7 @@
         return value;
     };
 
-    processing.getColumnValue = function(column, rowData)
+    processing.getColumnValue = function (column, rowData)
     {
         var columnName = column.ColumnName;
         var columnType = column.ColumnType;

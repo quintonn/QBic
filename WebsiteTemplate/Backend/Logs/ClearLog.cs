@@ -1,13 +1,9 @@
-﻿using log4net;
-using log4net.Appender;
-using log4net.Repository.Hierarchy;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
-using static log4net.Appender.FileAppender;
 
 namespace WebsiteTemplate.Backend.Logs
 {
@@ -36,13 +32,13 @@ namespace WebsiteTemplate.Backend.Logs
 
         public override async Task<IList<IEvent>> ProcessAction()
         {
-            var rootAppender = ((Hierarchy)LogManager.GetRepository())
-                                         .Root.Appenders.OfType<FileAppender>()
-                                         .FirstOrDefault();
-            if (rootAppender != null)
-            {
-                File.WriteAllText(rootAppender.File, string.Empty);
-            }
+            //var rootAppender = ((Hierarchy)LogManager.GetRepository())
+            //                             .Root.Appenders.OfType<FileAppender>()
+            //                             .FirstOrDefault();
+            //if (rootAppender != null)
+            //{
+            //    File.WriteAllText(rootAppender.File, string.Empty);
+            //}
 
             return new List<IEvent>()
             {

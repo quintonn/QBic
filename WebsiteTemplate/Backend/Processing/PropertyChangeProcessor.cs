@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unity;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
@@ -10,7 +11,7 @@ namespace WebsiteTemplate.Backend.Processing
 {
     public class PropertyChangeProcessor : CoreProcessor<IList<IEvent>>
     {
-        public PropertyChangeProcessor(IUnityContainer container)
+        public PropertyChangeProcessor(IServiceProvider container)
             :base(container)
         {
 
@@ -18,7 +19,7 @@ namespace WebsiteTemplate.Backend.Processing
 
         public async override Task<IList<IEvent>> ProcessEvent(int eventId)
         {
-            var data = GetRequestData();
+            var data = await GetRequestData();
             var json = JsonHelper.Parse(data);
             data = json.GetValue("Data");
 
@@ -30,7 +31,7 @@ namespace WebsiteTemplate.Backend.Processing
             //var eventItem = EventList[eventId] as GetInput;
             //var eventItemType = EventList[eventId];
             //var eventItem = Container.Resolve(eventItemType) as GetInput;
-            var eventItem = Container.Resolve<EventService>().GetEventItem(eventId) as GetInput;
+            var eventItem = Container.GetService<EventService>().GetEventItem(eventId) as GetInput;
 
             var result = await eventItem.OnPropertyChanged(propertyName, propertyValue);
             return result;

@@ -1,9 +1,9 @@
-﻿using BasicAuthentication.Core.Users;
+﻿using QBic.Authentication;
 using QBic.Core.Models;
 
 namespace WebsiteTemplate.Models
 {
-    public abstract class UserBase : BaseClass, ICoreIdentityUser
+    public abstract class UserBase : BaseClass, IUser
     {
         public virtual string UserName { get; set; }
 

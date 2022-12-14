@@ -1,0 +1,37 @@
+﻿<div class="w3-section w3-content" id="##view_id##">
+    <h2 class="w3-center" data-bind="text: viewTitle, visible: isEmbeddedView == false" style="margin:0"></h2>
+
+    <div class="" data-bind="foreach: viewMenus">
+        <button class="w3-btn w3-app-color " data-bind="text: label, click: function(data, event) { $root.menuClick($data, $index(), event) }"></button>
+    </div>
+
+    <div class="w3-container w3-center" data-bind="visible: isEmbeddedView == false">
+        <div class="w3-row w3-center w3-content">
+            <table class="w3-center">
+                <tr class="">
+                    <td><label class="w3-label">Filter</label></td>
+                    <td><input class="w3-input w3-border w3-light-grey" type="text" data-bind="value: filterText, valueUpdate: 'keypress', event: {keypress: filterKeyPressed}, hasFocus: true" /></td>
+                    <td><button class="w3-btn w3-app-color" data-bind="click: filterSearchClick">Search</button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="w3-section" style="overflow-x:auto; overflow-y: auto; ">
+        <ul class="w3-ul" >
+            <!-- ko foreach: rows -->
+            <li class="w3-padding-16 w3-section w3-pale-blue w3-border-blue w3-leftbar" data-bind="click:  function(data, event) { $root.click($data, 0, $index(), event) }" style="cursor:pointer">
+                <span class="w3-xlarge" data-bind="text: cells()[1].value()"></span>
+                <!-- ko foreach: cells -->
+                    <!-- ko if: $index() > 1 -->
+                        <br  />
+                        <span class="" data-bind="text: value"></span>
+                    <!-- /ko -->
+                <!-- /ko -->
+            </li>
+            <!-- /ko -->
+        </ul>
+    </div>
+
+    <h5 class="w3-center" data-bind="html: viewMessage, visible: isEmbeddedView == false" style="margin:0"></h5>
+</div>

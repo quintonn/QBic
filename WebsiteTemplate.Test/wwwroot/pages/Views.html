@@ -1,0 +1,89 @@
+﻿<div id="##view_id##">
+    <h2 class="w3-center" data-bind="text: viewTitle, visible: isEmbeddedView == false" style="margin:0"></h2>
+    
+    <div class="" data-bind="foreach: viewMenus">
+        <button class="w3-btn w3-app-color " data-bind="text: label, click: function(data, event) { $root.menuClick($data, $index(), event) }"></button>
+    </div>
+
+    <div class="w3-container w3-center" data-bind="visible: isEmbeddedView == false">
+        <div class="w3-row w3-center w3-content">
+            <table class="w3-center">
+                <tr class="">
+                    <td><label class="w3-label">Filter</label></td>
+                    <td><input class="w3-input w3-border w3-light-grey" type="text" data-bind="value: filterText, valueUpdate: 'keypress', event: {keypress: filterKeyPressed}, hasFocus: true" /></td>
+                    <td><button class="w3-btn w3-app-color" data-bind="click: filterSearchClick">Search</button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+    <div class="w3-section" style="overflow-x:auto; overflow-y: auto; ">
+        <table class="w3-table w3-bordered w3-striped w3-border w3-hoverable " style="min-width:310px">
+            <thead>
+                <tr class="w3-grey">
+                    <!-- ko foreach: columns -->
+                        <th data-bind="text: label, visible: visible, attr: {colspan: columnSpan}"></th>
+                    <!-- /ko -->
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- ko foreach: rows -->
+                <tr>
+                    <!-- ko foreach: cells -->
+                        <td class="view-table-cell" data-bind="visible: showCell() == true || columnType() != 4, attr: {colspan: columnSpan}" style="padding-bottom:2px" >
+                            <!--  ko if:  columnType() == 0 ||  columnType() == 4 || columnType() == 1 -->
+                            <!--  String || Hidden || Boolean  -->
+                            <div data-bind="visible: showCell, text: value, attr: { title: value }" class="view-table-cell-div"></div>
+                            <!-- /ko -->
+                            <!--  ko if:  columnType() == 2 -->
+                            <!--  Button  -->
+                            <!-- the visible binding is duplicated here because if it's not here it messes column ordering up -->
+                            <button data-bind="visible: showCell, text: value, click:  function(data, event) { $root.click($parent, $index(), $parentContext.$index(), event) }"></button>
+
+                            <!-- /ko -->
+                            <!--  ko if: columnType() == 3 -->
+                            <!--  Link -->
+                            <a href="#" data-bind="visible: showCell, text: value, click:  function(data, event) { $root.click($parent, $index(), $parentContext.$index(), event) }"></a>
+                            <!-- /ko -->
+                            <!--  ko if:  columnType() == 5  -->
+                            <!--  Date  -->
+                            <span data-bind="visible: showCell"><nobr data-bind="html: dateValue"></nobr></span>
+                            <!-- /ko -->
+                            <!-- ko if: columnType() == 6 -->
+                            <!--  Checkbox -->
+                            <input class="w3-check" data-bind="checked: value, visible: showCell" type="checkbox" />
+                            <!-- /ko -->
+                        </td>
+                    <!-- /ko -->
+                    <td style="">
+                    </td>
+                </tr>
+                <!-- /ko -->
+            </tbody>
+
+            <tfoot data-bind="visible: isEmbeddedView == false">
+                <tr class="">
+                    <td data-bind="attr: {colspan: visibleColumnLength}">
+                        <div class="w3-center w3-small">
+                            <button class="w3-btn w3-app-color koHidden" data-bind="enable: currentPage() > 1, click: firstClick, css: { koHidden: false }"><<</button>
+                            <button class="w3-btn w3-app-color koHidden" data-bind="enable: currentPage() > 1, click: prevClick, css: { koHidden: false }"><</button>
+                            <select style="min-width:75px" data-bind="value: linesPerPage, event:{ change: linesPerPageChange}">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                                <option value="-2">All</option>
+                            </select>
+                            <button class="w3-btn w3-app-color koHidden" data-bind="enable: currentPage() < lastPage(), click: nextClick, css: { koHidden: false }">></button>
+                            <button class="w3-btn w3-app-color koHidden" data-bind="enable: currentPage() < lastPage(), click: lastClick, css: { koHidden: false }">>></button>
+                            <p class="w3-small" data-bind="text: footerText, visible: isEmbeddedView == false"></p>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <h5 class="w3-center" data-bind="html: viewMessage, visible: isEmbeddedView == false" style="margin:0"></h5>
+</div>

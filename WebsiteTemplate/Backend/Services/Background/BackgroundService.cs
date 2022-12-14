@@ -1,26 +1,27 @@
-﻿using QBic.Core.Services;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+using QBic.Authentication;
+using QBic.Core.Services;
 using QBic.Core.Utilities;
-using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using WebsiteTemplate.Data;
-using WebsiteTemplate.Models;
 using System.Threading.Tasks;
+using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Services.Background
 {
     public class BackgroundService : IDisposable
     {
         private DataService DataService { get; set; }
-        private UserContext UserContext { get; set; }
+        private UserManager<User> UserContext { get; set; }
         private BackgroundManager BackgroundManager { get; set; }
 
         private static object Locker = new object();
         public static bool Started { get; set; }
 
-        protected static readonly ILog Logger = SystemLogger.GetLogger<BackgroundService>();
+        protected static readonly ILogger Logger = SystemLogger.GetLogger<BackgroundService>();
         private CancellationToken CancelToken { get; set; }
 
         static BackgroundService()
@@ -29,7 +30,7 @@ namespace WebsiteTemplate.Backend.Services.Background
             Started = false;
         }
 
-        public BackgroundService(DataService dataService, UserContext userContext, BackgroundManager manager)
+        public BackgroundService(DataService dataService, UserManager<User> userContext, BackgroundManager manager)
         {
             DataService = dataService;
             UserContext = userContext;
@@ -44,14 +45,14 @@ namespace WebsiteTemplate.Backend.Services.Background
 
         private async void Setup()
         {
-            Logger.Debug("Starting background service");
-            SystemUser = await UserContext.FindUserByNameAsync("System");
+            Logger.LogDebug("Starting background service");
+            SystemUser = await UserContext.FindByNameAsync("System");
             Started = true;
         }
 
         private static List<Task> BackgroundThreads { get; set; }
         private static List<BackgroundJob> BackgroundJobs { get; set; }
-        private static User SystemUser { get; set; }
+        private static IUser SystemUser { get; set; }
         internal void SaveBackgroundJobResult(BackgroundJobResult jobResult)
         {
             lock (Locker)
@@ -227,7 +228,7 @@ namespace WebsiteTemplate.Backend.Services.Background
 
         internal void AddBackgroundInformation(string task, string statusInfo)
         {
-            Logger.Debug(task + "\n" + statusInfo);
+            Logger.LogDebug(task + "\n" + statusInfo);
             if (BackupService.BusyWithBackups == true)
             {
                 return;

@@ -8,13 +8,8 @@ namespace WebsiteTemplate.Mappings
     {
         public AuditEventMapping()
         {
-            //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
             Table("AuditEvent");
 
-            //References(x => x.User).Column("IdUser")
-            //               .Nullable()
-            //               .NotFound.Ignore()
-            //               .LazyLoad(Laziness.False);
             Map(x => x.UserId).Not.Nullable();
             Map(x => x.UserName).Not.Nullable();
 
@@ -25,17 +20,18 @@ namespace WebsiteTemplate.Mappings
                                    .Nullable();
             Map(x => x.ObjectId).Not.Nullable();
             Map(x => x.EntityName).Not.Nullable();
-            //if (DataStore.ProviderName.Contains("MySql"))
-            //{
-            //    Map(x => x.OriginalObject).Nullable().CustomSqlType("LONGTEXT").Length(int.MaxValue);
-            //    Map(x => x.NewObject).Nullable().CustomSqlType("LONGTEXT").Length(int.MaxValue);
-            //}
-            if (DataStore.SetCustomSqlTypes == true)
+            
+            if (DataStore.ProviderName == "MYSQL")
+            {
+                Map(x => x.OriginalObject).Nullable().CustomType("StringClob").CustomSqlType("LONGTEXT").Length(int.MaxValue);
+                Map(x => x.NewObject).Nullable().CustomType("StringClob").CustomSqlType("LONGTEXT").Length(int.MaxValue);
+            }
+            else if (DataStore.ProviderName == "SQL")
             {
                 Map(x => x.OriginalObject).Nullable().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
                 Map(x => x.NewObject).Nullable().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
             }
-            else if (DataStore.SetCustomSqlTypes == false)
+            else
             {
                 Map(x => x.OriginalObject).Nullable().Length(int.MaxValue);
                 Map(x => x.NewObject).Nullable().Length(int.MaxValue);

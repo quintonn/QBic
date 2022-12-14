@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unity;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Utilities;
@@ -10,7 +9,7 @@ namespace WebsiteTemplate.Backend.Processing
 {
     public abstract class EventProcessor<T> : CoreProcessor<T>
     {
-        public EventProcessor(IUnityContainer container)
+        public EventProcessor(IServiceProvider container)
             : base(container)
         {
 

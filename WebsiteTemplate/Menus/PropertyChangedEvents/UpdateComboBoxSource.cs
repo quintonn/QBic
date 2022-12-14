@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
-using Unity;
 
 namespace WebsiteTemplate.Menus.PropertyChangedEvents
 {
@@ -36,7 +35,7 @@ namespace WebsiteTemplate.Menus.PropertyChangedEvents
             }
         }
 
-        [InjectionConstructor]
+        //[InjectionConstructor]
         public UpdateComboBoxSource()
         {
 

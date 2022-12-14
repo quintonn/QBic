@@ -1,27 +1,29 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using System;
 using System.Linq;
-using System.Web.Http;
 using WebsiteTemplate.Backend.Services;
-using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Controllers
 {
-    public class ConditionalAuthorizeAttribute : AuthorizeAttribute
+    public class ConditionalAuthorizeAttribute : ActionFilterAttribute
     {
-        public override void OnAuthorization(System.Web.Http.Controllers.HttpActionContext actionContext)
+        public override void OnActionExecuted(ActionExecutedContext context)
         {
-            var eventIdString = actionContext.Request.RequestUri.Segments.Last();
+            base.OnActionExecuted(context);
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            var eventIdString = context.HttpContext.Request.Path.Value.Split("/").Last();
             var eventId = Convert.ToInt32(eventIdString);
 
             var iEvent = EventService.EventMenuList[eventId];
-            if (iEvent.RequiresAuthorization)
+            if (iEvent.RequiresAuthorization && context.HttpContext.User.Identity.IsAuthenticated == false)
             {
-                base.OnAuthorization(actionContext);
+                context.HttpContext.User = null;
+                context.Result = new UnauthorizedResult();
             }
-            //else
-            //{
-            //    //XXXUtils.SetCurrentUser("System");
-            //}
         }
     }
 }

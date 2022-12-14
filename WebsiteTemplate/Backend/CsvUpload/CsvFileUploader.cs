@@ -34,7 +34,7 @@ namespace WebsiteTemplate.Backend.CsvUpload
 
             results.Add(new FileInput("File", "File", mandatory: true, tabName: tabName));
             results.Add(new StringInput("Separator", "Column Separator", ColumnSeparator, mandatory: true, tabName: tabName));
-            results.Add(new NumericInput<int>("Skip", "Lines to Skip", 0, tabName: tabName));
+            results.Add(new NumericInput<int>("Skip", "Lines to Skip", LinesToSkip, tabName: tabName));
             results.Add(new ViewInput("Mappings", "ColumnMappings", new MappingView(), GetParameters(), mandatory: true, tabName: tabName));
             results.Add(new BooleanInput("IsQuoted", "Are values in quotes", false, null, false));
 
@@ -55,12 +55,13 @@ namespace WebsiteTemplate.Backend.CsvUpload
         }
 
         public virtual string ColumnSeparator { get; } = ",";
+        public virtual int LinesToSkip { get; } = 0;
 
         public abstract List<ColumnSetting> ColumnsToMap();
 
         public abstract FileInfo ProcessMappingResults(List<MappedRow> mappedData, List<string> mappedErrors);
 
-        private List<MappedRow> MapData(TextFieldParser parser, int linesToSkip, List<ColumnSetting> mappings, List<string> errors)
+        protected List<MappedRow> MapData(TextFieldParser parser, int linesToSkip, List<ColumnSetting> mappings, List<string> errors)
         {
             var results = new List<MappedRow>();
 
@@ -76,17 +77,6 @@ namespace WebsiteTemplate.Backend.CsvUpload
                 }
                 var fields = parser.ReadFields().ToList();
                     
-                //List<string> columnValues;
-                
-                //if (isQuoted)
-                //{
-                //    columnValues = line.Split($"\"{separator}\"".ToCharArray()).ToList();
-                //}
-                //else
-                //{
-                //    columnValues = line.Split(separator.ToCharArray()).ToList();
-                //}
-                
                 var row = new MappedRow(rowIndex);
 
                 var columnIndex = 1;
@@ -105,7 +95,7 @@ namespace WebsiteTemplate.Backend.CsvUpload
             return results;
         }
 
-        private string MapColumnData(string columnName, List<string> columnValues, string columnNumbers, int rowNumber, List<string> errors)
+        protected string MapColumnData(string columnName, List<string> columnValues, string columnNumbers, int rowNumber, List<string> errors)
         {
             var result = "";
 

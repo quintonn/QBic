@@ -92,6 +92,8 @@ namespace WebsiteTemplate.Backend.UIProcessors
             var result = await Injector.SaveOrUpdateUser(InputData, userName);
             if (result.Success == false)
             {
+                // todo: delete user ??
+                // but email was sent ??
                 message = result.Message + "\n" + message;
                 return new ProcessingResult(false, message);
             }

@@ -1,4 +1,5 @@
-﻿using QBic.Core.Services;
+﻿using Microsoft.Extensions.Configuration;
+using QBic.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -13,9 +14,11 @@ namespace WebsiteTemplate.Backend.Backups
     {
         private BackupService BackupService { get; set; }
 
-        public RestoreBackup(BackupService backupService)
+        private IConfiguration Config { get; set; }
+        public RestoreBackup(BackupService backupService, IConfiguration config)
         {
             BackupService = backupService;
+            Config = config;
         }
         public override string Description
         {
@@ -59,8 +62,8 @@ namespace WebsiteTemplate.Backend.Backups
             {
                 var backupFile = GetValue<FileInfo>("BackupFile");
                 var restoreSystemSettings = GetValue<bool>("SystemSettings");
-                var connection = ConfigurationManager.ConnectionStrings["MainDataStore"];
-                var mainConnectionString = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
+                
+                var mainConnectionString = Config.GetConnectionString("MainDataStore");// = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
                 
                 var success = false;
                 try

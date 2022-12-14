@@ -4,9 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using WebsiteTemplate.Backend.Services;
-using WebsiteTemplate.Data;
-using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
@@ -51,7 +48,7 @@ namespace WebsiteTemplate.Menus.InputItems
                                        bool orderByAsc = true,
                                        bool addBlankValue = false)
         {
-            var store = DataStore.GetInstance(false);
+            var store = DataStore.GetInstance(false, false, null);
             using (var session = store.OpenSession())
             {
                 var queryOver = session.QueryOver<T>();

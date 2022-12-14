@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity;
+using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.BasicCrudItems;
@@ -18,9 +19,9 @@ namespace WebsiteTemplate.Backend.Services
 
         public static IDictionary<int, BackgroundEvent> BackgroundEventList { get; set; }
 
-        public IUnityContainer Container { get; set; }
+        public IServiceProvider Container { get; set; }
 
-        public EventService(IUnityContainer container)
+        public EventService(IServiceProvider container)
         {
             //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
             Container = container;
@@ -46,12 +47,14 @@ namespace WebsiteTemplate.Backend.Services
                 return null;
             }
             var type = EventList[key];
-            var item = Container.Resolve(type) as IEvent;
+            //var item = Container.GetService(type) as IEvent;
+            var item = ActivatorUtilities.CreateInstance(Container, type) as IEvent;
 
             if (typeof(IBasicCrudView).IsAssignableFrom(type))
             {
                 var subTypeType = SubTypes[key];
-                var subType = Container.Resolve(subTypeType) as IBasicCrudMenuItem;
+                //var subType = Container.GetService(subTypeType) as IBasicCrudMenuItem;
+                var subType = ActivatorUtilities.CreateInstance(Container, subTypeType) as IBasicCrudMenuItem;
                 var viewInstance = item as IBasicCrudView;
                 viewInstance.Id = subType.GetBaseMenuId();
                 viewInstance.ItemName = subType.GetBaseItemName();
@@ -64,7 +67,7 @@ namespace WebsiteTemplate.Backend.Services
             else if (typeof(IBasicCrudModify).IsAssignableFrom(type))
             {
                 var subTypeType = SubTypes[key];
-                var subType = Container.Resolve(subTypeType) as IBasicCrudMenuItem;
+                var subType = ActivatorUtilities.CreateInstance(Container, subTypeType) as IBasicCrudMenuItem;
                 var modifyInstance = item as IBasicCrudModify;
                 modifyInstance.Id = subType.GetBaseMenuId() + 1;
                 modifyInstance.ItemName = subType.GetBaseItemName();
@@ -75,7 +78,7 @@ namespace WebsiteTemplate.Backend.Services
             else if (typeof(IBasicCrudDelete).IsAssignableFrom(type))
             {
                 var subTypeType = SubTypes[key];
-                var subType = Container.Resolve(subTypeType) as IBasicCrudMenuItem;
+                var subType = ActivatorUtilities.CreateInstance(Container, subTypeType) as IBasicCrudMenuItem;
                 var deleteInstance = (IBasicCrudDelete)item;
                 deleteInstance.Id = subType.GetBaseMenuId() + 2;
                 deleteInstance.ItemName = subType.GetBaseItemName();
@@ -166,13 +169,14 @@ namespace WebsiteTemplate.Backend.Services
 
                     if (type.GetInterface("IBasicCrudMenuItem") != null)
                     {
-                        var subType = (IBasicCrudMenuItem)Container.Resolve(type);
+                        //var subType = (IBasicCrudMenuItem)Container.GetService(type);
+                        var subType = (IBasicCrudMenuItem)ActivatorUtilities.CreateInstance(Container, type);
 
                         var d1 = typeof(BasicCrudView<>);
                         Type[] typeArgs1 = { subType.InnerType };
                         var viewType = d1.MakeGenericType(typeArgs1);
 
-                        var viewInstance = (IBasicCrudView)Container.Resolve(viewType);
+                        var viewInstance = (IBasicCrudView)ActivatorUtilities.CreateInstance(Container, viewType);
                         viewInstance.Id = subType.GetBaseMenuId();
                         viewInstance.ItemName = subType.GetBaseItemName();
                         viewInstance.ColumnsToShowInView = subType.GetColumnsToShowInView();
@@ -192,7 +196,7 @@ namespace WebsiteTemplate.Backend.Services
                         var d2 = typeof(BasicCrudModify<>);
                         Type[] typeArgs2 = { subType.InnerType };
                         var modifyType = d2.MakeGenericType(typeArgs2);
-                        var modifyInstance = (IBasicCrudModify)Container.Resolve(modifyType);
+                        var modifyInstance = (IBasicCrudModify)ActivatorUtilities.CreateInstance(Container, modifyType);
                         modifyInstance.Id = subType.GetBaseMenuId() + 1;
                         modifyInstance.ItemName = subType.GetBaseItemName();
                         modifyInstance.InputProperties = subType.GetInputProperties();
@@ -210,7 +214,7 @@ namespace WebsiteTemplate.Backend.Services
                         var d3 = typeof(BasicCrudDelete<>);
                         Type[] typeArgs3 = { subType.InnerType };
                         var deleteType = d3.MakeGenericType(typeArgs2);
-                        var deleteInstance = (IBasicCrudDelete)Container.Resolve(deleteType);
+                        var deleteInstance = (IBasicCrudDelete)ActivatorUtilities.CreateInstance(Container, deleteType);
                         deleteInstance.Id = subType.GetBaseMenuId() + 2;
                         deleteInstance.ItemName = subType.GetBaseItemName();
                         deleteInstance.OnDeleteInternal = subType.OnDeleteInternal;
@@ -225,7 +229,9 @@ namespace WebsiteTemplate.Backend.Services
                     else if (type != typeof(BasicCrudMenuItem<>))
                     {
                         //if (System.Diagnostics.Debugger.IsAttached == false) System.Diagnostics.Debugger.Launch();
-                        var instance = (IEvent)Container.Resolve(type);
+                        //ActivatorUtilities.CreateInstance(Container, type);// <UnregisteredClass>(serviceProvider);
+                        //var instance = (IEvent)Container.GetService(type);
+                        var instance = (IEvent)ActivatorUtilities.CreateInstance(Container, type);
 
                         if (!(instance is BackgroundEvent) && !EventList.ContainsKey(instance.GetId()))
                         {

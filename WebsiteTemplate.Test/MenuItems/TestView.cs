@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
@@ -24,11 +25,12 @@ namespace WebsiteTemplate.Test.MenuItems
             }
         }
 
-        public override int AutoRefreshScreenTime => 3000;
+        //public override int AutoRefreshScreenTime => 3000;
 
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
             columnConfig.AddStringColumn("Name", "Name");
+            columnConfig.AddDateColumn("Date", "Date");
 
             columnConfig.AddLinkColumn("", "Name", "Test Pdf", 555);
         }
@@ -40,6 +42,7 @@ namespace WebsiteTemplate.Test.MenuItems
                 new
                 {
                     Name=  "Test",
+                    Date = DateTime.Now
                 }
             };
         }

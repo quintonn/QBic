@@ -1,0 +1,14 @@
+.view-table-cell {
+    max-width: 200px;
+    /*min-width: 100px;*/
+    margin-right: 5px;
+}
+
+.view-table-cell-div {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    /*max-width: 200px;*/
+    /*min-width: 100px;*/
+    margin-right:5px;
+}
