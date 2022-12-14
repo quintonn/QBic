@@ -41,6 +41,5 @@ QBic.FrontEnd/node_modules
 QBic.FrontEnd/bin
 QBic.FrontEnd/obj
 QBic.FrontEnd/Properties/launchSettings.json
-WebsiteTemplate.Test/appsettings.json
 WebsiteTemplate.Test/Data
 QBic.FrontEnd/wwwroot
