@@ -8,7 +8,9 @@ namespace WebsiteTemplate.Test.Mappings
         public MobileUserMap()
         {
             Table("MobileUser");
+            
 
+            Map(x => x.UserName).Not.Nullable(); // don't commit. // find out why it doesn't ignore this field
 
             Map(x => x.Email).Not.Nullable();
             Map(x => x.EmailConfirmed);

@@ -16,12 +16,17 @@ namespace WebsiteTemplate.Test
             Console.WriteLine("Done");
         }
 
+        static long MAX_REQUEST_BODY_BYTES = 250 * 1024 * 1024; // 100MB
+
         public static IWebHostBuilder CreateHostBuilder(string[] args)
         {
             var builder = new WebHostBuilder();
 
             builder.UseIISIntegration();
-            builder.UseKestrel();
+            builder.UseKestrel(opt =>
+            {
+                opt.Limits.MaxRequestBodySize = MAX_REQUEST_BODY_BYTES;
+            });
 
             //builder.UseKestrel((hostingContext, options) =>
             // {
@@ -71,6 +76,7 @@ namespace WebsiteTemplate.Test
                 x.ClearProviders();
                 x.AddDebug();
                 x.AddConsole();
+                x.AddFile("Logs/log-{Date}.txt");
             });
             builder.UseStartup<Startup>();
 

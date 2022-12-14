@@ -17,7 +17,7 @@ namespace WebsiteTemplate.Test.SiteSpecific
 
         public override bool UpdateDatabase => true; // Set to true first time to create tables. Also set to true after making changes
 
-        public override string ApplicationPassPhrase => "8375743900958305380983509";
+        public override string ApplicationPassPhrase => "xxxxxxxxxxxxxxxx";
 
         public override Type GetApplicationStartupType
         {

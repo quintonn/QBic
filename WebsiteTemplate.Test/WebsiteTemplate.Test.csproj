@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <UserSecretsId>30c0ab0f-3097-45eb-8684-8c3a2ccfd075</UserSecretsId>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
   
   <PropertyGroup>
@@ -11,14 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\*" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="wwwroot\Frontend\**" />
-    <Content Remove="wwwroot\Frontend\**" />
-    <EmbeddedResource Remove="wwwroot\Frontend\**" />
-    <None Remove="wwwroot\Frontend\**" />
+    <_WebToolingArtifacts Remove="Properties\launchSettings.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,15 +21,23 @@
     <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="5.0.1" />
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.113.6" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\WebsiteTemplate\WebsiteTemplate.csproj" />
   </ItemGroup>
 
- 
+  <ItemGroup>
+    <Content Include="Data\**\*" Exclude="Data\*.db;Data\*.txt" />
+    <Content Include="Properties\launchSettings.json" />
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="MenuItems\MarketplaceItems\" />
+  </ItemGroup> 
 
 
 </Project>
