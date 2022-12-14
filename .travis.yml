@@ -16,7 +16,7 @@ deploy:
   script:
     - dotnet pack QBicCore.sln -o . && dotnet nuget push "**/*.nupkg" --api-key $NUGET_API_KEY --source $NUGET_SOURCE --skip-duplicate  
   on:
-    branch: net_core
+    branch: master
 branches:
   only:
-    - net_core
+    - master
