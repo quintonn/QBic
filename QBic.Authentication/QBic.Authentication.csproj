@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Authors>Quintonn Rothmann</Authors>
     <Company>Quintonn Rothmann</Company>
     <Copyright>Copyright © 2018</Copyright>
-    <Version>7.0.0.1</Version>
+    <Version>6.0.0.1</Version>
     <RepositoryUrl>https://github.com/quintonn/QBic</RepositoryUrl>
     <Product>QBic.Authentication</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="6.0.1" />
     <PackageReference Include="NHibernate" Version="5.4.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.1" />
   </ItemGroup>

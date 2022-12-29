@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Authors>Quintonn Rothmann</Authors>
     <Company>Quintonn Rothmann</Company>
     <Copyright>Copyright © 2018</Copyright>
-    <Version>7.0.0.1</Version>
+    <Version>6.0.0.1</Version>
     <RepositoryUrl>https://github.com/quintonn/QBic</RepositoryUrl>
     <Product>DocumentGenerator</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
