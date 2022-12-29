@@ -1,7 +1,7 @@
 language: csharp
 mono: none
 dist: xenial
-dotnet: 5.0
+dotnet: 7.0
 solution: Build.sln
 warnings_are_errors: false
 install:
