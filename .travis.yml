@@ -5,8 +5,8 @@ dotnet: 5.0
 solution: Build.sln
 warnings_are_errors: false
 install:
-  - dotnet restore QBicCore.sln
-script: dotnet build QBicCore.sln
+  - dotnet restore QBic.sln
+script: dotnet build QBic.sln
 deploy:
   skip_cleanup: true
   provider: script
