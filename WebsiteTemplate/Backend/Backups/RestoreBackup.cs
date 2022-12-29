@@ -63,8 +63,6 @@ namespace WebsiteTemplate.Backend.Backups
                 var backupFile = GetValue<FileInfo>("BackupFile");
                 var restoreSystemSettings = GetValue<bool>("SystemSettings");
                 
-                var mainConnectionString = Config.GetConnectionString("MainDataStore");// = ConfigurationManager.ConnectionStrings["MainDataStore"]?.ConnectionString;
-                
                 var success = false;
                 try
                 {
@@ -75,8 +73,7 @@ namespace WebsiteTemplate.Backend.Backups
                         typesToIgnore.Add(typeof(Models.SystemSettingValue));
                     }
                     BackupService.BusyWithBackups = true;
-                    //BackupService.RemoveExistingData(mainConnectionString, typesToIgnore.ToArray());
-                    success = BackupService.RestoreFullBackup(true, backupFile.Data, mainConnectionString, typesToIgnore.ToArray());
+                    success = BackupService.RestoreFullBackup(true, backupFile.Data, typesToIgnore.ToArray());
                 }
                 finally
                 {

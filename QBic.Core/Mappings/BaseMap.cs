@@ -30,7 +30,7 @@ namespace QBic.Core.Mappings
 
                 if (propertyType == typeof(byte[]))
                 {
-                    if (DataStore.ProviderName == "SQL")
+                    if (DataStore.DbProviderType == DBProviderType.MSSQL)
                     {
                         dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Not.Nullable().CustomSqlType("varbinary(max)").Length(int.MaxValue);
                     }
@@ -42,11 +42,11 @@ namespace QBic.Core.Mappings
                 else if (propertyType == typeof(LongString))
                 {
 
-                    if (DataStore.ProviderName == "MYSQL")
+                    if (DataStore.DbProviderType == DBProviderType.MYSQL)
                     {
                         dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomType<LongString>().CustomSqlType("LONGTEXT").Length(int.MaxValue);
                     }
-                    else if (DataStore.ProviderName == "SQL")
+                    else if (DataStore.DbProviderType == DBProviderType.MSSQL)
                     {
                         dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomType<LongString>().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
                     }

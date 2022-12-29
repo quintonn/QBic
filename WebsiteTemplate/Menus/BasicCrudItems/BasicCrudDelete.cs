@@ -25,8 +25,6 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             }
         }
 
-        private DataService DataService { get; set; }
-
         public int Id { get; set; }
 
         public string ItemName { get; set; }

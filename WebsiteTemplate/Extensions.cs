@@ -52,6 +52,10 @@ namespace WebsiteTemplate
 
             var appSettings = Activator.CreateInstance<T>();
 
+            appSettings.SetConfig(configuration);
+
+            services.AddSingleton<IApplicationSettings>(appSettings);
+
             services.AddTransient<AuditService>();
 
             // registrations because Unity was removed and auto resolving doesn't work anymore
@@ -121,7 +125,7 @@ namespace WebsiteTemplate
             builder.AddAuthorization(); // This makes the AuthorizeAttribute work. Without this, requests are not authorized at all
             services.AddSingleton<IJwtAuthenticationProvider, QBicJwtAuthProvider>();
 
-            var dataStore = DataStore.GetInstance(appSettings.UpdateDatabase, appSettings.ShowSQL, configuration, services);
+            var dataStore = DataStore.GetInstance(appSettings.UpdateDatabase, appSettings, configuration, services);
             services.AddSingleton(dataStore);// appSettings.UpdateDatabase));
 
             // This is required for authentication to work

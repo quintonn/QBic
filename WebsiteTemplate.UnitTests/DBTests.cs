@@ -9,10 +9,8 @@ using QBic.Core.Data;
 using QBic.Core.Services;
 using QBic.Core.Utilities;
 using System;
-using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.UnitTests.Models;
 
@@ -22,6 +20,7 @@ namespace WebsiteTemplate.UnitTests
     public class DBTests
     {
         private IConfiguration Config { get; set; }
+        private IApplicationSettings AppSettings { get; set; }
         private IServiceCollection ServiceProvider { get; set; }
         [SetUp]
         public void Setup()
@@ -33,6 +32,7 @@ namespace WebsiteTemplate.UnitTests
             config.AddJsonFile("appsettings.json", true, true);
 
             Config = config.Build();
+            AppSettings = new TestAppSettings(Config);
             
             var serviceCollection = new ServiceCollection()
             .AddLogging(x =>
@@ -51,7 +51,7 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void DeleteInheritanceTest()
         {
-            var store = DataStore.GetInstance(true, false, Config, ServiceProvider);
+            var store = DataStore.GetInstance(true, AppSettings, Config, ServiceProvider);
 
             using (var session = store.OpenSession())
             {
@@ -87,7 +87,7 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void DeleteTest()
         {
-            var store = DataStore.GetInstance(true, false, Config, ServiceProvider);
+            var store = DataStore.GetInstance(true, AppSettings, Config, ServiceProvider);
 
             using (var session = store.OpenSession())
             {
@@ -150,7 +150,7 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void BasicTest()
         {
-            var store = DataStore.GetInstance(true, false, Config, ServiceProvider);
+            var store = DataStore.GetInstance(true, AppSettings, Config, ServiceProvider);
 
             using (var session = store.OpenSession())
             {
@@ -176,7 +176,7 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void AcmeTest()
         {
-            var store = DataStore.GetInstance(true, false, Config, ServiceProvider);
+            var store = DataStore.GetInstance(true, AppSettings, Config, ServiceProvider);
 
             using (var session = store.OpenSession())
             {
@@ -205,7 +205,7 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void TestAddingManyItems()
         {
-            var store = DataStore.GetInstance(true, false, Config, ServiceProvider);
+            var store = DataStore.GetInstance(true, AppSettings, Config, ServiceProvider);
             var stopwatch = Stopwatch.StartNew();
             var count = 1000;
             using (var session = store.OpenStatelessSession())
@@ -235,9 +235,9 @@ namespace WebsiteTemplate.UnitTests
         public void TestMakingAndRestoringBackup()
         {
             //var connection = ConfigurationManager.ConnectionStrings["MainDataStore"];
-            var connectionString = Config.GetConnectionString("MainDataStore");
-            var store = DataStore.GetInstance(true, false, Config, ServiceProvider);
-            var backupService = new BackupService();
+            //var connectionString = Config.GetConnectionString("MainDataStore");
+            var store = DataStore.GetInstance(true, AppSettings, Config, ServiceProvider);
+            var backupService = new BackupService(AppSettings);
             int preCount = 0;
             int postCount = 0;
             using (var session = store.OpenSession())
@@ -273,7 +273,7 @@ namespace WebsiteTemplate.UnitTests
                 session.Flush();
             }
 
-            backupService.RestoreFullBackup(true, backup, connectionString, typeof(ChildClass));
+            backupService.RestoreFullBackup(true, backup, typeof(ChildClass));
 
             using (var session = store.OpenSession())
             {

@@ -12,11 +12,11 @@ namespace QBic.Core.Mappings
 
             Id(x => x.Id).GeneratedBy.Assigned();
 
-            if (DataStore.ProviderName == "MYSQL")
+            if (DataStore.DbProviderType == DBProviderType.MYSQL)
             {
                 Map(x => x.Token).Not.Nullable().CustomType("StringClob").CustomSqlType("LONGTEXT").Length(int.MaxValue);
             }
-            else if(DataStore.ProviderName == "SQL")
+            else if (DataStore.DbProviderType == DBProviderType.MSSQL)
             {
                 Map(x => x.Token).Not.Nullable().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
             }
