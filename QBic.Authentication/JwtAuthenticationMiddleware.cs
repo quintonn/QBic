@@ -31,8 +31,6 @@ namespace QBic.Authentication
         {
             Logger = logger;
 
-            Logger.LogInformation("JWT Authentication middleware ctor");
-
             Next = next;
 
             SerializerOptions = new JsonSerializerOptions
