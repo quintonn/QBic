@@ -1,5 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentNHibernate.Cfg.Db;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
+using QBic.Core.Data;
+using QBic.Core.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -7,11 +11,17 @@ using WebsiteTemplate.Models.NonDatabase;
 
 namespace WebsiteTemplate.Utilities
 {
-    public abstract class ApplicationSettingsCore
+    public abstract class ApplicationSettingsCore : IApplicationSettings
     {
         public ApplicationSettingsCore()
         {
 
+        }
+
+        protected IConfiguration Config { get; set; }
+        public void SetConfig(IConfiguration config)
+        {
+            Config = config;
         }
         public abstract string GetApplicationName();
 
@@ -80,6 +90,10 @@ namespace WebsiteTemplate.Utilities
         {
             return new List<SystemSettingItem>();
         }
+
+        public abstract IPersistenceConfigurer GetPersistenceConfigurer(string databaseName);
+
+        public abstract DBProviderType DataProviderType { get; }
 
         public virtual string AccessControlAllowOrigin { get; } = "*";
         public virtual TimeSpan AccessTokenExpireTimeSpan { get; } = TimeSpan.FromHours(1); //Access token expires after 60min

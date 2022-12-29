@@ -4,11 +4,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
 using NHibernate.Cfg;
+using NHibernate.SqlCommand;
 using NHibernate.Tool.hbm2ddl;
 using QBic.Core.Utilities;
 using System;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 
 namespace QBic.Core.Data
 {
@@ -25,26 +27,28 @@ namespace QBic.Core.Data
         private static DataStore _instance { get; set; }
 
         private static bool UpdateDatabase { get; set; }
-        private static bool ShowSql { get; set; }
-        public static string ProviderName { get; set; }
+        private static IApplicationSettings AppSettings { get; set; }
+        //public static string ProviderName { get; set; }
+        public static DBProviderType DbProviderType { get; set; }
         private static IConfiguration Config { get; set; }
-        
-        private DataStore(bool updateDatabase, bool showSql)
+
+        private DataStore(bool updateDatabase, IApplicationSettings appSettings)
         {
             UpdateDatabase = updateDatabase;
-            ShowSql = showSql;
+            AppSettings = appSettings;
             init();
         }
 
-        public static DataStore GetInstance(bool updateDatabase, bool showSql, IConfiguration config, IServiceCollection serviceProvider = null)
+        public static DataStore GetInstance(bool updateDatabase, IApplicationSettings appSettings, IConfiguration config, IServiceCollection serviceProvider = null)
         {
             if (_instance == null)
             {
                 Config = config;
-                _instance = new DataStore(updateDatabase, showSql);
+                DbProviderType = appSettings.DataProviderType;
+                _instance = new DataStore(updateDatabase, appSettings);
                 if (serviceProvider != null)
                 {
-                    serviceProvider.AddTransient<ISessionFactory>((x) =>
+                    serviceProvider.AddSingleton<ISessionFactory>((x) =>
                     {
                         return Store;
                     });
@@ -79,17 +83,17 @@ namespace QBic.Core.Data
             var container = new FluentMappingsContainer();
 
 
-            var mainConnectionString = Config.GetConnectionString("MainDataStore");
+            //var mainConnectionString = Config.GetConnectionString("MainDataStore");
             //mainConnectionString = Encryption.Encrypt(mainConnectionString, AppSettings.ApplicationPassPhrase);
 
             //mainConnectionString = Encryption.Decrypt(mainConnectionString, AppSettings.ApplicationPassPhrase);
 
-            if (String.IsNullOrWhiteSpace(mainConnectionString))
-            {
-                throw new ArgumentNullException("MainDataStore connection string property in web.config does not contain a value for connection string");
-            }
+            //if (String.IsNullOrWhiteSpace(mainConnectionString))
+            //{
+            //    throw new ArgumentNullException("MainDataStore connection string property in web.config does not contain a value for connection string");
+            //}
 
-            Configuration = CreateNewConfigurationUsingConnectionString(mainConnectionString);
+            Configuration = CreateNewConfigurationUsingDatabaseName("MainDataStore");
 
             try
             {
@@ -105,14 +109,14 @@ namespace QBic.Core.Data
 
         private ISessionFactory CreateAuditSessionFactory()
         {
-            var connectionString = Config.GetConnectionString("AuditDataStore");
+            //var connectionString = Config.GetConnectionString("AuditDataStore");
 
-            if (String.IsNullOrWhiteSpace(connectionString))
-            {
-                return null;
-            }
+            //if (String.IsNullOrWhiteSpace(connectionString))
+            //{
+            //    return null;
+            //}
 
-            var configurer = CreatePersistenceConfigurer(connectionString);
+            var configurer = CreatePersistenceConfigurer("AuditDataStore");
 
             var config = Fluently.Configure()
                 .Database(configurer)
@@ -130,8 +134,20 @@ namespace QBic.Core.Data
             return factory;
         }
 
-        private IPersistenceConfigurer CreatePersistenceConfigurer(string connectionString)
+        private IPersistenceConfigurer CreatePersistenceConfigurerForBackups(string connectionString)
         {
+            //ProviderName = "SQLITE";
+
+            var currentDirectory = QBicUtils.GetCurrentDirectory();
+            connectionString = connectionString.Replace("##CurrentDirectory##", currentDirectory); // for my sqlite connectiontion string
+
+            var configurer = SQLiteConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
+            return configurer;
+        }
+
+        private IPersistenceConfigurer CreatePersistenceConfigurer(string databaseName)
+        {
+            /*
             IPersistenceConfigurer configurer;
             
             if (connectionString.Contains("##CurrentDirectory##") || connectionString.Contains(":memory:"))
@@ -154,12 +170,27 @@ namespace QBic.Core.Data
             }
 
             return configurer;
+            */
+
+            return AppSettings.GetPersistenceConfigurer(databaseName);
+        }
+
+        public NHibernate.Cfg.Configuration CreateNewConfigurationUsingDatabaseName(string databaseName)
+        {
+            var configurer = CreatePersistenceConfigurer(databaseName);
+
+            return CreateNewConfiguration(configurer);
         }
 
         public NHibernate.Cfg.Configuration CreateNewConfigurationUsingConnectionString(string connectionString)
         {
-            var configurer = CreatePersistenceConfigurer(connectionString);
+            var configurer = CreatePersistenceConfigurerForBackups(connectionString);
 
+            return CreateNewConfiguration(configurer);
+        }
+
+        private NHibernate.Cfg.Configuration CreateNewConfiguration(IPersistenceConfigurer configurer)
+        {
             var config = Fluently.Configure()
               .Database(configurer)
 
@@ -167,7 +198,7 @@ namespace QBic.Core.Data
 
             config.ExposeConfiguration(x =>
             {
-                x.SetProperty(NHibernate.Cfg.Environment.ShowSql, ShowSql.ToString().ToLower()); // shows sql in console
+                x.SetProperty(NHibernate.Cfg.Environment.ShowSql, AppSettings.ShowSQL.ToString().ToLower()); // shows sql in console (doesn't seem to work)
 
                 // This will set the command_timeout property on factory-level
                 //x.SetProperty(NHibernate.Cfg.Environment.CommandTimeout, "180");
@@ -206,12 +237,23 @@ namespace QBic.Core.Data
 
         public ISession OpenSession()
         {
-            return Store.OpenSession();
+            return Store.WithOptions()/*.Interceptor(new SqlDebugOutputInterceptor())*/.OpenSession();
         }
 
         public IStatelessSession OpenStatelessSession()
         {
             return Store.OpenStatelessSession();
+        }
+    }
+
+    public class SqlDebugOutputInterceptor : EmptyInterceptor
+    {
+        public override SqlString OnPrepareStatement(SqlString sql)
+        {
+            Debug.Write("NHibernate: ");
+            Debug.WriteLine(sql);
+
+            return base.OnPrepareStatement(sql);
         }
     }
 }

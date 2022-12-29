@@ -48,7 +48,7 @@ namespace WebsiteTemplate.Menus.InputItems
                                        bool orderByAsc = true,
                                        bool addBlankValue = false)
         {
-            var store = DataStore.GetInstance(false, false, null);
+            var store = DataStore.GetInstance(false, null, null); // datastore should be initialized at this point
             using (var session = store.OpenSession())
             {
                 var queryOver = session.QueryOver<T>();

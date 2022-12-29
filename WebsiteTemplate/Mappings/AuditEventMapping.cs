@@ -21,12 +21,12 @@ namespace WebsiteTemplate.Mappings
             Map(x => x.ObjectId).Not.Nullable();
             Map(x => x.EntityName).Not.Nullable();
             
-            if (DataStore.ProviderName == "MYSQL")
+            if (DataStore.DbProviderType == DBProviderType.MYSQL)
             {
                 Map(x => x.OriginalObject).Nullable().CustomType("StringClob").CustomSqlType("LONGTEXT").Length(int.MaxValue);
                 Map(x => x.NewObject).Nullable().CustomType("StringClob").CustomSqlType("LONGTEXT").Length(int.MaxValue);
             }
-            else if (DataStore.ProviderName == "SQL")
+            else if (DataStore.DbProviderType == DBProviderType.MSSQL)
             {
                 Map(x => x.OriginalObject).Nullable().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
                 Map(x => x.NewObject).Nullable().CustomSqlType("nvarchar(max)").Length(int.MaxValue);

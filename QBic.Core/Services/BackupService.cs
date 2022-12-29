@@ -29,9 +29,12 @@ namespace QBic.Core.Services
 
         public static readonly string BACKUP_HEADER_KEY = "BackupType";
 
-        public BackupService()
+        private IApplicationSettings AppSettings;
+
+        public BackupService(IApplicationSettings appSettings)
         {
-            DataService = DataStore.GetInstance(false, false, null);
+            AppSettings = appSettings;
+            DataService = DataStore.GetInstance(false, appSettings, null);
 
             if (SystemTypes == null)
             {
@@ -149,7 +152,7 @@ namespace QBic.Core.Services
                 CreateBackupFile(currentDirectory + backupName);
 
                 var connectionString = String.Format(@"Data Source=##CurrentDirectory##\Data\{0};Version=3;Journal Mode=Off;Connection Timeout=12000", backupName);
-                var store = DataStore.GetInstance(false, false, null);
+                var store = DataStore.GetInstance(false, AppSettings, null);
                 var config = store.CreateNewConfigurationUsingConnectionString(connectionString);
                 new SchemaUpdate(config).Execute(false, true); // Build the tables etc.
                 var factory = config.BuildSessionFactory();
@@ -199,7 +202,7 @@ namespace QBic.Core.Services
                 }
 
                 Logger.LogInformation("Closing factory");
-                factory.Close();
+                //factory.Close();
 
                 using (var session = factory.OpenSession())
                 {
@@ -236,19 +239,7 @@ namespace QBic.Core.Services
             }
         }
 
-        public void CreateNewDatabaseSchema(string connectionString)
-        {
-            var store = DataStore.GetInstance(false, false, null);
-
-            DynamicClass.SetIdsToBeAssigned = true; // This will set the Fluent NHibernate mappings' id's to be assigned and not GUID's for the restore.
-
-            var config = store.CreateNewConfigurationUsingConnectionString(connectionString);
-            new SchemaUpdate(config).Execute(true, true);
-
-            DynamicClass.SetIdsToBeAssigned = false; // Change it back
-        }
-
-        public void RemoveExistingData(string connectionString, params Type[] typesToIgnore)
+        private void RemoveExistingData(params Type[] typesToIgnore)
         {
             var ids = SystemTypes.Keys.ToList().OrderBy(i => i).Reverse().ToList();
 
@@ -270,6 +261,11 @@ namespace QBic.Core.Services
                         //itemsAllowed = session.QueryOver<Models.SystemSettings>().RowCount() +
                         //               session.QueryOver<Models.SystemSettingValue>().RowCount();
                         itemsAllowed += GetItemCount(type, session);
+                        continue;
+                    }
+
+                    if (type.FullName == "WebsiteTemplate.Models.AuditEvent")
+                    {
                         continue;
                     }
 
@@ -332,11 +328,11 @@ namespace QBic.Core.Services
             return false;
         }
 
-        public bool RestoreFullBackup(bool removeExistingItemsFirst, byte[] data, string dbConnectionString, params Type[] typesToIgnore)
+        public bool RestoreFullBackup(bool removeExistingItemsFirst, byte[] data, params Type[] typesToIgnore)
         {
             if (removeExistingItemsFirst)
             {
-                RemoveExistingData(dbConnectionString, typesToIgnore);
+                RemoveExistingData(typesToIgnore);
             }
 
             var stopwatch = new Stopwatch();
@@ -358,12 +354,12 @@ namespace QBic.Core.Services
                 File.WriteAllBytes(currentDirectory + backupName, data);
 
                 var connectionString = String.Format(@"Data Source=##CurrentDirectory##\Data\{0};Version=3;Journal Mode=Off;Connection Timeout=12000", backupName);
-                var store = DataStore.GetInstance(false, false, null);
+                var store = DataStore.GetInstance(false, AppSettings, null);
                 var backupConfig = store.CreateNewConfigurationUsingConnectionString(connectionString);
                 var backupFactory = backupConfig.BuildSessionFactory();
 
                 DynamicClass.SetIdsToBeAssigned = true;
-                var config = store.CreateNewConfigurationUsingConnectionString(dbConnectionString);
+                var config = store.CreateNewConfigurationUsingDatabaseName("MainDataStore");
                 var factory = config.BuildSessionFactory();
 
                 var ids = SystemTypes.Keys.ToList().OrderBy(i => i);
@@ -417,8 +413,8 @@ namespace QBic.Core.Services
                     }
                 }
 
-                factory.Close();
-                backupFactory.Close();
+                //factory.Close();
+                //backupFactory.Close();
 
                 using (var session = factory.OpenSession())
                 {

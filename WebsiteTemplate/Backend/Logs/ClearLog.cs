@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using NHibernate.Util;
+using QBic.Core.Utilities;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,13 +34,13 @@ namespace WebsiteTemplate.Backend.Logs
 
         public override async Task<IList<IEvent>> ProcessAction()
         {
-            //var rootAppender = ((Hierarchy)LogManager.GetRepository())
-            //                             .Root.Appenders.OfType<FileAppender>()
-            //                             .FirstOrDefault();
-            //if (rootAppender != null)
-            //{
-            //    File.WriteAllText(rootAppender.File, string.Empty);
-            //}
+            var logsPath = QBicUtils.GetCurrentDirectory() + Path.DirectorySeparatorChar + "Logs";
+            var directoryInfo = new DirectoryInfo(logsPath);
+            directoryInfo.GetFiles().OrderBy(x => x.LastAccessTime).ToList().ForEach(f =>
+            {
+                f.Delete();
+            });
+           
 
             return new List<IEvent>()
             {

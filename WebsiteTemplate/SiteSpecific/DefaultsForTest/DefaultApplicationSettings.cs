@@ -1,4 +1,9 @@
-﻿using System;
+﻿using FluentNHibernate.Cfg.Db;
+using Microsoft.Extensions.Configuration;
+using QBic.Core.Data;
+using QBic.Core.Utilities;
+using System;
+using System.Data;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
@@ -35,5 +40,19 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
         }
 
         public override bool TokenEndpointAllowInsecureHttpRequests => true;
+
+        public override DBProviderType DataProviderType => DBProviderType.SQLITE;
+
+        public override IPersistenceConfigurer GetPersistenceConfigurer(string databaseName)
+        {
+            var connectionString = Config.GetConnectionString(databaseName);
+            
+            var currentDirectory = QBicUtils.GetCurrentDirectory();
+            connectionString = connectionString.Replace("##CurrentDirectory##", currentDirectory); // for my sqlite connectiontion string
+
+            var configurer = SQLiteConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
+
+            return configurer;
+        }
     }
 }

@@ -1,7 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentNHibernate.Cfg.Db;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
+using QBic.Core.Data;
+using QBic.Core.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using WebsiteTemplate.Backend.Users;
 using WebsiteTemplate.Models.NonDatabase;
 using WebsiteTemplate.Test.MenuItems.Users;
@@ -18,6 +23,8 @@ namespace WebsiteTemplate.Test.SiteSpecific
         public override bool UpdateDatabase => true; // Set to true first time to create tables. Also set to true after making changes
 
         public override string ApplicationPassPhrase => "xxxxxxxxxxxxxxxx";
+
+        public override bool ShowSQL => true;
 
         public override Type GetApplicationStartupType
         {
@@ -55,5 +62,22 @@ namespace WebsiteTemplate.Test.SiteSpecific
                 new SystemSettingItem("TestCheck", "Test Check", Menus.InputItems.InputType.Boolean, true, "Email Settings", false),
             };
         }
+
+        public override IPersistenceConfigurer GetPersistenceConfigurer(string databaseName)
+        {
+            //var connectionString = Config.GetConnectionString(databaseName);
+
+            //var currentDirectory = QBicUtils.GetCurrentDirectory();
+            //connectionString = connectionString.Replace("##CurrentDirectory##", currentDirectory); // for my sqlite connectiontion string
+
+            //var configurer = SQLiteConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
+
+            var connectionString = "Integrated Security=SSPI;Persist Security Info=False;Data Source=localhost;Initial Catalog=WebTest;MultipleActiveResultSets=true";
+            var configurer = MsSqlConfiguration.MsSql2012.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
+
+            return configurer;
+        }
+
+        public override DBProviderType DataProviderType => DBProviderType.MSSQL;
     }
 }

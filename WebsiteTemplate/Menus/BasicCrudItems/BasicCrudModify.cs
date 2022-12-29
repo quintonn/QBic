@@ -16,8 +16,6 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 {
     public class BasicCrudModify<T> : GetInput, IBasicCrudModify where T : BaseClass
     {
-        private DataService DataService { get; set; }
-
         public BasicCrudModify(DataService dataService)
         {
             DataService = dataService;
