@@ -5,10 +5,10 @@ on: [push]
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     strategy:
       matrix:
-        dotnet-version: ['6.0' ]
+        dotnet-version: ['7.0' ]
 
     steps:
       - uses: actions/checkout@v3
@@ -27,3 +27,5 @@ jobs:
         run: dotnet restore QBic.sln
       - name: Build
         run: dotnet build QBic.sln --configuration Release --no-restore
+	  - name: Publish
+	    run: dotnet pack QBic.sln -o . && dotnet nuget push "**/*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source ${{secrets.NUGET_SOURCE}} --skip-duplicate  \
