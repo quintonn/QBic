@@ -16,16 +16,18 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
-      - uses: actions/cache@v3
-        with:
-          path: ~/.nuget/packages
-          # Look to see if there is a cache hit for the corresponding requirements file
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget
+#      - uses: actions/cache@v3
+#        with:
+#          path: ~/.nuget/packages
+#          # Look to see if there is a cache hit for the corresponding requirements file
+#          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+#          restore-keys: |
+#            ${{ runner.os }}-nuget
       - name: Install dependencies
         run: dotnet restore QBic.sln
       - name: Build
         run: dotnet build QBic.sln --configuration Release --no-restore
+      - name: ShowDir
+        run: cd
       - name: Publish
         run: dotnet pack QBic.sln -o . && dotnet nuget push "*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source ${{secrets.NUGET_SOURCE}} --skip-duplicate  \
