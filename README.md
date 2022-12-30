@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.com/quintonn/qBic.svg?branch=master)](https://travis-ci.com/quintonn/qBic)
+[![Build Status](https://github.com/quintonn/QBic/actions/workflows/github-actions.yml/badge.svg)](https://github.com/quintonn/QBic/actions/workflows/github-actions.yml)  
+
 
 ##### Table of Contents  
 1. [Introduction](#introduction)  
