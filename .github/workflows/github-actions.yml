@@ -30,4 +30,4 @@ jobs:
       - name: ShowDir
         run: cd
       - name: Publish
-        run: dotnet pack QBic.sln -o . && dotnet nuget push "*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source ${{secrets.NUGET_SOURCE}} --skip-duplicate  \
+        run: dotnet pack QBic.sln -c Release -o dist && dotnet nuget push "dist\*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source ${{secrets.NUGET_SOURCE}} --skip-duplicate  \
