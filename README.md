@@ -60,7 +60,7 @@ To create and run a new project, simply run the following commands:
 1. Login with admin/password
 
 Or, if on Windows, run the following single line:
-> dotnet new -i qbic-dotnet-template && dotnet new qBic -n myProject && cd myProject && start "" "https://localhost:5001" && dotnet run
+> dotnet new install qbic-dotnet-template && dotnet new qBic -n myProject && cd myProject && start "" "https://localhost:5001" && dotnet run
 
 # Documentation
 Documentation will be added over the course of time.  
