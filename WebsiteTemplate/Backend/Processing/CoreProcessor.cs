@@ -51,7 +51,14 @@ namespace WebsiteTemplate.Backend.Processing
             catch (Exception error)
             {
                 var message = error.Message;
-                SystemLogger.LogError("Error in core processor during Process", this.GetType(), error);
+                SystemLogger.LogError("Error in core processor during Process: " + error.Message + "\r\n"+error.StackTrace, this.GetType(), error);
+                var tmp = error;
+                while (tmp.InnerException != null)
+                {
+                    tmp = tmp.InnerException;
+                    SystemLogger.LogError("\t"+tmp.Message+"\r\n"+tmp.StackTrace, this.GetType(), tmp);
+                }
+                
                 return new BadRequestObjectResult(JsonSerializer.Serialize(SystemLogger.GetMessageStack(error)));
                 //return new BadRequestErrorMessageResult(SystemLogger.GetMessageStack(error), new DefaultContentNegotiator(), requestMessage, new List<MediaTypeFormatter>()
                 //{
