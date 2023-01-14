@@ -35,28 +35,36 @@ namespace WebsiteTemplate.Backend.UIProcessors
             return UserService.FindUserByUserName(userName);
         }
 
-        public override ProcessingResult PreDeleteActivities(ISession session, string itemId)
+        private void DeleteAuditEvents(string userId)
+        {
+            using (var session = DataService.OpenAuditSession())
+            {
+                var auditEvents = session.CreateCriteria<AuditEvent>()
+                                         .Add(Restrictions.Eq("UserId", userId))
+                                         .List<AuditEvent>()
+                                         .ToList();
+                auditEvents.ForEach(session.Delete);
+
+                session.Flush();
+            }
+        }
+
+        public override ProcessingResult PreDeleteActivities(ISession session, string userId)
         {
             var userRoles = session.CreateCriteria<UserRoleAssociation>()
                                        .CreateAlias("User", "user")
-                                       .Add(Restrictions.Eq("user.Id", itemId))
+                                       .Add(Restrictions.Eq("user.Id", userId))
                                        .List<UserRoleAssociation>()
                                        .ToList();
-            var auditEvents = session.CreateCriteria<AuditEvent>()
-                                     .CreateAlias("User", "user")
-                                     .Add(Restrictions.Eq("user.Id", itemId))
-                                     .List<AuditEvent>()
-                                     .ToList();
-            auditEvents.ForEach(a =>
-            {
-                DataService.TryDelete(session, a);
-            });
+            
             userRoles.ForEach(u =>
             {
                 DataService.TryDelete(session, u);
             });
 
-            return Injector.DeleteItem(session, itemId);
+            DeleteAuditEvents(userId);
+
+            return Injector.DeleteItem(session, userId);
         }
 
         public override async Task<ProcessingResult> SaveOrUpdate(string itemId)

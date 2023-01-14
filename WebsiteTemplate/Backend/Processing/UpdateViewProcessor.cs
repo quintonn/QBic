@@ -67,7 +67,6 @@ namespace WebsiteTemplate.Backend.Processing
             }
             var action = eventItem as ShowView;
 
-
             data = originalData;
             var parentData = data;
 

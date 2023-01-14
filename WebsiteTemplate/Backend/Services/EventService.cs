@@ -166,6 +166,7 @@ namespace WebsiteTemplate.Backend.Services
                         continue;
                     }
 
+                    //TODO: Can do the same for CoreModify, so I don't need to create 2 classes all the time
 
                     if (type.GetInterface("IBasicCrudMenuItem") != null)
                     {
