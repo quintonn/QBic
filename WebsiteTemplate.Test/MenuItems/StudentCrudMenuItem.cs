@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using NHibernate;
+using System.Collections.Generic;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.BasicCrudItems;
 using WebsiteTemplate.Test.Models;
@@ -35,7 +36,13 @@ namespace WebsiteTemplate.Test.MenuItems
             return new Dictionary<string, string>()
             {
                 { "Name", "Name" },
+                { "Class", "Class" }
             };
+        }
+
+        public override IQueryOver<Student> OrderQuery(IQueryOver<Student, Student> query)
+        {
+            return query.OrderBy(x => x.Name).Asc;
         }
     }
 }

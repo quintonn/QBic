@@ -81,8 +81,18 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             return query;
         }
 
+        /// <summary>
+        /// The columns to show in the view. Value is Label and Key is Column Name.
+        /// For DynamicClass fields, use 'field.subField' as the Key (e.g. User.Name)
+        /// </summary>
+        /// <returns>Columns to show in the view</returns>
         public abstract Dictionary<string, string> GetColumnsToShowInView();
 
+        /// <summary>
+        /// The fields to input when modifying the item.
+        /// For DynamicClass fields, override their .ToString() methods, which is what is used as the display value in the combo box
+        /// </summary>
+        /// <returns>Dictionary of inputs and their labels on the screen. The second value is the input label, first is the key.</returns>
         public abstract Dictionary<string, string> GetInputProperties();
 
         public abstract EventNumber GetBaseMenuId();

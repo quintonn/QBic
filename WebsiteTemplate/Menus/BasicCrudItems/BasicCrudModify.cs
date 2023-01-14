@@ -16,6 +16,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 {
     public class BasicCrudModify<T> : GetInput, IBasicCrudModify where T : BaseClass
     {
+        private static Type DynamicClassType = typeof(DynamicClass);
         public BasicCrudModify(DataService dataService)
         {
             DataService = dataService;
@@ -95,7 +96,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                     var item = ctor.Invoke(new object[] { input.Key, input.Value, false, null, null, defaultValue?.ToString(), null });
                     list.Add(item as InputField);
                 }
-                else if (baseType.IsSubclassOf(typeof(DynamicClass)))
+                else if (baseType.IsSubclassOf(DynamicClassType))
                 {
                     var type = typeof(DataSourceComboBoxInput<>);
                     //new DataSourceComboBoxInput<DynamicClass>(input.Key, input.Value, x => x.Id, x => x.ToString(), defaultValue);
@@ -103,7 +104,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                     Func<DynamicClass, string> keyFunc = x => x.Id;
                     Func<dynamic, object> valueFunc = x => x.ToString();
                     var ctor = comboType.GetConstructors()[0];
-                    var item = ctor.Invoke(new object[] { input.Key, input.Value, keyFunc, valueFunc, defaultValue, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing });
+                    var item = ctor.Invoke(new object[] { input.Key, input.Value, keyFunc, valueFunc, (defaultValue as DynamicClass)?.Id, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing });
                     var comboInstance = item as InputField;
                     //var enumInstance = Activator.CreateInstance(comboType, input.Key, input.Value, keyFunc, valueFunc, defaultValue) as InputField;
                     list.Add(comboInstance);
@@ -230,6 +231,14 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                             {
                                 prop.SetValue(item, date);
                             }
+                        }
+                        else if (prop.PropertyType.IsSubclassOf(DynamicClassType))
+                        {
+                            var method = GetType().GetMethods().Where(m => m.Name == "GetDataSourceValue").First();
+                            var generic = method.MakeGenericMethod(prop.PropertyType);
+                            var dbItem = generic.Invoke(this, new object[] { value.Key });
+
+                            prop.SetValue(item, dbItem);
                         }
                         else
                         {
