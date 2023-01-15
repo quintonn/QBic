@@ -10304,7 +10304,8 @@ function userModel(id, name, role)
     auth.performLogin = function (username, password)
     {
         var url = mainApp.apiURL + "token";
-        var data = "grant_type=password&username=" + username + "&password=" + password + "&client_id=" + _applicationModel.applicationName();
+        var data = "grant_type=password&username=" + username + "&password=" + encodeURIComponent(password) + "&client_id=" + _applicationModel.applicationName();
+        const abc = "1.0.0.1";
 
         dialog.showBusyDialog("Logging in...");
         return mainApp.makeWebCall(url, "POST", data)

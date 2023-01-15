@@ -44,15 +44,27 @@ module.exports = env =>
             {
                 fs.unlinkSync(__dirname + "/_wwwroot/main"); // delete the main file created by webpack
 
-                if (env && env.dev && env.dev == true)
+                console.log('-----------------');
+                console.log(__dirname);
+                console.log('-----------------');
+
+                var destDirs = [];
+
+                destDirs.push("../WebsiteTemplate.Test/wwwroot");
+
+                if (env && env.prod && env.prod == true)
                 {
-                    // copy the files to my test project too
-                    var destDir = "../WebsiteTemplate.Test/wwwroot";
+                    //destDirs.push("_wwwroot"); // already being copied here
+                }
 
+                // copy files to other folders too
+                destDirs.forEach(f =>
+                {
                     // copy site override css file to temp buffer
-                    var tmp = fs.readFileSync(destDir + "/siteOverrides.css");
+                    var tmp = fs.readFileSync(f + "/siteOverrides.css");
 
-                    fse.copySync(__dirname + "/_wwwroot", destDir, { overwrite: true }, function (err)
+                    console.log('copying to ' + f);
+                    fse.copySync(__dirname + "/_wwwroot", f, { overwrite: true }, function (err)
                     {
                         if (err)
                         {
@@ -65,8 +77,8 @@ module.exports = env =>
                     });
 
                     // put site override css file back
-                    fs.writeFileSync(destDir + "/siteOverrides.css", tmp);
-                }
+                    fs.writeFileSync(f + "/siteOverrides.css", tmp);
+                });
             }),
             // Also watch for any changes. CSS files not auto watched by webpack watch flag.
             new WatchExternalFilesPlugin({
