@@ -54,7 +54,7 @@ module.exports = env =>
 
                 if (env && env.prod && env.prod == true)
                 {
-                    //destDirs.push("_wwwroot"); // already being copied here
+                    destDirs.push("../WebsiteTemplate/wwwroot");
                 }
 
                 // copy files to other folders too
