@@ -42,7 +42,7 @@ namespace WebsiteTemplate.Test.SiteSpecific
             }
         }
 
-        public override bool TokenEndpointAllowInsecureHttpRequests => true;
+        public override bool TokenEndpointAllowInsecureHttpRequests => false;
 
         public override string GetApplicationName()
         {
