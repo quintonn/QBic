@@ -38,12 +38,12 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
                                                    .Take(settings.LinesPerPage)
                                                    .List<T>()
                                                    .ToList();
-                var results = TransformData(data);
+                var results = TransformData(data, session);
                 return results;
             }
         }
 
-        public virtual IEnumerable TransformData(IList<T> data)
+        public virtual IEnumerable TransformData(IList<T> data, ISession session)
         {
             return data;
         }

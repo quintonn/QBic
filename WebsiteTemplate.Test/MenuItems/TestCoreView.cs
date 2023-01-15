@@ -48,7 +48,7 @@ namespace WebsiteTemplate.Test.MenuItems
             };
         }
 
-        public override IEnumerable TransformData(IList<CauseChild> data)
+        public override IEnumerable TransformData(IList<CauseChild> data, ISession session)
         {
             return data.Select(d => new
             {

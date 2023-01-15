@@ -12,6 +12,8 @@ namespace WebsiteTemplate.Menus.BaseItems
             Value = value;
         }
 
+        //TODO: I need a way to not show the "system events" in the user role screen, but to allow it
+
         public static EventNumber Nothing = new EventNumber(0);
         public static EventNumber Logout = new EventNumber(10);
         public static EventNumber ViewUsers = new EventNumber(1000);

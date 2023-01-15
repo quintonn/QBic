@@ -28,10 +28,8 @@ namespace WebsiteTemplate.Backend.Processing
                                            .Add(Restrictions.IsNull("ParentMenu"))
                                            .List<Menu>()
                                            .ToList();
-                mainMenus.ForEach(m =>
-                {
-                    results.Add(m);
-                });
+                
+                mainMenus.ForEach(results.Add);
 
                 var mainMenusWithSubMenus = session.CreateCriteria<Menu>()
                                            .Add(Restrictions.IsNull("Event"))
