@@ -10,7 +10,9 @@ using QBic.Core.Services;
 using QBic.Core.Utilities;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.UnitTests.Models;
 
@@ -20,11 +22,20 @@ namespace WebsiteTemplate.UnitTests
     public class DBTests
     {
         private IConfiguration Config { get; set; }
-        private IApplicationSettings AppSettings { get; set; }
-        private IServiceCollection ServiceProvider { get; set; }
+        //private IApplicationSettings AppSettings { get; set; }
+        private IServiceCollection ServiceCollection { get; set; }
+        private ServiceProvider ServiceProvider { get; set; }
+
         [SetUp]
         public void Setup()
         {
+            var currentDirectory = QBicUtils.GetCurrentDirectory();
+            var dbFile = currentDirectory + "\\Data\\appDataCore.db";
+            if (File.Exists(dbFile))
+            {
+                File.Delete(dbFile);
+            }
+
             var types = typeof(User).Assembly.GetTypes().ToList(); // force WebsiteTemplate types to load for datastore initialization
             Console.WriteLine(types.Count);
 
@@ -32,7 +43,6 @@ namespace WebsiteTemplate.UnitTests
             config.AddJsonFile("appsettings.json", true, true);
 
             Config = config.Build();
-            AppSettings = new TestAppSettings(Config);
             
             var serviceCollection = new ServiceCollection()
             .AddLogging(x =>
@@ -43,15 +53,19 @@ namespace WebsiteTemplate.UnitTests
 
             //serviceCollection.configure
 
-            ServiceProvider = serviceCollection;
-            var provider = serviceCollection.BuildServiceProvider();
-            var factory = provider.GetService<ILoggerFactory>();
+            ServiceCollection = serviceCollection;
+
+            serviceCollection.UseQBic<TestAppSettings, TestAppStartup>(Config);
+
+            ServiceProvider = serviceCollection.BuildServiceProvider();
+            var factory = ServiceProvider.GetService<ILoggerFactory>();
             SystemLogger.Setup(factory);
         }
         [Test]
         public void DeleteInheritanceTest()
         {
-            var store = DataStore.GetInstance(true, AppSettings, Config, ServiceProvider);
+            var appSettings = ServiceProvider.GetService<IApplicationSettings>();
+            var store = DataStore.GetInstance(true, appSettings, Config, ServiceCollection);
 
             using (var session = store.OpenSession())
             {
@@ -87,7 +101,8 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void DeleteTest()
         {
-            var store = DataStore.GetInstance(true, AppSettings, Config, ServiceProvider);
+            var appSettings = ServiceProvider.GetService<IApplicationSettings>();
+            var store = DataStore.GetInstance(true, appSettings, Config, ServiceCollection);
 
             using (var session = store.OpenSession())
             {
@@ -150,7 +165,8 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void BasicTest()
         {
-            var store = DataStore.GetInstance(true, AppSettings, Config, ServiceProvider);
+            var appSettings = ServiceProvider.GetService<IApplicationSettings>();
+            var store = DataStore.GetInstance(true, appSettings, Config, ServiceCollection);
 
             using (var session = store.OpenSession())
             {
@@ -176,9 +192,11 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void AcmeTest()
         {
-            var store = DataStore.GetInstance(true, AppSettings, Config, ServiceProvider);
+            var appSettings = ServiceProvider.GetService<IApplicationSettings>();
+            //var store = DataStore.GetInstance(true, appSettings, Config, ServiceCollection);
+            var dataService = ServiceProvider.GetService<DataService>();
 
-            using (var session = store.OpenSession())
+            using (var session = dataService.OpenSession())
             {
                 var item = new AcmeData()
                 {
@@ -205,7 +223,8 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void TestAddingManyItems()
         {
-            var store = DataStore.GetInstance(true, AppSettings, Config, ServiceProvider);
+            var appSettings = ServiceProvider.GetService<IApplicationSettings>();
+            var store = DataStore.GetInstance(true, appSettings, Config, ServiceCollection);
             var stopwatch = Stopwatch.StartNew();
             var count = 1000;
             using (var session = store.OpenStatelessSession())
@@ -234,10 +253,11 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void TestMakingAndRestoringBackup()
         {
+            var appSettings = ServiceProvider.GetService<IApplicationSettings>();
             //var connection = ConfigurationManager.ConnectionStrings["MainDataStore"];
             //var connectionString = Config.GetConnectionString("MainDataStore");
-            var store = DataStore.GetInstance(true, AppSettings, Config, ServiceProvider);
-            var backupService = new BackupService(AppSettings);
+            var store = DataStore.GetInstance(true, appSettings, Config, ServiceCollection);
+            var backupService = new BackupService(appSettings);
             int preCount = 0;
             int postCount = 0;
             using (var session = store.OpenSession())

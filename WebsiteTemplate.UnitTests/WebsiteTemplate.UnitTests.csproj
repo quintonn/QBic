@@ -32,10 +32,4 @@
     <ProjectReference Include="..\WebsiteTemplate\WebsiteTemplate.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="Data\test.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

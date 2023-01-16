@@ -82,7 +82,6 @@ namespace QBic.Core.Data
         {
             var container = new FluentMappingsContainer();
 
-
             //var mainConnectionString = Config.GetConnectionString("MainDataStore");
             //mainConnectionString = Encryption.Encrypt(mainConnectionString, AppSettings.ApplicationPassPhrase);
 
@@ -92,7 +91,6 @@ namespace QBic.Core.Data
             //{
             //    throw new ArgumentNullException("MainDataStore connection string property in web.config does not contain a value for connection string");
             //}
-
             Configuration = CreateNewConfigurationUsingDatabaseName("MainDataStore");
 
             try

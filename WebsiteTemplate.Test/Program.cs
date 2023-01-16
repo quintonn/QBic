@@ -50,8 +50,6 @@ namespace WebsiteTemplate.Test
             });
             builder.UseStartup<Startup>();
 
-            
-
             return builder;
         }
     }
