@@ -24,13 +24,11 @@ namespace WebsiteTemplate.UnitTests
 
         public override bool TokenEndpointAllowInsecureHttpRequests => false;
 
+        static string name = Guid.NewGuid().ToString();// + ".db";
         public override IPersistenceConfigurer GetPersistenceConfigurer(string databaseName)
         {
-            var connectionString = Config.GetConnectionString(databaseName);
-
-            var currentDirectory = QBicUtils.GetCurrentDirectory();
-            connectionString = connectionString.Replace("##CurrentDirectory##", currentDirectory); // for my sqlite connectiontion string
-
+            var connectionString = $"Data Source=file:{name}?mode=memory&cache=shared;Version=3;New=True";
+            
             var configurer = SQLiteConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
 
             return configurer;

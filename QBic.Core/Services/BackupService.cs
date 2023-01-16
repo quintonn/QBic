@@ -152,6 +152,8 @@ namespace QBic.Core.Services
                 CreateBackupFile(currentDirectory + backupName);
 
                 var connectionString = String.Format(@"Data Source=##CurrentDirectory##\Data\{0};Version=3;Journal Mode=Off;Connection Timeout=12000", backupName);
+                //var connectionString = $"Data Source=file:{Guid.NewGuid()}?mode=memory&cache=shared;Version=3;New=True";
+                // this doesn't work because the code is reading the sqlite db file at the end. Maybe there is another way to get it
                 var store = DataStore.GetInstance(false, AppSettings, null);
                 var config = store.CreateNewConfigurationUsingConnectionString(connectionString);
                 new SchemaUpdate(config).Execute(false, true); // Build the tables etc.
@@ -354,6 +356,7 @@ namespace QBic.Core.Services
                 File.WriteAllBytes(currentDirectory + backupName, data);
 
                 var connectionString = String.Format(@"Data Source=##CurrentDirectory##\Data\{0};Version=3;Journal Mode=Off;Connection Timeout=12000", backupName);
+                //var connectionString = $"Data Source=file:{Guid.NewGuid()}?mode=memory&cache=shared;Version=3;New=True";
                 var store = DataStore.GetInstance(false, AppSettings, null);
                 var backupConfig = store.CreateNewConfigurationUsingConnectionString(connectionString);
                 var backupFactory = backupConfig.BuildSessionFactory();

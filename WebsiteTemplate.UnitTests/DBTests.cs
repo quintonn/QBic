@@ -5,7 +5,6 @@ using NHibernate.Exceptions;
 using NHibernate.Linq;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
-using QBic.Core.Data;
 using QBic.Core.Services;
 using QBic.Core.Utilities;
 using System;
@@ -23,10 +22,10 @@ namespace WebsiteTemplate.UnitTests
     {
         private IConfiguration Config { get; set; }
         //private IApplicationSettings AppSettings { get; set; }
-        private IServiceCollection ServiceCollection { get; set; }
         private ServiceProvider ServiceProvider { get; set; }
+        private DataService DataService { get; set; }
 
-        [SetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             var currentDirectory = QBicUtils.GetCurrentDirectory();
@@ -39,8 +38,10 @@ namespace WebsiteTemplate.UnitTests
             var types = typeof(User).Assembly.GetTypes().ToList(); // force WebsiteTemplate types to load for datastore initialization
             Console.WriteLine(types.Count);
 
+            types = typeof(AcmeData).Assembly.GetTypes().ToList(); // force WebsiteTemplate types to load for datastore initialization
+            Console.WriteLine(types.Count);
+
             var config = new ConfigurationBuilder();
-            config.AddJsonFile("appsettings.json", true, true);
 
             Config = config.Build();
             
@@ -51,23 +52,18 @@ namespace WebsiteTemplate.UnitTests
             })
             .AddSingleton<IConfiguration>(Config);
 
-            //serviceCollection.configure
-
-            ServiceCollection = serviceCollection;
-
             serviceCollection.UseQBic<TestAppSettings, TestAppStartup>(Config);
 
             ServiceProvider = serviceCollection.BuildServiceProvider();
             var factory = ServiceProvider.GetService<ILoggerFactory>();
             SystemLogger.Setup(factory);
+
+            DataService = ServiceProvider.GetService<DataService>();
         }
         [Test]
         public void DeleteInheritanceTest()
         {
-            var appSettings = ServiceProvider.GetService<IApplicationSettings>();
-            var store = DataStore.GetInstance(true, appSettings, Config, ServiceCollection);
-
-            using (var session = store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var item = new ChildClass()
                 {
@@ -78,7 +74,7 @@ namespace WebsiteTemplate.UnitTests
                 session.Flush();
             }
 
-            using (var session = store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var childCount = session.QueryOver<ChildClass>().RowCount();
                 var parentCount = session.QueryOver<ParentClass>().RowCount();
@@ -101,10 +97,7 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void DeleteTest()
         {
-            var appSettings = ServiceProvider.GetService<IApplicationSettings>();
-            var store = DataStore.GetInstance(true, appSettings, Config, ServiceCollection);
-
-            using (var session = store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 session.Query<Department>().Delete();
                 session.Query<Employee>().Delete();
@@ -128,7 +121,7 @@ namespace WebsiteTemplate.UnitTests
                 session.Flush();
             }
             
-            using (var session = store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var demptCount = session.QueryOver<Department>().RowCount();
                 var empCount = session.QueryOver<Employee>().RowCount();
@@ -165,10 +158,7 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void BasicTest()
         {
-            var appSettings = ServiceProvider.GetService<IApplicationSettings>();
-            var store = DataStore.GetInstance(true, appSettings, Config, ServiceCollection);
-
-            using (var session = store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var preCount = session.QueryOver<BasicDataClass>().RowCount();
                 if (preCount == 0)
@@ -192,11 +182,7 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void AcmeTest()
         {
-            var appSettings = ServiceProvider.GetService<IApplicationSettings>();
-            //var store = DataStore.GetInstance(true, appSettings, Config, ServiceCollection);
-            var dataService = ServiceProvider.GetService<DataService>();
-
-            using (var session = dataService.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var item = new AcmeData()
                 {
@@ -223,11 +209,9 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void TestAddingManyItems()
         {
-            var appSettings = ServiceProvider.GetService<IApplicationSettings>();
-            var store = DataStore.GetInstance(true, appSettings, Config, ServiceCollection);
             var stopwatch = Stopwatch.StartNew();
             var count = 1000;
-            using (var session = store.OpenStatelessSession())
+            using (var session = DataService.OpenStatelessSession())
             using (var transaction = session.BeginTransaction())
             {
                 for (var i = 0; i < count; i++)
@@ -253,14 +237,10 @@ namespace WebsiteTemplate.UnitTests
         [Test]
         public void TestMakingAndRestoringBackup()
         {
-            var appSettings = ServiceProvider.GetService<IApplicationSettings>();
-            //var connection = ConfigurationManager.ConnectionStrings["MainDataStore"];
-            //var connectionString = Config.GetConnectionString("MainDataStore");
-            var store = DataStore.GetInstance(true, appSettings, Config, ServiceCollection);
-            var backupService = new BackupService(appSettings);
+            var backupService = ServiceProvider.GetService<BackupService>();
             int preCount = 0;
             int postCount = 0;
-            using (var session = store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 preCount = session.QueryOver<ChildClass>().RowCount();
                 if (preCount == 0)
@@ -275,13 +255,11 @@ namespace WebsiteTemplate.UnitTests
                     preCount++;
                 }
             }
-
             
             var backup = backupService.CreateFullBackup();
 
-
             // Add 1 more item, and we'll make sure it doesn't get removed by the backup using ignoreType
-            using (var session = store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 var item = new ChildClass()
                 {
@@ -295,7 +273,7 @@ namespace WebsiteTemplate.UnitTests
 
             backupService.RestoreFullBackup(true, backup, typeof(ChildClass));
 
-            using (var session = store.OpenSession())
+            using (var session = DataService.OpenSession())
             {
                 postCount = session.QueryOver<ChildClass>().RowCount();
             }
