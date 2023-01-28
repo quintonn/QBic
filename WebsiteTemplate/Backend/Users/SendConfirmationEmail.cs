@@ -44,7 +44,7 @@ namespace WebsiteTemplate.Backend.Users
             var id = GetValue("Id");
 
             var user = UserService.RetrieveUser(id);
-            emailSentResultMessage = await UserService.SendAcccountFonfirmationEmail(user.Id, user.UserName, user.Email);
+            emailSentResultMessage = await UserService.SendAcccountConfirmationEmail(user.Id, user.UserName, user.Email);
 
             if (String.IsNullOrWhiteSpace(emailSentResultMessage))
             {

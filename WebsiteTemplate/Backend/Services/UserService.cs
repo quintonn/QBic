@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using NHibernate;
 using NHibernate.Criterion;
-using QBic.Authentication;
 using QBic.Core.Utilities;
 using System;
 using System.Collections.Generic;
@@ -77,7 +76,7 @@ namespace WebsiteTemplate.Backend.Services
             }
             try
             {
-                var emailResult = await SendAcccountFonfirmationEmail(user.Id, userName, email);
+                var emailResult = await SendAcccountConfirmationEmail(user.Id, userName, email);
 
                 return emailResult;
             }
@@ -87,7 +86,7 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        public async Task<string> SendPasswordResetLink(string userNameOrEmail)
+        public virtual async Task<string> SendPasswordResetLink(string userNameOrEmail)
         {
             Models.SystemSettings settings;
             using (var session = DataService.OpenSession())
@@ -162,7 +161,7 @@ namespace WebsiteTemplate.Backend.Services
             return emailStatus;
         }
 
-        public async Task<string> SendAcccountFonfirmationEmail(string userId, string userName, string emailAddress)
+        public virtual async Task<string> SendAcccountConfirmationEmail(string userId, string userName, string emailAddress)
         {
             Models.SystemSettings settings;
             User dbUser;
