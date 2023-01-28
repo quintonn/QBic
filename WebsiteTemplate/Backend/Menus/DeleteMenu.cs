@@ -41,8 +41,8 @@ namespace WebsiteTemplate.Backend.Menus
             return EventNumber.DeleteMenu;
         }
 
-        public DeleteMenu(MenuProcessor menuProcessor, MenuService menuService)
-            : base(menuProcessor)
+        public DeleteMenu(MenuProcessor menuProcessor, MenuService menuService, DataService dataService)
+            : base(menuProcessor, dataService)
         {
             MenuService = menuService;
         }

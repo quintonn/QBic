@@ -10,11 +10,8 @@ namespace WebsiteTemplate.Backend.Menus
 {
     public class IncrementMenuOrder : DoSomething
     {
-        private DataService DataService { get; set; }
-
-        public IncrementMenuOrder(DataService dataService)
+        public IncrementMenuOrder(DataService dataService) : base(dataService)
         {
-            DataService = dataService;
         }
         public override bool AllowInMenu
         {

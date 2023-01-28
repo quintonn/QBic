@@ -7,7 +7,12 @@ namespace WebsiteTemplate.Menus.InputItems
 {
     public abstract class InputProcessingEvent : Event
     {
-        internal DataService DataService { get; set; }
+        protected DataService DataService { get; set; }
+
+        protected InputProcessingEvent(DataService dataService)
+        {
+            DataService = dataService;
+        }
 
         public Dictionary<string, object> InputData { get; set; } = new Dictionary<string, object>();
 

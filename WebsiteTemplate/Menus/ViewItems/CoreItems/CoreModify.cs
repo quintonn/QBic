@@ -13,14 +13,12 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
 {
     public abstract class CoreModify<T> : GetInput where T : DynamicClass
     {
-        protected DataService DataService { get; set; }
         protected bool IsNew { get; set; }
 
         protected T Item { get; set; }
 
-        public CoreModify(DataService dataService, bool isNew)
+        public CoreModify(DataService dataService, bool isNew) : base(dataService) 
         {
-            DataService = dataService;
             IsNew = isNew;
         }
 

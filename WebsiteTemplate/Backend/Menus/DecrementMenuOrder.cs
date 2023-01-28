@@ -10,11 +10,8 @@ namespace WebsiteTemplate.Backend.Menus
 {
     public class DecrementMenuOrder : DoSomething
     {
-        private DataService DataService { get; set; }
-
-        public DecrementMenuOrder(DataService dataService)
+        public DecrementMenuOrder(DataService dataService) : base(dataService)
         {
-            DataService = dataService;
         }
 
         public override string Description

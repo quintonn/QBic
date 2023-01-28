@@ -17,11 +17,9 @@ namespace WebsiteTemplate.Backend.CsvUpload
     {
         public override bool AllowInMenu => true;
 
-        protected DataService DataService { get; set; }
-
-        public CsvFileUploader(DataService dataService)
+        public CsvFileUploader(DataService dataService) : base(dataService)
         {
-            DataService = dataService;
+            
         }
 
         public override IList<InputField> GetInputFields()

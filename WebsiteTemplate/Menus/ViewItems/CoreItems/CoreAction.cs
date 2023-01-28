@@ -4,11 +4,9 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
 {
     public abstract class CoreAction : DoSomething
     {
-        protected DataService DataService { get; set; }
-
-        public CoreAction(DataService dataService)
+        public CoreAction(DataService dataService) : base(dataService)
         {
-            DataService = dataService;
+            
         }
 
         public override bool AllowInMenu

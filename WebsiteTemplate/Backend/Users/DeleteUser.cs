@@ -1,4 +1,5 @@
-﻿using WebsiteTemplate.Backend.UIProcessors;
+﻿using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Backend.UIProcessors;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
@@ -7,8 +8,8 @@ namespace WebsiteTemplate.Backend.Users
 {
     public class DeleteUser : DeleteItemUsingInputProcessor<UserProcessor, User>
     {
-        public DeleteUser(UserProcessor userProcessor)
-            : base(userProcessor)
+        public DeleteUser(UserProcessor userProcessor, DataService dataService)
+            : base(userProcessor, dataService)
         {
         }
 

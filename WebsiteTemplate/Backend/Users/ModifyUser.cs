@@ -16,8 +16,8 @@ namespace WebsiteTemplate.Backend.Users
         private UserService UserService { get; set; }
         private UserInjector Injector { get; set; }
 
-        public ModifyUser(UserService service, UserProcessor userProcessor, UserInjector injector, bool isNew)
-            : base(userProcessor, isNew)
+        public ModifyUser(UserService service, UserProcessor userProcessor, UserInjector injector, bool isNew, DataService dataService)
+            : base(userProcessor, dataService, isNew)
         {
             UserService = service;
             Injector = injector;

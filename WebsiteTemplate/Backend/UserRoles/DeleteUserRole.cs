@@ -1,4 +1,5 @@
-﻿using WebsiteTemplate.Backend.UIProcessors;
+﻿using WebsiteTemplate.Backend.Services;
+using WebsiteTemplate.Backend.UIProcessors;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Models;
@@ -23,8 +24,8 @@ namespace WebsiteTemplate.Backend.UserRoles
             }
         }
 
-        public DeleteUserRole(UserRoleProcessor processor)
-            : base(processor)
+        public DeleteUserRole(UserRoleProcessor processor, DataService dataService)
+            : base(processor, dataService)
         {
         }
 

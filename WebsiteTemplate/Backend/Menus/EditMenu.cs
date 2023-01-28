@@ -6,8 +6,8 @@ namespace WebsiteTemplate.Backend.Menus
 {
     public class EditMenu : ModifyMenu
     {
-        public EditMenu(MenuService menuService, MenuProcessor menuProcessor)
-            : base(menuProcessor, false, menuService)
+        public EditMenu(MenuService menuService, MenuProcessor menuProcessor, DataService dataService)
+            : base(menuProcessor, false, menuService, dataService)
         {
         }
 

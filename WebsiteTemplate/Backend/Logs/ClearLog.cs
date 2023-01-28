@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 
@@ -11,6 +12,10 @@ namespace WebsiteTemplate.Backend.Logs
 {
     public class ClearLog : DoSomething
     {
+        public ClearLog(DataService dataService) : base(dataService)
+        {
+        }
+
         public override bool AllowInMenu
         {
             get

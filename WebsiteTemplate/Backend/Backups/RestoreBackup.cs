@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Threading.Tasks;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
@@ -15,7 +16,7 @@ namespace WebsiteTemplate.Backend.Backups
         private BackupService BackupService { get; set; }
 
         private IConfiguration Config { get; set; }
-        public RestoreBackup(BackupService backupService, IConfiguration config)
+        public RestoreBackup(BackupService backupService, IConfiguration config, DataService dataService) : base (dataService) 
         {
             BackupService = backupService;
             Config = config;

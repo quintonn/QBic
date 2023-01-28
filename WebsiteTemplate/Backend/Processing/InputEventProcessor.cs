@@ -69,7 +69,6 @@ namespace WebsiteTemplate.Backend.Processing
             }
 
             eventItem.InputData = processedFormData;
-            eventItem.DataService = DataService;
             result = await eventItem.ProcessAction(actionId);
 
             await HandleProcessActionResult(result, eventItem);

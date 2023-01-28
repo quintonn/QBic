@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
@@ -14,6 +15,10 @@ namespace WebsiteTemplate.Test.MenuItems
 {
     public class TestPropertyChangedEvents : GetInput
     {
+        public TestPropertyChangedEvents(DataService dataService) : base(dataService)
+        {
+        }
+
         public override bool AllowInMenu
         {
             get

@@ -21,9 +21,8 @@ namespace WebsiteTemplate.Backend.SystemSettings
         //private Dictionary<string, object> SystemSettingValues { get; set; }
         private ApplicationSettingsCore AppSettings { get; set; }
         
-        public ModifySystemSettings(DataService dataService, ApplicationSettingsCore appSettings)
+        public ModifySystemSettings(DataService dataService, ApplicationSettingsCore appSettings) : base(dataService)
         {
-            DataService = dataService;
             AppSettings = appSettings;
             //SystemSettingValues = new Dictionary<string, object>();
         }

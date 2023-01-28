@@ -34,9 +34,8 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             return Id;
         }
 
-        public BasicCrudDelete(DataService dataService)
+        public BasicCrudDelete(DataService dataService) : base(dataService) 
         {
-            DataService = dataService;
         }
 
         public Action<ISession, object> OnDeleteInternal { get; set; }

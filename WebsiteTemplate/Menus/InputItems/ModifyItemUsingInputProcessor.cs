@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Processing.InputProcessing;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Utilities;
 
@@ -27,7 +28,7 @@ namespace WebsiteTemplate.Menus.InputItems
             }
         }
 
-        public ModifyItemUsingInputProcessor(TItemProcessor itemProcessor, bool isNew)
+        public ModifyItemUsingInputProcessor(TItemProcessor itemProcessor, DataService dataService, bool isNew) : base(dataService)
         {
             ItemProcessor = itemProcessor;
             IsNew = isNew;

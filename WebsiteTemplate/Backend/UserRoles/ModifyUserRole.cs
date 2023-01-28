@@ -12,8 +12,8 @@ namespace WebsiteTemplate.Backend.UserRoles
     public abstract class ModifyUserRole : ModifyItemUsingInputProcessor<UserRoleProcessor, UserRole>
     {
         private UserRoleService UserRoleService { get; set; }
-        public ModifyUserRole(UserRoleProcessor itemProcessor, UserRoleService userRoleService, bool isNew) 
-            : base(itemProcessor, isNew)
+        public ModifyUserRole(UserRoleProcessor itemProcessor, UserRoleService userRoleService, bool isNew, DataService dataService) 
+            : base(itemProcessor, dataService, isNew)
         {
             UserRoleService = userRoleService;
         }

@@ -6,8 +6,8 @@ namespace WebsiteTemplate.Backend.UserRoles
 {
     public class AddUserRole : ModifyUserRole
     {
-        public AddUserRole(UserRoleService service, UserRoleProcessor processor)
-            : base(processor, service, true)
+        public AddUserRole(UserRoleService service, UserRoleProcessor processor, DataService dataService)
+            : base(processor, service, true, dataService)
         {
         }
 

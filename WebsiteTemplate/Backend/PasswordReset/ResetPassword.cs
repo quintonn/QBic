@@ -25,7 +25,7 @@ namespace WebsiteTemplate.Backend.PasswordReset
 
         private static readonly ILogger Logger = SystemLogger.GetLogger<ResetPassword>();
 
-        public ResetPassword(UserService userService, ApplicationSettingsCore appSettings, UserManager<User> userManager)
+        public ResetPassword(UserService userService, ApplicationSettingsCore appSettings, UserManager<User> userManager, DataService dataService) : base(dataService)
         {
             UserService = userService;
             AppSettings = appSettings;

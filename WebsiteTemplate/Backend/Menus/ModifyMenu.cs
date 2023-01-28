@@ -15,8 +15,8 @@ namespace WebsiteTemplate.Backend.Menus
     public abstract class ModifyMenu : ModifyItemUsingInputProcessor<MenuProcessor, Menu>
     {
         private MenuService MenuService { get; set; }
-        public ModifyMenu(MenuProcessor menuProcessor, bool isNew, MenuService menuService)
-            :base(menuProcessor, isNew)
+        public ModifyMenu(MenuProcessor menuProcessor, bool isNew, MenuService menuService, DataService dataService)
+            :base(menuProcessor, dataService, isNew)
         {
             MenuService = menuService;
         }

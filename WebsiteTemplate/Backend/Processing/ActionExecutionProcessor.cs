@@ -141,7 +141,6 @@ namespace WebsiteTemplate.Backend.Processing
                 }
 
                 (eventItem as DoSomething).InputData = processedFormData;
-                (eventItem as DoSomething).DataService = DataService;
                 var doResult = await (eventItem as DoSomething).ProcessAction();
                 await HandleProcessActionResult(doResult, eventItem);
                 result.AddRange(doResult);

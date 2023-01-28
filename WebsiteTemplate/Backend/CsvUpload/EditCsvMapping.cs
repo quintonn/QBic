@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Utilities;
@@ -9,6 +10,10 @@ namespace WebsiteTemplate.Backend.CsvUpload
 {
     public class EditCsvMapping : GetInput
     {
+        public EditCsvMapping(DataService dataService) : base(dataService)
+        {
+        }
+
         private JsonHelper RowData { get; set; }
         private int RowId { get; set; }
 

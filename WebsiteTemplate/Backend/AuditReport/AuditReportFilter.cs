@@ -31,7 +31,7 @@ namespace WebsiteTemplate.Backend.AuditReport
 
         private UserService UserService { get; set; }
 
-        public AuditReportFilter(UserService userService)
+        public AuditReportFilter(UserService userService, DataService dataService) : base(dataService)
         {
             UserService = userService;
         }

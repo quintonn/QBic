@@ -17,9 +17,8 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
     public class BasicCrudModify<T> : GetInput, IBasicCrudModify where T : BaseClass
     {
         private static Type DynamicClassType = typeof(DynamicClass);
-        public BasicCrudModify(DataService dataService)
+        public BasicCrudModify(DataService dataService) : base(dataService)
         {
-            DataService = dataService;
         }
         public override bool AllowInMenu
         {

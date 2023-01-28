@@ -11,6 +11,10 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
 {
     public class ClearBackgroundErrors : DoSomething
     {
+        public ClearBackgroundErrors(DataService dataService) : base(dataService)
+        {
+        }
+
         public override string Description
         {
             get

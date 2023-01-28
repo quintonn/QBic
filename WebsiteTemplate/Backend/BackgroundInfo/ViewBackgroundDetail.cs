@@ -11,6 +11,10 @@ namespace WebsiteTemplate.Backend.BackgroundInfo
 {
     public class ViewBackgroundDetail : DoSomething
     {
+        public ViewBackgroundDetail(DataService dataService) : base(dataService)
+        {
+        }
+
         public override bool AllowInMenu
         {
             get

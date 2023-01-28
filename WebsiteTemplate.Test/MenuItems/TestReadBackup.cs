@@ -1,27 +1,27 @@
 ﻿using QBic.Core.Models;
 using QBic.Core.Utilities;
-using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Web;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Controllers;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
-using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
-using System.IO.Compression;
 
 namespace WebsiteTemplate.Test.MenuItems
 {
     public class TestReadBackup : GetInput
     {
+        public TestReadBackup(DataService dataService) : base(dataService)
+        {
+        }
+
         public override bool AllowInMenu
         {
             get

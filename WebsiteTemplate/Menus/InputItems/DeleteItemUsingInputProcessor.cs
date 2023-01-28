@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Processing.InputProcessing;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
 
@@ -12,7 +13,7 @@ namespace WebsiteTemplate.Menus.InputItems
     {
         protected TItemProcessor ItemProcessor { get; set; }
 
-        public DeleteItemUsingInputProcessor(TItemProcessor itemProcessor)
+        public DeleteItemUsingInputProcessor(TItemProcessor itemProcessor, DataService dataService) : base (dataService)
         {
             ItemProcessor = itemProcessor;
         }

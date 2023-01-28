@@ -21,6 +21,10 @@ namespace WebsiteTemplate.Test.MenuItems
 {
     public class TestBackupProcessor : DoSomething
     {
+        public TestBackupProcessor(DataService dataService) : base(dataService)
+        {
+        }
+
         public override bool AllowInMenu
         {
             get

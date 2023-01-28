@@ -11,7 +11,7 @@ namespace WebsiteTemplate.Backend.Users
     {
         private UserService UserService { get; set; }
 
-        public SendConfirmationEmail(UserService service)
+        public SendConfirmationEmail(UserService service, DataService dataService) : base(dataService)
         {
             UserService = service;
         }
