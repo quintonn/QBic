@@ -4,7 +4,7 @@ using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Test.Models
 {
-    public class NewsItem : FilterItemParentBase
+    public class NewsItem : FilterItemParentBase, ITestItem
     {
         public virtual string Title { get; set; }
 
@@ -22,9 +22,16 @@ namespace WebsiteTemplate.Test.Models
 
         public virtual User Advisor { get; set; }
 
+        public string Name => Title;
+
         public NewsItem()
         {
             Filters = new HashSet<NewsFilterItem>();
         }
+    }
+
+    internal interface ITestItem
+    {
+        string Name { get; }
     }
 }

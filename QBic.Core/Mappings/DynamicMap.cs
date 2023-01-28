@@ -10,7 +10,7 @@ namespace QBic.Core.Mappings
     {
         private string TableName = typeof(T).Name.Split(".".ToCharArray()).Last();
         private IList<PropertyInfo> Properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                                                            .Where(p => p.GetMethod.IsVirtual && !p.GetMethod.IsAbstract)
+                                                            .Where(p => p.GetMethod.IsVirtual && !p.GetMethod.IsAbstract && p.GetSetMethod() != null)
                                                             .ToList();
 
         public DynamicMap()
