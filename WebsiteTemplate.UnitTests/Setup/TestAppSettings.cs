@@ -6,7 +6,7 @@ using System;
 using System.Data;
 using WebsiteTemplate.Utilities;
 
-namespace WebsiteTemplate.UnitTests
+namespace WebsiteTemplate.UnitTests.Setup
 {
     internal class TestAppSettings : ApplicationSettingsCore
     {
@@ -24,11 +24,11 @@ namespace WebsiteTemplate.UnitTests
 
         public override bool TokenEndpointAllowInsecureHttpRequests => false;
 
-        static string name = Guid.NewGuid().ToString();// + ".db";
+        string name = Guid.NewGuid().ToString();
         public override IPersistenceConfigurer GetPersistenceConfigurer(string databaseName)
         {
             var connectionString = $"Data Source=file:{name}?mode=memory&cache=shared;Version=3;New=True";
-            
+
             var configurer = SQLiteConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
 
             return configurer;

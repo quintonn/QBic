@@ -13,7 +13,7 @@ using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
-namespace WebsiteTemplate.UnitTests
+namespace WebsiteTemplate.UnitTests.Setup
 {
     internal class TestAppStartup : ApplicationStartup
     {

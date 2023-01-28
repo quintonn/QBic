@@ -39,6 +39,15 @@ namespace QBic.Core.Data
             init();
         }
 
+        /// <summary>
+        /// Clear the static singleton instance of the DataStore.
+        /// This is useful for unit testing.
+        /// </summary>
+        public static void ClearInstance()
+        {
+            _instance = null;
+        }
+
         public static DataStore GetInstance(bool updateDatabase, IApplicationSettings appSettings, IConfiguration config, IServiceCollection serviceProvider = null)
         {
             if (_instance == null)
