@@ -16,14 +16,17 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
-      - uses: actions/cache@v3
+      - name: Setup Cache
+        id: cache
+        uses: actions/cache@v3
         with:
           path: ~/.nuget/packages
           # Look to see if there is a cache hit for the corresponding requirements file
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
           restore-keys: |
             ${{ runner.os }}-nuget
       - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
         run: dotnet restore QBic.sln
       - name: Build Solution
         run: dotnet build QBic.sln --configuration Release --no-restore
