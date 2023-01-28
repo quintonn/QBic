@@ -30,7 +30,7 @@ namespace WebsiteTemplate.Test.Models
         }
     }
 
-    internal interface ITestItem
+    internal interface ITestItem // before fix, doing this would cause an exception
     {
         string Name { get; }
     }
