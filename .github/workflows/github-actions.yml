@@ -26,7 +26,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget
       - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
         run: dotnet restore QBic.sln
       - name: Build Solution
         run: dotnet build QBic.sln --configuration Release --no-restore
