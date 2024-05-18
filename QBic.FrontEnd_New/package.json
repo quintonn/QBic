@@ -1,0 +1,16 @@
+{
+  "name": "qbic-front-end",
+  "version": "1.0.0",
+  "description": "QBic Front End Code",
+  "source": "src/index.html",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build"
+  },
+  "keywords": [],
+  "author": "Quintonn Rothmann",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel": "^2.12.0"
+  }
+}
