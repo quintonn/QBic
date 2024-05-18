@@ -85,7 +85,6 @@ namespace QBic.Core.Mappings
 
                 var method = typeof(FluentNHibernate.Reveal).GetMethods().Where(m => m.Name == "Member").Last();
                 var generic = method.MakeGenericMethod(typeof(T), column.PropertyType);
-
                 dynamic tmp = generic.Invoke(dynamicMap, new object[] { column.Name });
 
                 if (nullableReference == false) // this is always false at the moment.

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -17,6 +18,8 @@ namespace WebsiteTemplate.Test
     {
         private IConfiguration Config;
 
+        private static int DEFAULT_CACHE_TIME = 60 * 60 * 24 * 10;// 10 days
+
         public Startup(IConfiguration config)
         {
             Config = config;
@@ -24,6 +27,14 @@ namespace WebsiteTemplate.Test
 
         public void ConfigureServices(IServiceCollection services)
         {
+            // This is needed if hosting on Linux environment such as azure
+            services.AddLogging(x =>
+            {
+                x.AddConsole();
+                x.AddDebug();
+
+            });
+
             var idOptions = new Action<IdentityOptions>(options =>
             {
                 options.Password.RequireDigit = false;
@@ -32,6 +43,7 @@ namespace WebsiteTemplate.Test
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.SignIn.RequireConfirmedAccount = true;
+                options.User.RequireUniqueEmail = true;
 
                 options.User.AllowedUserNameCharacters += " ";
             });
@@ -52,12 +64,29 @@ namespace WebsiteTemplate.Test
             services.AddTransient<IPasswordHasher<MobileUser>, PasswordHasher<MobileUser>>();
             services.AddTransient<UserManager<MobileUser>, UserManager<MobileUser>>();
 
+            services.AddMvc(options =>
+            {
+                options.CacheProfiles.Add("DefaultImageCache",
+                    new CacheProfile()
+                    {
+                        Duration = DEFAULT_CACHE_TIME,
+                    });
+            });
+
+            services.AddCors(o => o.AddPolicy("Default", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
         }
 
 
         public void Configure(IApplicationBuilder app, IServiceProvider serviceProvider, ILoggerFactory logFactory)
         {
             SystemLogger.Setup(logFactory);
+            logFactory.AddFile("Logs/log-{Date}.txt");
+            app.UseCors("Default");
             app.UseQBic(serviceProvider);
         }
     }
