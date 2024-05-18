@@ -39,6 +39,33 @@ const findClickedItem = (id: string, items: AppMenuItem[]): AppMenuItem => {
   }
   return null;
 };
+const MapMenuItemsToSideNavItems = (
+  items: MenuItem[],
+  root: boolean = true
+): SideNavigationProps.Item[] => {
+  const results: SideNavigationProps.Item[] = [];
+
+  if (root) {
+    results.push({ text: "Home", href: "#", type: "link" });
+  }
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (item.SubMenus && item.SubMenus.length > 0) {
+      const sectionItem = {
+        text: item.Name,
+        type: "section",
+        items: MapMenuItemsToSideNavItems(item.SubMenus, false),
+      } as SideNavigationProps.Item;
+
+      results.push(sectionItem);
+    } else {
+      results.push({ text: item.Name, href: "#" + item.Id, type: "link" });
+    }
+  }
+
+  return results;
+};
 
 const MapMenuItemToAppMenuItem = (
   items: MenuItem[],
@@ -73,77 +100,28 @@ const MapMenuItemToAppMenuItem = (
   }));
 };
 
-const rootMenuItem: AppMenuItem = {
-  id: "root",
-  canDelete: false,
-  event: null,
-  href: "/",
-  name: "",
-  parentMenu: null,
-  path: "/",
-  position: 0,
-  subMenus: null,
-};
-
 const allItems = MapMenuItemToAppMenuItem(TestMenuData as MenuItem[], ""); //TODO: fetch this async etc.
-rootMenuItem.subMenus = allItems;
+
+const sideNavItems = MapMenuItemsToSideNavItems(TestMenuData as MenuItem[]);
 
 export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
-  const [currentMenuItem, setCurrentMenuItem] =
-    useState<AppMenuItem>(rootMenuItem);
-
+  const [activeHref, setActiveHref] = useState("#");
   const navigate = useNavigate();
-  const location = useLocation();
 
-  useEffect(() => {
-    // TODO: can check location.pathname here to see if we are already on a path, and handle that as a click event or similar
-    console.log(location.pathname);
-    const fullPath = location.pathname.substring(1);
-    console.log(fullPath);
-  }, []);
-
-  useEffect(() => {
-    console.log("location changed");
-    console.log(location);
-    console.log(currentMenuItem);
-  }, [location]);
-
-  const handleMenuClick = (itemId: string) => {
-    console.log("menu item clicked");
-    console.log(itemId);
-
-    if (!itemId || itemId == "/") {
-      console.log("item id is null");
+  const handleMenuClick = (itemRef: string) => {
+    if (itemRef == "#") {
+      console.log("home clicked");
       navigate("/");
       return;
     }
-
-    if (itemId.indexOf("#back") > -1) {
-      console.log("back clicked");
-      const parentId = itemId.replace("#back/", "");
-      console.log(parentId);
-      const parentMenu = findClickedItem(parentId, allItems);
-      console.log("parent menu", parentMenu);
-      setCurrentMenuItem(parentMenu.parentMenu);
-      navigate(-1);
-      return;
-    }
+    const itemId = itemRef.substring(1);
 
     const menuItemClicked = findClickedItem(itemId, allItems);
 
-    if (menuItemClicked) {
-      navigate(menuItemClicked.href);
-      if (menuItemClicked.subMenus && menuItemClicked.subMenus.length > 1) {
-        // show sub-menu items
-        console.log("setting current menuitem", menuItemClicked);
-        console.log(currentMenuItem);
-        menuItemClicked.parentMenu = currentMenuItem;
-        setCurrentMenuItem(menuItemClicked);
-      } else {
-        // todo: process the event
-        console.log("TODO: Process event: " + menuItemClicked.event);
-      }
-    }
+    console.log(
+      "TODO: Handle menu item event clicked: " + menuItemClicked.event
+    );
+    //TODO: handle menuItemClicked.event
   };
 
   return (
@@ -196,20 +174,14 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
         toolsHide={true}
         navigation={
           <SideNavigation
-            activeHref={currentMenuItem.href}
+            activeHref={activeHref}
             // header={{ href: currentMenuItem.href, text: currentMenuItem.name }}
             onFollow={(event) => {
               event.preventDefault();
+              setActiveHref(event.detail.href);
               handleMenuClick(event.detail.href);
             }}
-            items={currentMenuItem.subMenus.map(
-              (x) =>
-                ({
-                  type: "link",
-                  text: x.name,
-                  href: x.href,
-                } as SideNavigationProps.Link)
-            )}
+            items={sideNavItems}
           />
         }
       ></AppLayout>{" "}
