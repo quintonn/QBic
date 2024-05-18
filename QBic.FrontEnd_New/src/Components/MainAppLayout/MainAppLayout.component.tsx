@@ -17,7 +17,7 @@ interface AppMenuItem {
   href: string;
   path: string;
   name: string;
-  parentMenu: null;
+  parentMenu: any;
   subMenus: AppMenuItem[] | null;
   event: number | null;
   position: number;
@@ -53,7 +53,20 @@ const MapMenuItemToAppMenuItem = (
     id: item.Id,
     name: item.Name,
     parentMenu: null,
-    subMenus: MapMenuItemToAppMenuItem(item.SubMenus, path + "/" + item.Id),
+    subMenus: [
+      {
+        id: "#back",
+        event: null,
+        position: 0,
+        canDelete: false,
+        href: "#back/" + item.Id,
+        name: "<<",
+        parentMenu: null,
+        path: "",
+        subMenus: [],
+      },
+      ...MapMenuItemToAppMenuItem(item.SubMenus, path + "/" + item.Id),
+    ],
     event: item.Event,
     position: item.Position,
     canDelete: item.CanDelete,
@@ -75,11 +88,7 @@ const rootMenuItem: AppMenuItem = {
 const allItems = MapMenuItemToAppMenuItem(TestMenuData as MenuItem[], ""); //TODO: fetch this async etc.
 rootMenuItem.subMenus = allItems;
 
-const initialItems = allItems;
-
 export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
-  const [items, setItems] = useState<AppMenuItem[]>(initialItems);
-
   const [currentMenuItem, setCurrentMenuItem] =
     useState<AppMenuItem>(rootMenuItem);
 
@@ -88,13 +97,53 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
 
   useEffect(() => {
     // TODO: can check location.pathname here to see if we are already on a path, and handle that as a click event or similar
+    console.log(location.pathname);
+    const fullPath = location.pathname.substring(1);
+    console.log(fullPath);
   }, []);
+
+  useEffect(() => {
+    console.log("location changed");
+    console.log(location);
+    console.log(currentMenuItem);
+  }, [location]);
 
   const handleMenuClick = (itemId: string) => {
     console.log("menu item clicked");
+    console.log(itemId);
+
+    if (!itemId || itemId == "/") {
+      console.log("item id is null");
+      navigate("/");
+      return;
+    }
+
+    if (itemId.indexOf("#back") > -1) {
+      console.log("back clicked");
+      const parentId = itemId.replace("#back/", "");
+      console.log(parentId);
+      const parentMenu = findClickedItem(parentId, allItems);
+      console.log("parent menu", parentMenu);
+      setCurrentMenuItem(parentMenu.parentMenu);
+      navigate(-1);
+      return;
+    }
+
     const menuItemClicked = findClickedItem(itemId, allItems);
 
-    console.log(menuItemClicked);
+    if (menuItemClicked) {
+      navigate(menuItemClicked.href);
+      if (menuItemClicked.subMenus && menuItemClicked.subMenus.length > 1) {
+        // show sub-menu items
+        console.log("setting current menuitem", menuItemClicked);
+        console.log(currentMenuItem);
+        menuItemClicked.parentMenu = currentMenuItem;
+        setCurrentMenuItem(menuItemClicked);
+      } else {
+        // todo: process the event
+        console.log("TODO: Process event: " + menuItemClicked.event);
+      }
+    }
   };
 
   return (
@@ -148,12 +197,12 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
         navigation={
           <SideNavigation
             activeHref={currentMenuItem.href}
-            header={{ href: currentMenuItem.href, text: currentMenuItem.name }} // This can be updated with the current menu list ??
+            // header={{ href: currentMenuItem.href, text: currentMenuItem.name }}
             onFollow={(event) => {
               event.preventDefault();
               handleMenuClick(event.detail.href);
             }}
-            items={items.map(
+            items={currentMenuItem.subMenus.map(
               (x) =>
                 ({
                   type: "link",
