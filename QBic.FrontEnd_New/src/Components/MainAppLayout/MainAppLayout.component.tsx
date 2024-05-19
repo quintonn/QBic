@@ -6,23 +6,11 @@ import {
   TopNavigation,
 } from "@cloudscape-design/components";
 import { useEffect, useState } from "react";
-import { MenuItem, TestMenuData } from "../../TestData/Menus";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { AppMenuItem, getUserMenu } from "../../Services/MenuService";
 
 interface MainAppLayoutProps extends AppLayoutProps {
   content: React.ReactNode;
-}
-
-interface AppMenuItem {
-  href: string;
-  path: string;
-  name: string;
-  parentMenu: any;
-  subMenus: AppMenuItem[] | null;
-  event: number | null;
-  position: number;
-  id: string;
-  canDelete: boolean;
 }
 
 const findClickedItem = (id: string, items: AppMenuItem[]): AppMenuItem => {
@@ -39,74 +27,27 @@ const findClickedItem = (id: string, items: AppMenuItem[]): AppMenuItem => {
   }
   return null;
 };
-const MapMenuItemsToSideNavItems = (
-  items: MenuItem[],
-  root: boolean = true
-): SideNavigationProps.Item[] => {
-  const results: SideNavigationProps.Item[] = [];
-
-  if (root) {
-    results.push({ text: "Home", href: "#", type: "link" });
-  }
-
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    if (item.SubMenus && item.SubMenus.length > 0) {
-      const sectionItem = {
-        text: item.Name,
-        type: "section",
-        items: MapMenuItemsToSideNavItems(item.SubMenus, false),
-      } as SideNavigationProps.Item;
-
-      results.push(sectionItem);
-    } else {
-      results.push({ text: item.Name, href: "#" + item.Id, type: "link" });
-    }
-  }
-
-  return results;
-};
-
-const MapMenuItemToAppMenuItem = (
-  items: MenuItem[],
-  path: string = ""
-): AppMenuItem[] => {
-  if (!items) {
-    return [];
-  }
-  return items.map((item) => ({
-    path: path + "/" + item.Id,
-    href: item.Id,
-    id: item.Id,
-    name: item.Name,
-    parentMenu: null,
-    subMenus: [
-      {
-        id: "#back",
-        event: null,
-        position: 0,
-        canDelete: false,
-        href: "#back/" + item.Id,
-        name: "<<",
-        parentMenu: null,
-        path: "",
-        subMenus: [],
-      },
-      ...MapMenuItemToAppMenuItem(item.SubMenus, path + "/" + item.Id),
-    ],
-    event: item.Event,
-    position: item.Position,
-    canDelete: item.CanDelete,
-  }));
-};
-
-const allItems = MapMenuItemToAppMenuItem(TestMenuData as MenuItem[], ""); //TODO: fetch this async etc.
-
-const sideNavItems = MapMenuItemsToSideNavItems(TestMenuData as MenuItem[]);
 
 export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
   const [activeHref, setActiveHref] = useState("#");
   const navigate = useNavigate();
+
+  const [allItems, setAllItems] = useState<AppMenuItem[]>([]);
+  const [sideNavItems, setSideNavItems] = useState<SideNavigationProps.Item[]>(
+    []
+  );
+
+  useEffect(() => {
+    async function fetchData() {
+      const { appMenuItems, sideNavMenuItems } = await getUserMenu();
+      setAllItems(appMenuItems);
+      setSideNavItems(sideNavMenuItems);
+    }
+
+    setTimeout(() => {
+      fetchData();
+    }, 1000);
+  }, []);
 
   const handleMenuClick = (itemRef: string) => {
     if (itemRef == "#") {
@@ -184,7 +125,7 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
             items={sideNavItems}
           />
         }
-      ></AppLayout>{" "}
+      ></AppLayout>
     </>
   );
 };
