@@ -84,14 +84,20 @@ const MapMenuItemToAppMenuItem = (
   }));
 };
 
-export const getUserMenu = () => {
+interface GetUserMenuResponse {
+  appMenuItems: AppMenuItem[];
+  sideNavMenuItems: SideNavigationProps.Item[];
+}
+export const getUserMenu = (): Promise<GetUserMenuResponse> => {
   const appMenuItems = MapMenuItemToAppMenuItem(TestMenuData as MenuItem[], ""); //TODO: fetch this async etc.
 
   const sideNavMenuItems = MapMenuItemsToSideNavItems(
     TestMenuData as MenuItem[]
   );
 
-  console.log(sideNavMenuItems);
-
-  return Promise.resolve({ appMenuItems, sideNavMenuItems });
+  return new Promise((res, rej) => {
+    setTimeout(() => {
+      res({ appMenuItems, sideNavMenuItems });
+    }, 500); // simulate loading
+  });
 };
