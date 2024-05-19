@@ -1,12 +1,4 @@
-export interface MenuItem {
-  Name: string;
-  ParentMenu: null;
-  SubMenus: MenuItem[] | null;
-  Event: number | null;
-  Position: number;
-  Id: string;
-  CanDelete: boolean;
-}
+import { MenuItem } from "../Services/MenuService";
 
 export const TestMenuData = [
   {
