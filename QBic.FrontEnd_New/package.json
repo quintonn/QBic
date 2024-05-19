@@ -13,6 +13,7 @@
   "devDependencies": {
     "@cloudscape-design/components": "^3.0.633",
     "@cloudscape-design/global-styles": "^1.0.27",
+    "@types/node": "^20.12.12",
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.3.0",
     "parcel": "^2.12.0",
