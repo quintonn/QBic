@@ -2,12 +2,11 @@ import {
   AppLayout,
   AppLayoutProps,
   SideNavigation,
-  SideNavigationProps,
   TopNavigation,
 } from "@cloudscape-design/components";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AppMenuItem, getUserMenu } from "../../Services/MenuService";
+import { AppMenuItem, useMenus } from "../../Hooks/menuHook";
 
 interface MainAppLayoutProps extends AppLayoutProps {
   content: React.ReactNode;
@@ -32,21 +31,7 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
   const [activeHref, setActiveHref] = useState("#");
   const navigate = useNavigate();
 
-  const [allItems, setAllItems] = useState<AppMenuItem[]>([]);
-  const [sideNavItems, setSideNavItems] = useState<SideNavigationProps.Item[]>(
-    []
-  );
-
-  useEffect(() => {
-    //TODO: show some kind of busy insdicator while loading menu, and also while initializing and checking stuff
-    async function fetchData() {
-      const { appMenuItems, sideNavMenuItems } = await getUserMenu();
-      setAllItems(appMenuItems);
-      setSideNavItems(sideNavMenuItems);
-    }
-
-    fetchData();
-  }, []);
+  const { appMenuItems, sideNavMenuItems } = useMenus();
 
   const handleMenuClick = (itemRef: string) => {
     if (itemRef == "#") {
@@ -56,7 +41,7 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
     }
     const itemId = itemRef.substring(1);
 
-    const menuItemClicked = findClickedItem(itemId, allItems);
+    const menuItemClicked = findClickedItem(itemId, appMenuItems);
 
     console.log(
       "TODO: Handle menu item event clicked: " + menuItemClicked.event
@@ -121,7 +106,7 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
               setActiveHref(event.detail.href);
               handleMenuClick(event.detail.href);
             }}
-            items={sideNavItems}
+            items={sideNavMenuItems}
           />
         }
       ></AppLayout>
