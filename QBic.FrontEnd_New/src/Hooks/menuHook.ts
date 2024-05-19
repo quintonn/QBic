@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { SideNavigationProps } from "@cloudscape-design/components";
 import { TestMenuData } from "../TestData/Menus";
 
@@ -84,20 +85,29 @@ const MapMenuItemToAppMenuItem = (
   }));
 };
 
-interface GetUserMenuResponse {
-  appMenuItems: AppMenuItem[];
-  sideNavMenuItems: SideNavigationProps.Item[];
-}
-export const getUserMenu = (): Promise<GetUserMenuResponse> => {
-  const appMenuItems = MapMenuItemToAppMenuItem(TestMenuData as MenuItem[], ""); //TODO: fetch this async etc.
+export const useMenus = () => {
+  const [appMenuItems, setAppMenuItems] = useState<AppMenuItem[]>([]);
+  const [sideNavMenuItems, setSideNavMenuItems] = useState<
+    SideNavigationProps.Item[]
+  >([]);
 
-  const sideNavMenuItems = MapMenuItemsToSideNavItems(
-    TestMenuData as MenuItem[]
-  );
+  useEffect(() => {
+    //TODO: fetch this async etc.
 
-  return new Promise((res, rej) => {
     setTimeout(() => {
-      res({ appMenuItems, sideNavMenuItems });
-    }, 500); // simulate loading
-  });
+      const menuItems = MapMenuItemToAppMenuItem(
+        TestMenuData as MenuItem[],
+        ""
+      );
+
+      const sideNavItems = MapMenuItemsToSideNavItems(
+        TestMenuData as MenuItem[]
+      );
+
+      setAppMenuItems(menuItems);
+      setSideNavMenuItems(sideNavItems);
+    });
+  }, []);
+
+  return { appMenuItems, sideNavMenuItems };
 };

@@ -1,4 +1,4 @@
-import { MenuItem } from "../Services/MenuService";
+import { MenuItem } from "../Hooks/menuHook";
 
 export const TestMenuData = [
   {
