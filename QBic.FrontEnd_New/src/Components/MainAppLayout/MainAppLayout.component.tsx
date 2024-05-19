@@ -38,15 +38,14 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
   );
 
   useEffect(() => {
+    //TODO: show some kind of busy insdicator while loading menu, and also while initializing and checking stuff
     async function fetchData() {
       const { appMenuItems, sideNavMenuItems } = await getUserMenu();
       setAllItems(appMenuItems);
       setSideNavItems(sideNavMenuItems);
     }
 
-    setTimeout(() => {
-      fetchData();
-    }, 1000);
+    fetchData();
   }, []);
 
   const handleMenuClick = (itemRef: string) => {
