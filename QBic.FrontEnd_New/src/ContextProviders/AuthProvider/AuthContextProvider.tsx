@@ -156,13 +156,24 @@ export const AuthContextProvider = ({ children }) => {
     // }
   };
 
+  const logout = () => {
+    // localStorage.setItem(getName("accessToken"), '');
+    // localStorage.setItem(getName("refreshToken"), '');
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("lastRefreshDate");
+
+    window.location.reload(); // TODO: instead of reloading the page, call all the initialization code again
+  };
+
   const value = {
     refreshToken,
     accessToken,
     initializeAuth,
     performTokenRefresh,
-    isReady,
+    isReady, //TODO: i would like this to work without all this isReady stuff
     doLogin,
+    logout,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
