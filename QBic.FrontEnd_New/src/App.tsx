@@ -9,10 +9,13 @@ import {
 } from "react-router-dom";
 import { Home } from "./Components/Home/Home.component";
 import { MainAppLayout } from "./Components/MainAppLayout/MainAppLayout.component";
+import { AuthContextProvider } from "./ContextProviders/AuthProvider/AuthContextProvider";
+import { ApiContextProvider } from "./ContextProviders/ApiContextProvider/ApiContextProvider";
+import { AppInfoContextProvider } from "./ContextProviders/AppInfoContextProvider/AppInfoContextProvider";
 
 function App() {
   const [routes, setRoutes] = useState<RouteObject[]>([]);
-  const [loadingRoutes, setLoadingRoutes] = useState(false);
+  const [loadingRoutes, setLoadingRoutes] = useState(true);
 
   routes.push({ path: "/*", element: <Home /> });
 
@@ -27,7 +30,7 @@ function App() {
     //TODO: here we can fetch the user's menu
     setTimeout(() => {
       setRoutes([...routes, { path: "/test", element: <h1>Test</h1> }]);
-      setLoadingRoutes(true);
+      setLoadingRoutes(false);
     }, 10);
   }, []);
 
@@ -39,7 +42,15 @@ function App() {
     return <h1>Loading...</h1>;
   };
 
-  return <MainBody isReady={loadingRoutes} />;
+  return (
+    <AppInfoContextProvider>
+      <AuthContextProvider>
+        <ApiContextProvider>
+          <MainBody isReady={!loadingRoutes} />
+        </ApiContextProvider>
+      </AuthContextProvider>
+    </AppInfoContextProvider>
+  );
 }
 
 export default App;
