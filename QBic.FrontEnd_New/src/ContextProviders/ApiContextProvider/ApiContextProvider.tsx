@@ -17,8 +17,7 @@ export const ApiContextProvider = ({ children }) => {
   const makeApiCall = async <T extends any>(
     url: string,
     method: "GET" | "POST" = "GET",
-    data?: any,
-    raiseErrors: boolean = true
+    data?: any
   ): Promise<T> => {
     // Setup
     let cacheControl = `&_=${Date.now()}`; // don't cache stuff

@@ -15,6 +15,11 @@ export const AuthContextProvider = ({ children }) => {
     return appInfo.appName + "_" + name;
   };
 
+  useEffect(() => {
+    console.log("app info has changed - AuthContext");
+    console.log(appInfo);
+  }, [appInfo]);
+
   const performTokenRefresh = async () => {
     const data = new FormData();
     data.append("grant_type", "refresh_token");
@@ -36,8 +41,19 @@ export const AuthContextProvider = ({ children }) => {
       console.log(loginResponse);
 
       if (loginResponse.ok === true) {
-        // TODO: update token stuff
-        console.log("TODO: update auth tokens");
+        const json = await loginResponse.json();
+        console.log(json);
+
+        //setAccessToken(json.access_token);
+        //setRefreshToken(json.refresh_token);
+        //setLastRefreshDate(new Date());
+
+        localStorage.setItem(getName("accessToken"), json.access_token);
+        localStorage.setItem(getName("refreshToken"), json.refresh_token);
+        localStorage.setItem(
+          getName("lastRefreshDate"),
+          JSON.stringify(new Date())
+        );
       }
       console.log("login response not ok");
       return Promise.reject("could not update refresh token");
@@ -83,7 +99,9 @@ export const AuthContextProvider = ({ children }) => {
     setRefreshToken(refreshToken);
 
     console.log("initializing auth");
-    console.log(accessToken, refreshToken, "tokens <---");
+    console.log(accessToken);
+    console.log(refreshToken);
+    console.log("tokens <---");
 
     //setIsReady(true);
     validateRefreshToken();
