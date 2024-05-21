@@ -10,35 +10,9 @@ export interface SystemInfo {
 
 const ApiContext = createContext(null);
 
-const API_VERSION = "v1";
-
 export const ApiContextProvider = ({ children }) => {
   const auth = useAuth();
   const appInfo = useAppInfo();
-
-  //const [apiUrl, setApiUrl] = useState(appInfo.apiUrl);
-  //const [appVersion, setAppVersion] = useState(appInfo.appVersion);
-
-  //   const [isReady, setIsReady] = useState(false);
-
-  //   useEffect(() => {
-  //     console.log("appInfo changed");
-  //     console.log(appInfo);
-  //     setApiUrl(appInfo.apiUrl);
-  //     setAppVersion(appInfo.appVersion);
-  //   }, [appInfo]);
-
-  //   const getUrl = (url: string) => {
-  //     let cacheControl = `&_=${Date.now()}`; // don't cache stuff
-  //     if (url.includes("html")) {
-  //       cacheControl = "";
-  //     }
-
-  //     console.log("apiUrl = " + apiUrl);
-
-  //     const urlToCall = `${apiUrl}${url}?v=${appVersion}${cacheControl}`;
-  //     return urlToCall;
-  //   };
 
   const makeApiCall = async <T extends any>(
     url: string,
@@ -53,16 +27,16 @@ export const ApiContextProvider = ({ children }) => {
     }
     const urlToCall = `${appInfo.apiUrl}${url}?v=${appInfo.appVersion}${cacheControl}`;
 
-    console.log(appInfo);
-    console.log("url to call", urlToCall);
-    //const urlToCall = getUrl(url);
-    console.log("url to call", urlToCall);
-
     // make API call
-
     const fetchOptions: RequestInit = {
       method: method,
+      headers: {
+        Authorization: "Bearer " + auth.accessToken,
+      },
     };
+
+    console.log("fetch Options");
+    console.log(fetchOptions);
 
     if (method == "POST") {
       if (data instanceof FormData) {
@@ -80,32 +54,6 @@ export const ApiContextProvider = ({ children }) => {
   };
 
   const initializeSystem = async (): Promise<SystemInfo> => {
-    // console.log('setting initialize system');
-    // console.log(appInfo);
-    // const scheme = window.location.protocol; //"https";
-    // let _url = scheme + "//" + window.location.host + window.location.pathname;
-    // //console.log("base url = " + baseURL);
-    // //console.log("root url = " + process.env.ROOT_URL);
-
-    // if (process.env.ROOT_URL) {
-    //   //console.log("dev root url is not empty");
-    //   _url = process.env.ROOT_URL;
-    // }
-
-    // if (!_url.endsWith("/")) {
-    //   _url += "/";
-    // }
-
-    // console.log("setting base url to ", _url);
-    // appInfo.setBaseUrl(_url);
-
-    // const _apiUrl = `${_url}api/${API_VERSION}/`;
-    // appInfo.setApiUrl(_apiUrl);
-
-    // TODO: Move all of the above to a hook or something (maybe just a file that gets imported by app.ts);
-
-    //const url = `initializeSystem`;
-
     let cacheControl = `&_=${Date.now()}`; // don't cache stuff
     const urlToCall = `${appInfo.apiUrl}initializeSystem?v=${appInfo.appVersion}${cacheControl}`;
 
@@ -137,7 +85,6 @@ export const ApiContextProvider = ({ children }) => {
   ): Promise<T> => {
     // make API call
     try {
-      //console.trace("making api call", urlToCall);
       const response = await fetch(urlToCall, fetchOptions);
 
       if (response.status >= 200 && response.status < 300) {
@@ -146,15 +93,35 @@ export const ApiContextProvider = ({ children }) => {
         return Promise.resolve(json);
       } else if (response.status == 401) {
         console.log("unauthorized, calling refresh token now");
-        console.log(appInfo);
-        await auth.performTokenRefresh(); //TODO: Api service will have to be a hook to so we can use this part
-        // try freshing the token and re-doing the api call
-      } else {
-        console.log("unhanled response status: ", response.status);
-        //alert("Unhandled response status: " + response.status);
-        return null;
-        //TODO: handle response
+        return auth
+          .performTokenRefresh()
+          .then((x) => {
+            // try call again
+            console.log("refresh token updated successfully");
+            return makeApiCallInternal(
+              urlToCall,
+              fetchOptions,
+              raiseErrors
+            ).then((x) => {
+              return Promise.resolve(x);
+            });
+          })
+          .catch((err) => {
+            console.error("error while getting refresh token");
+            // TODO: show login dialog -> which should then essentially restart the application initialization stuff as it will have new tokens
+            auth.doLogin();
+          });
+      } else if (response.status == 400) {
+        const text = await response.text();
+        if (text.includes("invalid_grant")) {
+          console.log("username or password incorrect");
+          // show message that username or password was incorrect
+        }
       }
+
+      console.log("unhanled response status: ", response.status);
+      return null;
+      //TODO: handle response
     } catch (err) {
       console.log("error making api call to: " + urlToCall);
       console.log(err);
