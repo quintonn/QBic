@@ -67,7 +67,11 @@ export const makeApiCall = async <T extends any>(
     };
 
     if (method == "POST") {
-      fetchOptions.body = JSON.stringify(data);
+      if (data instanceof FormData) {
+        fetchOptions.body = data;
+      } else {
+        fetchOptions.body = JSON.stringify(data);
+      }
     }
 
     const response = await fetch(urlToCall, fetchOptions);

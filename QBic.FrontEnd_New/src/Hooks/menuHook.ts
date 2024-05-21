@@ -40,6 +40,7 @@ const MapMenuItemsToSideNavItems = (
       const sectionItem = {
         text: item.Name,
         type: "section",
+        defaultExpanded: false,
         items: MapMenuItemsToSideNavItems(item.SubMenus, false),
       } as SideNavigationProps.Item;
 
