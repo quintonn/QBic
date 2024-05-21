@@ -29,6 +29,7 @@ export const useInit = () => {
       try {
         const systemInfo = await initializeSystem();
 
+        console.log("setting appName in initHook");
         appInfo.setAppName(systemInfo.ApplicationName);
         appInfo.setAppVersion(systemInfo.Version);
 
@@ -45,6 +46,7 @@ export const useInit = () => {
 
   useEffect(() => {
     async function onReadyFunction() {
+      console.log("calling initializeAuth");
       await initializeAuth();
     }
 
@@ -57,6 +59,7 @@ export const useInit = () => {
     async function onReadyFunction() {
       // call initialize (basically checks if user is authenticated, and returns user name and id)
 
+      console.log("on ready function calling initialize");
       const _userInfo = await makeApiCall("initialize");
       console.log(_userInfo);
     }
