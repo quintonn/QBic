@@ -25,58 +25,14 @@ export const useInit = () => {
   // need to do our own auth ??
 
   useEffect(() => {
-    async function onReadyFunction() {
-      // then initialize auth system -> basically checks local storage for auth tokens and gets new tokens if needs to
-      console.log("initializing auth");
-      await initializeAuth();
-    }
-
-    if (isReady === true) {
-      console.log("is ready now fired");
-      console.log(appInfo);
-      onReadyFunction();
-    }
-
-    // then load user menus
-
-    // If the initialize fails, we need to check if an anonymous function is called, because this is how password reset works
-  }, [isReady]);
-
-  useEffect(() => {
-    async function onReadyFunction() {
-      // call initialize (basically checks if user is authenticated, and returns user name and id)
-      console.log("calling initialize...");
-      const _userInfo = await makeApiCall("initialize");
-      console.log(_userInfo);
-    }
-
-    console.log("authIsReady changed", authIsReady);
-
-    if (authIsReady === true) {
-      setTimeout(() => {
-        console.log("XXXXXXXXXXXXXXXXXX");
-        onReadyFunction();
-      }, 3000);
-    }
-
-    // then load user menus
-
-    // If the initialize fails, we need to check if an anonymous function is called, because this is how password reset works
-  }, [authIsReady]);
-
-  useEffect(() => {
     async function initializeApp() {
       try {
         const systemInfo = await initializeSystem();
-        console.log("get system info", systemInfo);
-        console.log("setting appInfo appname", systemInfo.ApplicationName);
+
         appInfo.setAppName(systemInfo.ApplicationName);
         appInfo.setAppVersion(systemInfo.Version);
 
-        setTimeout(() => {
-          console.log("setting is ready 1");
-          setIsReady(true);
-        }, 3000);
+        setIsReady(true);
       } catch (err) {
         console.log("error during initialization");
         console.error(err);
@@ -86,6 +42,33 @@ export const useInit = () => {
 
     initializeApp();
   }, []);
+
+  useEffect(() => {
+    async function onReadyFunction() {
+      await initializeAuth();
+    }
+
+    if (isReady === true) {
+      onReadyFunction();
+    }
+  }, [isReady]);
+
+  useEffect(() => {
+    async function onReadyFunction() {
+      // call initialize (basically checks if user is authenticated, and returns user name and id)
+
+      const _userInfo = await makeApiCall("initialize");
+      console.log(_userInfo);
+    }
+
+    if (authIsReady === true) {
+      onReadyFunction();
+    }
+  }, [authIsReady]);
+
+  // TODO: Still do the following stuff
+  // then load user menus
+  // If the initialize fails, we need to check if an anonymous function is called, because this is how password reset works
 
   return {
     loading,
