@@ -23,16 +23,14 @@ if (!_url.endsWith("/")) {
 
 const _apiUrl = `${_url}api/${API_VERSION}/`;
 
-const cacheControl = `&_=${Date.now()}`; // don't cache stuff
-const urlToCall = `${_apiUrl}initializeSystem?v=${cacheControl}`;
-
 export const MainAppProvider = ({ children }) => {
   const [appName, setAppName] = useState("");
   const [appVersion, setAppVersion] = useState("");
   const [isReady, setIsReady] = useState(false);
 
   const initializeSystem = async (): Promise<void> => {
-    //console.log("main hook calling initialize system");
+    const cacheControl = `&_=${Date.now()}`; // don't cache stuff
+    const urlToCall = `${_apiUrl}initializeSystem?v=${cacheControl}`;
     const resp = await fetch(urlToCall);
     const systemInfo = (await resp.json()) as SystemInfo;
     if (systemInfo) {
@@ -40,23 +38,21 @@ export const MainAppProvider = ({ children }) => {
         console.log("There was an error in the system initialization code:");
         console.log(systemInfo.ConstructionError);
 
-        //TODO: raise a big error
+        //TODO: show error somewhere
       } else {
         setAppName(systemInfo.ApplicationName);
         setAppVersion(systemInfo.Version);
 
         document.title = `${systemInfo.ApplicationName} ${systemInfo.Version}`;
-        //setTimeout(() => {
         setIsReady(true);
-        //}, 5000);
       }
     }
   };
 
   useEffect(() => {
-    console.log("useEffect of main App Hook");
     initializeSystem();
   }, []);
+
   const value = {
     appName,
     appVersion,
@@ -64,7 +60,6 @@ export const MainAppProvider = ({ children }) => {
     apiUrl: _apiUrl,
     baseUrl: _url,
   };
-  //const value = {};
 
   return (
     <MainAppContext.Provider value={value}>{children}</MainAppContext.Provider>

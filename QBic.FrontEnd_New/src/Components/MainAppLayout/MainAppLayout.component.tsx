@@ -36,9 +36,31 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
 
   const { appMenuItems, sideNavMenuItems } = useMenus();
 
-  //const auth = useAuth(); -> calls main App
+  //const auth = useAuth();
   const api = useApi(); // calls auth -> calls main App
   //const user = useUser();
+
+  // TODO: make these provider things too
+
+  // TODO: - it might be easier to wait for main app to be ready, and call all these things manually
+  //       - then I can call them as "startApplication" same as before
+
+  // flow:
+  // call 'initialize system' to get system information   -> only happens once ever
+
+  // then (a.k.a. startApplication)
+  // then auth initialize
+  //    -> get local stored stuff
+  //    -> call perform token refresh is needed
+  // then main app initialize
+  //    -> check anon actions
+  //    -> call 'initialize'
+  //    -> if web call fails with 401
+  //           --> call perform token refresh
+  //           --> if this errors show login dialog
+  //           --> if login dialog succeeds, start this flow again
+  // then load menus
+  //    -> if this errors check for anon functions
 
   const handleMenuClick = (itemRef: string) => {
     if (itemRef == "#") {
