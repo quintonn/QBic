@@ -9,7 +9,6 @@ using QBic.Core.Services;
 using QBic.Core.Utilities;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Models;
@@ -72,8 +71,9 @@ namespace WebsiteTemplate.UnitTests.Tests
             {
                 var childCount = session.QueryOver<ChildClass>().RowCount();
                 var parentCount = session.QueryOver<ParentClass>().RowCount();
-                Assert.AreEqual(1, childCount);
-                Assert.AreEqual(1, parentCount);
+
+                Assert.That(1 == childCount);
+                Assert.That(1 == parentCount);
 
                 var child = session.QueryOver<ChildClass>().Take(1).List().ToList().FirstOrDefault();
                 // also works if I delete parent class
@@ -83,8 +83,8 @@ namespace WebsiteTemplate.UnitTests.Tests
 
                 childCount = session.QueryOver<ChildClass>().RowCount();
                 parentCount = session.QueryOver<ParentClass>().RowCount();
-                Assert.AreEqual(0, childCount);
-                Assert.AreEqual(0, parentCount);
+                Assert.That(0 == childCount);
+                Assert.That(0 == parentCount);
             }
         }
 
@@ -119,8 +119,8 @@ namespace WebsiteTemplate.UnitTests.Tests
             {
                 var demptCount = session.QueryOver<Department>().RowCount();
                 var empCount = session.QueryOver<Employee>().RowCount();
-                Assert.AreEqual(1, demptCount);
-                Assert.AreEqual(1, empCount);
+                Assert.That(1 == demptCount);
+                Assert.That(1 == empCount);
 
                 var dept = session.QueryOver<Department>().Take(1).List().ToList().FirstOrDefault();
 
@@ -139,13 +139,13 @@ namespace WebsiteTemplate.UnitTests.Tests
                 }
 
                 // make sure we did get the error
-                Assert.IsTrue(couldNotDelete && deptTable);
+                Assert.That(couldNotDelete && deptTable);
 
                 // make sure nothing was deleted
                 demptCount = session.QueryOver<Department>().RowCount();
                 empCount = session.QueryOver<Employee>().RowCount();
-                Assert.AreEqual(1, demptCount);
-                Assert.AreEqual(1, empCount);
+                Assert.That(1 == demptCount);
+                Assert.That(1 == empCount);
             }
         }
 
@@ -169,7 +169,7 @@ namespace WebsiteTemplate.UnitTests.Tests
                 }
 
                 var postCount = session.QueryOver<BasicDataClass>().RowCount();
-                Assert.AreEqual(postCount, preCount + 1);
+                Assert.That(postCount == preCount + 1);
             }
         }
 
@@ -195,7 +195,7 @@ namespace WebsiteTemplate.UnitTests.Tests
                 session.Flush();
 
                 var cnt = session.QueryOver<AcmeData>().RowCount();
-                Assert.AreEqual(1, cnt);
+                Assert.That(1 == cnt);
             }
         }
 
@@ -225,7 +225,7 @@ namespace WebsiteTemplate.UnitTests.Tests
 
             Trace.WriteLine($"Adding ${count} items took {elapsedTime} ms");
 
-            Assert.AreEqual(1, 1);
+            Assert.That(1 == 1);
         }
 
         [Test]
@@ -272,7 +272,7 @@ namespace WebsiteTemplate.UnitTests.Tests
                 postCount = session.QueryOver<ChildClass>().RowCount();
             }
 
-            Assert.AreEqual(preCount + 1, postCount);
+            Assert.That(preCount + 1 == postCount);
         }
     }
 }

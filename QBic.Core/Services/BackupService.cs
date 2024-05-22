@@ -523,6 +523,10 @@ namespace QBic.Core.Services
             var allTypes = new List<Type>();
             foreach (var assembly in tmpAssemblies)
             {
+                if (assembly.FullName.Contains("System.Data.SqlClient"))
+                {
+                    continue; // might be cached locally after upgrade, might not be a problem
+                }
                 var tmpBaseTypes = assembly.GetTypes().Where(t => t.IsClass && t.IsSubclassOf(typeof(BaseClass)) && t.IsAbstract == false).ToList();
                 allTypes.AddRange(tmpBaseTypes);
             }
