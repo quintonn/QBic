@@ -8,6 +8,7 @@ import {
   SpaceBetween,
 } from "@cloudscape-design/components";
 import { Link } from "react-router-dom";
+import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
 
 interface ServiceFeatureListItemProps {
   title: string;
@@ -26,6 +27,7 @@ const ServiceFeatureListItem = ({
 );
 
 export const Home = () => {
+  const mainApp = useMainApp();
   return (
     <ContentLayout
       header={
@@ -42,9 +44,9 @@ export const Home = () => {
               variant="h1"
               padding="n"
             >
-              App Name
+              {mainApp.appName}
             </Box>
-            <Box fontSize="display-l" fontWeight="light">
+            {/* <Box fontSize="display-l" fontWeight="light">
               Sub heading
             </Box>
             <Box
@@ -52,20 +54,20 @@ export const Home = () => {
               color="text-body-secondary"
             >
               Summary
-            </Box>
+            </Box> */}
           </Box>
-          <Container
+          {/* <Container
             header={<Header variant="h2">Manage stuff from here</Header>}
           >
             <SpaceBetween size="s">
               <Box variant="p">To get started, select a menu action</Box>
               <Button variant="primary">Sign in to get started</Button>
             </SpaceBetween>
-          </Container>
+          </Container> */}
         </Grid>
       }
     >
-      <Container
+      {/* <Container
         header={
           <Box variant="h2" fontSize="heading-xl" padding="n">
             Features
@@ -85,7 +87,7 @@ export const Home = () => {
           />
           <Link to="/test">Test</Link>
         </SpaceBetween>
-      </Container>
+      </Container> */}
     </ContentLayout>
   );
 };

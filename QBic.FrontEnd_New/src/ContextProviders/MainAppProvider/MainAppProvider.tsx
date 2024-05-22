@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { API_URL } from "../../Constants/AppValues";
 
 export interface SystemInfo {
   ApplicationName: string;
@@ -6,22 +7,13 @@ export interface SystemInfo {
   ConstructionError: string;
 }
 
-const MainAppContext = createContext(null);
-
-const API_VERSION = "v1";
-
-const scheme = window.location.protocol;
-let _url = scheme + "//" + window.location.host + window.location.pathname;
-
-if (process.env.ROOT_URL) {
-  _url = process.env.ROOT_URL;
+interface MainAppContextType {
+  appName: string;
+  appVersion: string;
+  isReady: boolean;
 }
 
-if (!_url.endsWith("/")) {
-  _url += "/";
-}
-
-const _apiUrl = `${_url}api/${API_VERSION}/`;
+const MainAppContext = createContext<MainAppContextType>(null);
 
 export const MainAppProvider = ({ children }) => {
   const [appName, setAppName] = useState("");
@@ -29,27 +21,36 @@ export const MainAppProvider = ({ children }) => {
   const [isReady, setIsReady] = useState(false);
 
   const initializeSystem = async (): Promise<void> => {
-    const cacheControl = `&_=${Date.now()}`; // don't cache stuff
-    const urlToCall = `${_apiUrl}initializeSystem?v=${cacheControl}`;
-    const resp = await fetch(urlToCall);
-    const systemInfo = (await resp.json()) as SystemInfo;
-    if (systemInfo) {
-      if (systemInfo.ConstructionError) {
-        console.log("There was an error in the system initialization code:");
-        console.log(systemInfo.ConstructionError);
+    try {
+      const cacheControl = `&_=${Date.now()}`; // don't cache stuff
+      const urlToCall = `${API_URL}initializeSystem?v=${cacheControl}`;
+      const resp = await fetch(urlToCall);
+      const systemInfo = (await resp.json()) as SystemInfo;
+      if (systemInfo) {
+        if (systemInfo.ConstructionError) {
+          console.log("There was an error in the system initialization code:");
+          console.log(systemInfo.ConstructionError);
 
-        //TODO: show error somewhere
-      } else {
-        setAppName(systemInfo.ApplicationName);
-        setAppVersion(systemInfo.Version);
+          //TODO: show error somewhere
+          //    : Maybe using the modal proider
+        } else {
+          setAppName(systemInfo.ApplicationName);
+          setAppVersion(systemInfo.Version);
 
-        document.title = `${systemInfo.ApplicationName} ${systemInfo.Version}`;
-        setIsReady(true);
+          document.title = `${systemInfo.ApplicationName} ${systemInfo.Version}`;
+          setIsReady(true);
+        }
       }
+    } catch (err) {
+      console.error("Fatal error calling initialize system:");
+      // wouldn't really happen because back-end hosts front-end
+      console.error(err);
+      alert("fatal error");
     }
   };
 
   useEffect(() => {
+    console.log("main app hook useEffect");
     initializeSystem();
   }, []);
 
@@ -57,8 +58,6 @@ export const MainAppProvider = ({ children }) => {
     appName,
     appVersion,
     isReady,
-    apiUrl: _apiUrl,
-    baseUrl: _url,
   };
 
   return (

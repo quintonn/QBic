@@ -1,3 +1,4 @@
+import { API_URL } from "../Constants/AppValues";
 import { useMainApp } from "../ContextProviders/MainAppProvider/MainAppProvider";
 import { useAuth } from "./authHook";
 
@@ -10,7 +11,7 @@ export interface SystemInfo {
 export const useApi = () => {
   const auth = useAuth();
 
-  const { apiUrl, appVersion } = useMainApp();
+  const { appVersion } = useMainApp();
 
   const makeApiCall = async <T extends any>(
     url: string,
@@ -22,7 +23,7 @@ export const useApi = () => {
     if (url.includes("html")) {
       cacheControl = "";
     }
-    const urlToCall = `${apiUrl}${url}?v=${appVersion}${cacheControl}`;
+    const urlToCall = `${API_URL}${url}?v=${appVersion}${cacheControl}`;
 
     // make API call
     const fetchOptions: RequestInit = {
@@ -31,9 +32,6 @@ export const useApi = () => {
         Authorization: "Bearer " + auth.accessToken,
       },
     };
-
-    console.log("fetch Options");
-    console.log(fetchOptions);
 
     if (method == "POST") {
       if (data instanceof FormData) {
@@ -80,32 +78,35 @@ export const useApi = () => {
     // make API call
     try {
       const response = await fetch(urlToCall, fetchOptions);
-
-      if (response.status >= 200 && response.status < 300) {
+      if (response.ok) {
         // success
         var json = (await response.json()) as T;
         return Promise.resolve(json);
       } else if (response.status == 401) {
-        console.log("unauthorized, calling refresh token now");
-        return auth
-          .performTokenRefresh()
-          .then((x) => {
-            // try call again
-            console.log("refresh token updated successfully");
-            return makeApiCallInternal<T>(
-              urlToCall,
-              fetchOptions,
-              raiseErrors
-            ).then((x) => {
-              return Promise.resolve(x as T);
+        if (auth.refreshToken) {
+          return auth
+            .performTokenRefresh()
+            .then((x) => {
+              // try call again
+
+              return makeApiCallInternal<T>(
+                urlToCall,
+                fetchOptions,
+                raiseErrors
+              ).then((x) => {
+                return Promise.resolve(x as T);
+              });
+            })
+            .catch((err) => {
+              console.error("error while getting refresh token");
+              // TODO: show login dialog -> which should then essentially restart the application initialization stuff as it will have new tokens
+              //auth.doLogin();
+              // setShowLoginDialog -> or something like that
+              return Promise.resolve(null as T);
             });
-          })
-          .catch((err) => {
-            console.error("error while getting refresh token");
-            // TODO: show login dialog -> which should then essentially restart the application initialization stuff as it will have new tokens
-            auth.doLogin();
-            return Promise.resolve(null as T);
-          });
+        } else {
+          return Promise.reject(401);
+        }
       } else if (response.status == 400) {
         const text = await response.text();
         if (text.includes("invalid_grant")) {
@@ -115,7 +116,7 @@ export const useApi = () => {
       }
 
       console.log("unhanled response status: ", response.status);
-      return null;
+      return Promise.reject("Error making api call: " + response.status);
       //TODO: handle response
     } catch (err) {
       console.log("error making api call to: " + urlToCall);

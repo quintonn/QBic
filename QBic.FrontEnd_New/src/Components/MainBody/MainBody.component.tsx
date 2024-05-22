@@ -7,12 +7,14 @@ import {
 } from "react-router-dom";
 import { Home } from "../Home/Home.component";
 import { MainAppLayout } from "../MainAppLayout/MainAppLayout.component";
+import { Login } from "../Login/Login.component";
 
 export const MainBody = () => {
   const [routes, setRoutes] = useState<RouteObject[]>([]);
   const [loadingRoutes, setLoadingRoutes] = useState(true);
 
   routes.push({ path: "/*", element: <Home /> });
+  routes.push({ path: "/login", element: <Login /> });
 
   useEffect(() => {
     //TODO: here we can fetch the user's menu

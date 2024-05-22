@@ -4,12 +4,13 @@ import {
   SideNavigation,
   TopNavigation,
 } from "@cloudscape-design/components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppMenuItem, useMenus } from "../../Hooks/menuHook";
-import { useAuth } from "../../Hooks/authHook";
 import { useApi } from "../../Hooks/apiHook";
+import { useAuth } from "../../Hooks/authHook";
 import { useUser } from "../../Hooks/userHook";
+import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
 
 interface MainAppLayoutProps extends AppLayoutProps {
   content: React.ReactNode;
@@ -36,9 +37,11 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
 
   const { appMenuItems, sideNavMenuItems } = useMenus();
 
-  //const auth = useAuth();
+  const mainApp = useMainApp(); // auto injected because it's a context provider
+
+  const auth = useAuth();
   const api = useApi(); // calls auth -> calls main App
-  //const user = useUser();
+  const user = useUser();
 
   // TODO: make these provider things too
 
@@ -80,14 +83,21 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
 
   return (
     <>
+      {/* {!user.isReady && <Login />} */}
       <div id="h" style={{ position: "sticky", top: 0, zIndex: 1002 }}>
         <TopNavigation
           // i18nStrings={i18nStrings}
           identity={{
             href: "/",
-            title: "App name",
+            title: mainApp.appName || "QBic",
             //   logo: { src: logo, alt: "Service name logo" },
           }}
+          utilities={
+            user.isReady
+              ? [{ type: "button", text: "Logout", onClick: auth.logout }]
+              : []
+            // : [{ type: "button", text: "Sign In", href: PATHS.signin.path }]
+          }
           // search={
           //   <Input
           //     ariaLabel="Input field"
@@ -126,6 +136,7 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
         headerSelector="#h"
         content={content}
         toolsHide={true}
+        navigationHide={!user.isReady}
         navigation={
           <SideNavigation
             activeHref={activeHref}
