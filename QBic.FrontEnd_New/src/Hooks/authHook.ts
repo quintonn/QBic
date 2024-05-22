@@ -9,6 +9,7 @@ export const useAuth = () => {
   const [isReady, setIsReady] = useState(false);
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [gotTokens, setGotTokens] = useState(false);
 
   const {
     appName,
@@ -29,7 +30,15 @@ export const useAuth = () => {
     }
   }, [mainAppIsReady]);
 
+  useEffect(() => {
+    if (gotTokens === true) {
+      console.log("got tokens, do validate them");
+      validateRefreshToken();
+    }
+  }, [gotTokens]);
+
   const performTokenRefresh = async () => {
+    console.log("refresh token = ", refreshToken);
     const data = new FormData();
     data.append("grant_type", "refresh_token");
     data.append("refresh_token", refreshToken);
@@ -55,6 +64,7 @@ export const useAuth = () => {
 
         setAccessToken(json.access_token);
         setRefreshToken(json.refresh_token);
+
         setLastRefreshDate(new Date());
 
         localStorage.setItem(getName("accessToken"), json.access_token);
@@ -111,6 +121,7 @@ export const useAuth = () => {
     const _refreshToken = localStorage.getItem(getName("refreshToken"));
     setAccessToken(_accessToken);
     setRefreshToken(_refreshToken);
+    console.log("setting refresh token", _refreshToken);
 
     console.log("initializing auth");
     console.log(accessToken);
@@ -118,38 +129,39 @@ export const useAuth = () => {
     console.log("tokens <---");
 
     //setIsReady(true);
-    try {
-      await validateRefreshToken();
-    } catch (err) {
-      console.log("error validating auth tokens", err);
-    } finally {
-      const urlToCall = `${apiUrl}initialize?v=${appVersion}`;
+    setGotTokens(true);
+    // try {
+    //   //await validateRefreshToken();
+    // } catch (err) {
+    //   console.log("error validating auth tokens", err);
+    // } finally {
+    //   const urlToCall = `${apiUrl}initialize?v=${appVersion}`;
 
-      // make API call
-      try {
-        const fetchOptions: RequestInit = {
-          method: "GET",
-          headers: {
-            Authorization: "Bearer " + accessToken,
-          },
-        };
-        const userResponse = await fetch(urlToCall, fetchOptions);
-        if (userResponse.ok) {
-          const userInfo = await userResponse.json();
-          setIsAuthenticated(true);
-        } else {
-          console.log("initialize call failed " + userResponse.status);
-          setIsAuthenticated(false);
-        }
-      } catch (err) {
-        setIsAuthenticated(false);
-        console.log("initialize call failed");
-        console.log(err);
-        //TODO: so it means we're unauthenticated
-      }
+    //   // make API call
+    //   try {
+    //     const fetchOptions: RequestInit = {
+    //       method: "GET",
+    //       headers: {
+    //         Authorization: "Bearer " + accessToken,
+    //       },
+    //     };
+    //     const userResponse = await fetch(urlToCall, fetchOptions);
+    //     if (userResponse.ok) {
+    //       const userInfo = await userResponse.json();
+    //       setIsAuthenticated(true);
+    //     } else {
+    //       console.log("initialize call failed " + userResponse.status);
+    //       setIsAuthenticated(false);
+    //     }
+    //   } catch (err) {
+    //     setIsAuthenticated(false);
+    //     console.log("initialize call failed");
+    //     console.log(err);
+    //     //TODO: so it means we're unauthenticated
+    //   }
 
-      setIsReady(true);
-    }
+    //   setIsReady(true);
+    // }
   };
 
   const performLogin = async (username: string, password: string) => {
