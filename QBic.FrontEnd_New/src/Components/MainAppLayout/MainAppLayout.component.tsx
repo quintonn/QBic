@@ -7,7 +7,9 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppMenuItem, useMenus } from "../../Hooks/menuHook";
-import { useInit } from "../../Hooks/initHook";
+import { useAuth } from "../../Hooks/authHook";
+import { useApi } from "../../Hooks/apiHook";
+import { useUser } from "../../Hooks/userHook";
 
 interface MainAppLayoutProps extends AppLayoutProps {
   content: React.ReactNode;
@@ -34,7 +36,9 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
 
   const { appMenuItems, sideNavMenuItems } = useMenus();
 
-  const initInfo = useInit();
+  //const auth = useAuth(); -> calls main App
+  const api = useApi(); // calls auth -> calls main App
+  //const user = useUser();
 
   const handleMenuClick = (itemRef: string) => {
     if (itemRef == "#") {

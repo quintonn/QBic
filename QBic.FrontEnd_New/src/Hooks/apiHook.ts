@@ -1,6 +1,5 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { useAuth } from "../AuthProvider/AuthContextProvider";
-import { useAppInfo } from "../AppInfoContextProvider/AppInfoContextProvider";
+import { useMainApp } from "../ContextProviders/MainAppProvider/MainAppProvider";
+import { useAuth } from "./authHook";
 
 export interface SystemInfo {
   ApplicationName: string;
@@ -8,13 +7,10 @@ export interface SystemInfo {
   ConstructionError: string;
 }
 
-const ApiContext = createContext(null);
-
-export const ApiContextProvider = ({ children }) => {
+export const useApi = () => {
   const auth = useAuth();
-  const appInfo = useAppInfo();
 
-  console.log("inside api context provider");
+  const { apiUrl, appVersion } = useMainApp();
 
   const makeApiCall = async <T extends any>(
     url: string,
@@ -26,7 +22,7 @@ export const ApiContextProvider = ({ children }) => {
     if (url.includes("html")) {
       cacheControl = "";
     }
-    const urlToCall = `${appInfo.apiUrl}${url}?v=${appInfo.appVersion}${cacheControl}`;
+    const urlToCall = `${apiUrl}${url}?v=${appVersion}${cacheControl}`;
 
     // make API call
     const fetchOptions: RequestInit = {
@@ -96,18 +92,19 @@ export const ApiContextProvider = ({ children }) => {
           .then((x) => {
             // try call again
             console.log("refresh token updated successfully");
-            return makeApiCallInternal(
+            return makeApiCallInternal<T>(
               urlToCall,
               fetchOptions,
               raiseErrors
             ).then((x) => {
-              return Promise.resolve(x);
+              return Promise.resolve(x as T);
             });
           })
           .catch((err) => {
             console.error("error while getting refresh token");
             // TODO: show login dialog -> which should then essentially restart the application initialization stuff as it will have new tokens
             auth.doLogin();
+            return Promise.resolve(null as T);
           });
       } else if (response.status == 400) {
         const text = await response.text();
@@ -135,15 +132,5 @@ export const ApiContextProvider = ({ children }) => {
     }
   };
 
-  const value = { makeApiCall, initializeSystem };
-
-  return <ApiContext.Provider value={value}>{children}</ApiContext.Provider>;
-};
-
-export const useApi = () => {
-  const context = useContext(ApiContext);
-  if (!context) {
-    throw new Error("useApi must be used within an ApiContextProvider");
-  }
-  return context;
+  return { makeApiCall, initializeSystem };
 };
