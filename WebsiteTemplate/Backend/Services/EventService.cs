@@ -105,6 +105,10 @@ namespace WebsiteTemplate.Backend.Services
                 var allAssemblies = AppDomain.CurrentDomain.GetAssemblies();
                 foreach (var assembly in allAssemblies)
                 {
+                    if (assembly.FullName.Contains("System.Data.SqlClient"))
+                    {
+                        continue; // might be cached locally after upgrade, might not be a problem
+                    }
                     var tmpBaseTypes = assembly.GetTypes()
                                                .Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(Event)))
                                                .ToList();

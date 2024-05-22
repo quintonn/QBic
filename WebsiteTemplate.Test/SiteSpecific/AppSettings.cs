@@ -22,7 +22,7 @@ namespace WebsiteTemplate.Test.SiteSpecific
 
         public override bool UpdateDatabase => true; // Set to true first time to create tables. Also set to true after making changes
 
-        public override string ApplicationPassPhrase => "xxxxxxxxxxxxxxxx";
+        public override string ApplicationPassPhrase => "xxxxxxxxxxxxxxxxqqqqqqqqqqqqqqqq"; // must be at least 32 characters long (multiples of 8)
 
         public override bool ShowSQL => true;
 

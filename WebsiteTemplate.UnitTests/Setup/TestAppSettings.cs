@@ -14,7 +14,7 @@ namespace WebsiteTemplate.UnitTests.Setup
 
         public override DBProviderType DataProviderType => DBProviderType.SQLITE;
 
-        public override string ApplicationPassPhrase => "1234567890";
+        public override string ApplicationPassPhrase => "12345678901234567890123456789123";
 
         public override bool UpdateDatabase => true;
 

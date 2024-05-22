@@ -13,7 +13,7 @@ namespace WebsiteTemplate.UnitTests.Tests
             using (var session = DataService.OpenSession())
             {
                 var employees = session.QueryOver<Employee>().List().ToList();
-                Assert.AreEqual(0, employees.Count);
+                Assert.That(0 == employees.Count);
                 var dept = new Department()
                 {
                     Name = "Department 1"
@@ -29,7 +29,7 @@ namespace WebsiteTemplate.UnitTests.Tests
                 session.Flush();
 
                 employees = session.QueryOver<Employee>().List().ToList();
-                Assert.AreEqual(1, employees.Count);
+                Assert.That(1 == employees.Count);
             }
         }
     }
