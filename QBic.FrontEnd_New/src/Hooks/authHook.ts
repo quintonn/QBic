@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useMainApp } from "../ContextProviders/MainAppProvider/MainAppProvider";
+import { API_URL } from "../Constants/AppValues";
+import { useNavigate } from "react-router-dom";
 
 export const useAuth = () => {
   const [accessToken, setAccessToken] = useState("");
@@ -11,13 +13,9 @@ export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [gotTokens, setGotTokens] = useState(false);
 
-  const {
-    appName,
-    apiUrl,
-    appVersion,
-    baseUrl,
-    isReady: mainAppIsReady,
-  } = useMainApp();
+  const { appName, appVersion, isReady: mainAppIsReady } = useMainApp();
+
+  const navigate = useNavigate();
 
   const getName = (name: string) => {
     return appName + "_" + name;
@@ -25,26 +23,23 @@ export const useAuth = () => {
 
   useEffect(() => {
     if (mainAppIsReady === true) {
-      console.log("auth hook got main app ready");
       initializeAuth();
     }
   }, [mainAppIsReady]);
 
   useEffect(() => {
     if (gotTokens === true) {
-      console.log("got tokens, do validate them");
       validateRefreshToken();
     }
   }, [gotTokens]);
 
   const performTokenRefresh = async () => {
-    console.log("refresh token = ", refreshToken);
     const data = new FormData();
     data.append("grant_type", "refresh_token");
     data.append("refresh_token", refreshToken);
     data.append("client_id", appName);
 
-    const urlToCall = `${apiUrl}token?v=${appVersion}`;
+    const urlToCall = `${API_URL}token?v=${appVersion}`;
 
     // make API call
     try {
@@ -56,11 +51,8 @@ export const useAuth = () => {
 
       const loginResponse = await fetch(urlToCall, fetchOptions);
 
-      console.log(loginResponse);
-
       if (loginResponse.ok === true) {
         const json = await loginResponse.json();
-        console.log(json);
 
         setAccessToken(json.access_token);
         setRefreshToken(json.refresh_token);
@@ -76,10 +68,9 @@ export const useAuth = () => {
 
         setIsAuthenticated(true);
       }
-      console.log("login response not ok");
       return Promise.reject("could not update refresh token");
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 
@@ -101,17 +92,10 @@ export const useAuth = () => {
     if (
       savedLastRefreshDate.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0)
     ) {
-      console.log("last refresh was before today");
-      console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-      console.log(refreshToken);
-      console.log(savedLastRefreshDate);
-      console.log(today);
       await performTokenRefresh();
-      console.log("after perform token refresh");
-      //setIsReady(true);
+      setIsReady(true);
     } else {
-      console.log("not refreshing token, setting ready");
-      //setIsReady(true);
+      setIsReady(true);
     }
   };
 
@@ -121,47 +105,8 @@ export const useAuth = () => {
     const _refreshToken = localStorage.getItem(getName("refreshToken"));
     setAccessToken(_accessToken);
     setRefreshToken(_refreshToken);
-    console.log("setting refresh token", _refreshToken);
 
-    console.log("initializing auth");
-    console.log(accessToken);
-    console.log(refreshToken);
-    console.log("tokens <---");
-
-    //setIsReady(true);
     setGotTokens(true);
-    // try {
-    //   //await validateRefreshToken();
-    // } catch (err) {
-    //   console.log("error validating auth tokens", err);
-    // } finally {
-    //   const urlToCall = `${apiUrl}initialize?v=${appVersion}`;
-
-    //   // make API call
-    //   try {
-    //     const fetchOptions: RequestInit = {
-    //       method: "GET",
-    //       headers: {
-    //         Authorization: "Bearer " + accessToken,
-    //       },
-    //     };
-    //     const userResponse = await fetch(urlToCall, fetchOptions);
-    //     if (userResponse.ok) {
-    //       const userInfo = await userResponse.json();
-    //       setIsAuthenticated(true);
-    //     } else {
-    //       console.log("initialize call failed " + userResponse.status);
-    //       setIsAuthenticated(false);
-    //     }
-    //   } catch (err) {
-    //     setIsAuthenticated(false);
-    //     console.log("initialize call failed");
-    //     console.log(err);
-    //     //TODO: so it means we're unauthenticated
-    //   }
-
-    //   setIsReady(true);
-    // }
   };
 
   const performLogin = async (username: string, password: string) => {
@@ -171,7 +116,7 @@ export const useAuth = () => {
     data.append("password", password);
     data.append("client_id", appName);
 
-    const urlToCall = `${apiUrl}token?v=${appVersion}`;
+    const urlToCall = `${API_URL}token?v=${appVersion}`;
 
     // make API call
     try {
@@ -183,17 +128,8 @@ export const useAuth = () => {
 
       const loginResponse = await fetch(urlToCall, fetchOptions);
 
-      console.log(loginResponse);
-
       if (loginResponse.ok === true) {
-        // TODO: update token stuff
-        console.log("TODO: update auth tokens");
         const json = await loginResponse.json();
-        console.log(json);
-
-        //setAccessToken(json.access_token);
-        //setRefreshToken(json.refresh_token);
-        //setLastRefreshDate(new Date());
 
         localStorage.setItem(getName("accessToken"), json.access_token);
         localStorage.setItem(getName("refreshToken"), json.refresh_token);
@@ -202,43 +138,32 @@ export const useAuth = () => {
           JSON.stringify(new Date())
         );
 
-        console.log("reloading page");
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 10); // make sure this happens after navigate !?!
+        navigate("/");
+
         return;
       }
-      console.log("login response not ok");
-      return Promise.reject("could not login");
+
+      const responseText = await loginResponse.text();
+
+      return Promise.reject(responseText);
     } catch (err) {
       console.log(err);
     }
   };
 
-  const doLogin = async () => {
-    //return;
-    console.log("xx loging in XX");
-
-    // HERE ----> x123  -> Try implement the react-redux (see flashbar in envoy tools app)
-    // THIS WORKED - make UI for this
-    // ALSO - need a log out button
-
-    // let username = "admin";
-    // let password = "password";
-
-    // try {
-    //   await performLogin(username, password);
-    // } catch (err) {
-    //   console.log("error logging in");
-    //   console.log(err);
-    // }
+  const doLogin = async (username: string, password: string) => {
+    await performLogin(username, password);
   };
 
   const logout = () => {
-    // localStorage.setItem(getName("accessToken"), '');
-    // localStorage.setItem(getName("refreshToken"), '');
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("lastRefreshDate");
-
+    console.log("auth logout called");
+    localStorage.removeItem(getName("accessToken"));
+    localStorage.removeItem(getName("refreshToken"));
+    localStorage.removeItem(getName("lastRefreshDate"));
+    setIsAuthenticated(false);
     window.location.reload(); // TODO: instead of reloading the page, call all the initialization code again
   };
 
@@ -250,5 +175,7 @@ export const useAuth = () => {
     isReady, //TODO: i would like this to work without all this isReady stuff
     doLogin,
     logout,
+    isAuthenticated,
+    setIsAuthenticated,
   };
 };
