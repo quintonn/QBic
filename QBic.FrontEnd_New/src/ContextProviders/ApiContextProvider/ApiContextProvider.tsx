@@ -14,6 +14,8 @@ export const ApiContextProvider = ({ children }) => {
   const auth = useAuth();
   const appInfo = useAppInfo();
 
+  console.log("inside api context provider");
+
   const makeApiCall = async <T extends any>(
     url: string,
     method: "GET" | "POST" = "GET",
@@ -53,17 +55,14 @@ export const ApiContextProvider = ({ children }) => {
   };
 
   const initializeSystem = async (): Promise<SystemInfo> => {
-    let cacheControl = `&_=${Date.now()}`; // don't cache stuff
-    const urlToCall = `${appInfo.apiUrl}initializeSystem?v=${appInfo.appVersion}${cacheControl}`;
+    // let cacheControl = `&_=${Date.now()}`; // don't cache stuff
+    // const urlToCall = `${appInfo.apiUrl}initializeSystem?v=${appInfo.appVersion}${cacheControl}`;
 
-    const fetchOptions: RequestInit = {
-      method: "GET",
-    };
+    // const fetchOptions: RequestInit = {
+    //   method: "GET",
+    // };
 
-    const systemInfo = await makeApiCallInternal<SystemInfo>(
-      urlToCall,
-      fetchOptions
-    );
+    const systemInfo = await makeApiCall<SystemInfo>("initializeSystem");
     if (systemInfo) {
       if (systemInfo.ConstructionError) {
         console.log("There was an error in the system initialization code:");
