@@ -52,6 +52,11 @@ namespace WebsiteTemplate
 
             var appSettings = Activator.CreateInstance<T>();
 
+            if (appSettings.ApplicationPassPhrase.Length < 32)
+            {
+                throw new Exception("Application Pass Phrase must be at least 32 characters long to be used by JWT Encryption");
+            }
+
             appSettings.SetConfig(configuration);
 
             services.AddSingleton<IApplicationSettings>(appSettings);
