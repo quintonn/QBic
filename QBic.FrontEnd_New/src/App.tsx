@@ -1,19 +1,13 @@
 import "@cloudscape-design/global-styles/index.css";
 
-import { AuthContextProvider } from "./ContextProviders/AuthProvider/AuthContextProvider";
-import { ApiContextProvider } from "./ContextProviders/ApiContextProvider/ApiContextProvider";
-import { AppInfoContextProvider } from "./ContextProviders/AppInfoContextProvider/AppInfoContextProvider";
 import { MainBody } from "./Components/MainBody/MainBody.component";
+import { MainAppProvider } from "./ContextProviders/MainAppProvider/MainAppProvider";
 
 function App() {
   return (
-    <AppInfoContextProvider>
-      <AuthContextProvider>
-        <ApiContextProvider>
-          <MainBody />
-        </ApiContextProvider>
-      </AuthContextProvider>
-    </AppInfoContextProvider>
+    <MainAppProvider>
+      <MainBody />
+    </MainAppProvider>
   );
 }
 

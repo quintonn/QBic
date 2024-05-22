@@ -1,32 +1,41 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { useAppInfo } from "../AppInfoContextProvider/AppInfoContextProvider";
+import { useEffect, useState } from "react";
+import { useMainApp } from "../ContextProviders/MainAppProvider/MainAppProvider";
 
-export const AuthContext = createContext(null);
-
-export const AuthContextProvider = ({ children }) => {
+export const useAuth = () => {
   const [accessToken, setAccessToken] = useState("");
   const [refreshToken, setRefreshToken] = useState("");
   const [lastRefreshDate, setLastRefreshDate] = useState<Date>(new Date());
-  const appInfo = useAppInfo();
 
   const [isReady, setIsReady] = useState(false);
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const {
+    appName,
+    apiUrl,
+    appVersion,
+    baseUrl,
+    isReady: mainAppIsReady,
+  } = useMainApp();
+
   const getName = (name: string) => {
-    return appInfo.appName + "_" + name;
+    return appName + "_" + name;
   };
 
   useEffect(() => {
-    console.log("app info has changed - AuthContext");
-    console.log(appInfo);
-  }, [appInfo]);
+    if (mainAppIsReady === true) {
+      console.log("auth hook got main app ready");
+      initializeAuth();
+    }
+  }, [mainAppIsReady]);
 
   const performTokenRefresh = async () => {
     const data = new FormData();
     data.append("grant_type", "refresh_token");
     data.append("refresh_token", refreshToken);
-    data.append("client_id", appInfo.appName);
+    data.append("client_id", appName);
 
-    const urlToCall = `${appInfo.apiUrl}token?v=${appInfo.appVersion}`;
+    const urlToCall = `${apiUrl}token?v=${appVersion}`;
 
     // make API call
     try {
@@ -44,9 +53,9 @@ export const AuthContextProvider = ({ children }) => {
         const json = await loginResponse.json();
         console.log(json);
 
-        //setAccessToken(json.access_token);
-        //setRefreshToken(json.refresh_token);
-        //setLastRefreshDate(new Date());
+        setAccessToken(json.access_token);
+        setRefreshToken(json.refresh_token);
+        setLastRefreshDate(new Date());
 
         localStorage.setItem(getName("accessToken"), json.access_token);
         localStorage.setItem(getName("refreshToken"), json.refresh_token);
@@ -54,6 +63,8 @@ export const AuthContextProvider = ({ children }) => {
           getName("lastRefreshDate"),
           JSON.stringify(new Date())
         );
+
+        setIsAuthenticated(true);
       }
       console.log("login response not ok");
       return Promise.reject("could not update refresh token");
@@ -81,22 +92,25 @@ export const AuthContextProvider = ({ children }) => {
       savedLastRefreshDate.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0)
     ) {
       console.log("last refresh was before today");
+      console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+      console.log(refreshToken);
+      console.log(savedLastRefreshDate);
+      console.log(today);
       await performTokenRefresh();
       console.log("after perform token refresh");
-      setIsReady(true);
+      //setIsReady(true);
     } else {
       console.log("not refreshing token, setting ready");
-      setIsReady(true);
+      //setIsReady(true);
     }
   };
 
   const initializeAuth = async () => {
     // get auth tokens from local storage
-
-    const accessToken = localStorage.getItem(getName("accessToken"));
-    const refreshToken = localStorage.getItem(getName("refreshToken"));
-    setAccessToken(accessToken);
-    setRefreshToken(refreshToken);
+    const _accessToken = localStorage.getItem(getName("accessToken"));
+    const _refreshToken = localStorage.getItem(getName("refreshToken"));
+    setAccessToken(_accessToken);
+    setRefreshToken(_refreshToken);
 
     console.log("initializing auth");
     console.log(accessToken);
@@ -104,7 +118,38 @@ export const AuthContextProvider = ({ children }) => {
     console.log("tokens <---");
 
     //setIsReady(true);
-    validateRefreshToken();
+    try {
+      await validateRefreshToken();
+    } catch (err) {
+      console.log("error validating auth tokens", err);
+    } finally {
+      const urlToCall = `${apiUrl}initialize?v=${appVersion}`;
+
+      // make API call
+      try {
+        const fetchOptions: RequestInit = {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + accessToken,
+          },
+        };
+        const userResponse = await fetch(urlToCall, fetchOptions);
+        if (userResponse.ok) {
+          const userInfo = await userResponse.json();
+          setIsAuthenticated(true);
+        } else {
+          console.log("initialize call failed " + userResponse.status);
+          setIsAuthenticated(false);
+        }
+      } catch (err) {
+        setIsAuthenticated(false);
+        console.log("initialize call failed");
+        console.log(err);
+        //TODO: so it means we're unauthenticated
+      }
+
+      setIsReady(true);
+    }
   };
 
   const performLogin = async (username: string, password: string) => {
@@ -112,9 +157,9 @@ export const AuthContextProvider = ({ children }) => {
     data.append("grant_type", "password");
     data.append("username", username);
     data.append("password", password);
-    data.append("client_id", appInfo.appName);
+    data.append("client_id", appName);
 
-    const urlToCall = `${appInfo.apiUrl}token?v=${appInfo.appVersion}`;
+    const urlToCall = `${apiUrl}token?v=${appVersion}`;
 
     // make API call
     try {
@@ -160,6 +205,7 @@ export const AuthContextProvider = ({ children }) => {
     //return;
     console.log("xx loging in XX");
 
+    // HERE ----> x123  -> Try implement the react-redux (see flashbar in envoy tools app)
     // THIS WORKED - make UI for this
     // ALSO - need a log out button
 
@@ -184,7 +230,7 @@ export const AuthContextProvider = ({ children }) => {
     window.location.reload(); // TODO: instead of reloading the page, call all the initialization code again
   };
 
-  const value = {
+  return {
     refreshToken,
     accessToken,
     initializeAuth,
@@ -193,14 +239,4 @@ export const AuthContextProvider = ({ children }) => {
     doLogin,
     logout,
   };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthContextProvider");
-  }
-  return context;
 };
