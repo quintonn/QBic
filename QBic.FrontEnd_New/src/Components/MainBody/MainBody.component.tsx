@@ -8,6 +8,7 @@ import {
 import { Home } from "../Home/Home.component";
 import { MainAppLayout } from "../MainAppLayout/MainAppLayout.component";
 import { Login } from "../Login/Login.component";
+import { AuthProvider } from "../../ContextProviders/AuthProvider/AuthProvider";
 
 export const MainBody = () => {
   const [routes, setRoutes] = useState<RouteObject[]>([]);
@@ -26,7 +27,11 @@ export const MainBody = () => {
 
   const router = createBrowserRouter([
     {
-      element: <MainAppLayout content={<Outlet></Outlet>} />,
+      element: (
+        <AuthProvider>
+          <MainAppLayout content={<Outlet></Outlet>} />
+        </AuthProvider>
+      ),
       children: routes,
     },
   ]);

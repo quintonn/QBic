@@ -1,14 +1,28 @@
-import { useEffect, useState } from "react";
-import { useMainApp } from "../ContextProviders/MainAppProvider/MainAppProvider";
-import { API_URL } from "../Constants/AppValues";
+import { createContext, useContext, useEffect, useState } from "react";
+import { API_URL } from "../../Constants/AppValues";
+import { useMainApp } from "../MainAppProvider/MainAppProvider";
 import { useNavigate } from "react-router-dom";
+
+interface AuthContextType {
+  refreshToken: string;
+  accessToken: string;
+  // isReady, //TODO: i would like this to work without all this isReady stuff
+  doLogin: (username: string, password: string) => void;
+  logout: () => void;
+  isAuthenticated: boolean;
+  //setIsAuthenticated,
+  performTokenRefresh: () => Promise<void>;
+  resetPassword: (username: string) => Promise<string>;
+}
 
 interface UserInfo {
   Id: string;
   User: string;
 }
 
-export const useAuth = () => {
+const AuthContext = createContext<AuthContextType>(null);
+
+export const AuthProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState("");
   const [refreshToken, setRefreshToken] = useState("");
   const [lastRefreshDate, setLastRefreshDate] = useState<Date>(new Date());
@@ -34,6 +48,8 @@ export const useAuth = () => {
   }, [mainAppIsReady]);
 
   useEffect(() => {
+    // this is done using a useEffect, else the accessToken and refreshToken state values are not set
+    // TODO: Can be improved
     if (gotTokens === true) {
       validateRefreshToken();
     }
@@ -238,7 +254,7 @@ export const useAuth = () => {
     }
   }
 
-  return {
+  const value = {
     refreshToken,
     accessToken,
     initializeAuth,
@@ -250,4 +266,14 @@ export const useAuth = () => {
     setIsAuthenticated,
     resetPassword,
   };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };
