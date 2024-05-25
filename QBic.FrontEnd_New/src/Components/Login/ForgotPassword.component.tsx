@@ -9,7 +9,7 @@ import {
   SpaceBetween,
 } from "@cloudscape-design/components";
 import { useState } from "react";
-import { useAuth } from "../../Hooks/authHook";
+import { useAuth } from "../../ContextProviders/AuthProvider/AuthProvider";
 
 interface ForgotPasswordProps {
   visible: boolean;

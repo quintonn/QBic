@@ -11,10 +11,9 @@ import {
   SpaceBetween,
 } from "@cloudscape-design/components";
 import { useEffect, useState } from "react";
-import { useApi } from "../../Hooks/apiHook";
-import { useAuth } from "../../Hooks/authHook";
 import { ForgotPassword } from "./ForgotPassword.component";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../ContextProviders/AuthProvider/AuthProvider";
 
 interface LoginData {
   username: string;

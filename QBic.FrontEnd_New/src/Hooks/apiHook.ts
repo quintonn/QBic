@@ -1,6 +1,6 @@
 import { API_URL } from "../Constants/AppValues";
+import { useAuth } from "../ContextProviders/AuthProvider/AuthProvider";
 import { useMainApp } from "../ContextProviders/MainAppProvider/MainAppProvider";
-import { useAuth } from "./authHook";
 
 export interface SystemInfo {
   ApplicationName: string;

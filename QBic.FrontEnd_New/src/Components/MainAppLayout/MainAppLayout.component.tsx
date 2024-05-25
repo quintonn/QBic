@@ -4,12 +4,12 @@ import {
   SideNavigation,
   TopNavigation,
 } from "@cloudscape-design/components";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppMenuItem, useMenus } from "../../Hooks/menuHook";
 import { useApi } from "../../Hooks/apiHook";
-import { useAuth } from "../../Hooks/authHook";
 import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
+import { useAuth } from "../../ContextProviders/AuthProvider/AuthProvider";
 
 interface MainAppLayoutProps extends AppLayoutProps {
   content: React.ReactNode;
