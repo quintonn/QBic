@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { SideNavigationProps } from "@cloudscape-design/components";
-import { TestMenuData } from "../TestData/Menus";
+import { useAuth } from "../ContextProviders/AuthProvider/AuthProvider";
+import { useApi } from "./apiHook";
 
 export interface MenuItem {
   Name: string;
@@ -92,23 +93,27 @@ export const useMenus = () => {
     SideNavigationProps.Item[]
   >([]);
 
+  const auth = useAuth();
+  const api = useApi();
+
+  const loadMenus = async () => {
+    const menuData = await api.makeApiCall<MenuItem[]>("getUserMenu", "GET");
+    const menuItems = MapMenuItemToAppMenuItem(menuData, "");
+
+    const sideNavItems = MapMenuItemsToSideNavItems(menuData);
+
+    setAppMenuItems(menuItems);
+    setSideNavMenuItems(sideNavItems);
+  };
+
   useEffect(() => {
-    //TODO: fetch this async etc.
-
-    setTimeout(() => {
-      const menuItems = MapMenuItemToAppMenuItem(
-        TestMenuData as MenuItem[],
-        ""
-      );
-
-      const sideNavItems = MapMenuItemsToSideNavItems(
-        TestMenuData as MenuItem[]
-      );
-
-      setAppMenuItems(menuItems);
-      setSideNavMenuItems(sideNavItems);
-    });
-  }, []);
+    if (auth.isAuthenticated === true) {
+      loadMenus();
+    } else {
+      setAppMenuItems([]);
+      setSideNavMenuItems([]);
+    }
+  }, [auth.isAuthenticated]);
 
   return { appMenuItems, sideNavMenuItems };
 };

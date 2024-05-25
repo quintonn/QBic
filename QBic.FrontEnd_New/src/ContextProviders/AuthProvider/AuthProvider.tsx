@@ -89,6 +89,7 @@ export const AuthProvider = ({ children }) => {
         );
 
         setIsAuthenticated(true);
+        console.log("perform refresh token done");
       }
       return Promise.reject("could not update refresh token");
     } catch (err) {
@@ -220,7 +221,7 @@ export const AuthProvider = ({ children }) => {
     window.location.reload(); // TODO: instead of reloading the page, call all the initialization code again
   };
 
-  async function onReadyFunction() {
+  async function onReadyFunction(allow401: boolean = true) {
     // call initialize (basically checks if user is authenticated, and returns user name and id)
 
     // make API call
@@ -243,7 +244,15 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
       } else {
         if (apiResponse.status == 401) {
-          navigate("/login");
+          alert("no longer authenticated, see logs");
+          if (allow401) {
+            console.log("got a 401");
+            await performTokenRefresh();
+            console.log("after perform refresh token");
+            await onReadyFunction(false);
+          } else {
+            navigate("/login");
+          }
         }
       }
       //return Promise.reject(responseText);
