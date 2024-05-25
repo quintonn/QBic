@@ -1,6 +1,6 @@
 import { MenuItem } from "../Hooks/menuHook";
 
-export const TestMenuData = [
+const TestMenuData = [
   {
     Name: "System",
     ParentMenu: null,
