@@ -34,7 +34,7 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
   const [activeHref, setActiveHref] = useState("#");
   const navigate = useNavigate();
 
-  const { appMenuItems, sideNavMenuItems } = useMenus();
+  const menus = useMenus();
 
   const mainApp = useMainApp(); // auto injected because it's a context provider
 
@@ -65,74 +65,38 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
 
   const handleMenuClick = (itemRef: string) => {
     if (itemRef == "#") {
-      console.log("home clicked");
-      navigate("/");
+      menus.onHomeClick();
       return;
     }
     const itemId = itemRef.substring(1);
 
-    const menuItemClicked = findClickedItem(itemId, appMenuItems);
+    const menuItemClicked = findClickedItem(itemId, menus.appMenuItems);
 
-    console.log(
-      "TODO: Handle menu item event clicked: " + menuItemClicked.event
-    );
-    //TODO: handle menuItemClicked.event
+    menus.onMenuClick(menuItemClicked.event);
   };
 
   return (
     <>
-      {/* {!user.isReady && <Login />} */}
       <div id="h" style={{ position: "sticky", top: 0, zIndex: 1002 }}>
         <TopNavigation
-          // i18nStrings={i18nStrings}
           identity={{
             href: "/",
             title: mainApp.appName || "QBic",
-            //   logo: { src: logo, alt: "Service name logo" },
           }}
           utilities={
             auth.isAuthenticated
-              ? [{ type: "button", text: "Logout", onClick: auth.logout }]
+              ? [
+                  { type: "button", text: auth?.user?.User },
+                  { type: "button", text: "Logout", onClick: auth.logout },
+                ]
               : []
-            // : [{ type: "button", text: "Sign In", href: PATHS.signin.path }]
           }
-          // search={
-          //   <Input
-          //     ariaLabel="Input field"
-          //     clearAriaLabel="Clear"
-          //     value={searchValue}
-          //     type="search"
-          //     placeholder="Search"
-          //     onChange={({ detail }) => setSearchValue(detail.value)}
-          //   />
-          // }
-          // utilities={[
-          //   {
-          //     type: "button",
-          //     iconName: "notification",
-          //     ariaLabel: "Notifications",
-          //     badge: true,
-          //     disableUtilityCollapse: true,
-          //   },
-          //   {
-          //     type: "button",
-          //     iconName: "settings",
-          //     title: "Settings",
-          //     ariaLabel: "Settings",
-          //   },
-          //   {
-          //     type: "menu-dropdown",
-          //     text: "Customer name",
-          //     description: "customer@example.com",
-          //     iconName: "user-profile",
-          //     items: profileActions,
-          //   },
-          //]}
         />
       </div>
       <AppLayout
         headerSelector="#h"
         content={content}
+        contentType={menus.currentContentType}
         toolsHide={true}
         navigationHide={!auth.isAuthenticated}
         navigation={
@@ -144,7 +108,7 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
               setActiveHref(event.detail.href);
               handleMenuClick(event.detail.href);
             }}
-            items={sideNavMenuItems}
+            items={menus.sideNavMenuItems}
           />
         }
       ></AppLayout>

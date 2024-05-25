@@ -13,6 +13,7 @@ interface AuthContextType {
   //setIsAuthenticated,
   performTokenRefresh: () => Promise<void>;
   resetPassword: (username: string) => Promise<string>;
+  user: UserInfo;
 }
 
 interface UserInfo {
@@ -56,6 +57,7 @@ export const AuthProvider = ({ children }) => {
   }, [gotTokens]);
 
   const performTokenRefresh = async () => {
+    console.log("perform token refresh called");
     const data = new FormData();
     data.append("grant_type", "refresh_token");
     data.append("refresh_token", refreshToken);
@@ -72,7 +74,8 @@ export const AuthProvider = ({ children }) => {
       fetchOptions.body = data;
 
       const loginResponse = await fetch(urlToCall, fetchOptions);
-
+      console.log("token call response");
+      console.log(loginResponse);
       if (loginResponse.ok === true) {
         const json = await loginResponse.json();
 
@@ -90,6 +93,7 @@ export const AuthProvider = ({ children }) => {
 
         setIsAuthenticated(true);
         console.log("perform refresh token done");
+        return Promise.resolve();
       }
       return Promise.reject("could not update refresh token");
     } catch (err) {
@@ -244,7 +248,6 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
       } else {
         if (apiResponse.status == 401) {
-          alert("no longer authenticated, see logs");
           if (allow401) {
             console.log("got a 401");
             await performTokenRefresh();
@@ -274,6 +277,7 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated,
     setIsAuthenticated,
     resetPassword,
+    user,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
