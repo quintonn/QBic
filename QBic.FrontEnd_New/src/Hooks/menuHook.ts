@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
-import { SideNavigationProps } from "@cloudscape-design/components";
+import {
+  AppLayoutProps,
+  SideNavigationProps,
+} from "@cloudscape-design/components";
 import { useAuth } from "../ContextProviders/AuthProvider/AuthProvider";
 import { useApi } from "./apiHook";
+import { useNavigate } from "react-router-dom";
 
 export interface MenuItem {
   Name: string;
@@ -25,6 +29,23 @@ export interface AppMenuItem {
   canDelete: boolean;
 }
 
+interface MenuDetail {
+  Description?: string;
+  Title?: string;
+  AllowInMenu?: boolean;
+  DataForGettingMenu?: any;
+  ActionType?: number;
+  Pages?: 0;
+  LinesPerPage?: number;
+  CurrentPage?: number;
+  TotalLines?: number;
+  Filter?: string;
+  RequiresAuthorization?: boolean;
+  EventParameters?: any;
+  Id?: number;
+  Parameters?: any;
+}
+
 const MapMenuItemsToSideNavItems = (
   items: MenuItem[],
   root: boolean = true
@@ -35,7 +56,7 @@ const MapMenuItemsToSideNavItems = (
     results.push({ text: "Home", href: "#", type: "link" });
   }
 
-  for (let i = 0; i < items.length; i++) {
+  for (let i = 0; i < items?.length; i++) {
     const item = items[i];
     if (item.SubMenus && item.SubMenus.length > 0) {
       const sectionItem = {
@@ -93,17 +114,75 @@ export const useMenus = () => {
     SideNavigationProps.Item[]
   >([]);
 
+  const [menuCache, setMenuCache] = useState<Record<number, MenuDetail[]>>({}); // Maybe i shouldn't cache? Some stuff should reload
+  const [currentContentType, setCurrentContentType] =
+    useState<AppLayoutProps.ContentType>("default");
+
+  const [currentMenu, setCurrentMenu] = useState<MenuDetail>({
+    Description: "test",
+  });
+
   const auth = useAuth();
   const api = useApi();
+  const navigate = useNavigate();
 
   const loadMenus = async () => {
     const menuData = await api.makeApiCall<MenuItem[]>("getUserMenu", "GET");
     const menuItems = MapMenuItemToAppMenuItem(menuData, "");
 
+    console.log(menuData);
+
     const sideNavItems = MapMenuItemsToSideNavItems(menuData);
 
     setAppMenuItems(menuItems);
     setSideNavMenuItems(sideNavItems);
+
+    //TODO: check current Path and perform the on click so the page is updated
+  };
+
+  const onHomeClick = async () => {
+    navigate("/");
+    setCurrentContentType("default");
+  };
+
+  const onMenuClick = async (event: number) => {
+    console.log("on menu click", event);
+
+    let menuDetails = menuCache[event];
+
+    if (!menuDetails) {
+      const url = "executeUIAction/" + event;
+
+      menuDetails = await api.makeApiCall<MenuDetail[]>(url, "POST");
+
+      const newCache = { ...menuCache };
+      newCache[event] = menuDetails;
+      setMenuCache(newCache);
+    }
+
+    for (let i = 0; i < menuDetails.length; i++) {
+      const item = menuDetails[i];
+
+      switch (item.ActionType) {
+        case 0: {
+          console.log("setting current menu");
+          console.log(item);
+          console.log(item as MenuDetail);
+
+          setCurrentContentType("table");
+          setCurrentMenu({ Description: "abc" });
+          navigate("/view/" + event);
+          setCurrentMenu({ Description: "abcxxx" });
+
+          break;
+        }
+        default:
+          console.warn("Unknown action type: " + item.ActionType);
+        // show global message?
+      }
+
+      break; // don't perform multiple actions for now, need to figure out how this will work
+    }
   };
 
   useEffect(() => {
@@ -115,5 +194,12 @@ export const useMenus = () => {
     }
   }, [auth.isAuthenticated]);
 
-  return { appMenuItems, sideNavMenuItems };
+  return {
+    appMenuItems,
+    sideNavMenuItems,
+    onMenuClick,
+    currentContentType,
+    onHomeClick,
+    currentMenu,
+  };
 };

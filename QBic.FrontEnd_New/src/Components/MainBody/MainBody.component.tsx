@@ -9,12 +9,14 @@ import { Home } from "../Home/Home.component";
 import { MainAppLayout } from "../MainAppLayout/MainAppLayout.component";
 import { Login } from "../Login/Login.component";
 import { AuthProvider } from "../../ContextProviders/AuthProvider/AuthProvider";
+import { ViewComponent } from "../View/View.component";
 
 export const MainBody = () => {
   const [routes, setRoutes] = useState<RouteObject[]>([]);
   const [loadingRoutes, setLoadingRoutes] = useState(true);
 
   routes.push({ path: "/*", element: <Home /> });
+  routes.push({ path: "/view/*", element: <ViewComponent /> });
   routes.push({ path: "/login", element: <Login /> });
 
   useEffect(() => {
