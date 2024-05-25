@@ -23,18 +23,20 @@ export const useUser = () => {
   async function onReadyFunction() {
     // call initialize (basically checks if user is authenticated, and returns user name and id)
 
-    console.log("on ready function calling initialize");
     makeApiCall("initialize", "GET")
       .then((userInfo) => {
         console.log(userInfo);
-        setIsReady(true);
+        if (userInfo) {
+          setIsReady(true);
+        } else {
+          // probably not logged in
+          navigate("/login");
+        }
       })
       .catch((err) => {
         if (err === 401) {
           // initialize call failed (it should have tried to refresh the token if it had one)
           // do login
-
-          console.log("show login screen");
 
           // var temp = confirm("Auto login?");
           // if (temp === true) {
