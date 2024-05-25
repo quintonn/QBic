@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 import { AppMenuItem, useMenus } from "../../Hooks/menuHook";
 import { useApi } from "../../Hooks/apiHook";
 import { useAuth } from "../../Hooks/authHook";
-import { useUser } from "../../Hooks/userHook";
 import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
 
 interface MainAppLayoutProps extends AppLayoutProps {
@@ -41,7 +40,6 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
 
   const auth = useAuth();
   const api = useApi(); // calls auth -> calls main App
-  const user = useUser();
 
   // TODO: make these provider things too
 
@@ -93,7 +91,7 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
             //   logo: { src: logo, alt: "Service name logo" },
           }}
           utilities={
-            user.isReady
+            auth.isAuthenticated
               ? [{ type: "button", text: "Logout", onClick: auth.logout }]
               : []
             // : [{ type: "button", text: "Sign In", href: PATHS.signin.path }]
@@ -136,7 +134,7 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
         headerSelector="#h"
         content={content}
         toolsHide={true}
-        navigationHide={!user.isReady}
+        navigationHide={!auth.isAuthenticated}
         navigation={
           <SideNavigation
             activeHref={activeHref}

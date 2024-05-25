@@ -1,21 +1,20 @@
 import {
   Alert,
-  Box,
   Button,
   Container,
   ContentLayout,
   Form,
   FormField,
-  Grid,
   Header,
   Input,
-  Modal,
+  Link,
   SpaceBetween,
 } from "@cloudscape-design/components";
-import { useState } from "react";
-import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
+import { useEffect, useState } from "react";
 import { useApi } from "../../Hooks/apiHook";
 import { useAuth } from "../../Hooks/authHook";
+import { ForgotPassword } from "./ForgotPassword.component";
+import { useNavigate } from "react-router-dom";
 
 interface LoginData {
   username: string;
@@ -54,11 +53,18 @@ export const Login = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const api = useApi();
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+
   const auth = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (auth.isAuthenticated == true) {
+      navigate("/");
+    }
+  }, [auth.isAuthenticated]);
 
   const onChange = (field: string, value: any) => {
-    console.log("on change");
     setValues((prevValues) => ({ ...prevValues, [field]: value }));
 
     const error = validateField(field, value);
@@ -76,28 +82,12 @@ export const Login = () => {
       setLoading(true);
 
       try {
-        console.log("loggging in");
         await auth.doLogin(values.username, values.password);
       } catch (err) {
         setErrorMessage(err);
       } finally {
         setLoading(false);
       }
-
-      //   try {
-      //     const response = await api.post("api/customers/", formData);
-      //     navigate("..");
-      //   } catch (err: any) {
-      //     console.log("Error creating customer");
-      //     console.log(err);
-      //     if (err?.response?.data) {
-      //       setApiError(err.response.data);
-      //     } else {
-      //       setApiError("Error creating customer: " + err);
-      //     }
-      //   } finally {
-      //     setLoading(false);
-      //   }
     }
   };
 
@@ -113,53 +103,69 @@ export const Login = () => {
         </SpaceBetween>
       }
     >
-      <Container header={<Header variant="h2">Login</Header>}>
-        <form onSubmit={submitForm}>
-          <Form
-            actions={
-              <SpaceBetween direction="horizontal" size="xs">
-                <Button variant="primary" loading={loading}>
-                  Login
-                </Button>
-              </SpaceBetween>
-            }
-          >
-            <SpaceBetween direction="vertical" size="l">
-              <FormField label="Username" errorText={errors?.username}>
-                <Input
-                  onChange={({ detail: { value } }) =>
-                    onChange("username", value)
-                  }
-                  placeholder="Enter username"
-                  value={values.username}
-                />
-              </FormField>
-              <FormField label="Password" errorText={errors?.password}>
-                <Input
-                  type="password"
-                  onChange={({ detail: { value } }) =>
-                    onChange("password", value)
-                  }
-                  placeholder="Enter password"
-                  value={values.password}
-                />
-              </FormField>
-              {errorMessage ? (
-                <Alert
-                  statusIconAriaLabel="Error"
-                  type="error"
-                  header={`Unable to login`}
-                  key="alert-item"
-                  dismissible
-                  onDismiss={() => setErrorMessage("")}
+      <>
+        <ForgotPassword
+          visible={showForgotPassword}
+          onDismiss={() => setShowForgotPassword(false)}
+        ></ForgotPassword>
+        <Container header={<Header variant="h2">Login</Header>}>
+          <form onSubmit={submitForm}>
+            <Form
+              variant="embedded"
+              actions={
+                <SpaceBetween
+                  alignItems="center"
+                  direction="horizontal"
+                  size="xs"
                 >
-                  {errorMessage}
-                </Alert>
-              ) : null}
-            </SpaceBetween>
-          </Form>
-        </form>
-      </Container>
+                  <Button variant="primary" loading={loading}>
+                    Login
+                  </Button>
+                </SpaceBetween>
+              }
+            >
+              <SpaceBetween direction="vertical" size="l">
+                <FormField label="Username" errorText={errors?.username}>
+                  <Input
+                    onChange={({ detail: { value } }) =>
+                      onChange("username", value)
+                    }
+                    placeholder="Enter username"
+                    value={values.username}
+                  />
+                </FormField>
+                <FormField label="Password" errorText={errors?.password}>
+                  <Input
+                    type="password"
+                    onChange={({ detail: { value } }) =>
+                      onChange("password", value)
+                    }
+                    placeholder="Enter password"
+                    value={values.password}
+                  />
+                </FormField>
+                <FormField>
+                  <Link onFollow={() => setShowForgotPassword(true)}>
+                    Forgot password?
+                  </Link>
+                </FormField>
+                {errorMessage ? (
+                  <Alert
+                    statusIconAriaLabel="Error"
+                    type="error"
+                    header={`Unable to login`}
+                    key="alert-item"
+                    dismissible
+                    onDismiss={() => setErrorMessage("")}
+                  >
+                    {errorMessage}
+                  </Alert>
+                ) : null}
+              </SpaceBetween>
+            </Form>
+          </form>
+        </Container>
+      </>
     </ContentLayout>
   );
 };
