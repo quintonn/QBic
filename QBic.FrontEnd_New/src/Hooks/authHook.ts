@@ -92,7 +92,13 @@ export const useAuth = () => {
     if (
       savedLastRefreshDate.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0)
     ) {
-      await performTokenRefresh();
+      console.log("saved refresh date < today, performing token refresh");
+      try {
+        await performTokenRefresh();
+      } catch (err) {
+        console.log("error performing token refresh");
+        console.log(err);
+      }
       setIsReady(true);
     } else {
       setIsReady(true);
