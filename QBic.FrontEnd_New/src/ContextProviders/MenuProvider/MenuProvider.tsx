@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   AppLayoutProps,
   SideNavigationProps,
@@ -40,6 +40,52 @@ export interface AppMenuItem {
   canDelete: boolean;
 }
 
+export enum ColumnType {
+  String = 0,
+  Boolean = 1,
+  Button = 2,
+  Link = 3,
+  Hidden = 4,
+  Date = 5,
+  CheckBox = 6,
+}
+enum ColumnDisplay {
+  Show = 0,
+  Hide = 1,
+}
+
+enum ConditionComparison {
+  Equals = 0,
+  NotEquals = 1,
+  Contains = 2,
+  IsNotNull = 3,
+  IsNull = 4,
+  GreaterThan = 5,
+  GreaterThanOrEqual = 6,
+  LessThan = 7,
+  LessThanOrEqual = 8,
+}
+interface ColumnCondition {
+  ColumnName: string;
+  Comparison: ConditionComparison;
+  ColumnValue: string;
+}
+
+interface ColumnSetting {
+  ColumnSettingType: number;
+  Display?: ColumnDisplay;
+  Conditions?: ColumnCondition[];
+}
+
+export interface ViewColumn {
+  ColumnSpan: number;
+  ColumnLabel: string;
+  ColumnName: string;
+  ColumnType: ColumnType;
+  ColumnSetting: ColumnSetting;
+  LinkLabel?: string;
+}
+
 interface MenuDetail {
   Description?: string;
   Title?: string;
@@ -55,6 +101,8 @@ interface MenuDetail {
   EventParameters?: any;
   Id?: number;
   Parameters?: any;
+  Columns?: ViewColumn[];
+  ViewData?: any[];
 }
 
 const MapMenuItemsToSideNavItems = (
@@ -129,26 +177,38 @@ export const MenuProvider = ({ children }) => {
   const [currentContentType, setCurrentContentType] =
     useState<AppLayoutProps.ContentType>("default");
 
-  const [currentMenu, setCurrentMenu] = useState<MenuDetail>({
-    Description: "Test Description",
-  });
+  const [currentMenu, setCurrentMenu] = useState<MenuDetail>(null);
 
   const auth = useAuth();
   const api = useApi();
   const navigate = useNavigate();
 
+  const location = useLocation();
+
   const loadMenus = async () => {
     const menuData = await api.makeApiCall<MenuItem[]>("getUserMenu", "GET");
     const menuItems = MapMenuItemToAppMenuItem(menuData, "");
-
-    console.log(menuData);
 
     const sideNavItems = MapMenuItemsToSideNavItems(menuData);
 
     setAppMenuItems(menuItems);
     setSideNavMenuItems(sideNavItems);
 
-    //TODO: check current Path and perform the on click so the page is updated
+    // check current path and simulate menu click
+    const pathValues = location.pathname.split("/");
+    console.log(pathValues);
+    if (pathValues[pathValues.length - 1]) {
+      const lastValue = pathValues[pathValues.length - 1];
+      const lastValueNumber = Number(lastValue);
+      if (isFinite(lastValueNumber)) {
+        await onMenuClick(lastValueNumber);
+      } else {
+        console.warn(
+          "current location path value is not a number",
+          location.pathname
+        );
+      }
+    }
   };
 
   const onHomeClick = async () => {
@@ -157,7 +217,9 @@ export const MenuProvider = ({ children }) => {
   };
 
   const onMenuClick = async (event: number) => {
-    console.log("on menu click", event);
+    //TODO: Need to show busy indicator
+    // maybe... (works for now but don't like it)
+    await onHomeClick();
 
     let menuDetails = menuCache[event];
 
@@ -176,12 +238,8 @@ export const MenuProvider = ({ children }) => {
 
       switch (item.ActionType) {
         case 0: {
-          console.log("setting current menu");
-          console.log(item);
-          console.log(item as MenuDetail);
-
           setCurrentContentType("table");
-          setCurrentMenu({ Description: item.Description });
+          setCurrentMenu(item);
           navigate("/view/" + event);
           break;
         }

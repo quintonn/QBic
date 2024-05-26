@@ -357,7 +357,7 @@
             case 1: // Not Equals
                 return actualValue != colVal;
             case 2: // Contains
-                return (actualValue.toLowerCase()).indexOf(colValue.toLowerCase()) > -1;
+                return (actualValue.toLowerCase()).indexOf(colVal.toLowerCase()) > -1;
             case 3: // IsNotNull
                 return actualValue != null && actualValue.length > 0;
             case 4: // IsNull
