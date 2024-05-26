@@ -1,11 +1,22 @@
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   AppLayoutProps,
   SideNavigationProps,
 } from "@cloudscape-design/components";
-import { useAuth } from "../ContextProviders/AuthProvider/AuthProvider";
-import { useApi } from "./apiHook";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../AuthProvider/AuthProvider";
+import { useApi } from "../../Hooks/apiHook";
+
+interface MenuContextType {
+  appMenuItems: AppMenuItem[];
+  sideNavMenuItems: SideNavigationProps.Item[];
+  onMenuClick: (event: number) => Promise<void>;
+  currentContentType: AppLayoutProps.ContentType;
+  onHomeClick: () => Promise<void>;
+  currentMenu: MenuDetail;
+}
+
+const MenuContext = createContext<MenuContextType>(null);
 
 export interface MenuItem {
   Name: string;
@@ -108,7 +119,7 @@ const MapMenuItemToAppMenuItem = (
   }));
 };
 
-export const useMenus = () => {
+export const MenuProvider = ({ children }) => {
   const [appMenuItems, setAppMenuItems] = useState<AppMenuItem[]>([]);
   const [sideNavMenuItems, setSideNavMenuItems] = useState<
     SideNavigationProps.Item[]
@@ -119,7 +130,7 @@ export const useMenus = () => {
     useState<AppLayoutProps.ContentType>("default");
 
   const [currentMenu, setCurrentMenu] = useState<MenuDetail>({
-    Description: "test",
+    Description: "Test Description",
   });
 
   const auth = useAuth();
@@ -170,10 +181,8 @@ export const useMenus = () => {
           console.log(item as MenuDetail);
 
           setCurrentContentType("table");
-          setCurrentMenu({ Description: "abc" });
+          setCurrentMenu({ Description: item.Description });
           navigate("/view/" + event);
-          setCurrentMenu({ Description: "abcxxx" });
-
           break;
         }
         default:
@@ -194,7 +203,7 @@ export const useMenus = () => {
     }
   }, [auth.isAuthenticated]);
 
-  return {
+  const value = {
     appMenuItems,
     sideNavMenuItems,
     onMenuClick,
@@ -202,4 +211,14 @@ export const useMenus = () => {
     onHomeClick,
     currentMenu,
   };
+
+  return <MenuContext.Provider value={value}>{children}</MenuContext.Provider>;
+};
+
+export const useMenu = () => {
+  const context = useContext(MenuContext);
+  if (!context) {
+    throw new Error("useMenu must be used within an MenuProvider");
+  }
+  return context;
 };

@@ -1,15 +1,14 @@
 import {
   Button,
   Container,
-  ContentLayout,
   Header,
   SpaceBetween,
   Table,
   TableProps,
   TextFilter,
 } from "@cloudscape-design/components";
-import { useMenus } from "../../Hooks/menuHook";
 import { useEffect } from "react";
+import { useMenu } from "../../ContextProviders/MenuProvider/MenuProvider";
 
 export const ViewComponent = () => {
   const columnDefinitions: TableProps.ColumnDefinition<unknown>[] = [
@@ -35,7 +34,7 @@ export const ViewComponent = () => {
     },
   ];
 
-  const { currentMenu } = useMenus();
+  const { currentMenu } = useMenu();
 
   useEffect(() => {
     if (currentMenu) {

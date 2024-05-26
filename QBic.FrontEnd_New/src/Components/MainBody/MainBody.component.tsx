@@ -10,6 +10,7 @@ import { MainAppLayout } from "../MainAppLayout/MainAppLayout.component";
 import { Login } from "../Login/Login.component";
 import { AuthProvider } from "../../ContextProviders/AuthProvider/AuthProvider";
 import { ViewComponent } from "../View/View.component";
+import { MenuProvider } from "../../ContextProviders/MenuProvider/MenuProvider";
 
 export const MainBody = () => {
   const [routes, setRoutes] = useState<RouteObject[]>([]);
@@ -31,7 +32,9 @@ export const MainBody = () => {
     {
       element: (
         <AuthProvider>
-          <MainAppLayout content={<Outlet></Outlet>} />
+          <MenuProvider>
+            <MainAppLayout content={<Outlet></Outlet>} />
+          </MenuProvider>
         </AuthProvider>
       ),
       children: routes,
