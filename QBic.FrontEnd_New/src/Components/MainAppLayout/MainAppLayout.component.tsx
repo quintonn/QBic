@@ -6,10 +6,13 @@ import {
 } from "@cloudscape-design/components";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AppMenuItem, useMenus } from "../../Hooks/menuHook";
 import { useApi } from "../../Hooks/apiHook";
 import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
 import { useAuth } from "../../ContextProviders/AuthProvider/AuthProvider";
+import {
+  AppMenuItem,
+  useMenu,
+} from "../../ContextProviders/MenuProvider/MenuProvider";
 
 interface MainAppLayoutProps extends AppLayoutProps {
   content: React.ReactNode;
@@ -34,7 +37,7 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
   const [activeHref, setActiveHref] = useState("#");
   const navigate = useNavigate();
 
-  const menus = useMenus();
+  const menus = useMenu();
 
   const mainApp = useMainApp(); // auto injected because it's a context provider
 
