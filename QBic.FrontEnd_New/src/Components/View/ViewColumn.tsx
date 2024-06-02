@@ -7,10 +7,21 @@ interface ViewColumnCellProps {
 }
 
 export const ViewColumnCell = ({ rowData, column }: ViewColumnCellProps) => {
-  // todo: show/hide columns based on settings
+  let colVal = rowData[column.ColumnName];
+
   if (showColumn({ rowData, column })) {
-    return rowData[column.ColumnName]?.toString();
+    if (column.ColumnType == 1) {
+      if (colVal == true) {
+        colVal = column.TrueValueDisplay;
+      } else if (colVal == false) {
+        colVal = column.FalseValueDisplay;
+      }
+    }
+
+    return colVal;
   } else {
-    return "";
+    colVal = "";
   }
+
+  return colVal;
 };
