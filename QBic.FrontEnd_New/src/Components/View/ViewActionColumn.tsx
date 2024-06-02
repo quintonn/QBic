@@ -1,4 +1,4 @@
-import { Button, SpaceBetween } from "@cloudscape-design/components";
+import { Box, Button, SpaceBetween } from "@cloudscape-design/components";
 import {
   ColumnType,
   ViewColumn,
@@ -17,10 +17,8 @@ const ColButton = ({
   rowData: any;
   column: ViewColumn;
 }) => {
-  //console.log(column);
-  if (!showColumn({ rowData, column })) {
-    return <Button>X</Button>;
-  }
+  const visible = showColumn({ rowData, column });
+
   let label = column.ColumnLabel;
   if (
     column.ColumnType == ColumnType.Button ||
@@ -28,7 +26,26 @@ const ColButton = ({
   ) {
     label = column.LinkLabel;
   }
-  return <Button>{label}</Button>;
+
+  return (
+    <div
+      style={{
+        opacity: visible ? 1 : 0,
+        display: "flex",
+        height: "100%", // to make the link items align vertical center
+      }}
+    >
+      <Button
+        variant={
+          column.ColumnType == ColumnType.Link ? "inline-link" : "normal"
+        }
+        wrapText={false}
+        disabled={visible ? false : true} // this is so the cursor is normal when it's invisible
+      >
+        {label}
+      </Button>
+    </div>
+  );
 };
 
 export const ViewActionColumn = ({
@@ -39,15 +56,15 @@ export const ViewActionColumn = ({
     return "";
   }
 
-  // todo: show/hide columns based on settings
   return (
-    <SpaceBetween direction="horizontal" size="xs">
-      {columns
-        // .filter((c) => showColumn({ rowData, column: c }))
-        .map((c, i) => (
-          <ColButton key={i} rowData={rowData} column={c} />
-        ))}
-      {/* <Button
+    <Box float="right">
+      <SpaceBetween direction="horizontal" size="xl">
+        {columns
+          // .filter((c) => showColumn({ rowData, column: c }))
+          .map((c, i) => (
+            <ColButton key={i} rowData={rowData} column={c} />
+          ))}
+        {/* <Button
         href="#"
         variant="link"
         onClick={() => {
@@ -57,6 +74,7 @@ export const ViewActionColumn = ({
         Edit
       </Button>
       <Button>X</Button> */}
-    </SpaceBetween>
+      </SpaceBetween>
+    </Box>
   );
 };

@@ -62,12 +62,14 @@ export const ViewComponent = () => {
     const columnsToShow = currentMenu?.Columns?.filter(
       (c) => c.ColumnType == 0
     );
-    const actionColumns = currentMenu?.Columns?.filter(
+    const actionColumnsToShow = currentMenu?.Columns?.filter(
       (c) => c.ColumnType == 2 || c.ColumnType == 3
     );
+
     if (!columnsToShow) {
       return;
     }
+
     const viewColumns = columnsToShow.map(
       (c) =>
         ({
@@ -79,16 +81,14 @@ export const ViewComponent = () => {
         } as TableProps.ColumnDefinition<unknown>)
     );
 
-    //TODO: make each action column its own column just like in current QBic
     const cols = [
       ...viewColumns,
       {
         id: "actions",
         header: "Actions",
         cell: (rowData) => (
-          <ViewActionColumn rowData={rowData} columns={actionColumns} />
+          <ViewActionColumn rowData={rowData} columns={actionColumnsToShow} />
         ),
-        // maxWidth: 200,
       },
     ];
 
