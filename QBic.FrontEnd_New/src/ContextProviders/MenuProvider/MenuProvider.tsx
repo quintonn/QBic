@@ -49,6 +49,7 @@ export enum ColumnType {
   Date = 5,
   CheckBox = 6,
 }
+
 enum ColumnDisplay {
   Show = 0,
   Hide = 1,
@@ -84,9 +85,11 @@ export interface ViewColumn {
   ColumnType: ColumnType;
   ColumnSetting: ColumnSetting;
   LinkLabel?: string;
+  TrueValueDisplay?: string;
+  FalseValueDisplay?: string;
 }
 
-interface MenuDetail {
+export interface MenuDetail {
   Description?: string;
   Title?: string;
   AllowInMenu?: boolean;
@@ -196,7 +199,7 @@ export const MenuProvider = ({ children }) => {
 
     // check current path and simulate menu click
     const pathValues = location.pathname.split("/");
-    console.log(pathValues);
+
     if (pathValues[pathValues.length - 1]) {
       const lastValue = pathValues[pathValues.length - 1];
       const lastValueNumber = Number(lastValue);
@@ -233,7 +236,7 @@ export const MenuProvider = ({ children }) => {
       setMenuCache(newCache);
     }
 
-    for (let i = 0; i < menuDetails.length; i++) {
+    for (let i = 0; i < menuDetails?.length; i++) {
       const item = menuDetails[i];
 
       switch (item.ActionType) {
