@@ -10,7 +10,7 @@ import { useApi } from "../../Hooks/apiHook";
 interface MenuContextType {
   appMenuItems: AppMenuItem[];
   sideNavMenuItems: SideNavigationProps.Item[];
-  onMenuClick: (event: number) => Promise<void>;
+  onMenuClick: (event: number, params?: any) => Promise<void>;
   currentContentType: AppLayoutProps.ContentType;
   onHomeClick: () => Promise<void>;
   currentMenu: MenuDetail;
@@ -84,9 +84,12 @@ export interface ViewColumn {
   ColumnName: string;
   ColumnType: ColumnType;
   ColumnSetting: ColumnSetting;
+  KeyColumn?: string;
+  EventNumber?: number;
   LinkLabel?: string;
   TrueValueDisplay?: string;
   FalseValueDisplay?: string;
+  ParametersToPass?: any;
 }
 
 export interface MenuDetail {
@@ -219,17 +222,22 @@ export const MenuProvider = ({ children }) => {
     setCurrentContentType("default");
   };
 
-  const onMenuClick = async (event: number) => {
+  const onMenuClick = async (event: number, params: any = null) => {
     //TODO: Need to show busy indicator
     // maybe... (works for now but don't like it)
-    await onHomeClick();
 
-    let menuDetails = menuCache[event];
+    //await onHomeClick();
 
-    if (!menuDetails) {
+    let menuDetails = menuCache[event]; //TODO: don't cache, because child items change. Unless the ID field of params is always present
+
+    if (!menuDetails || true) {
       const url = "executeUIAction/" + event;
 
-      menuDetails = await api.makeApiCall<MenuDetail[]>(url, "POST");
+      const data = {
+        Data: params || "",
+      };
+
+      menuDetails = await api.makeApiCall<MenuDetail[]>(url, "POST", data);
 
       const newCache = { ...menuCache };
       newCache[event] = menuDetails;

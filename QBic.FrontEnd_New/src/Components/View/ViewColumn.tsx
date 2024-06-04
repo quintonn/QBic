@@ -17,11 +17,9 @@ export const ViewColumnCell = ({ rowData, column }: ViewColumnCellProps) => {
         colVal = column.FalseValueDisplay;
       }
     }
-
-    return colVal;
   } else {
     colVal = "";
   }
 
-  return colVal;
+  return colVal + ""; // else booleans don't show
 };

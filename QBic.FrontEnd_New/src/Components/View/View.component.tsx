@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   CollectionPreferencesProps,
-  FormField,
   Header,
   Pagination,
   SpaceBetween,
@@ -13,7 +12,6 @@ import {
 import { useEffect, useState } from "react";
 import {
   MenuDetail,
-  MenuItem,
   useMenu,
 } from "../../ContextProviders/MenuProvider/MenuProvider";
 import { TablePreferences } from "./TablePreferences.component";
@@ -79,11 +77,10 @@ export const ViewComponent = () => {
     pageCount: 1,
     linesPerPage: -1,
   });
-  const [mustReload, setMustReload] = useState(false);
 
   const [filterText, setFilterText] = useState("");
 
-  const { currentMenu } = useMenu();
+  const { currentMenu, onMenuClick } = useMenu();
   const api = useApi();
 
   const [viewMenu, setViewMenu] = useState<ViewMenu[]>([]);
@@ -97,21 +94,32 @@ export const ViewComponent = () => {
     setPreferences(value);
   };
 
-  const retrieveData = async () => {
+  const doReload = (
+    filter: string = "",
+    _viewSettings: ViewSettings = null
+  ) => {
+    retrieveData(filter, _viewSettings || viewSettings);
+  };
+
+  const retrieveData = async (
+    filter: string = "",
+    _viewSettings: ViewSettings
+  ) => {
     setLoading(true);
     try {
       const data = {
         Data: {
           viewSettings: {
-            currentPage: viewSettings.currentPage,
-            linesPerPage: viewSettings.linesPerPage,
+            currentPage: _viewSettings.currentPage,
+            linesPerPage: _viewSettings.linesPerPage,
             totalLines: -1, //viewSettings.totalLines,
           },
-          filter: viewSettings.filter,
-          parameters: viewSettings.parameters,
-          eventParameters: viewSettings.eventParameters,
+          filter: filter,
+          parameters: currentMenu.Parameters,
+          eventParameters: currentMenu.EventParameters,
         },
       };
+
       const viewData = await api.makeApiCall<MenuDetail>(
         "updateViewData/" + currentMenu.Id,
         "POST",
@@ -120,7 +128,7 @@ export const ViewComponent = () => {
 
       if (viewData) {
         setTableItems(viewData.ViewData);
-        updateCounts(viewData.TotalLines);
+        //updateCounts(viewData.TotalLines, _viewSettings.currentPage);
       }
     } catch (err) {
       console.log("error loading data");
@@ -165,7 +173,11 @@ export const ViewComponent = () => {
         id: "actions",
         header: "Actions",
         cell: (rowData) => (
-          <ViewActionColumn rowData={rowData} columns={actionColumnsToShow} />
+          <ViewActionColumn
+            rowData={rowData}
+            columns={actionColumnsToShow}
+            menu={currentMenu}
+          />
         ),
       },
     ];
@@ -225,20 +237,9 @@ export const ViewComponent = () => {
     setViewMenu(viewMenu);
   };
 
-  useEffect(() => {
-    if (
-      mustReload == true &&
-      viewSettings != null &&
-      viewSettings.totalLines > -1
-    ) {
-      setMustReload(false);
-      retrieveData();
-    }
-  }, [mustReload]);
-
-  const updateCounts = (totalLines: number) => {
+  const updateCounts = (totalLines: number, currentPage: number) => {
     let pageCount = Math.floor(totalLines / preferences.pageSize);
-    let currentPage = viewSettings.currentPage;
+    //let currentPage = viewSettings.currentPage;
     if (totalLines % preferences.pageSize > 0) {
       pageCount++;
     }
@@ -258,21 +259,10 @@ export const ViewComponent = () => {
 
   useEffect(() => {
     if (preferences && currentMenu) {
-      // if (preferences.pageSize != viewSettings.linesPerPage) {
-      //   pageCount = Math.floor(currentMenu.TotalLines / preferences.pageSize);
-      //   if (currentMenu.TotalLines % preferences.pageSize > 0) {
-      //     pageCount++;
-      //   }
-      // }
+      setFilterText("");
+      updateCounts(currentMenu.TotalLines, viewSettings.currentPage);
 
-      // setViewSettings({
-      //   ...viewSettings,
-      //   totalLines: currentMenu.TotalLines,
-      //   linesPerPage: preferences.pageSize,
-      //   pageCount: pageCount,
-      // });
-      updateCounts(currentMenu.TotalLines);
-      setMustReload(true);
+      doReload();
     }
   }, [preferences, currentMenu]);
 
@@ -285,9 +275,19 @@ export const ViewComponent = () => {
 
   const debouncedFilterChange = useDebounce(() => {
     setViewSettings({ ...viewSettings, filter: filterText });
-    setMustReload(true); //TODO: This doesn't always trigger a reload for some reason (might only be in dev mode after saving code changes)
-    console.log("filter");
+    doReload(filterText);
   });
+
+  const viewMenuItemClick = (item: ViewMenu) => {
+    const data = {
+      data: item.ParametersToPass,
+      parameters: {
+        ViewId: item.EventNumber,
+      },
+    };
+
+    onMenuClick(item.EventNumber, data);
+  };
 
   return (
     <Table
@@ -297,6 +297,27 @@ export const ViewComponent = () => {
       loadingText="Loading data"
       columnDefinitions={columnDefinitions}
       variant="full-page"
+      empty={
+        <Box margin={{ vertical: "xs" }} textAlign="center" color="inherit">
+          <SpaceBetween size="m">
+            {filterText.length > 0 ? (
+              <>
+                <b>No matches found </b>
+                <Button
+                  onClick={() => {
+                    setFilterText("");
+                    doReload();
+                  }}
+                >
+                  Clear filter
+                </Button>
+              </>
+            ) : (
+              <b>No resources</b>
+            )}
+          </SpaceBetween>
+        </Box>
+      }
       header={
         <Header
           variant="awsui-h1-sticky"
@@ -307,7 +328,11 @@ export const ViewComponent = () => {
               {/* TODO: handle on click */}
               {viewMenu
                 ? viewMenu.map((m, i) => (
-                    <Button key={i} variant="normal">
+                    <Button
+                      key={i}
+                      variant="normal"
+                      onClick={() => viewMenuItemClick(m)}
+                    >
                       {m.Label}
                     </Button>
                   ))
@@ -323,11 +348,12 @@ export const ViewComponent = () => {
           filteringPlaceholder="Filter items"
           onChange={({ detail }) => setFilterText(detail.filteringText)}
           onDelayedChange={(x) => {
-            //console.log("on delayed change", x);
-            // this is a bit too quick for now.
             debouncedFilterChange();
           }}
           filteringText={filterText}
+          countText={
+            tableItems.length === 1 ? "1 match" : tableItems.length + " matches"
+          }
         />
       }
       columnDisplay={preferences?.contentDisplay}
@@ -340,11 +366,13 @@ export const ViewComponent = () => {
           currentPageIndex={viewSettings.currentPage}
           pagesCount={viewSettings.pageCount}
           onChange={({ detail }) => {
-            setViewSettings({
+            const newViewSettings = {
               ...viewSettings,
               currentPage: detail.currentPageIndex,
-            });
-            setMustReload(true);
+            };
+
+            setViewSettings(newViewSettings);
+            doReload("", newViewSettings);
           }}
         />
       }
