@@ -109,6 +109,8 @@ export interface MenuDetail {
   Parameters?: any;
   Columns?: ViewColumn[];
   ViewData?: any[];
+  ParametersToPass?: any;
+  EventNumber?: number;
 }
 
 const MapMenuItemsToSideNavItems = (
@@ -249,17 +251,22 @@ export const MenuProvider = ({ children }) => {
 
       switch (item.ActionType) {
         case 0: {
+          // show a view
           setCurrentContentType("table");
           setCurrentMenu(item);
           navigate("/view/" + event);
+          return; // don't perform multiple actions for now, need to figure out how this will work (when showing a View)
           break;
         }
+        case 6: // execute UI action
+          onMenuClick(item.EventNumber, item.ParametersToPass);
+          break;
         default:
           console.warn("Unknown action type: " + item.ActionType);
         // show global message?
       }
 
-      break; // don't perform multiple actions for now, need to figure out how this will work
+      //break;
     }
   };
 
