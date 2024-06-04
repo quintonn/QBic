@@ -78,6 +78,11 @@ interface ColumnSetting {
   Conditions?: ColumnCondition[];
 }
 
+interface ViewEvent {
+  ActionType: number;
+  EventNumber: number;
+}
+
 export interface ViewColumn {
   ColumnSpan: number;
   ColumnLabel: string;
@@ -86,6 +91,7 @@ export interface ViewColumn {
   ColumnSetting: ColumnSetting;
   KeyColumn?: string;
   EventNumber?: number;
+  Event?: ViewEvent;
   LinkLabel?: string;
   TrueValueDisplay?: string;
   FalseValueDisplay?: string;

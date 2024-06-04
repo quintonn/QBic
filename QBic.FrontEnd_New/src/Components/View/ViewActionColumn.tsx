@@ -3,9 +3,9 @@ import {
   ColumnType,
   MenuDetail,
   ViewColumn,
-  useMenu,
 } from "../../ContextProviders/MenuProvider/MenuProvider";
 import { showColumn } from "../../Utilities/viewUtils";
+import { useViewEvents } from "../../Hooks/viewEventsHook";
 
 export interface ViewActionColumnProps {
   rowData: any[];
@@ -23,7 +23,8 @@ const ColButton = ({
   menu: MenuDetail;
 }) => {
   const visible = showColumn({ rowData, column });
-  const { onMenuClick } = useMenu();
+
+  const { handleViewEvent } = useViewEvents();
 
   let label = column.ColumnLabel;
   if (
@@ -32,6 +33,10 @@ const ColButton = ({
   ) {
     label = column.LinkLabel;
   }
+
+  const buttonClick = () => {
+    handleViewEvent(column, rowData, menu);
+  };
 
   return (
     <div
@@ -45,24 +50,7 @@ const ColButton = ({
         variant={
           column.ColumnType == ColumnType.Link ? "inline-link" : "normal"
         }
-        onClick={() => {
-          const id = rowData[column.KeyColumn];
-          const params = column.ParametersToPass || {};
-          params["ViewId"] = column.EventNumber;
-          params["RowId"] = id;
-
-          var formData = {
-            Id: id,
-            data: rowData,
-            viewSettings: "", // Why is this not included in the call?
-            //parameters: theColumn.ParametersToPass,
-            parameters: params,
-            eventParameters: menu.EventParameters,
-          };
-
-          // execute ui action
-          onMenuClick(column.EventNumber, formData);
-        }}
+        onClick={buttonClick}
         wrapText={false}
         disabled={visible ? false : true} // this is so the cursor is normal when it's invisible
       >
