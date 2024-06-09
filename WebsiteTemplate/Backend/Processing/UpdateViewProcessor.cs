@@ -73,8 +73,10 @@ namespace WebsiteTemplate.Backend.Processing
             var currentPage = 1;
             var linesPerPage = 10;
             var totalLines = -1;
-            var filter = String.Empty;
-            var parameters = String.Empty;
+            var filter = string.Empty;
+            var parameters = string.Empty;
+            var sortColumn = string.Empty;
+            var sortAscending = true;
 
             var dataJson = new JsonHelper();
             if (!String.IsNullOrWhiteSpace(data))
@@ -84,6 +86,8 @@ namespace WebsiteTemplate.Backend.Processing
                     dataJson = JsonHelper.Parse(data);
 
                     filter = dataJson.GetValue("filter").Trim();
+                    sortColumn = dataJson.GetValue("sortColumn")?.Trim();
+                    sortAscending = dataJson.GetValue<bool>("sortAscending", true);
                     parameters = dataJson.GetValue("parameters");
 
                     var viewSettings = dataJson.GetValue<JsonHelper>("viewSettings");
@@ -109,9 +113,9 @@ namespace WebsiteTemplate.Backend.Processing
                 parentData = data;  // In case user modified parentData -> this smells??
             }
 
-            var viewDataSettings = new GetDataSettings(parentData, filter, currentPage, linesPerPage);
+            var viewDataSettings = new GetDataSettings(parentData, filter, currentPage, linesPerPage, sortColumn, sortAscending);
 
-            if (totalLines == -1 || !String.IsNullOrWhiteSpace(filter))
+            if (totalLines == -1 || !string.IsNullOrWhiteSpace(filter))
             {
                 totalLines = action.GetDataCount(viewDataSettings);
             }
@@ -128,6 +132,8 @@ namespace WebsiteTemplate.Backend.Processing
             action.LinesPerPage = linesPerPage == int.MaxValue ? -2 : linesPerPage;
             action.TotalLines = totalLines;
             action.Filter = filter;
+            action.SortColumn = sortColumn;
+            action.SortAscending = sortAscending;
             action.Parameters = parameters;
 
             return action;

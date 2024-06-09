@@ -7,7 +7,6 @@ using Newtonsoft.Json;
 using QBic.Core.Utilities;
 using System;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Processing;
 using WebsiteTemplate.Backend.Services;

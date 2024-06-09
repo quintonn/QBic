@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using WebsiteTemplate.Menus.BaseItems;
+using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Backend.Services
@@ -180,15 +181,28 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        public List<UserRole> RetrieveUserRoles(int currentPage, int linesPerPage, string filter)
+        public List<UserRole> RetrieveUserRoles(GetDataSettings settings)
         {
             using (var session = DataService.OpenSession())
             {
-                return CreateUserRoleQuery(session, filter)
-                                     .Skip((currentPage - 1) * linesPerPage)
-                                     .Take(linesPerPage)
-                                     .List<UserRole>()
-                                     .ToList();
+                var query = CreateUserRoleQuery(session, settings.Filter);
+
+                if (!string.IsNullOrWhiteSpace(settings.SortColumn))
+                {
+                    if (settings.SortAscending)
+                    {
+                        query = query.OrderBy(Projections.Property(settings.SortColumn)).Asc();
+                    }
+                    else
+                    {
+                        query = query.OrderBy(Projections.Property(settings.SortColumn)).Desc();
+                    }
+                }
+
+                return query.Skip((settings.CurrentPage - 1) * settings.LinesPerPage)
+                            .Take(settings.LinesPerPage)
+                            .List<UserRole>()
+                            .ToList();
             }
         }
 
@@ -200,7 +214,7 @@ namespace WebsiteTemplate.Backend.Services
             }
         }
 
-        private IQueryOver<UserRole> CreateUserRoleQuery(ISession session, string filter)
+        private IQueryOver<UserRole, UserRole> CreateUserRoleQuery(ISession session, string filter)
         {
             return session.QueryOver<UserRole>().Where(Restrictions.On<UserRole>(x => x.Name).IsInsensitiveLike(filter, MatchMode.Anywhere) ||
                                                        Restrictions.On<UserRole>(x => x.Description).IsInsensitiveLike(filter, MatchMode.Anywhere));

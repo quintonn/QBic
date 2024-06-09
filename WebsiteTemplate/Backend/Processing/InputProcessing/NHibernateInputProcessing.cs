@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.ViewItems;
+using NHibernate.Criterion;
 
 namespace WebsiteTemplate.Backend.Processing.InputProcessing
 {
@@ -38,6 +39,18 @@ namespace WebsiteTemplate.Backend.Processing.InputProcessing
             {
                 var query = session.QueryOver<T>();
                 query = CreateQueryForRetrieval(query, settings.Filter, additionalParameters);
+
+                if (!string.IsNullOrWhiteSpace(settings.SortColumn))
+                {
+                    if (settings.SortAscending)
+                    {
+                        query = query.OrderBy(Projections.Property(settings.SortColumn)).Asc();
+                    }
+                    else
+                    {
+                        query = query.OrderBy(Projections.Property(settings.SortColumn)).Desc();
+                    }
+                }
 
                 var results = query
                       .Skip((settings.CurrentPage - 1) * settings.LinesPerPage)
