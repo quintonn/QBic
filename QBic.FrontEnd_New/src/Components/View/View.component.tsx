@@ -58,7 +58,6 @@ interface ViewSettings {
   currentPage: number;
   linesPerPage: number;
   pageCount: number;
-  filter?: string;
   parameters?: any;
   eventParameters?: any;
 }
@@ -70,6 +69,22 @@ export const ViewComponent = () => {
     TableProps.ColumnDefinition<unknown>[]
   >([]);
   const [tableItems, setTableItems] = useState<any[]>([]);
+
+  const [sortingColumn, setSortingColumn] =
+    useState<TableProps<any>["sortingColumn"]>(null);
+
+  const [sortingDescending, setSortingDescending] = useState(false);
+
+  const onSortingChange: TableProps<any>["onSortingChange"] = ({
+    detail: { isDescending, sortingColumn },
+  }) => {
+    setSortingDescending(Boolean(isDescending));
+    setSortingColumn(sortingColumn);
+
+    console.log("sort order changed");
+
+    doReload(filterText, null, sortingColumn.sortingField, !isDescending);
+  };
 
   const [viewSettings, setViewSettings] = useState<ViewSettings>({
     totalLines: -1,
@@ -89,21 +104,39 @@ export const ViewComponent = () => {
     useState<CollectionPreferencesProps.Preferences>(null);
   const [preferenceKey, setPreferenceKey] = useState("");
 
-  const updatePreference = (value: CollectionPreferencesProps.Preferences) => {
+  const updatePreferences = (value: CollectionPreferencesProps.Preferences) => {
     localStorage.setItem(preferenceKey, JSON.stringify(value));
+    let currentPage = viewSettings.currentPage;
+    if (viewSettings.linesPerPage < value.pageSize) {
+      currentPage = 1;
+    }
+    setViewSettings({
+      ...viewSettings,
+      linesPerPage: value.pageSize,
+      currentPage: currentPage,
+    });
     setPreferences(value);
   };
 
   const doReload = (
     filter: string = "",
-    _viewSettings: ViewSettings = null
+    _viewSettings: ViewSettings = null,
+    sortColumn: string = "",
+    sortAscending: boolean = true
   ) => {
-    retrieveData(filter, _viewSettings || viewSettings);
+    retrieveData(
+      filter,
+      _viewSettings || viewSettings,
+      sortColumn,
+      sortAscending
+    );
   };
 
   const retrieveData = async (
     filter: string = "",
-    _viewSettings: ViewSettings
+    _viewSettings: ViewSettings,
+    sortColumn: string = "",
+    sortAscending: boolean = true
   ) => {
     setLoading(true);
     try {
@@ -112,9 +145,11 @@ export const ViewComponent = () => {
           viewSettings: {
             currentPage: _viewSettings.currentPage,
             linesPerPage: _viewSettings.linesPerPage,
-            totalLines: -1, //viewSettings.totalLines,
+            totalLines: -1,
           },
           filter: filter,
+          sortColumn: sortColumn,
+          sortAscending: sortAscending,
           parameters: currentMenu.Parameters,
           eventParameters: currentMenu.EventParameters,
         },
@@ -128,7 +163,7 @@ export const ViewComponent = () => {
 
       if (viewData) {
         setTableItems(viewData.ViewData);
-        //updateCounts(viewData.TotalLines, _viewSettings.currentPage);
+        updateCounts(viewData.TotalLines, _viewSettings.currentPage);
       }
     } catch (err) {
       console.log("error loading data");
@@ -164,15 +199,16 @@ export const ViewComponent = () => {
           cell: (row) => <ViewColumnCell rowData={row} column={c} />,
           maxWidth: 250,
           minWidth: 200,
+          sortingField: c.ColumnName.includes(".") ? null : c.ColumnName,
         } as TableProps.ColumnDefinition<unknown>)
     );
 
-    const cols = [
+    const cols: TableProps.ColumnDefinition<unknown>[] = [
       ...viewColumns,
       {
         id: "actions",
         header: "Actions",
-        cell: (rowData) => (
+        cell: (rowData: any) => (
           <ViewActionColumn
             rowData={rowData}
             columns={actionColumnsToShow}
@@ -239,7 +275,6 @@ export const ViewComponent = () => {
 
   const updateCounts = (totalLines: number, currentPage: number) => {
     let pageCount = Math.floor(totalLines / preferences.pageSize);
-    //let currentPage = viewSettings.currentPage;
     if (totalLines % preferences.pageSize > 0) {
       pageCount++;
     }
@@ -259,6 +294,9 @@ export const ViewComponent = () => {
 
   useEffect(() => {
     if (preferences && currentMenu) {
+      // clear page settings
+      setSortingDescending(false);
+      setSortingColumn(null);
       setFilterText("");
       updateCounts(currentMenu.TotalLines, viewSettings.currentPage);
 
@@ -274,8 +312,7 @@ export const ViewComponent = () => {
   }, [currentMenu]);
 
   const debouncedFilterChange = useDebounce(() => {
-    setViewSettings({ ...viewSettings, filter: filterText });
-    doReload(filterText);
+    doReload(filterText, null, sortingColumn?.sortingField, !sortingDescending);
   });
 
   const viewMenuItemClick = (item: ViewMenu) => {
@@ -297,6 +334,10 @@ export const ViewComponent = () => {
       loadingText="Loading data"
       columnDefinitions={columnDefinitions}
       variant="full-page"
+      sortingDisabled={false}
+      sortingColumn={sortingColumn}
+      sortingDescending={sortingDescending}
+      onSortingChange={onSortingChange}
       empty={
         <Box margin={{ vertical: "xs" }} textAlign="center" color="inherit">
           <SpaceBetween size="m">
@@ -306,7 +347,12 @@ export const ViewComponent = () => {
                 <Button
                   onClick={() => {
                     setFilterText("");
-                    doReload();
+                    doReload(
+                      "",
+                      null,
+                      sortingColumn.sortingField,
+                      !sortingDescending
+                    );
                   }}
                 >
                   Clear filter
@@ -372,14 +418,19 @@ export const ViewComponent = () => {
             };
 
             setViewSettings(newViewSettings);
-            doReload("", newViewSettings);
+            doReload(
+              filterText,
+              newViewSettings,
+              sortingColumn?.sortingField || "",
+              !sortingDescending
+            );
           }}
         />
       }
       preferences={
         <TablePreferences
           preferences={preferences}
-          setPreferences={updatePreference}
+          setPreferences={updatePreferences}
           columnDisplayPreferenceOptions={
             columnDefinitions.map(({ id, header, isRowHeader }) => ({
               id,

@@ -1,4 +1,5 @@
 ﻿using NHibernate;
+using NHibernate.Criterion;
 using QBic.Core.Data;
 using QBic.Core.Models;
 using System;
@@ -83,8 +84,22 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             using (var session = Store.OpenSession())
             {
                 var query = session.QueryOver<T>();
-                (this as IBasicCrudView).OrderQuery(query);
-                //OrderQuery(query);
+                if (string.IsNullOrWhiteSpace(settings.SortColumn))
+                {
+                    (this as IBasicCrudView).OrderQuery(query);
+                }
+                else
+                {
+                    if (settings.SortAscending)
+                    {
+                        query = query.OrderBy(Projections.Property(settings.SortColumn)).Asc();
+                    }
+                    else
+                    {
+                        query = query.OrderBy(Projections.Property(settings.SortColumn)).Desc();
+                    }
+
+                }
                 var result = query.Skip((settings.CurrentPage-1)*settings.LinesPerPage)
                                   .Take(settings.LinesPerPage)
                                   .List<T>().ToList();

@@ -6,8 +6,14 @@ interface ViewColumnCellProps {
   column: ViewColumn;
 }
 
+const getNestedValue = (data, path) => {
+  return path
+    .split(".")
+    .reduce((partValue, subPath) => partValue && partValue[subPath], data);
+};
+
 export const ViewColumnCell = ({ rowData, column }: ViewColumnCellProps) => {
-  let colVal = rowData[column.ColumnName];
+  let colVal = getNestedValue(rowData, column.ColumnName);
 
   if (showColumn({ rowData, column })) {
     if (column.ColumnType == 1) {

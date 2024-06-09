@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +9,6 @@ using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Utilities;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace WebsiteTemplate.Backend.Processing
 {
@@ -28,7 +28,7 @@ namespace WebsiteTemplate.Backend.Processing
             originalData = json.GetValue("Data");
 
             var data = originalData;
-            if (!String.IsNullOrWhiteSpace(data))
+            if (!string.IsNullOrWhiteSpace(data))
             {
                 try
                 {
@@ -37,7 +37,7 @@ namespace WebsiteTemplate.Backend.Processing
                     {
                         var subData = tmp.GetValue("data");
 
-                        if (!String.IsNullOrWhiteSpace(subData))
+                        if (!string.IsNullOrWhiteSpace(subData))
                         {
                             data = subData;
                         }
@@ -88,7 +88,7 @@ namespace WebsiteTemplate.Backend.Processing
                     parentData = data;  // In case user modified parentData -> this smells??
                 }
 
-                var viewDataSettings = new GetDataSettings(parentData, String.Empty, 1, 10);
+                var viewDataSettings = new GetDataSettings(parentData, string.Empty, 1, 10, string.Empty, true);
 
                 var totalLines = action.GetDataCount(viewDataSettings);
 
@@ -100,7 +100,7 @@ namespace WebsiteTemplate.Backend.Processing
                 action.CurrentPage = 1;
                 action.LinesPerPage = 10;
                 action.TotalLines = totalLines;
-                action.Filter = String.Empty;
+                action.Filter = string.Empty;
 
                 //clicking back in view many times breaks filter args- test with menus
 

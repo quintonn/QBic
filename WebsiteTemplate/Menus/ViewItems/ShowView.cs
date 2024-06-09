@@ -250,5 +250,7 @@ namespace WebsiteTemplate.Menus.ViewItems
         public int CurrentPage { get; set; }
         public int TotalLines { get; set; }
         public string Filter { get; set; }
+        public string SortColumn { get; set; }
+        public bool SortAscending { get; set; }
     }
 }
