@@ -117,6 +117,7 @@ export interface MenuDetail {
   ViewData?: any[];
   ParametersToPass?: any;
   EventNumber?: number;
+  AllowSorting?: boolean;
 }
 
 const MapMenuItemsToSideNavItems = (
