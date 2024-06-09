@@ -22,6 +22,13 @@ namespace WebsiteTemplate.Menus.ViewItems
         public abstract void ConfigureColumns(ColumnConfiguration columnConfig);
 
         /// <summary>
+        /// Setting to set whether sorting on the page is allowed.
+        /// This is true by default
+        /// </summary>
+        public virtual bool AllowSorting => true;
+        
+
+        /// <summary>
         /// Returns the title that will be displayed when this view is rendered.
         /// </summary>
         public virtual string Title

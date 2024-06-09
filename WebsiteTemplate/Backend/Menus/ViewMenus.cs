@@ -39,6 +39,8 @@ namespace WebsiteTemplate.Backend.Menus
             }
         }
 
+        public override bool AllowSorting => false;
+
         public ViewMenus(MenuProcessor menuProcessor)
             :base(menuProcessor)
         {
