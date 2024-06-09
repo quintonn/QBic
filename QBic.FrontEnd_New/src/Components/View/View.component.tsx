@@ -334,7 +334,7 @@ export const ViewComponent = () => {
       loadingText="Loading data"
       columnDefinitions={columnDefinitions}
       variant="full-page"
-      sortingDisabled={false}
+      sortingDisabled={currentMenu.AllowSorting === false}
       sortingColumn={sortingColumn}
       sortingDescending={sortingDescending}
       onSortingChange={onSortingChange}
