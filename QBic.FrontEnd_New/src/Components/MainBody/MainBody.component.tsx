@@ -11,6 +11,7 @@ import { Login } from "../Login/Login.component";
 import { AuthProvider } from "../../ContextProviders/AuthProvider/AuthProvider";
 import { ViewComponent } from "../View/View.component";
 import { MenuProvider } from "../../ContextProviders/MenuProvider/MenuProvider";
+import { ModalProvider } from "../../ContextProviders/ModalProvider/ModalProvider";
 
 export const MainBody = () => {
   const [routes, setRoutes] = useState<RouteObject[]>([]);
@@ -33,7 +34,9 @@ export const MainBody = () => {
       element: (
         <AuthProvider>
           <MenuProvider>
-            <MainAppLayout content={<Outlet></Outlet>} />
+            <ModalProvider>
+              <MainAppLayout content={<Outlet></Outlet>} />
+            </ModalProvider>
           </MenuProvider>
         </AuthProvider>
       ),

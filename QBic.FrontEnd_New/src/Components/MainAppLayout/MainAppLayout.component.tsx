@@ -5,7 +5,6 @@ import {
   TopNavigation,
 } from "@cloudscape-design/components";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useApi } from "../../Hooks/apiHook";
 import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
 import { useAuth } from "../../ContextProviders/AuthProvider/AuthProvider";
@@ -35,7 +34,6 @@ const findClickedItem = (id: string, items: AppMenuItem[]): AppMenuItem => {
 
 export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
   const [activeHref, setActiveHref] = useState("#");
-  const navigate = useNavigate();
 
   const menus = useMenu();
 
