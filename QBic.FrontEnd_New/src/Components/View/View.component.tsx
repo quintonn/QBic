@@ -10,16 +10,15 @@ import {
   TextFilter,
 } from "@cloudscape-design/components";
 import { useEffect, useState } from "react";
-import {
-  MenuDetail,
-  useMenu,
-} from "../../ContextProviders/MenuProvider/MenuProvider";
+import { MenuDetail } from "../../ContextProviders/MenuProvider/MenuProvider";
 import { TablePreferences } from "./TablePreferences.component";
 import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
 import { ViewActionColumn } from "./ViewActionColumn";
 import { ViewColumnCell } from "./ViewColumn";
 import { useApi } from "../../Hooks/apiHook";
 import { useDebounce } from "../../Hooks/useDebounce";
+import { useActions } from "../../Hooks/actionHook";
+import { useLocation } from "react-router-dom";
 
 // create common interface between ColumnDefintion and ContentDisplayItem
 interface HasId {
@@ -81,8 +80,6 @@ export const ViewComponent = () => {
     setSortingDescending(Boolean(isDescending));
     setSortingColumn(sortingColumn);
 
-    console.log("sort order changed");
-
     doReload(filterText, null, sortingColumn.sortingField, !isDescending);
   };
 
@@ -95,8 +92,14 @@ export const ViewComponent = () => {
 
   const [filterText, setFilterText] = useState("");
 
-  const { currentMenu, onMenuClick } = useMenu();
+  //const { currentMenu } = useMenu();
+  const { onMenuClick } = useActions();
   const api = useApi();
+
+  const location = useLocation();
+
+  const [currentMenu, setCurrentMenu] = useState<MenuDetail>();
+  const mainApp = useMainApp();
 
   const [viewMenu, setViewMenu] = useState<ViewMenu[]>([]);
 
@@ -303,6 +306,11 @@ export const ViewComponent = () => {
       doReload();
     }
   }, [preferences, currentMenu]);
+
+  useEffect(() => {
+    const menuItem = mainApp.getCacheValue(location.pathname);
+    setCurrentMenu(menuItem);
+  }, [location]);
 
   useEffect(() => {
     if (currentMenu) {
