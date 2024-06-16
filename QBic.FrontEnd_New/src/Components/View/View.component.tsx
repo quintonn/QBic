@@ -326,6 +326,24 @@ export const ViewComponent = () => {
     onMenuClick(item.EventNumber, data);
   };
 
+  const tableActions = viewMenu?.map((m, i) => (
+    <Button key={i} variant="normal" onClick={() => viewMenuItemClick(m)}>
+      {m.Label}
+    </Button>
+  ));
+
+  const doRefresh = () => {
+    doReload(filterText, null, sortingColumn?.sortingField, !sortingDescending);
+  };
+  tableActions.unshift(
+    <Button
+      key="refresh"
+      variant="icon"
+      iconName="refresh"
+      onClick={doRefresh}
+    ></Button>
+  );
+
   return (
     <Table
       items={tableItems}
@@ -372,17 +390,7 @@ export const ViewComponent = () => {
             <SpaceBetween direction="horizontal" size="xs">
               {/* <Button>Back</Button> How will we handle this?? */}
               {/* TODO: handle on click */}
-              {viewMenu
-                ? viewMenu.map((m, i) => (
-                    <Button
-                      key={i}
-                      variant="normal"
-                      onClick={() => viewMenuItemClick(m)}
-                    >
-                      {m.Label}
-                    </Button>
-                  ))
-                : null}
+              {tableActions}
             </SpaceBetween>
           }
         >

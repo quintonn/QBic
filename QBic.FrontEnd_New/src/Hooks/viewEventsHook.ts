@@ -3,9 +3,11 @@ import {
   ViewColumn,
   useMenu,
 } from "../ContextProviders/MenuProvider/MenuProvider";
+import { useModal } from "../ContextProviders/ModalProvider/ModalProvider";
 
 export const useViewEvents = () => {
   const { onMenuClick } = useMenu();
+  const modal = useModal();
 
   const handleViewEvent = (
     column: ViewColumn,
@@ -14,7 +16,7 @@ export const useViewEvents = () => {
   ) => {
     const id = rowData[column.KeyColumn];
     const params = column.ParametersToPass || {};
-    params["ViewId"] = column.EventNumber;
+    params["ViewId"] = menu.Id;
     params["RowId"] = id;
 
     var formData = {
@@ -36,11 +38,9 @@ export const useViewEvents = () => {
       onMenuClick(eventId, formData);
     } else if (column.Event.ActionType == 5) {
       // show message
-      // close busy dialog (don't have that yet)
-      // TODO get user confirmation
-      console.log("todo: user confirmation");
       const data = formData || {};
       data["parameters"] = params;
+      modal.getUserConfirmation(column.Event, data);
     }
   };
 

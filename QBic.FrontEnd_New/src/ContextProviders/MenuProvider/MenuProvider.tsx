@@ -78,9 +78,14 @@ interface ColumnSetting {
   Conditions?: ColumnCondition[];
 }
 
-interface ViewEvent {
+export interface ViewEvent {
   ActionType: number;
   EventNumber: number;
+  CancelButtonText?: string;
+  ConfirmationButtonText?: string;
+  ConfirmationMessage?: string;
+  OnCancelUIAction?: number;
+  OnConfirmationUIAction?: number;
 }
 
 export interface ViewColumn {
