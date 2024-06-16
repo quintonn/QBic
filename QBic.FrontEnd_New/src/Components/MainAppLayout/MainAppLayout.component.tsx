@@ -5,13 +5,13 @@ import {
   TopNavigation,
 } from "@cloudscape-design/components";
 import { useState } from "react";
-import { useApi } from "../../Hooks/apiHook";
 import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
 import { useAuth } from "../../ContextProviders/AuthProvider/AuthProvider";
 import {
   AppMenuItem,
   useMenu,
 } from "../../ContextProviders/MenuProvider/MenuProvider";
+import { useActions } from "../../Hooks/actionHook";
 
 interface MainAppLayoutProps extends AppLayoutProps {
   content: React.ReactNode;
@@ -36,11 +36,11 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
   const [activeHref, setActiveHref] = useState("#");
 
   const menus = useMenu();
+  const { onMenuClick } = useActions();
 
   const mainApp = useMainApp(); // auto injected because it's a context provider
 
   const auth = useAuth();
-  const api = useApi(); // calls auth -> calls main App
 
   // TODO: make these provider things too
 
@@ -73,7 +73,7 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
 
     const menuItemClicked = findClickedItem(itemId, menus.appMenuItems);
 
-    menus.onMenuClick(menuItemClicked.event);
+    onMenuClick(menuItemClicked.event);
   };
 
   return (
@@ -97,13 +97,12 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
       <AppLayout
         headerSelector="#h"
         content={content}
-        contentType={menus.currentContentType}
+        contentType={mainApp.currentContentType}
         toolsHide={true}
         navigationHide={!auth.isAuthenticated}
         navigation={
           <SideNavigation
             activeHref={activeHref}
-            // header={{ href: currentMenuItem.href, text: currentMenuItem.name }}
             onFollow={(event) => {
               event.preventDefault();
               setActiveHref(event.detail.href);

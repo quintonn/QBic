@@ -1,12 +1,12 @@
 import {
   MenuDetail,
   ViewColumn,
-  useMenu,
 } from "../ContextProviders/MenuProvider/MenuProvider";
 import { useModal } from "../ContextProviders/ModalProvider/ModalProvider";
+import { useActions } from "./actionHook";
 
 export const useViewEvents = () => {
-  const { onMenuClick } = useMenu();
+  const { onMenuClick } = useActions();
   const modal = useModal();
 
   const handleViewEvent = (

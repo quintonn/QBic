@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { API_URL } from "../../Constants/AppValues";
+import { AppLayoutProps } from "@cloudscape-design/components";
 
 export interface SystemInfo {
   ApplicationName: string;
@@ -11,6 +12,10 @@ interface MainAppContextType {
   appName: string;
   appVersion: string;
   isReady: boolean;
+  getCacheValue: (id: string) => any;
+  setCacheValue: (id: string, value: any) => void;
+  currentContentType: AppLayoutProps.ContentType;
+  setCurrentContentType: (value: AppLayoutProps.ContentType) => void;
 }
 
 const MainAppContext = createContext<MainAppContextType>(null);
@@ -19,6 +24,9 @@ export const MainAppProvider = ({ children }) => {
   const [appName, setAppName] = useState("");
   const [appVersion, setAppVersion] = useState("");
   const [isReady, setIsReady] = useState(false);
+  const [cache, setCache] = useState<any>({});
+  const [currentContentType, setCurrentContentType] =
+    useState<AppLayoutProps.ContentType>("default");
 
   const initializeSystem = async (): Promise<void> => {
     try {
@@ -54,10 +62,22 @@ export const MainAppProvider = ({ children }) => {
     initializeSystem();
   }, []);
 
+  const getCacheValue = (id: string): any => {
+    return cache[id];
+  };
+
+  const setCacheValue = (id: string, value: any) => {
+    setCache({ ...cache, [id]: value });
+  };
+
   const value = {
     appName,
     appVersion,
     isReady,
+    getCacheValue,
+    setCacheValue,
+    currentContentType,
+    setCurrentContentType,
   };
 
   return (

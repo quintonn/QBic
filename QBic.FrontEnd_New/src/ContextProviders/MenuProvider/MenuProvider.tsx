@@ -1,19 +1,16 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  AppLayoutProps,
-  SideNavigationProps,
-} from "@cloudscape-design/components";
+import { SideNavigationProps } from "@cloudscape-design/components";
 import { useAuth } from "../AuthProvider/AuthProvider";
 import { useApi } from "../../Hooks/apiHook";
+import { useModal } from "../ModalProvider/ModalProvider";
+import { useActions } from "../../Hooks/actionHook";
+import { useMainApp } from "../MainAppProvider/MainAppProvider";
 
 interface MenuContextType {
   appMenuItems: AppMenuItem[];
   sideNavMenuItems: SideNavigationProps.Item[];
-  onMenuClick: (event: number, params?: any) => Promise<void>;
-  currentContentType: AppLayoutProps.ContentType;
   onHomeClick: () => Promise<void>;
-  currentMenu: MenuDetail;
 }
 
 const MenuContext = createContext<MenuContextType>(null);
@@ -193,17 +190,13 @@ export const MenuProvider = ({ children }) => {
     SideNavigationProps.Item[]
   >([]);
 
-  const [menuCache, setMenuCache] = useState<Record<number, MenuDetail[]>>({}); // Maybe i shouldn't cache? Some stuff should reload
-  const [currentContentType, setCurrentContentType] =
-    useState<AppLayoutProps.ContentType>("default");
-
-  const [currentMenu, setCurrentMenu] = useState<MenuDetail>(null);
-
   const auth = useAuth();
   const api = useApi();
+  const modal = useModal();
   const navigate = useNavigate();
-
   const location = useLocation();
+  const { onMenuClick } = useActions();
+  const mainApp = useMainApp();
 
   const loadMenus = async () => {
     const menuData = await api.makeApiCall<MenuItem[]>("getUserMenu", "GET");
@@ -233,53 +226,7 @@ export const MenuProvider = ({ children }) => {
 
   const onHomeClick = async () => {
     navigate("/");
-    setCurrentContentType("default");
-  };
-
-  const onMenuClick = async (event: number, params: any = null) => {
-    //TODO: Need to show busy indicator
-    // maybe... (works for now but don't like it)
-
-    //await onHomeClick();
-
-    let menuDetails = menuCache[event]; //TODO: don't cache, because child items change. Unless the ID field of params is always present
-
-    if (!menuDetails || true) {
-      const url = "executeUIAction/" + event;
-
-      const data = {
-        Data: params || "",
-      };
-
-      menuDetails = await api.makeApiCall<MenuDetail[]>(url, "POST", data);
-
-      const newCache = { ...menuCache };
-      newCache[event] = menuDetails;
-      setMenuCache(newCache);
-    }
-
-    for (let i = 0; i < menuDetails?.length; i++) {
-      const item = menuDetails[i];
-
-      switch (item.ActionType) {
-        case 0: {
-          // show a view
-          setCurrentContentType("table");
-          setCurrentMenu(item);
-          navigate("/view/" + event);
-          return; // don't perform multiple actions for now, need to figure out how this will work (when showing a View)
-          break;
-        }
-        case 6: // execute UI action
-          onMenuClick(item.EventNumber, item.ParametersToPass);
-          break;
-        default:
-          console.warn("Unknown action type: " + item.ActionType);
-        // show global message?
-      }
-
-      //break;
-    }
+    mainApp.setCurrentContentType("default");
   };
 
   useEffect(() => {
@@ -294,10 +241,7 @@ export const MenuProvider = ({ children }) => {
   const value = {
     appMenuItems,
     sideNavMenuItems,
-    onMenuClick,
-    currentContentType,
     onHomeClick,
-    currentMenu,
   };
 
   return <MenuContext.Provider value={value}>{children}</MenuContext.Provider>;

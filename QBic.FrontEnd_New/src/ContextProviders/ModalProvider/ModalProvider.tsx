@@ -5,8 +5,8 @@ import {
   SpaceBetween,
 } from "@cloudscape-design/components";
 import { createContext, useContext, useState } from "react";
-import { ViewEvent, useMenu } from "../MenuProvider/MenuProvider";
-import { useAuth } from "../AuthProvider/AuthProvider";
+import { ViewEvent } from "../MenuProvider/MenuProvider";
+import { useActions } from "../../Hooks/actionHook";
 
 //import { store } from "../app/store";
 
@@ -29,8 +29,7 @@ interface ModalDialogProps {
 }
 
 export const ModalProvider = ({ children }: ModalContextProviderProps) => {
-  const { currentMenu, onMenuClick } = useMenu();
-  const auth = useAuth();
+  const { onMenuClick } = useActions();
 
   const [isVisible, setIsVisible] = useState(false);
 
@@ -84,12 +83,16 @@ export const ModalProvider = ({ children }: ModalContextProviderProps) => {
         footer={
           <Box float="right">
             <SpaceBetween direction="horizontal" size="xs">
-              <Button variant="link" onClick={() => onDismiss(false)}>
-                {confirmationSettings?.CancelButtonText}
-              </Button>
-              <Button variant="primary" onClick={() => onDismiss(true)}>
-                {confirmationSettings?.ConfirmationButtonText}
-              </Button>
+              {confirmationSettings?.CancelButtonText?.length > 0 ? (
+                <Button variant="link" onClick={() => onDismiss(false)}>
+                  {confirmationSettings?.CancelButtonText}
+                </Button>
+              ) : null}
+              {confirmationSettings?.ConfirmationButtonText?.length > 0 ? (
+                <Button variant="primary" onClick={() => onDismiss(true)}>
+                  {confirmationSettings?.ConfirmationButtonText}
+                </Button>
+              ) : null}
             </SpaceBetween>
           </Box>
         }
