@@ -55,7 +55,6 @@ const isColumnInDefinitions = (column: HasId, definitions: HasId[]) =>
 interface ViewSettings {
   totalLines: number;
   currentPage: number;
-  linesPerPage: number;
   pageCount: number;
   parameters?: any;
   eventParameters?: any;
@@ -87,12 +86,10 @@ export const ViewComponent = () => {
     totalLines: -1,
     currentPage: 1,
     pageCount: 1,
-    linesPerPage: -1,
   });
 
   const [filterText, setFilterText] = useState("");
 
-  //const { currentMenu } = useMenu();
   const { onMenuClick } = useActions();
   const api = useApi();
 
@@ -110,12 +107,12 @@ export const ViewComponent = () => {
   const updatePreferences = (value: CollectionPreferencesProps.Preferences) => {
     localStorage.setItem(preferenceKey, JSON.stringify(value));
     let currentPage = viewSettings.currentPage;
-    if (viewSettings.linesPerPage < value.pageSize) {
+    if (value.pageSize > preferences.pageSize) {
       currentPage = 1;
     }
+
     setViewSettings({
       ...viewSettings,
-      linesPerPage: value.pageSize,
       currentPage: currentPage,
     });
     setPreferences(value);
@@ -147,7 +144,7 @@ export const ViewComponent = () => {
         Data: {
           viewSettings: {
             currentPage: _viewSettings.currentPage,
-            linesPerPage: _viewSettings.linesPerPage,
+            linesPerPage: preferences.pageSize,
             totalLines: -1,
           },
           filter: filter,
@@ -290,7 +287,6 @@ export const ViewComponent = () => {
       ...viewSettings,
       currentPage: currentPage,
       totalLines: totalLines,
-      linesPerPage: preferences.pageSize,
       pageCount: pageCount,
     });
   };
@@ -308,8 +304,10 @@ export const ViewComponent = () => {
   }, [preferences, currentMenu]);
 
   useEffect(() => {
-    const menuItem = mainApp.getCacheValue(location.pathname);
-    setCurrentMenu(menuItem);
+    if (location && location.pathname) {
+      const menuItem = mainApp.getCacheValue(location.pathname);
+      setCurrentMenu(menuItem);
+    }
   }, [location]);
 
   useEffect(() => {

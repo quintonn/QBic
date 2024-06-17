@@ -1,6 +1,7 @@
 import {
   AppLayout,
   AppLayoutProps,
+  Flashbar,
   SideNavigation,
   TopNavigation,
 } from "@cloudscape-design/components";
@@ -12,6 +13,8 @@ import {
   useMenu,
 } from "../../ContextProviders/MenuProvider/MenuProvider";
 import { useActions } from "../../Hooks/actionHook";
+import { removeMessage, selectedMessages } from "../../App/flashbarSlice";
+import { useAppDispatch, useAppSelector } from "../../App/hooks";
 
 interface MainAppLayoutProps extends AppLayoutProps {
   content: React.ReactNode;
@@ -34,6 +37,9 @@ const findClickedItem = (id: string, items: AppMenuItem[]): AppMenuItem => {
 
 export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
   const [activeHref, setActiveHref] = useState("#");
+
+  const { messages } = useAppSelector(selectedMessages);
+  const dispatch = useAppDispatch();
 
   const menus = useMenu();
   const { onMenuClick } = useActions();
@@ -110,6 +116,23 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
             }}
             items={menus.sideNavMenuItems}
           />
+        }
+        notifications={
+          <>
+            <Flashbar
+              items={messages.map((message) => {
+                return {
+                  ...message,
+                  onDismiss: () => {
+                    if (message.id) {
+                      dispatch(removeMessage(message.id));
+                    }
+                  },
+                };
+              })}
+              stackItems
+            />
+          </>
         }
       ></AppLayout>
     </>
