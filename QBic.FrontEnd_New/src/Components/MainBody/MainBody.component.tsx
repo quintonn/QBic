@@ -12,6 +12,8 @@ import { AuthProvider } from "../../ContextProviders/AuthProvider/AuthProvider";
 import { ViewComponent } from "../View/View.component";
 import { MenuProvider } from "../../ContextProviders/MenuProvider/MenuProvider";
 import { ModalProvider } from "../../ContextProviders/ModalProvider/ModalProvider";
+import { store } from "../../App/store";
+import { Provider } from "react-redux";
 
 export const MainBody = () => {
   const [routes, setRoutes] = useState<RouteObject[]>([]);
@@ -35,7 +37,9 @@ export const MainBody = () => {
         <AuthProvider>
           <MenuProvider>
             <ModalProvider>
-              <MainAppLayout content={<Outlet></Outlet>} />
+              <Provider store={store}>
+                <MainAppLayout content={<Outlet></Outlet>} />
+              </Provider>
             </ModalProvider>
           </MenuProvider>
         </AuthProvider>

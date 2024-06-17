@@ -1,3 +1,5 @@
+import { addMessage } from "../App/flashbarSlice";
+import { store } from "../App/store";
 import { API_URL } from "../Constants/AppValues";
 import { useAuth } from "../ContextProviders/AuthProvider/AuthProvider";
 import { useMainApp } from "../ContextProviders/MainAppProvider/MainAppProvider";
@@ -108,21 +110,43 @@ export const useApi = () => {
           return Promise.reject(401);
         }
       } else if (response.status == 400) {
-        const text = await response.text();
-        if (text.includes("invalid_grant")) {
-          console.log("username or password incorrect");
+        let message = await response.text();
+        if (message.includes("invalid_grant")) {
+          message = "Incorrect username or password";
           // show message that username or password was incorrect
+        } else if (message.startsWith('"')) {
+          message = message.substring(1, message.length - 2);
         }
+        store.dispatch(
+          addMessage({
+            type: "error",
+            content: message,
+          })
+        );
+        return Promise.resolve(null);
       }
 
-      console.log("unhanled response status: ", response.status);
-      return Promise.reject("Error making api call: " + response.status);
-      //TODO: handle response
+      const responseText = await response.text();
+      const message = `Unhandled response status ${response.status} with content: ${responseText}`;
+
+      store.dispatch(
+        addMessage({
+          type: "error",
+          content: message,
+        })
+      );
+
+      return Promise.reject(message);
     } catch (err) {
       console.log("error making api call to: " + urlToCall);
       console.log(err);
       if (raiseErrors == true) {
-        //TODO: show these errors somewhere (flashbar);
+        store.dispatch(
+          addMessage({
+            type: "error",
+            content: `Error making api call to: ${urlToCall}`,
+          })
+        );
       } else {
         return null;
       }

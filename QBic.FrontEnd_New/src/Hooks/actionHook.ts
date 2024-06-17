@@ -54,8 +54,10 @@ export const useActions = () => {
 
     const menuDetails = await api.makeApiCall<MenuDetail[]>(url, "POST", data);
 
-    for (let i = 0; i < menuDetails?.length; i++) {
-      handleAction(menuDetails[i]);
+    if (menuDetails && menuDetails.length > 0) {
+      for (let i = 0; i < menuDetails?.length; i++) {
+        handleAction(menuDetails[i]);
+      }
     }
   };
 
