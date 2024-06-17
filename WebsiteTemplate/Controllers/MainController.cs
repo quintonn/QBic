@@ -185,7 +185,7 @@ namespace WebsiteTemplate.Controllers
             if (result is FileContentResult)
             {
                 var f = result as FileContentResult;
-                Response.Headers.Add("filename", f.FileDownloadName);
+                Response.Headers.Append("filename", f.FileDownloadName);
             }
             return result;
         }

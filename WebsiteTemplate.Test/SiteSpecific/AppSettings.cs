@@ -75,6 +75,11 @@ namespace WebsiteTemplate.Test.SiteSpecific
             var connectionString = "Integrated Security=SSPI;Persist Security Info=False;Data Source=localhost;Initial Catalog=WebTest;MultipleActiveResultSets=true";
             var configurer = MsSqlConfiguration.MsSql2012.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
 
+            //var connectionString = "Data Source=##CurrentDirectory##\\Data\\test.db;Version=3;Journal Mode=Off;Connection Timeout=12000";
+            //var currentDirectory = QBicUtils.GetCurrentDirectory();
+            //connectionString = connectionString.Replace("##CurrentDirectory##", currentDirectory); // for my sqlite connectiontion string
+            //var configurer = SQLiteConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
+
             return configurer;
         }
 

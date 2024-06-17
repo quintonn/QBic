@@ -26,6 +26,10 @@ namespace QBic.Core.Data
 
             foreach (var assembly in allAssemblies)
             {
+                if (assembly.GetName().Name.Contains("Data.SqlClient")) // because this gives an error
+                {
+                    continue;
+                }
                 var assemblyTypes = assembly.GetTypes();
                 var tmpBaseTypes = assemblyTypes
                                            .Where(myType => myType.IsClass /*&& !myType.IsAbstract */&& myType.IsSubclassOf(typeof(DynamicClass)))

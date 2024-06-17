@@ -1,4 +1,4 @@
-﻿using FluentNHibernate.Mapping;
+﻿using NHibernate.Type;
 using QBic.Core.Data;
 using WebsiteTemplate.Models;
 
@@ -15,12 +15,12 @@ namespace WebsiteTemplate.Mappings
 
             Map(x => x.AuditEventDateTimeUTC).Not.Nullable();
 
-            Map(x => x.AuditAction).CustomType<GenericEnumMapper<AuditAction>>()
+            Map(x => x.AuditAction).CustomType<EnumStringType<AuditAction>>()
                                    .Not
                                    .Nullable();
             Map(x => x.ObjectId).Not.Nullable();
             Map(x => x.EntityName).Not.Nullable();
-            
+
             if (DataStore.DbProviderType == DBProviderType.MYSQL)
             {
                 Map(x => x.OriginalObject).Nullable().CustomType("StringClob").CustomSqlType("LONGTEXT").Length(int.MaxValue);
