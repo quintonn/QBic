@@ -155,9 +155,13 @@ namespace QBic.Core.Services
                 //var connectionString = $"Data Source=file:{Guid.NewGuid()}?mode=memory&cache=shared;Version=3;New=True";
                 // this doesn't work because the code is reading the sqlite db file at the end. Maybe there is another way to get it
                 var store = DataStore.GetInstance(false, AppSettings, null);
+                var tmp = DataStore.DbProviderType;
+                DataStore.DbProviderType = DBProviderType.SQLITE;
                 var config = store.CreateNewConfigurationUsingConnectionString(connectionString);
                 new SchemaUpdate(config).Execute(false, true); // Build the tables etc.
                 var factory = config.BuildSessionFactory();
+
+                DataStore.DbProviderType = tmp;
 
                 var ids = SystemTypes.Keys.ToList().OrderBy(i => i);
 

@@ -7,11 +7,91 @@ import { useModal } from "../ContextProviders/ModalProvider/ModalProvider";
 import { useApi } from "./apiHook";
 import { useMainApp } from "../ContextProviders/MainAppProvider/MainAppProvider";
 
+import { API_URL } from "../Constants/AppValues";
+import { useAuth } from "../ContextProviders/AuthProvider/AuthProvider";
+import { request } from "http";
+import { store } from "../App/store";
+import { addMessage } from "../App/flashbarSlice";
+
 export const useActions = () => {
   const navigate = useNavigate();
   const modal = useModal();
   const api = useApi();
   const mainApp = useMainApp();
+  const auth = useAuth();
+
+  const encode = (str: string) => {
+    return btoa(
+      encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p1) {
+        return String.fromCharCode(0 + p1);
+      })
+    );
+  };
+
+  const downloadFile = async (url: string, requestData?: string) => {
+    store.dispatch(
+      addMessage({
+        type: "info",
+        content: "File download started...",
+      })
+    );
+
+    let urlToCall = `${API_URL}${url}?v=${mainApp.appVersion}`;
+    urlToCall = urlToCall.replaceAll("//", "/");
+
+    // make API call
+    const fetchOptions: RequestInit = {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + auth.accessToken,
+      },
+    };
+
+    let dataToSend = "";
+    if (requestData && requestData.length > 0) {
+      fetchOptions.body = encode(dataToSend);
+    }
+
+    try {
+      const response = await fetch(urlToCall, fetchOptions);
+
+      if (response.ok) {
+        const blob = await response.blob();
+
+        let filename = response.headers.get("FileName");
+
+        if (filename == null || filename.length == 0) {
+          filename = "unknown file.zip";
+        }
+
+        const objUrl = URL.createObjectURL(new Blob([blob]));
+        const link = document.createElement("a");
+        link.href = objUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        URL.revokeObjectURL(objUrl);
+
+        link.remove();
+
+        store.dispatch(
+          addMessage({
+            type: "success",
+            content: "File download complete",
+          })
+        );
+      }
+    } catch (err) {
+      console.log("error downloading file with url: " + urlToCall);
+      console.log(err);
+      store.dispatch(
+        addMessage({
+          type: "error",
+          content: `Error downloading file: ${err}`,
+        })
+      );
+    }
+  };
 
   const handleAction = (item: MenuDetail) => {
     switch (item.ActionType) {
@@ -25,14 +105,14 @@ export const useActions = () => {
       }
       case 5: {
         // ShowMessage
-
         modal.getUserConfirmation(item as ViewEvent, null);
-        // console.log("get user confirmation");
-        // console.log(item);
         break;
       }
       case 6: // execute UI action
         onMenuClick(item.EventNumber, item.ParametersToPass);
+        break;
+      case 11: // download file
+        downloadFile(item.DataUrl, item.RequestData);
         break;
       default:
         console.warn("Unknown action type: " + item.ActionType);
