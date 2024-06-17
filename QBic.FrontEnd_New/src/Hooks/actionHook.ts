@@ -103,6 +103,19 @@ export const useActions = () => {
         navigate("/view/" + item.Id);
         break;
       }
+      case 1: {
+        // TODO: get user input
+        // this is just about the next thing to do
+        console.log("todo: get user inputs");
+        break;
+      }
+      //case 2: // submenu  - // nothing, this is commented out in the old code
+      //case 3: // do something - // nothing, this is commented out in the old code
+      case 4: {
+        // close input dialog (not sure if i need this here);
+        console.log("close input dialog action ignored");
+        break;
+      }
       case 5: {
         // ShowMessage
         modal.getUserConfirmation(item as ViewEvent, null);
@@ -111,6 +124,13 @@ export const useActions = () => {
       case 6: // execute UI action
         onMenuClick(item.EventNumber, item.ParametersToPass);
         break;
+      //case 7: // input data view (ignore in old code)
+      case 8: // update input view
+      case 9: {
+        // delete input view item
+        console.log("todo: DeleteInputViewItem");
+        break;
+      }
       case 11: // download file
         downloadFile(item.DataUrl, item.RequestData);
         break;
