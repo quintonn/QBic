@@ -100,6 +100,31 @@ export interface ViewColumn {
   ParametersToPass?: any;
 }
 
+export interface ListSourceItem {
+  Key: string;
+  Value: string;
+}
+
+export interface InputField {
+  DefaultValue: any;
+  InputLabel: string;
+  InputName: string;
+  InputType: number;
+  Mandatory: boolean;
+  MandatoryConditions: any[];
+  RaisePropertyChangedEvent: boolean;
+  TabName: string | null;
+  VisibilityConditions: any[];
+  MultiLineText?: boolean;
+  ListSource?: ListSourceItem[];
+}
+
+export interface InputButton {
+  ActionNumber: number;
+  Label: string;
+  ValidateInput: boolean;
+}
+
 export interface MenuDetail {
   Description?: string;
   Title?: string;
@@ -122,6 +147,8 @@ export interface MenuDetail {
   AllowSorting?: boolean;
   DataUrl?: string;
   RequestData?: string;
+  InputFields?: InputField[];
+  InputButtons?: InputButton[];
 }
 
 const MapMenuItemsToSideNavItems = (
