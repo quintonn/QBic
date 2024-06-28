@@ -105,6 +105,12 @@ export interface ListSourceItem {
   Value: string;
 }
 
+export interface VisibilityConditions {
+  ColumnName: string;
+  ColumnValue: string;
+  Comparison: number;
+}
+
 export interface InputField {
   DefaultValue: any;
   InputLabel: string;
@@ -114,8 +120,9 @@ export interface InputField {
   MandatoryConditions: any[];
   RaisePropertyChangedEvent: boolean;
   TabName: string | null;
-  VisibilityConditions: any[];
+  VisibilityConditions: VisibilityConditions[];
   MultiLineText?: boolean;
+  ListItems?: ListSourceItem[];
   ListSource?: ListSourceItem[];
 }
 
@@ -149,6 +156,7 @@ export interface MenuDetail {
   RequestData?: string;
   InputFields?: InputField[];
   InputButtons?: InputButton[];
+  ConfirmationMessage?: string;
 }
 
 const MapMenuItemsToSideNavItems = (
