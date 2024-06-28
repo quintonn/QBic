@@ -14,6 +14,7 @@ import { MenuProvider } from "../../ContextProviders/MenuProvider/MenuProvider";
 import { ModalProvider } from "../../ContextProviders/ModalProvider/ModalProvider";
 import { store } from "../../App/store";
 import { Provider } from "react-redux";
+import { FormComponent } from "../Form/Form.component";
 
 export const MainBody = () => {
   const [routes, setRoutes] = useState<RouteObject[]>([]);
@@ -21,6 +22,7 @@ export const MainBody = () => {
 
   routes.push({ path: "/*", element: <Home /> });
   routes.push({ path: "/view/*", element: <ViewComponent /> });
+  routes.push({ path: "/form/*", element: <FormComponent /> });
   routes.push({ path: "/login", element: <Login /> });
 
   useEffect(() => {

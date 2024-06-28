@@ -98,15 +98,17 @@ export const useActions = () => {
       case 0: {
         // show a view
         mainApp.setCurrentContentType("table");
-        //setCurrentMenu(item);
         mainApp.setCacheValue("/view/" + item.Id, item);
         navigate("/view/" + item.Id);
         break;
       }
       case 1: {
-        // TODO: get user input
-        // this is just about the next thing to do
-        console.log("todo: get user inputs");
+        // get inputs
+        //mainApp.setCurrentContentType("form");
+        mainApp.setCacheValue("/form/" + item.Id, item);
+        console.log(item);
+        //mainApp.setCacheValue("/view/" + item.Id, item);
+        navigate("/form/" + item.Id);
         break;
       }
       //case 2: // submenu  - // nothing, this is commented out in the old code
