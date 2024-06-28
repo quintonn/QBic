@@ -31,10 +31,9 @@ export const useApi = () => {
     const fetchOptions: RequestInit = {
       method: method,
       headers: {
-        Authorization: "Bearer " + auth.accessToken,
+        Authorization: "Bearer " + auth.getAccessToken(),
       },
     };
-
     if (method == "POST") {
       if (data instanceof FormData) {
         fetchOptions.body = data;
@@ -90,7 +89,6 @@ export const useApi = () => {
             .performTokenRefresh()
             .then((x) => {
               // try call again
-
               return makeApiCallInternal<T>(
                 urlToCall,
                 fetchOptions,

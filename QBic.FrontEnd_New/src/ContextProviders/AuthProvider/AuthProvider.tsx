@@ -5,12 +5,10 @@ import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
   refreshToken: string;
-  accessToken: string;
-  // isReady, //TODO: i would like this to work without all this isReady stuff
+  getAccessToken: () => string;
   doLogin: (username: string, password: string) => void;
   logout: () => void;
   isAuthenticated: boolean;
-  //setIsAuthenticated,
   performTokenRefresh: () => Promise<void>;
   resetPassword: (username: string) => Promise<string>;
   user: UserInfo;
@@ -23,8 +21,10 @@ interface UserInfo {
 
 const AuthContext = createContext<AuthContextType>(null);
 
+let accessToken = "";
+
 export const AuthProvider = ({ children }) => {
-  const [accessToken, setAccessToken] = useState("");
+  //const [accessToken, setAccessToken] = useState("");
   const [refreshToken, setRefreshToken] = useState("");
   const [lastRefreshDate, setLastRefreshDate] = useState<Date>(new Date());
   const [user, setUser] = useState<UserInfo>(null);
@@ -56,8 +56,11 @@ export const AuthProvider = ({ children }) => {
     }
   }, [gotTokens]);
 
+  const getAccessToken = () => {
+    return accessToken;
+  };
+
   const performTokenRefresh = async () => {
-    console.log("perform token refresh called");
     const data = new FormData();
     data.append("grant_type", "refresh_token");
     data.append("refresh_token", refreshToken);
@@ -74,12 +77,10 @@ export const AuthProvider = ({ children }) => {
       fetchOptions.body = data;
 
       const loginResponse = await fetch(urlToCall, fetchOptions);
-      console.log("token call response");
-      console.log(loginResponse);
       if (loginResponse.ok === true) {
         const json = await loginResponse.json();
 
-        setAccessToken(json.access_token);
+        accessToken = json.access_token;
         setRefreshToken(json.refresh_token);
 
         setLastRefreshDate(new Date());
@@ -92,7 +93,6 @@ export const AuthProvider = ({ children }) => {
         );
 
         setIsAuthenticated(true);
-        console.log("perform refresh token done");
         return Promise.resolve();
       }
       return Promise.reject("could not update refresh token");
@@ -217,7 +217,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    console.log("auth logout called");
     localStorage.removeItem(getName("accessToken"));
     localStorage.removeItem(getName("refreshToken"));
     localStorage.removeItem(getName("lastRefreshDate"));
@@ -268,8 +267,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     refreshToken,
-    accessToken,
-    initializeAuth,
+    getAccessToken,
     performTokenRefresh,
     isReady, //TODO: i would like this to work without all this isReady stuff
     doLogin,

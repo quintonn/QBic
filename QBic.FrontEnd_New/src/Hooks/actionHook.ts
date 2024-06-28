@@ -43,7 +43,7 @@ export const useActions = () => {
     const fetchOptions: RequestInit = {
       method: "POST",
       headers: {
-        Authorization: "Bearer " + auth.accessToken,
+        Authorization: "Bearer " + auth.getAccessToken(),
       },
     };
 
@@ -115,11 +115,14 @@ export const useActions = () => {
       //case 3: // do something - // nothing, this is commented out in the old code
       case 4: {
         // close input dialog (not sure if i need this here);
-        console.log("close input dialog action ignored");
+        // maybe navigate back
+        //console.log("close input dialog action ignored");
+        navigate(-1);
         break;
       }
       case 5: {
         // ShowMessage
+        console.log(modal);
         modal.getUserConfirmation(item as ViewEvent, null);
         break;
       }
@@ -163,5 +166,5 @@ export const useActions = () => {
     }
   };
 
-  return { onMenuClick };
+  return { onMenuClick, handleAction };
 };
