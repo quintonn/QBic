@@ -135,11 +135,9 @@ export const AuthProvider = ({ children }) => {
 
   const initializeAuth = async () => {
     // get auth tokens from local storage
-    const _accessToken = localStorage.getItem(getName("accessToken"));
+    accessToken = localStorage.getItem(getName("accessToken"));
     const _refreshToken = localStorage.getItem(getName("refreshToken"));
-    setAccessToken(_accessToken);
     setRefreshToken(_refreshToken);
-
     setGotTokens(true);
   };
 
