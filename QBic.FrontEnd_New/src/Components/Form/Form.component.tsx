@@ -24,7 +24,7 @@ import { addMessage } from "../../App/flashbarSlice";
 import { useApi } from "../../Hooks/apiHook";
 
 import { OptionDefinition } from "@cloudscape-design/components/internal/components/option/interfaces";
-import { useActions } from "../../Hooks/actionHook";
+import { useActions } from "../../ContextProviders/ActionProvider/ActionProvider";
 
 export const FormComponent = () => {
   const mainApp = useMainApp();

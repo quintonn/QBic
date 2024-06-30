@@ -17,8 +17,8 @@ import { ViewActionColumn } from "./ViewActionColumn";
 import { ViewColumnCell } from "./ViewColumn";
 import { useApi } from "../../Hooks/apiHook";
 import { useDebounce } from "../../Hooks/useDebounce";
-import { useActions } from "../../Hooks/actionHook";
 import { useLocation } from "react-router-dom";
+import { useActions } from "../../ContextProviders/ActionProvider/ActionProvider";
 
 // create common interface between ColumnDefintion and ContentDisplayItem
 interface HasId {
