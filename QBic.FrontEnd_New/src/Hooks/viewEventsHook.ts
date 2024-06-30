@@ -9,8 +9,6 @@ export const useViewEvents = () => {
   const { onMenuClick } = useActions();
   const modal = useModal();
 
-  //TODO: Refactor this so it's also inside ActionProvider
-
   const handleViewEvent = (
     column: ViewColumn,
     rowData: any,
@@ -21,7 +19,7 @@ export const useViewEvents = () => {
     params["ViewId"] = menu.Id;
     params["RowId"] = id;
 
-    var formData = {
+    const formData = {
       Id: id,
       data: rowData,
       viewSettings: "", // Why is this not included in the call?
@@ -37,6 +35,7 @@ export const useViewEvents = () => {
       const eventId =
         column.Event == null ? column.EventNumber : column.Event.EventNumber;
       // execute ui action
+
       onMenuClick(eventId, formData);
     } else if (column.Event.ActionType == 5) {
       // show message

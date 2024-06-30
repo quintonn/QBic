@@ -7,8 +7,6 @@ import {
 import { createContext, useContext, useState } from "react";
 import { ViewEvent } from "../MenuProvider/MenuProvider";
 
-//import { store } from "../app/store";
-
 type ModalAction = "none" | "user-confirmation" | "unknown-remove-when-known";
 
 interface ModalContextValue {
