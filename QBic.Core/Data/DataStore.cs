@@ -205,7 +205,7 @@ namespace QBic.Core.Data
 
             config.ExposeConfiguration(x =>
             {
-                x.SetProperty(NHibernate.Cfg.Environment.ShowSql, AppSettings.ShowSQL.ToString().ToLower()); // shows sql in console (doesn't seem to work)
+                x.SetProperty(NHibernate.Cfg.Environment.ShowSql, AppSettings.ShowSQL.ToString().ToLower()); // shows sql in console
 
                 // This will set the command_timeout property on factory-level
                 //x.SetProperty(NHibernate.Cfg.Environment.CommandTimeout, "180");

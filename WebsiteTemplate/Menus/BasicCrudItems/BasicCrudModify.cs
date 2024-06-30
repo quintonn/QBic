@@ -1,6 +1,6 @@
-﻿using QBic.Core.Data.BaseTypes;
+﻿using NHibernate.Criterion;
+using QBic.Core.Data.BaseTypes;
 using QBic.Core.Models;
-using NHibernate.Criterion;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
-using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.BasicCrudItems
@@ -17,6 +16,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
     public class BasicCrudModify<T> : GetInput, IBasicCrudModify where T : BaseClass
     {
         private static Type DynamicClassType = typeof(DynamicClass);
+        private readonly string DateFormat = "yyyy-MM-dd";// Fix to ISO date format
         public BasicCrudModify(DataService dataService) : base(dataService)
         {
         }
@@ -183,7 +183,6 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 
                 using (var session = DataService.OpenSession())
                 {
-                    var dateFormat = String.Empty;
                     T item;
                     if (!isNew)
                     {
@@ -221,12 +220,12 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                         else if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
                         {
                             DateTime date;
-                            if (String.IsNullOrWhiteSpace(dateFormat))
-                            {
-                                var appSettings = session.QueryOver<SystemSettings>().List<SystemSettings>().FirstOrDefault();
-                                dateFormat = appSettings.DateFormat;
-                            }
-                            if (DateTime.TryParseExact(value.Value?.ToString(), dateFormat, CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out date))
+                            //if (String.IsNullOrWhiteSpace(dateFormat))
+                            //{
+                            //    var appSettings = session.QueryOver<SystemSettings>().List<SystemSettings>().FirstOrDefault();
+                            //    dateFormat = appSettings.DateFormat;
+                            //}
+                            if (DateTime.TryParseExact(value.Value?.ToString(), DateFormat, CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out date))
                             {
                                 prop.SetValue(item, date);
                             }

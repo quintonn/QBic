@@ -6,11 +6,13 @@ export interface SystemInfo {
   ApplicationName: string;
   Version: string;
   ConstructionError: string;
+  DateFormat: string;
 }
 
 interface MainAppContextType {
   appName: string;
   appVersion: string;
+  dateFormat: string;
   isReady: boolean;
   getCacheValue: (id: string) => any;
   setCacheValue: (id: string, value: any) => void;
@@ -23,6 +25,7 @@ const MainAppContext = createContext<MainAppContextType>(null);
 export const MainAppProvider = ({ children }) => {
   const [appName, setAppName] = useState("");
   const [appVersion, setAppVersion] = useState("");
+  const [dateFormat, setDateFormat] = useState("");
   const [isReady, setIsReady] = useState(false);
   const [cache, setCache] = useState<any>({});
   const [currentContentType, setCurrentContentType] =
@@ -44,6 +47,7 @@ export const MainAppProvider = ({ children }) => {
         } else {
           setAppName(systemInfo.ApplicationName);
           setAppVersion(systemInfo.Version);
+          setDateFormat(systemInfo.DateFormat);
 
           document.title = `${systemInfo.ApplicationName} ${systemInfo.Version}`;
           setIsReady(true);
@@ -73,6 +77,7 @@ export const MainAppProvider = ({ children }) => {
   const value = {
     appName,
     appVersion,
+    dateFormat,
     isReady,
     getCacheValue,
     setCacheValue,

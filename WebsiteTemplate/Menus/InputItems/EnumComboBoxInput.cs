@@ -53,9 +53,9 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public override object GetValue(JToken jsonToken)
         {
-            if (jsonToken == null)
+            if (jsonToken == null || string.IsNullOrWhiteSpace(jsonToken?.ToString()))
             {
-                return Enum.GetValues(typeof(T)).First();
+                return null;// Enum.GetValues(typeof(T)).First();
             }
             var result = (T)Enum.Parse(typeof(T), jsonToken?.ToString());
             return result;

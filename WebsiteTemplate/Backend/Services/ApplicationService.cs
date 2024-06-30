@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using QBic.Authentication;
 using QBic.Core.Utilities;
+using System.Linq;
 using System.Threading.Tasks;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
@@ -13,11 +13,13 @@ namespace WebsiteTemplate.Backend.Services
         private static ApplicationSettingsCore ApplicationSettings { get; set; }
         private UserManager<User> UserContext { get; set; }
         private IHttpContextAccessor HttpContextAccessor { get; set; }
-        public ApplicationService(ApplicationSettingsCore applicationSettings, UserManager<User> userContext, IHttpContextAccessor httpContextAccessor)
+        private readonly DataService DataService;
+        public ApplicationService(ApplicationSettingsCore applicationSettings, UserManager<User> userContext, IHttpContextAccessor httpContextAccessor, DataService dataService)
         {
             ApplicationSettings = applicationSettings;
             UserContext = userContext;
             HttpContextAccessor = httpContextAccessor;
+            DataService = dataService;
         }
 
         
@@ -27,11 +29,15 @@ namespace WebsiteTemplate.Backend.Services
 
             var version = ApplicationSettings.GetType().Assembly.GetName().Version.ToString();
 
+            using var session = DataService.OpenSession();
+            var appSettings = session.QueryOver<Models.SystemSettings>().List<Models.SystemSettings>().FirstOrDefault();
+
             var json = new
             {
                 ApplicationName = ApplicationSettings.GetApplicationName(),
                 Version = version,
-                ConstructorError = constructorError
+                ConstructorError = constructorError,
+                DateFormat = appSettings.DateFormat
             };
 
             return json;

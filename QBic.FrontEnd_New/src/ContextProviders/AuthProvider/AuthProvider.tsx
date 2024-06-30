@@ -4,7 +4,6 @@ import { useMainApp } from "../MainAppProvider/MainAppProvider";
 import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
-  refreshToken: string;
   getAccessToken: () => string;
   doLogin: (username: string, password: string) => void;
   logout: () => void;
@@ -22,17 +21,15 @@ interface UserInfo {
 const AuthContext = createContext<AuthContextType>(null);
 
 let accessToken = "";
+let refreshToken = "";
 
 export const AuthProvider = ({ children }) => {
-  //const [accessToken, setAccessToken] = useState("");
-  const [refreshToken, setRefreshToken] = useState("");
   const [lastRefreshDate, setLastRefreshDate] = useState<Date>(new Date());
   const [user, setUser] = useState<UserInfo>(null);
 
   const [isReady, setIsReady] = useState(false);
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [gotTokens, setGotTokens] = useState(false);
 
   const { appName, appVersion, isReady: mainAppIsReady } = useMainApp();
 
@@ -48,16 +45,12 @@ export const AuthProvider = ({ children }) => {
     }
   }, [mainAppIsReady]);
 
-  useEffect(() => {
-    // this is done using a useEffect, else the accessToken and refreshToken state values are not set
-    // TODO: Can be improved
-    if (gotTokens === true) {
-      validateRefreshToken();
-    }
-  }, [gotTokens]);
-
   const getAccessToken = () => {
     return accessToken;
+  };
+
+  const getRefreshToken = () => {
+    return refreshToken;
   };
 
   const performTokenRefresh = async () => {
@@ -81,7 +74,7 @@ export const AuthProvider = ({ children }) => {
         const json = await loginResponse.json();
 
         accessToken = json.access_token;
-        setRefreshToken(json.refresh_token);
+        refreshToken = json.refresh_token;
 
         setLastRefreshDate(new Date());
 
@@ -136,9 +129,10 @@ export const AuthProvider = ({ children }) => {
   const initializeAuth = async () => {
     // get auth tokens from local storage
     accessToken = localStorage.getItem(getName("accessToken"));
-    const _refreshToken = localStorage.getItem(getName("refreshToken"));
-    setRefreshToken(_refreshToken);
-    setGotTokens(true);
+    refreshToken = localStorage.getItem(getName("refreshToken"));
+    //validateRefreshToken();
+    await onReadyFunction();
+    setIsReady(true);
   };
 
   const performLogin = async (username: string, password: string) => {
@@ -264,7 +258,6 @@ export const AuthProvider = ({ children }) => {
   }
 
   const value = {
-    refreshToken,
     getAccessToken,
     performTokenRefresh,
     isReady, //TODO: i would like this to work without all this isReady stuff
