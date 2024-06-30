@@ -317,9 +317,20 @@ export const ViewComponent = () => {
     }
   }, [currentMenu]);
 
-  const debouncedFilterChange = useDebounce(() => {
-    doReload(filterText, null, sortingColumn?.sortingField, !sortingDescending);
-  });
+  const debouncedFilterChange = () =>
+    useDebounce(
+      () => {
+        console.log("debounced call");
+        doReload(
+          filterText,
+          null,
+          sortingColumn?.sortingField,
+          !sortingDescending
+        );
+      },
+      "refresh",
+      500
+    );
 
   const viewMenuItemClick = (item: ViewMenu) => {
     const data = {

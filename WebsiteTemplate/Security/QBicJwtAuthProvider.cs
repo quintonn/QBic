@@ -13,6 +13,16 @@ namespace WebsiteTemplate.Security
             AppSettings = appSettings;
         }
 
+        public override TimeSpan AccessTokenExpiration
+        {
+            get
+            {
+                return AppSettings.AccessTokenExpireTimeSpan;
+            }
+        }
+
+        public override TimeSpan RefreshTokenExpiration => AppSettings.RefreshTokenExpireTimeSpan;
+
         public override bool AllowInsecureHttp => AppSettings.TokenEndpointAllowInsecureHttpRequests; // this can be false, even behind reverse proxy if UseForwardedHeaders is setup correctly
 
         public override string Path => AppSettings.TokenEndpointPath;

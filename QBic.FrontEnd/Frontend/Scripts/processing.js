@@ -101,7 +101,7 @@
                         {
                             if (inp.inputType == 5) // List Selection
                             {
-                                var defaultList = defaultValue || [];
+                                var defaultList = inpValue || [];
                                 var listSource = item.ListItems
                                 listSource = $.map(listSource, function (item)
                                 {
