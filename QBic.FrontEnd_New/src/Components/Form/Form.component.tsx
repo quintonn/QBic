@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  DatePicker,
   Form,
   FormField,
   Header,
@@ -9,6 +10,7 @@ import {
   Select,
   SpaceBetween,
   Tabs,
+  Textarea,
 } from "@cloudscape-design/components";
 import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
 import { useEffect, useState } from "react";
@@ -26,6 +28,8 @@ import { useApi } from "../../Hooks/apiHook";
 import { OptionDefinition } from "@cloudscape-design/components/internal/components/option/interfaces";
 import { useActions } from "../../ContextProviders/ActionProvider/ActionProvider";
 
+import moment from "moment";
+
 export const FormComponent = () => {
   const mainApp = useMainApp();
   const [loading, setLoading] = useState(false);
@@ -41,6 +45,27 @@ export const FormComponent = () => {
   const api = useApi();
   const { handleAction } = useActions();
 
+  const getInputValue = (field: InputField): any => {
+    let value = values[field.InputName];
+
+    if (field.InputType == 3) {
+      // combo box
+      const selectedItem = value as OptionDefinition;
+      value = selectedItem.value;
+    } else if (field.InputType == 5) {
+      // list selection
+      const selectedItems = value as OptionDefinition[];
+      value = selectedItems.map((s) => s.value);
+    } else if (field.InputType == 6) {
+      // date
+      if (value) {
+        value = new Date(value).toISOString().split("T")[0];
+      }
+    }
+
+    return value;
+  };
+
   const getInputValues = () => {
     const result: any = {};
 
@@ -51,17 +76,7 @@ export const FormComponent = () => {
       if (!isVisible) {
         continue;
       }
-      let value = values[field.InputName];
-
-      if (field.InputType == 3) {
-        const selectedItem = value as OptionDefinition;
-        value = selectedItem.value;
-      } else if (field.InputType == 5) {
-        const selectedItems = value as OptionDefinition[];
-        value = selectedItems.map((s) => s.value);
-      }
-
-      result[field.InputName] = value;
+      result[field.InputName] = getInputValue(field);
     }
 
     return result;
@@ -73,6 +88,14 @@ export const FormComponent = () => {
     try {
       if (button.ValidateInput) {
         //todo : validate all input fields -> currentMenu.fields with values
+        for (let i = 0; i < currentMenu.InputFields.length; i++) {
+          const field = currentMenu.InputFields[i];
+          const value = getInputValue(field);
+          const validationResult = validateField(field, value);
+          if (validationResult.length > 0) {
+            return;
+          }
+        }
       }
       //TODO: handle button click
       //      if validateInput, validateAllFields
@@ -97,10 +120,11 @@ export const FormComponent = () => {
       );
 
       //await formEvents.handleEvents(resp);
-      for (let i = 0; i < resp.length; i++) {
+      for (let i = 0; i < resp?.length; i++) {
         handleAction(resp[i]);
       }
     } catch (error) {
+      console.log(error);
       let message = "Unexpected error: " + error;
       dispatch(
         addMessage({
@@ -114,8 +138,8 @@ export const FormComponent = () => {
   };
 
   const validateField = (field: InputField, value: any): string => {
-    if (field.Mandatory === true) {
-      if (value == null || value == "") {
+    if (field.Mandatory === true && fieldVisibility[field.InputName] == true) {
+      if (value === null || value === "") {
         return field.InputLabel + " is required";
       }
     }
@@ -157,6 +181,24 @@ export const FormComponent = () => {
               return { label: label, value: d };
             })
             .filter((x) => x.label && x.label != "");
+          break;
+        }
+        case 6: {
+          // date input
+          defaultValue = f.DefaultValue || "";
+          if (defaultValue) {
+            // convert from mainApp.dateFormat
+            try {
+              //defaultValue = parse("23-06-2024", "dd-MM-YYYY", new Date());
+              defaultValue = moment(defaultValue, "DD-MMM-YYYY").format(
+                "YYYY-MM-DD"
+              );
+            } catch (err) {
+              console.log("error parsing date: " + defaultValue);
+              console.log(err);
+            }
+          }
+
           break;
         }
         default:
@@ -248,8 +290,18 @@ export const FormComponent = () => {
     switch (field.InputType) {
       case 0: // text
       case 1: // password
+        if (field.MultiLineText == true) {
+          return (
+            <Textarea
+              placeholder={field.InputLabel}
+              value={values?.[field.InputName]}
+              onChange={({ detail: { value } }) => onChange(field, value)}
+            ></Textarea>
+          );
+        }
         return (
           <Input
+            placeholder={field.InputLabel}
             type={field.InputType == 1 ? "password" : "text"}
             value={values?.[field.InputName]}
             onChange={({ detail: { value } }) => onChange(field, value)}
@@ -293,6 +345,25 @@ export const FormComponent = () => {
             }))}
           ></Multiselect>
         );
+      case 6: // date input
+        return (
+          <DatePicker
+            value={values?.[field.InputName]}
+            onChange={({ detail: { value } }) => onChange(field, value)}
+            placeholder={field.InputLabel}
+          />
+        );
+      case 10: // number
+        return (
+          <Input
+            type="number"
+            placeholder={field.InputLabel}
+            value={values?.[field.InputName]}
+            onChange={({ detail: { value } }) => onChange(field, value)}
+          />
+        );
+      case 11: // label
+        return <div>{field.DefaultValue}</div>;
       default:
         console.error("unhandled input type: " + field.InputType);
         dispatch(
@@ -341,14 +412,32 @@ export const FormComponent = () => {
       }
     });
 
-    const tabNames = Array.from(uniqueTabs?.values());
+    const tabNames = Array.from(uniqueTabs?.values()).filter(
+      (x) => x != null && x.length > 0
+    );
+
+    return (
+      <>
+        {tabNames.length > 1 ? (
+          <Tabs
+            tabs={tabNames.map((t) => ({
+              label: t,
+              id: t,
+              content: <SpaceBetween size="l">{getTabContent(t)}</SpaceBetween>,
+            }))}
+          />
+        ) : null}
+
+        <SpaceBetween size="l">{getTabContent(null)}</SpaceBetween>
+      </>
+    );
     if (tabNames.length > 1) {
       return (
         <Tabs
           tabs={tabNames.map((t) => ({
             label: t,
             id: t,
-            content: getTabContent(t),
+            content: <SpaceBetween size="l">{getTabContent(t)}</SpaceBetween>,
           }))}
         />
       );

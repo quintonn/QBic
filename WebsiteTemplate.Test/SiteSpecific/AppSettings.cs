@@ -1,9 +1,7 @@
 ﻿using FluentNHibernate.Cfg.Db;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
 using QBic.Core.Data;
-using QBic.Core.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -24,7 +22,9 @@ namespace WebsiteTemplate.Test.SiteSpecific
 
         public override string ApplicationPassPhrase => "xxxxxxxxxxxxxxxxqqqqqqqqqqqqqqqq"; // must be at least 32 characters long (multiples of 8)
 
-        public override bool ShowSQL => true;
+        public override bool ShowSQL => false;
+
+        //public override TimeSpan AccessTokenExpireTimeSpan => TimeSpan.FromSeconds(10);
 
         public override Type GetApplicationStartupType
         {

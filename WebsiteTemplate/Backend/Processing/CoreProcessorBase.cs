@@ -3,13 +3,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using NHibernate.Criterion;
-using QBic.Authentication;
 using QBic.Core.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Backend.Services.Background;
@@ -60,7 +57,8 @@ namespace WebsiteTemplate.Backend.Processing
 
                     JSON_SETTINGS = new JsonSerializerSettings
                     {
-                        DateFormatString = WebsiteUtils.DateFormat,
+                        // hardcode for now because the front-end and back-end don't match
+                        DateFormatString = "dd-MMM-yyyy",// WebsiteUtils.DateFormat,
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                     };
                 }

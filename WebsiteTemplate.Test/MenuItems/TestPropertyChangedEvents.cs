@@ -88,7 +88,7 @@ namespace WebsiteTemplate.Test.MenuItems
                 var change = Convert.ToBoolean(propertyValue.ToString());
                 if (change)
                 {
-                    var combo = InputFields.Where(i => i.InputName == "Comparison").Single() as EnumComboBoxInput<FilterComparison>;
+                    var combo = GetInputFields().Where(i => i.InputName == "Comparison").Single() as EnumComboBoxInput<FilterComparison>;
                     
                     combo.UpdateList(x => x.Key == FilterComparison.Contains || x.Key == FilterComparison.NotEquals, null, false);
 
@@ -96,7 +96,7 @@ namespace WebsiteTemplate.Test.MenuItems
                     result.Add(new UpdateComboBoxSource("Comparison", list));
 
 
-                    var listInput = InputFields.Where(i => i.InputName == "List").Single() as ListSelectionInput;
+                    var listInput = GetInputFields().Where(i => i.InputName == "List").Single() as ListSelectionInput;
                     listInput.ListSource = new Dictionary<string, object>()
                     {
                         { "x", "ITem XXX" }
@@ -108,7 +108,7 @@ namespace WebsiteTemplate.Test.MenuItems
             else if (propertyName == "User")
             {
                 var userId = propertyValue?.ToString();
-                if (userId == "a444fd59-1ed5-49f4-80be-4c6c1dae6aa2")
+                if (userId == "cdc908f7-bd2a-49ac-8f5b-d01167d44e0f")
                 {
                     result.Add(new UpdateInputVisibility("Email", true));
                 }

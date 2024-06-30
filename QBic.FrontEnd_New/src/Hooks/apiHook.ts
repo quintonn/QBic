@@ -84,29 +84,31 @@ export const useApi = () => {
         var json = (await response.json()) as T;
         return Promise.resolve(json);
       } else if (response.status == 401) {
-        if (auth.refreshToken) {
-          return auth
-            .performTokenRefresh()
-            .then((x) => {
-              // try call again
-              return makeApiCallInternal<T>(
-                urlToCall,
-                fetchOptions,
-                raiseErrors
-              ).then((x) => {
-                return Promise.resolve(x as T);
-              });
-            })
-            .catch((err) => {
-              console.error("error while getting refresh token");
-              // TODO: show login dialog -> which should then essentially restart the application initialization stuff as it will have new tokens
-              //auth.doLogin();
-              // setShowLoginDialog -> or something like that
-              return Promise.resolve(null as T);
+        alert("401");
+        console.log("response received was 401");
+        console.log("trying to refresh token");
+        return auth
+          .performTokenRefresh()
+          .then((x) => {
+            // try call again
+            console.log("trying call again");
+            return makeApiCallInternal<T>(
+              urlToCall,
+              fetchOptions,
+              raiseErrors
+            ).then((x) => {
+              return Promise.resolve(x as T);
             });
-        } else {
-          return Promise.reject(401);
-        }
+          })
+          .catch((err) => {
+            alert("error");
+            console.error("error while getting refresh token");
+            console.log(err);
+            // TODO: show login dialog -> which should then essentially restart the application initialization stuff as it will have new tokens
+            //auth.doLogin();
+            // setShowLoginDialog -> or something like that
+            return Promise.resolve(null as T);
+          });
       } else if (response.status == 400) {
         let message = await response.text();
         if (message.includes("invalid_grant")) {
