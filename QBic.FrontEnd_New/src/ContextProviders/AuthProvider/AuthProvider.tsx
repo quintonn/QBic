@@ -240,9 +240,7 @@ export const AuthProvider = ({ children }) => {
       } else {
         if (apiResponse.status == 401) {
           if (allow401) {
-            console.log("got a 401");
             await performTokenRefresh();
-            console.log("after perform refresh token");
             await onReadyFunction(false);
           } else {
             navigate("/login");

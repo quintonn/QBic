@@ -43,6 +43,10 @@ namespace WebsiteTemplate.Test.MenuItems
         public override IList<InputField> GetInputFields()
         {
             var result = new List<InputField>();
+            result.Add(new StringInput("Name", "Name", null, null, true)
+            {
+                RaisePropertyChangedEvent = true
+            });
 
             result.Add(new BooleanInput("FilterItems", "Filter Items", false)
             {
@@ -83,9 +87,15 @@ namespace WebsiteTemplate.Test.MenuItems
         {
             var result = new List<IEvent>();
 
+            var value = propertyValue?.ToString();
+
             if (propertyName == "FilterItems")
             {
-                var change = Convert.ToBoolean(propertyValue.ToString());
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    value = "false";
+                }
+                var change = Convert.ToBoolean(value);
                 if (change)
                 {
                     var combo = GetInputFields().Where(i => i.InputName == "Comparison").Single() as EnumComboBoxInput<FilterComparison>;
@@ -99,7 +109,7 @@ namespace WebsiteTemplate.Test.MenuItems
                     var listInput = GetInputFields().Where(i => i.InputName == "List").Single() as ListSelectionInput;
                     listInput.ListSource = new Dictionary<string, object>()
                     {
-                        { "x", "ITem XXX" }
+                        { "x", "Item XXX" }
                     };
                     var tmp = listInput.ListSource;
                     result.Add(new UpdateComboBoxSource("List", tmp));
@@ -107,7 +117,7 @@ namespace WebsiteTemplate.Test.MenuItems
             }
             else if (propertyName == "User")
             {
-                var userId = propertyValue?.ToString();
+                var userId = value;
                 if (userId == "cdc908f7-bd2a-49ac-8f5b-d01167d44e0f")
                 {
                     result.Add(new UpdateInputVisibility("Email", true));

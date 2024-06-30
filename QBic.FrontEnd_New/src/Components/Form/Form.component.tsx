@@ -18,6 +18,7 @@ import { useLocation } from "react-router-dom";
 import {
   InputButton,
   InputField,
+  ListSourceItem,
   MenuDetail,
   VisibilityConditions,
 } from "../../ContextProviders/MenuProvider/MenuProvider";
@@ -29,6 +30,7 @@ import { OptionDefinition } from "@cloudscape-design/components/internal/compone
 import { useActions } from "../../ContextProviders/ActionProvider/ActionProvider";
 
 import moment from "moment";
+import { useDebounce } from "../../Hooks/useDebounce";
 
 export const FormComponent = () => {
   const mainApp = useMainApp();
@@ -42,11 +44,20 @@ export const FormComponent = () => {
   const [fieldVisibility, setFieldVisibility] = useState<
     Record<string, boolean>
   >({});
+  const [fieldSources, setFieldSources] = useState<
+    Record<string, ListSourceItem[]>
+  >({});
   const api = useApi();
   const { handleAction } = useActions();
 
-  const getInputValue = (field: InputField): any => {
-    let value = values[field.InputName];
+  const getInputValue = (field: InputField, onChangeValue = null): any => {
+    let value = null;
+    if (onChangeValue != null) {
+      value = onChangeValue;
+    } else if (values[field.InputName]) {
+      value = values[field.InputName];
+    }
+    //let value = onChangeValue || values[field.InputName] || null;
 
     if (field.InputType == 3) {
       // combo box
@@ -154,6 +165,15 @@ export const FormComponent = () => {
       return prev;
     }, {});
 
+    const defaultFieldSources = fields
+      .filter((f) => f.InputType == 5 || f.InputType == 3)
+      .reduce((prev, f) => {
+        prev[f.InputName] = f.InputType == 5 ? f.ListSource : f.ListItems;
+        return prev;
+      }, {});
+
+    setFieldSources(defaultFieldSources);
+
     setFieldVisibility(defaultVisibility);
 
     fields.forEach((f) => {
@@ -243,6 +263,94 @@ export const FormComponent = () => {
     }
   };
 
+
+  const raisePropertyChangedEvent = async (field, fieldValue) => {
+    setLoading(true);
+    try {
+      const data = {
+        Data: {
+          PropertyName: field.InputName,
+          PropertyValue: fieldValue,
+          EventId: currentMenu.Id,
+        },
+      };
+      const resp = await api.makeApiCall<MenuDetail[]>(
+        "propertyChanged/" + currentMenu.Id,
+        "POST",
+        data
+      );
+
+      if (resp && resp.length > 0) {
+        for (let i = 0; i < resp.length; i++) {
+          let item = resp[i];
+          switch (item.ActionType) {
+            case 10: {
+              // update combo box
+              setFieldSources((prevValues) => ({
+                ...prevValues,
+                [item.InputName]: item.ListItems,
+              }));
+
+              const fld = currentMenu.InputFields.filter(
+                (f) => f.InputName == item.InputName
+              )[0];
+              const currentValue = getInputValue(fld);
+
+              if (currentValue) {
+                if (fld.InputType == 3) {
+                  const validValues = item.ListItems.map((l) => l.Key);
+                  if (!validValues.includes(currentValue)) {
+                    setValues((prevValues) => ({
+                      ...prevValues,
+                      [item.InputName]: null,
+                    }));
+                  }
+                } else if (fld.InputType == 5) {
+                  const validValues = item.ListItems.map((l) => l.Key);
+
+                  let newCurrentValue = values[item.InputName] as any[];
+                  const updatedValue = newCurrentValue.filter((n) =>
+                    validValues.includes(n.value)
+                  );
+
+                  if (!validValues.includes(currentValue)) {
+                    setValues((prevValues) => ({
+                      ...prevValues,
+                      [item.InputName]: updatedValue,
+                    }));
+                  }
+                }
+              }
+              break;
+            }
+            case 17: {
+              // UpdateInputVisibility
+              setFieldVisibility((prevValues) => ({
+                ...prevValues,
+                [item.InputName]: item.InputIsVisible,
+              }));
+              break;
+            }
+            default: {
+              console.log("unknown action type: " + item.ActionType);
+              dispatch(
+                addMessage({
+                  type: "error",
+                  content: "Unknown action type: " + item.ActionType,
+                })
+              );
+              break;
+            }
+          }
+        }
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  const debouncedPropertyChanged = (propName, timeout, field, ...x) =>
+    useDebounce(raisePropertyChangedEvent, propName, timeout, ...[field, ...x]);
+
   const updateFieldVisibilities = (
     fieldChanged: InputField,
     valueChanged: any
@@ -282,7 +390,21 @@ export const FormComponent = () => {
     updateFieldVisibilities(field, value);
 
     if (field.RaisePropertyChangedEvent === true) {
-      //todo - old code only triggered on field exit I THINK!!
+      const fieldValue = getInputValue(field, value);
+      let timeoutValue = 0;
+      if (
+        field.InputType == 0 ||
+        field.InputType == 1 ||
+        field.InputType == 10
+      ) {
+        timeoutValue = 500;
+      }
+      debouncedPropertyChanged(
+        field.InputName,
+        timeoutValue,
+        field,
+        fieldValue
+      );
     }
   };
 
@@ -316,7 +438,7 @@ export const FormComponent = () => {
             onChange={({ detail }) => {
               onChange(field, detail.selectedOption);
             }}
-            options={field.ListItems?.map((x) => ({
+            options={fieldSources[field.InputName]?.map((x) => ({
               label: x.Value,
               value: x.Key,
             }))}
@@ -339,7 +461,7 @@ export const FormComponent = () => {
             onChange={({ detail }) => {
               onChange(field, detail.selectedOptions);
             }}
-            options={field.ListSource?.map((x) => ({
+            options={fieldSources[field.InputName]?.map((x) => ({
               label: x.Value,
               value: x.Key,
             }))}

@@ -160,6 +160,9 @@ export interface MenuDetail {
   ConfirmationMessage?: string;
   OnCancelUIAction?: number;
   OnConfirmationUIAction?: number;
+  InputName?: string;
+  InputIsVisible?: boolean;
+  ListItems?: ListSourceItem[];
 }
 
 const MapMenuItemsToSideNavItems = (

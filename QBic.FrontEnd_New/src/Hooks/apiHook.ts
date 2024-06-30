@@ -78,20 +78,20 @@ export const useApi = () => {
   ): Promise<T> => {
     // make API call
     try {
+      const tmpAccessToken = auth.getAccessToken();
       const response = await fetch(urlToCall, fetchOptions);
       if (response.ok) {
         // success
         var json = (await response.json()) as T;
         return Promise.resolve(json);
       } else if (response.status == 401) {
-        alert("401");
-        console.log("response received was 401");
-        console.log("trying to refresh token");
         return auth
           .performTokenRefresh()
           .then((x) => {
             // try call again
-            console.log("trying call again");
+            fetchOptions.headers["Authorization"] =
+              "Bearer " + auth.getAccessToken(); // update auth token
+
             return makeApiCallInternal<T>(
               urlToCall,
               fetchOptions,
@@ -105,7 +105,6 @@ export const useApi = () => {
             console.error("error while getting refresh token");
             console.log(err);
             // TODO: show login dialog -> which should then essentially restart the application initialization stuff as it will have new tokens
-            //auth.doLogin();
             // setShowLoginDialog -> or something like that
             return Promise.resolve(null as T);
           });
