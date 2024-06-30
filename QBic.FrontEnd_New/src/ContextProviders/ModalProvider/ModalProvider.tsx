@@ -6,7 +6,6 @@ import {
 } from "@cloudscape-design/components";
 import { createContext, useContext, useState } from "react";
 import { ViewEvent } from "../MenuProvider/MenuProvider";
-import { useActions } from "../../Hooks/actionHook";
 
 //import { store } from "../app/store";
 
@@ -29,8 +28,6 @@ interface ModalDialogProps {
 }
 
 export const ModalProvider = ({ children }: ModalContextProviderProps) => {
-  const { onMenuClick } = useActions();
-
   const [isVisible, setIsVisible] = useState(false);
 
   const [currentAction, setCurrentAction] = useState<ModalAction>("none");
@@ -58,13 +55,6 @@ export const ModalProvider = ({ children }: ModalContextProviderProps) => {
         ...mainProps,
         onCloseAction: (result: boolean | null) => {
           setIsVisible(false);
-
-          if (result === true && props.OnConfirmationUIAction > 0) {
-            onMenuClick(props.OnConfirmationUIAction, data);
-          } else if (result === false && props.OnCancelUIAction > 0) {
-            onMenuClick(props.OnCancelUIAction, data);
-          }
-
           resolve(result);
         },
       });

@@ -1,13 +1,15 @@
+import { useActions } from "../ContextProviders/ActionProvider/ActionProvider";
 import {
   MenuDetail,
   ViewColumn,
 } from "../ContextProviders/MenuProvider/MenuProvider";
 import { useModal } from "../ContextProviders/ModalProvider/ModalProvider";
-import { useActions } from "./actionHook";
 
 export const useViewEvents = () => {
   const { onMenuClick } = useActions();
   const modal = useModal();
+
+  //TODO: Refactor this so it's also inside ActionProvider
 
   const handleViewEvent = (
     column: ViewColumn,
@@ -40,7 +42,13 @@ export const useViewEvents = () => {
       // show message
       const data = formData || {};
       data["parameters"] = params;
-      modal.getUserConfirmation(column.Event, data);
+      modal.getUserConfirmation(column.Event, data).then((res) => {
+        if (res === true && column.Event.OnConfirmationUIAction > 0) {
+          onMenuClick(column.Event.OnConfirmationUIAction, data);
+        } else if (res === false && column.Event.OnCancelUIAction > 0) {
+          onMenuClick(column.Event.OnCancelUIAction, data);
+        }
+      });
     }
   };
 

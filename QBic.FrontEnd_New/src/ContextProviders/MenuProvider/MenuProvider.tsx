@@ -3,9 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { SideNavigationProps } from "@cloudscape-design/components";
 import { useAuth } from "../AuthProvider/AuthProvider";
 import { useApi } from "../../Hooks/apiHook";
-import { useModal } from "../ModalProvider/ModalProvider";
-import { useActions } from "../../Hooks/actionHook";
 import { useMainApp } from "../MainAppProvider/MainAppProvider";
+import { useActions } from "../ActionProvider/ActionProvider";
 
 interface MenuContextType {
   appMenuItems: AppMenuItem[];
@@ -156,7 +155,11 @@ export interface MenuDetail {
   RequestData?: string;
   InputFields?: InputField[];
   InputButtons?: InputButton[];
+  CancelButtonText?: string;
+  ConfirmationButtonText?: string;
   ConfirmationMessage?: string;
+  OnCancelUIAction?: number;
+  OnConfirmationUIAction?: number;
 }
 
 const MapMenuItemsToSideNavItems = (
@@ -229,7 +232,6 @@ export const MenuProvider = ({ children }) => {
 
   const auth = useAuth();
   const api = useApi();
-  const modal = useModal();
   const navigate = useNavigate();
   const location = useLocation();
   const { onMenuClick } = useActions();
