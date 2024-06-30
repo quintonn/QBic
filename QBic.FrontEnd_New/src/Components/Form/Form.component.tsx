@@ -17,6 +17,7 @@ import {
   InputButton,
   InputField,
   MenuDetail,
+  VisibilityConditions,
 } from "../../ContextProviders/MenuProvider/MenuProvider";
 import { useAppDispatch } from "../../App/hooks";
 import { addMessage } from "../../App/flashbarSlice";
@@ -34,6 +35,9 @@ export const FormComponent = () => {
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [values, setValues] = useState<Record<string, any>>({});
+  const [fieldVisibility, setFieldVisibility] = useState<
+    Record<string, boolean>
+  >({});
   const api = useApi();
   const { handleAction } = useActions();
 
@@ -43,10 +47,13 @@ export const FormComponent = () => {
     for (let i = 0; i < currentMenu.InputFields.length; i++) {
       const field = currentMenu.InputFields[i];
 
+      const isVisible = fieldVisibility[field.InputName];
+      if (!isVisible) {
+        continue;
+      }
       let value = values[field.InputName];
 
       if (field.InputType == 3) {
-        console.log(field);
         const selectedItem = value as OptionDefinition;
         value = selectedItem.value;
       } else if (field.InputType == 5) {
@@ -61,8 +68,6 @@ export const FormComponent = () => {
   };
 
   const onButtonClick = async (button: InputButton) => {
-    console.log("on button click");
-    console.log(button);
     setLoading(true);
 
     try {
@@ -90,7 +95,7 @@ export const FormComponent = () => {
         "POST",
         data
       );
-      console.log(resp);
+
       //await formEvents.handleEvents(resp);
       for (let i = 0; i < resp.length; i++) {
         handleAction(resp[i]);
@@ -118,36 +123,47 @@ export const FormComponent = () => {
   };
 
   const buildInputs = () => {
-    console.log("build inputs");
     const fields = currentMenu.InputFields;
-    console.log(fields);
-    const defaultValues = fields.reduce((prev, f) => {
-      if (f.InputType == 3) {
-        // combo box
-        prev[f.InputName] = {
-          label: f.ListItems.filter((l) => l.Key == f.DefaultValue)[0]?.Value,
-          value: f.DefaultValue,
-        };
-      } else if (f.InputType == 4) {
-        // boolean
-        prev[f.InputName] = f.DefaultValue === true ? true : false;
-      } else if (f.InputType == 5) {
-        // multi select
-        const defaultValues = f.DefaultValue || ([] as string[]);
-        const tmp = defaultValues
-          .map((d) => {
-            const label = f.ListSource.filter((l) => l.Key == d)[0]?.Value;
-            return { label: label, value: d };
-          })
-          .filter((x) => x.label && x.label != "");
-        prev[f.InputName] = tmp;
-      } else {
-        prev[f.InputName] = f.DefaultValue || "";
-      }
+
+    const defaultVisibility = fields.reduce((prev, f) => {
+      prev[f.InputName] = true;
       return prev;
     }, {});
-    console.log(defaultValues);
-    setValues(defaultValues);
+
+    setFieldVisibility(defaultVisibility);
+
+    fields.forEach((f) => {
+      let defaultValue = f.DefaultValue;
+      switch (f.InputType) {
+        case 3: {
+          // combo box
+          defaultValue = {
+            label: f.ListItems.filter((l) => l.Key == f.DefaultValue)[0]?.Value,
+            value: f.DefaultValue,
+          };
+          break;
+        }
+        case 4: {
+          // boolean
+          defaultValue = f.DefaultValue === true ? true : false;
+          break;
+        }
+        case 5: {
+          // multi select
+          const tmpDefaultValues = f.DefaultValue || ([] as string[]);
+          defaultValue = tmpDefaultValues
+            .map((d) => {
+              const label = f.ListSource.filter((l) => l.Key == d)[0]?.Value;
+              return { label: label, value: d };
+            })
+            .filter((x) => x.label && x.label != "");
+          break;
+        }
+        default:
+          break;
+      }
+      onChange(f, defaultValue); // to update the visbility
+    });
   };
 
   useEffect(() => {
@@ -163,6 +179,55 @@ export const FormComponent = () => {
     }
   }, [currentMenu]);
 
+  const conditionIsMet = (condition: VisibilityConditions, value: any) => {
+    if (condition.Comparison == 0) {
+      // Equals
+      return value === condition.ColumnValue;
+    } else if (condition.Comparison == 1) {
+      // Not-Equals
+      return value != condition.ColumnValue;
+    } else if (condition.Comparison == 2) {
+      // Contains
+      return value.indexOf(condition.ColumnValue) > -1;
+    } else if (condition.Comparison == 3) {
+      // IsNotNull
+      return value != null && (value + "").length > 0;
+    } else if (condition.Comparison == 4) {
+      // IsNull
+      return value == null || (value + "").length == 0;
+    } else {
+      console.log("Error", "Unknown comparison: " + condition.Comparison);
+      return false;
+    }
+  };
+
+  const updateFieldVisibilities = (
+    fieldChanged: InputField,
+    valueChanged: any
+  ) => {
+    const otherFields = currentMenu.InputFields.filter(
+      (f) =>
+        f.VisibilityConditions.filter(
+          (v) => v.ColumnName == fieldChanged.InputName
+        ).length > 0
+    );
+
+    for (let i = 0; i < otherFields.length; i++) {
+      const field = otherFields[i];
+
+      const matchedConditions = field.VisibilityConditions.filter(
+        (condition) => {
+          return conditionIsMet(condition, valueChanged?.toString());
+        }
+      );
+
+      setFieldVisibility((prevValues) => ({
+        ...prevValues,
+        [field.InputName]: matchedConditions.length > 0,
+      }));
+    }
+  };
+
   const onChange = (field: InputField, value: any) => {
     setValues((prevValues) => ({ ...prevValues, [field.InputName]: value }));
 
@@ -171,6 +236,8 @@ export const FormComponent = () => {
       ...prevErrors,
       [field.InputName]: fieldError,
     }));
+
+    updateFieldVisibilities(field, value);
 
     if (field.RaisePropertyChangedEvent === true) {
       //todo - old code only triggered on field exit I THINK!!
@@ -245,13 +312,17 @@ export const FormComponent = () => {
   const getTabContent = (tabName: string) => {
     const fields = currentMenu.InputFields.filter((x) => x.TabName == tabName);
     const formFields = fields.map((f) => (
-      <FormField
-        key={f.InputName}
-        label={f.InputLabel}
-        errorText={errors?.[f.InputName]}
-      >
-        {getInputField(f)}
-      </FormField>
+      <div key={f.InputName}>
+        {fieldVisibility[f.InputName] != true ? null : (
+          <FormField
+            key={f.InputName}
+            label={f.InputLabel}
+            errorText={errors?.[f.InputName]}
+          >
+            {getInputField(f)}
+          </FormField>
+        )}
+      </div>
     ));
 
     return <SpaceBetween size="l">{formFields}</SpaceBetween>;
