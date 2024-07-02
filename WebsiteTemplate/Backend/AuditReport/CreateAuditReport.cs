@@ -122,6 +122,7 @@ namespace WebsiteTemplate.Backend.AuditReport
                 result.Data = stream.ToArray();
                 result.FileName = document.DocumentTitle;
                 result.MimeType = "application/pdf";
+                result.FileExtension = "pdf";
             }
 
             return result;
