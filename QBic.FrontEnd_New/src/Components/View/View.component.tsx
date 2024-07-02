@@ -10,7 +10,10 @@ import {
   TextFilter,
 } from "@cloudscape-design/components";
 import { useEffect, useState } from "react";
-import { MenuDetail } from "../../ContextProviders/MenuProvider/MenuProvider";
+import {
+  MenuDetail,
+  ViewColumn,
+} from "../../ContextProviders/MenuProvider/MenuProvider";
 import { TablePreferences } from "./TablePreferences.component";
 import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
 import { ViewActionColumn } from "./ViewActionColumn";
@@ -19,6 +22,7 @@ import { useApi } from "../../Hooks/apiHook";
 import { useDebounce } from "../../Hooks/useDebounce";
 import { useLocation } from "react-router-dom";
 import { useActions } from "../../ContextProviders/ActionProvider/ActionProvider";
+import { useViewEvents } from "../../Hooks/viewEventsHook";
 
 // create common interface between ColumnDefintion and ContentDisplayItem
 interface HasId {
@@ -90,6 +94,7 @@ export const ViewComponent = () => {
 
   const [filterText, setFilterText] = useState("");
 
+  const { handleViewEvent } = useViewEvents();
   const { onMenuClick } = useActions();
   const api = useApi();
 
@@ -203,6 +208,19 @@ export const ViewComponent = () => {
         } as TableProps.ColumnDefinition<unknown>)
     );
 
+    const onActionColumnClick = async (
+      column: ViewColumn,
+      rowData: any[]
+    ): Promise<void> => {
+      console.log("xxx");
+      setLoading(true);
+      try {
+        await handleViewEvent(column, rowData, currentMenu);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     const cols: TableProps.ColumnDefinition<unknown>[] = [
       ...viewColumns,
       {
@@ -212,7 +230,7 @@ export const ViewComponent = () => {
           <ViewActionColumn
             rowData={rowData}
             columns={actionColumnsToShow}
-            menu={currentMenu}
+            onClick={onActionColumnClick}
           />
         ),
       },

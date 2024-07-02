@@ -9,7 +9,7 @@ export const useViewEvents = () => {
   const { onMenuClick } = useActions();
   const modal = useModal();
 
-  const handleViewEvent = (
+  const handleViewEvent = async (
     column: ViewColumn,
     rowData: any,
     menu: MenuDetail
@@ -36,18 +36,17 @@ export const useViewEvents = () => {
         column.Event == null ? column.EventNumber : column.Event.EventNumber;
       // execute ui action
 
-      onMenuClick(eventId, formData);
+      await onMenuClick(eventId, formData);
     } else if (column.Event.ActionType == 5) {
       // show message
       const data = formData || {};
       data["parameters"] = params;
-      modal.getUserConfirmation(column.Event, data).then((res) => {
-        if (res === true && column.Event.OnConfirmationUIAction > 0) {
-          onMenuClick(column.Event.OnConfirmationUIAction, data);
-        } else if (res === false && column.Event.OnCancelUIAction > 0) {
-          onMenuClick(column.Event.OnCancelUIAction, data);
-        }
-      });
+      const res = await modal.getUserConfirmation(column.Event, data);
+      if (res === true && column.Event.OnConfirmationUIAction > 0) {
+        await onMenuClick(column.Event.OnConfirmationUIAction, data);
+      } else if (res === false && column.Event.OnCancelUIAction > 0) {
+        await onMenuClick(column.Event.OnCancelUIAction, data);
+      }
     }
   };
 

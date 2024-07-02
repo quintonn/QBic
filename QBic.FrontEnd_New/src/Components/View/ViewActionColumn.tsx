@@ -1,7 +1,6 @@
 import { Box, Button, SpaceBetween } from "@cloudscape-design/components";
 import {
   ColumnType,
-  MenuDetail,
   ViewColumn,
 } from "../../ContextProviders/MenuProvider/MenuProvider";
 import { showColumn } from "../../Utilities/viewUtils";
@@ -10,17 +9,17 @@ import { useViewEvents } from "../../Hooks/viewEventsHook";
 export interface ViewActionColumnProps {
   rowData: any[];
   columns: ViewColumn[];
-  menu: MenuDetail;
+  onClick: (column: ViewColumn, rowData: any[]) => Promise<void>;
 }
 
 const ColButton = ({
   rowData,
   column,
-  menu,
+  onClick,
 }: {
   rowData: any;
   column: ViewColumn;
-  menu: MenuDetail;
+  onClick: (column: ViewColumn, rowData: any[]) => Promise<void>;
 }) => {
   const visible = showColumn({ rowData, column });
 
@@ -35,7 +34,7 @@ const ColButton = ({
   }
 
   const buttonClick = () => {
-    handleViewEvent(column, rowData, menu);
+    onClick(column, rowData);
   };
 
   return (
@@ -63,7 +62,7 @@ const ColButton = ({
 export const ViewActionColumn = ({
   rowData,
   columns,
-  menu,
+  onClick,
 }: ViewActionColumnProps) => {
   if (!columns || columns.length == 0) {
     return "";
@@ -75,7 +74,7 @@ export const ViewActionColumn = ({
         {columns
           // .filter((c) => showColumn({ rowData, column: c }))
           .map((c, i) => (
-            <ColButton key={i} rowData={rowData} column={c} menu={menu} />
+            <ColButton key={i} rowData={rowData} column={c} onClick={onClick} />
           ))}
         {/* <Button
         href="#"
