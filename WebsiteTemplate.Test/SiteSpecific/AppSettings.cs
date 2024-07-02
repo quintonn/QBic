@@ -24,7 +24,7 @@ namespace WebsiteTemplate.Test.SiteSpecific
 
         public override bool ShowSQL => false;
 
-        public override TimeSpan AccessTokenExpireTimeSpan => TimeSpan.FromSeconds(25);
+        //public override TimeSpan AccessTokenExpireTimeSpan => TimeSpan.FromSeconds(25);
 
         public override Type GetApplicationStartupType
         {
