@@ -19,5 +19,7 @@ namespace WebsiteTemplate.Test.SiteSpecific
         public static MenuNumber DeleteMarketplaceItem = new MenuNumber(2003);
         public static MenuNumber MarketplaceItemDetails = new MenuNumber(2004);
         public static MenuNumber DownloadMarketplaceItem = new MenuNumber(2005);
+
+        public static MenuNumber TestCsvFileUpload = new MenuNumber(2080);
     }
 }

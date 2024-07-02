@@ -10,6 +10,7 @@ import {
   Multiselect,
   Select,
   SpaceBetween,
+  Table,
   Tabs,
   Textarea,
 } from "@cloudscape-design/components";
@@ -32,6 +33,7 @@ import { useActions } from "../../ContextProviders/ActionProvider/ActionProvider
 
 import moment from "moment";
 import { useDebounce } from "../../Hooks/useDebounce";
+import { TableComponent } from "../View/Table.component";
 
 export const FormComponent = () => {
   const mainApp = useMainApp();
@@ -76,10 +78,17 @@ export const FormComponent = () => {
       if (value) {
         value = new Date(value).toISOString().split("T")[0];
       }
+    } else if (field.InputType == 8) {
+      // input view
+      const params: any = {};
+      params["data"] = { ViewData: [], Filter: "" }; // TODO: viewdata should be the table rows values
+      return params;
     } else if (field.InputType == 9) {
       // file
       if (value && value.length > 0) {
         value = await readFile(value[0]);
+      } else {
+        value = null;
       }
     }
     return value;
@@ -160,10 +169,14 @@ export const FormComponent = () => {
           const value = await getInputValue(field);
           const validationResult = validateField(field, value);
           if (validationResult.length > 0) {
+            console.log(validationResult);
+            console.log("aa");
+            console.log(errors?.[field.InputName]);
             return;
           }
         }
       }
+      console.log("x");
 
       const params = await getInputValues();
 
@@ -203,6 +216,15 @@ export const FormComponent = () => {
         return field.InputLabel + " is required";
       }
     }
+
+    if (field.InputType == 9) {
+      console.log("xxxxxxx");
+      console.log(value);
+      if (value == null || value.length == 0) {
+        return field.InputLabel + " is required";
+      }
+    }
+
     return "";
   };
 
@@ -273,6 +295,7 @@ export const FormComponent = () => {
         case 9: {
           // file input
           defaultValue = [];
+          break;
         }
         default:
           break;
@@ -434,6 +457,9 @@ export const FormComponent = () => {
   const onChange = async (field: InputField, value: any) => {
     setValues((prevValues) => ({ ...prevValues, [field.InputName]: value }));
 
+    console.log("on change called");
+    console.log(field);
+
     const fieldError = validateField(field, value);
     setErrors((prevErrors) => ({
       ...prevErrors,
@@ -533,6 +559,15 @@ export const FormComponent = () => {
             placeholder={field.InputLabel}
           />
         );
+      case 8: // Input View
+        console.log(field);
+        return (
+          <TableComponent
+            menuItem={field.ViewForInput}
+            isEmbedded={true}
+            defaultData={field.DefaultValue}
+          ></TableComponent>
+        );
       case 9: // file input
         return (
           <FileUpload
@@ -565,7 +600,9 @@ export const FormComponent = () => {
       case 11: // label
         return <div>{field.DefaultValue}</div>;
       default:
+        console.log(field);
         console.error("unhandled input type: " + field.InputType);
+
         dispatch(
           addMessage({
             type: "error",
@@ -581,7 +618,10 @@ export const FormComponent = () => {
   };
 
   const getTabContent = (tabName: string) => {
-    const fields = currentMenu.InputFields.filter((x) => x.TabName == tabName);
+    const fields = currentMenu.InputFields.filter(
+      (x) => x.TabName == tabName || (tabName == null && x.TabName == "")
+    );
+
     const formFields = fields
       .filter((f) => f.InputType != 2 /* exclude hidden fields */)
       .map((f, i) => (
@@ -613,6 +653,8 @@ export const FormComponent = () => {
         uniqueTabs.add(field.TabName || "");
       }
     });
+
+    console.log("unique tabs", uniqueTabs);
 
     const tabNames = Array.from(uniqueTabs?.values()).filter(
       (x) => x != null && x.length > 0
