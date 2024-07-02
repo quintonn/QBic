@@ -2,6 +2,7 @@ import {
   Button,
   Checkbox,
   DatePicker,
+  FileUpload,
   Form,
   FormField,
   Header,
@@ -50,11 +51,14 @@ export const FormComponent = () => {
   const api = useApi();
   const { handleAction } = useActions();
 
-  const getInputValue = (field: InputField, onChangeValue = null): any => {
+  const getInputValue = async (
+    field: InputField,
+    onChangeValue = null
+  ): Promise<any> => {
     let value = null;
     if (onChangeValue != null) {
       value = onChangeValue;
-    } else if (values[field.InputName]) {
+    } else if (values[field.InputName] != null) {
       value = values[field.InputName];
     }
     //let value = onChangeValue || values[field.InputName] || null;
@@ -72,12 +76,64 @@ export const FormComponent = () => {
       if (value) {
         value = new Date(value).toISOString().split("T")[0];
       }
+    } else if (field.InputType == 9) {
+      // file
+      if (value && value.length > 0) {
+        value = await readFile(value[0]);
+      }
     }
-
     return value;
   };
 
-  const getInputValues = () => {
+  const readFile = async (file: any) => {
+    return new Promise(function (resolve, reject) {
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        const arrayBuffer = e.target.result as ArrayBuffer;
+        const byteArray = new Uint8Array(arrayBuffer);
+
+        // Convert Uint8Array to binary string
+        let binaryString = "";
+        for (let i = 0; i < byteArray.length; i++) {
+          binaryString += String.fromCharCode(byteArray[i]);
+        }
+
+        const base64String = window.btoa(binaryString);
+
+        const filename = file.name;
+        const parts = filename.split(".");
+        const extension = parts.length > 1 ? parts[parts.length - 1] : "";
+        const nameWithoutExtension = parts[0];
+
+        const result = {
+          Data: base64String,
+          FileName: nameWithoutExtension,
+          MimeType: file.type,
+          FileExtension: extension,
+          Size: file.size,
+        };
+
+        resolve(result);
+      };
+
+      reader.onerror = function (err) {
+        reject(err);
+      };
+
+      reader.readAsArrayBuffer(file);
+    }).catch(function (err) {
+      console.error(err);
+      dispatch(
+        addMessage({
+          type: "error",
+          content: `Error reading file, see logs for details (${err})`,
+        })
+      );
+    });
+  };
+
+  const getInputValues = async () => {
     const result: any = {};
 
     for (let i = 0; i < currentMenu.InputFields.length; i++) {
@@ -87,7 +143,7 @@ export const FormComponent = () => {
       if (!isVisible) {
         continue;
       }
-      result[field.InputName] = getInputValue(field);
+      result[field.InputName] = await getInputValue(field);
     }
 
     return result;
@@ -101,22 +157,15 @@ export const FormComponent = () => {
         //todo : validate all input fields -> currentMenu.fields with values
         for (let i = 0; i < currentMenu.InputFields.length; i++) {
           const field = currentMenu.InputFields[i];
-          const value = getInputValue(field);
+          const value = await getInputValue(field);
           const validationResult = validateField(field, value);
           if (validationResult.length > 0) {
             return;
           }
         }
       }
-      //TODO: handle button click
-      //      if validateInput, validateAllFields
 
-      // get inputs, then process event
-
-      // TODO: handle visibility conditions (e.g. adding/editing menu items)
-      //       Might be worth creating different objects to represent each input or something
-
-      const params = getInputValues();
+      const params = await getInputValues();
 
       const data: any = {
         Data: params || "",
@@ -221,9 +270,14 @@ export const FormComponent = () => {
 
           break;
         }
+        case 9: {
+          // file input
+          defaultValue = [];
+        }
         default:
           break;
       }
+
       onChange(f, defaultValue); // to update the visbility
     });
   };
@@ -263,7 +317,6 @@ export const FormComponent = () => {
     }
   };
 
-
   const raisePropertyChangedEvent = async (field, fieldValue) => {
     setLoading(true);
     try {
@@ -294,7 +347,7 @@ export const FormComponent = () => {
               const fld = currentMenu.InputFields.filter(
                 (f) => f.InputName == item.InputName
               )[0];
-              const currentValue = getInputValue(fld);
+              const currentValue = await getInputValue(fld);
 
               if (currentValue) {
                 if (fld.InputType == 3) {
@@ -378,7 +431,7 @@ export const FormComponent = () => {
     }
   };
 
-  const onChange = (field: InputField, value: any) => {
+  const onChange = async (field: InputField, value: any) => {
     setValues((prevValues) => ({ ...prevValues, [field.InputName]: value }));
 
     const fieldError = validateField(field, value);
@@ -390,7 +443,7 @@ export const FormComponent = () => {
     updateFieldVisibilities(field, value);
 
     if (field.RaisePropertyChangedEvent === true) {
-      const fieldValue = getInputValue(field, value);
+      const fieldValue = await getInputValue(field, value);
       let timeoutValue = 0;
       if (
         field.InputType == 0 ||
@@ -408,7 +461,7 @@ export const FormComponent = () => {
     }
   };
 
-  const getInputField = (field: InputField) => {
+  const getInputField = (field: InputField, setAutoFocus: boolean) => {
     switch (field.InputType) {
       case 0: // text
       case 1: // password
@@ -416,6 +469,7 @@ export const FormComponent = () => {
           return (
             <Textarea
               placeholder={field.InputLabel}
+              autoFocus={setAutoFocus}
               value={values?.[field.InputName]}
               onChange={({ detail: { value } }) => onChange(field, value)}
             ></Textarea>
@@ -424,16 +478,18 @@ export const FormComponent = () => {
         return (
           <Input
             placeholder={field.InputLabel}
+            autoFocus={setAutoFocus}
             type={field.InputType == 1 ? "password" : "text"}
             value={values?.[field.InputName]}
             onChange={({ detail: { value } }) => onChange(field, value)}
           />
         );
       case 2: // hidden input
-        return null; // shouldn't have this
+        return null;
       case 3: // combo box
         return (
           <Select
+            autoFocus={setAutoFocus}
             selectedOption={values?.[field.InputName]}
             onChange={({ detail }) => {
               onChange(field, detail.selectedOption);
@@ -457,6 +513,7 @@ export const FormComponent = () => {
         return (
           <Multiselect
             tokenLimit={10}
+            autoFocus={setAutoFocus}
             selectedOptions={values?.[field.InputName]}
             onChange={({ detail }) => {
               onChange(field, detail.selectedOptions);
@@ -471,13 +528,34 @@ export const FormComponent = () => {
         return (
           <DatePicker
             value={values?.[field.InputName]}
+            autoFocus={setAutoFocus}
             onChange={({ detail: { value } }) => onChange(field, value)}
             placeholder={field.InputLabel}
+          />
+        );
+      case 9: // file input
+        return (
+          <FileUpload
+            onChange={({ detail: { value } }) => onChange(field, value)}
+            value={values?.[field.InputName]}
+            i18nStrings={{
+              uploadButtonText: (e) => (e ? "Choose files" : "Choose file"),
+              dropzoneText: (e) =>
+                e ? "Drop files to upload" : "Drop file to upload",
+              removeFileAriaLabel: (e) => `Remove file ${e + 1}`,
+              limitShowFewer: "Show fewer files",
+              limitShowMore: "Show more files",
+              errorIconAriaLabel: "Error",
+            }}
+            showFileLastModified={false}
+            showFileSize
+            showFileThumbnail
           />
         );
       case 10: // number
         return (
           <Input
+            autoFocus={setAutoFocus}
             type="number"
             placeholder={field.InputLabel}
             value={values?.[field.InputName]}
@@ -504,19 +582,21 @@ export const FormComponent = () => {
 
   const getTabContent = (tabName: string) => {
     const fields = currentMenu.InputFields.filter((x) => x.TabName == tabName);
-    const formFields = fields.map((f) => (
-      <div key={f.InputName}>
-        {fieldVisibility[f.InputName] != true ? null : (
-          <FormField
-            key={f.InputName}
-            label={f.InputLabel}
-            errorText={errors?.[f.InputName]}
-          >
-            {getInputField(f)}
-          </FormField>
-        )}
-      </div>
-    ));
+    const formFields = fields
+      .filter((f) => f.InputType != 2 /* exclude hidden fields */)
+      .map((f, i) => (
+        <div key={f.InputName}>
+          {fieldVisibility[f.InputName] != true ? null : (
+            <FormField
+              key={f.InputName}
+              label={f.InputLabel}
+              errorText={errors?.[f.InputName]}
+            >
+              {getInputField(f, i == 0)}
+            </FormField>
+          )}
+        </div>
+      ));
 
     return <SpaceBetween size="l">{formFields}</SpaceBetween>;
   };
@@ -553,21 +633,6 @@ export const FormComponent = () => {
         <SpaceBetween size="l">{getTabContent(null)}</SpaceBetween>
       </>
     );
-    if (tabNames.length > 1) {
-      return (
-        <Tabs
-          tabs={tabNames.map((t) => ({
-            label: t,
-            id: t,
-            content: <SpaceBetween size="l">{getTabContent(t)}</SpaceBetween>,
-          }))}
-        />
-      );
-    }
-
-    return <SpaceBetween size="l">{getTabContent(null)}</SpaceBetween>;
-    //TODO: I think there are scenarios where some fields should display for all tabs, i.e. not on the tabs but in a main component
-    // I think if tab name is '' (empty string)
   };
 
   const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
