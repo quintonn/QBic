@@ -11362,7 +11362,11 @@ return((r[1].length===0)?r[0]:null);};};Date.parseExact=function(s,fx){return Da
                     value = values;
                     return Promise.resolve(value);
                 case 6: // Date Input
-                    value = value || "";
+					value = value || "";
+					if (value != null && value.length > 0)
+					{
+						value = new Date(value).toISOString().split("T")[0];
+					}
                     return Promise.resolve(value);
                 case 8: // Input view
                     var model = self.viewModel;

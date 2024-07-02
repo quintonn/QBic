@@ -621,6 +621,9 @@
                     return Promise.resolve(value);
                 case 6: // Date Input
                     value = value || "";
+                    if (value != null && value.length > 0) {
+                        value = new Date(value).toISOString().split("T")[0];
+                    }
                     return Promise.resolve(value);
                 case 8: // Input view
                     var model = self.viewModel;

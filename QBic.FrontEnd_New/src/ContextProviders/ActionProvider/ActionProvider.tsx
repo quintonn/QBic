@@ -24,11 +24,14 @@ export const ActionProvider = ({ children }) => {
   const auth = useAuth();
 
   const encode = (str: string) => {
-    return btoa(
-      encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p1) {
-        return String.fromCharCode(0 + p1);
-      })
-    );
+    return btoa(str);
+    // const result = btoa(
+    //   encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p1) {
+    //     return String.fromCharCode(0 + p1);
+    //   })
+    // );
+
+    // return result;
   };
 
   const downloadFile = async (url: string, requestData?: string) => {
@@ -50,9 +53,8 @@ export const ActionProvider = ({ children }) => {
       },
     };
 
-    let dataToSend = "";
     if (requestData && requestData.length > 0) {
-      fetchOptions.body = encode(dataToSend);
+      fetchOptions.body = encode(requestData);
     }
 
     try {
