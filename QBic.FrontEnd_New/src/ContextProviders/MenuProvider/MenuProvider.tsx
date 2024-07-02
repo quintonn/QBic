@@ -123,6 +123,7 @@ export interface InputField {
   MultiLineText?: boolean;
   ListItems?: ListSourceItem[];
   ListSource?: ListSourceItem[];
+  ViewForInput?: MenuDetail;
 }
 
 export interface InputButton {

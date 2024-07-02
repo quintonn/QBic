@@ -139,7 +139,6 @@ namespace WebsiteTemplate.Backend.CsvUpload
 
         public override async Task<IList<IEvent>> ProcessAction(int actionNumber)
         {
-
             if (actionNumber == 1)
             {
                 return new List<IEvent>()
