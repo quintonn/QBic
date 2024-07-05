@@ -218,11 +218,15 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem(getName("refreshToken"));
     localStorage.removeItem(getName("lastRefreshDate"));
     setIsAuthenticated(false);
-    window.location.reload(); // TODO: instead of reloading the page, call all the initialization code again
+    navigate("/login");
   };
 
   async function onReadyFunction(allow401: boolean = true) {
     // call initialize (basically checks if user is authenticated, and returns user name and id)
+
+    if (window.location.search.includes("anonAction")) {
+      return;
+    }
 
     // make API call
     try {
