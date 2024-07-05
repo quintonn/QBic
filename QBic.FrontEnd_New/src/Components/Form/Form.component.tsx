@@ -69,11 +69,13 @@ export const FormComponent = () => {
     if (field.InputType == 3) {
       // combo box
       const selectedItem = value as OptionDefinition;
-      value = selectedItem.value;
+      if (selectedItem) {
+        value = selectedItem?.value;
+      }
     } else if (field.InputType == 5) {
       // list selection
       const selectedItems = value as OptionDefinition[];
-      value = selectedItems?.map((s) => s.value);
+      value = selectedItems?.filter((s) => s != null).map((s) => s.value);
     } else if (field.InputType == 6) {
       // date
       if (value) {
@@ -214,16 +216,25 @@ export const FormComponent = () => {
     }
   };
 
-  const validateField = (field: InputField, value: any): string => {
+  const validateField = (
+    field: InputField,
+    value: any,
+    forcedCheck: boolean = false
+  ): string => {
     if (
       field.Mandatory === true &&
-      fieldVisibility[field.InputName] !== false
+      (fieldVisibility[field.InputName] !== false || forcedCheck === true)
     ) {
       if (value === null || value === "") {
         return field.InputLabel + " is required";
       }
+      if (field.InputType == 3) {
+      } else if (field.InputType == 5) {
+        if (value == null || value.length == 0) {
+          return field.InputLabel + " is required";
+        }
+      }
     }
-
     if (field.InputType == 9) {
       if (value == null || value.length == 0) {
         return field.InputLabel + " is required";
@@ -257,10 +268,15 @@ export const FormComponent = () => {
       switch (f.InputType) {
         case 3: {
           // combo box
-          defaultValue = {
-            label: f.ListItems.filter((l) => l.Key == f.DefaultValue)[0]?.Value,
-            value: f.DefaultValue,
-          };
+          if (f.DefaultValue) {
+            defaultValue = {
+              label: f.ListItems.filter((l) => l.Key == f.DefaultValue)[0]
+                ?.Value,
+              value: f.DefaultValue,
+            };
+          } else {
+            defaultValue = null;
+          }
           break;
         }
         case 4: {
@@ -455,6 +471,11 @@ export const FormComponent = () => {
         conditionIsMet(condition, valueChanged?.toString())
       );
 
+      if (matchedConditions.length > 0) {
+        const otherValue = values[field.InputName];
+        updateFieldErrors(field, otherValue, true);
+      }
+
       setFieldVisibility((prevValues) => ({
         ...prevValues,
         [field.InputName]: matchedConditions.length > 0,
@@ -464,10 +485,18 @@ export const FormComponent = () => {
 
   useEffect(() => {
     if (errors) {
-      console.log(errors);
-      const thereAreErrors = Object.values(errors).some(
-        (value) => value != null && value != ""
-      );
+      const keys = Object.keys(errors);
+
+      let thereAreErrors = false;
+      for (let i = 0; i < keys.length; i++) {
+        const error = errors[keys[i]];
+        const visibility = fieldVisibility[keys[i]];
+
+        if (error && visibility === true) {
+          thereAreErrors = true;
+        }
+      }
+
       if (thereAreErrors === true) {
         setErrorMessage(
           "There are invalid inputs. Make sure to check all tabs."
@@ -478,15 +507,24 @@ export const FormComponent = () => {
     }
   }, [errors]);
 
-  const onChange = async (field: InputField, value: any) => {
-    setValues((prevValues) => ({ ...prevValues, [field.InputName]: value }));
-
-    const fieldError = validateField(field, value);
+  const updateFieldErrors = async (
+    field: InputField,
+    value: any,
+    forcedValidation: boolean = false // because this might be checked while changing visibility
+  ) => {
+    const actualValue = await getInputValue(field, value);
+    const fieldError = validateField(field, actualValue, forcedValidation);
 
     setErrors((prevErrors) => ({
       ...prevErrors,
       [field.InputName]: fieldError,
     }));
+  };
+
+  const onChange = async (field: InputField, value: any) => {
+    setValues((prevValues) => ({ ...prevValues, [field.InputName]: value }));
+
+    await updateFieldErrors(field, value);
 
     const fieldValue = await getInputValue(field, value);
     updateFieldVisibilities(field, fieldValue);

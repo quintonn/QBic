@@ -52,11 +52,11 @@ namespace WebsiteTemplate.Backend.Users
             }
 
             list.Add(new StringInput("UserName", "User Name", DataItem?.UserName, mainTab, true));
-            list.Add(new StringInput("Email", "Email", DataItem?.Email, mainTab));
+            list.Add(new StringInput("Email", "Email", DataItem?.Email, mainTab, true));
             if (IsNew)
             {
-                list.Add(new PasswordInput("Password", "Password", null, mainTab));
-                list.Add(new PasswordInput("ConfirmPassword", "Confirm Password", null, mainTab));
+                list.Add(new PasswordInput("Password", "Password", null, mainTab, true));
+                list.Add(new PasswordInput("ConfirmPassword", "Confirm Password", null, mainTab, true));
             }
 
             var items = UserService.GetUserRoles()
@@ -76,7 +76,8 @@ namespace WebsiteTemplate.Backend.Users
             {
                 AvailableItemsLabel = "List of User Roles:",
                 SelectedItemsLabel = "Chosen User Roles:",
-                ListSource = items
+                ListSource = items,
+                Mandatory = true
             };
 
             list.Add(listSelection);
