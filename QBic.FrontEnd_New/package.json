@@ -5,8 +5,10 @@
   "source": "src/index.html",
   "scripts": {
     "clean:output": "rimraf dist",
+    "clean-destination": "rimraf ../WebsiteTemplate.Test/wwwroot",
+    "copy-dist": "cpy dist/* ../WebsiteTemplate.Test/wwwroot --parents",
     "start": "npm run clean:output && parcel",
-    "build": "npm run clean:output && parcel build"
+    "build": "npm run clean:output && parcel build && npm run clean-destination && npm run copy-dist"
   },
   "keywords": [],
   "author": "Quintonn Rothmann",
@@ -18,6 +20,7 @@
     "@types/node": "^20.12.12",
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.3.0",
+    "cpy-cli": "^5.0.0",
     "moment": "^2.30.1",
     "parcel": "^2.12.0",
     "process": "^0.11.10",

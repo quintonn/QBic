@@ -112,6 +112,15 @@ namespace WebsiteTemplate.Backend.Services
             {
                 var passwordResetLink = await UserManager.GeneratePasswordResetTokenAsync(user);
 
+                using var session = DataService.OpenSession();
+
+                var dbToken = new PasswordResetToken()
+                {
+                    Token = passwordResetLink,
+                    Expiration = DateTime.UtcNow.Add(ApplicationSettings.PasswordResetTokenExpireTimeSpan)
+                };
+                session.SaveOrUpdate(dbToken);
+                session.Flush();
                 var myuri = new Uri(Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(HttpContextAccessor.HttpContext.Request));
 
                 var body = "Hi " + user.UserName;
