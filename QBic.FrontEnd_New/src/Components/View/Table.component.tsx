@@ -116,7 +116,33 @@ export const TableComponent = ({
 
   const [preferences, setPreferences] =
     useState<CollectionPreferencesProps.Preferences>(null);
-  const [preferenceKey, setPreferenceKey] = useState("");
+
+  const preferenceKey = appName + "_" + menuItem?.Id + "_preference_cache";
+
+  const columnPreferenceKey =
+    appName + "_" + menuItem?.Id + "_column_preference_cache";
+
+  const updateColumnPreferences = (
+    value: TableProps.ColumnWidthsChangeDetail
+  ) => {
+    const savedColumnPreferenceString =
+      localStorage.getItem(columnPreferenceKey);
+
+    let newColumnPreferences: any = {};
+    if (savedColumnPreferenceString) {
+      newColumnPreferences = JSON.parse(savedColumnPreferenceString);
+    }
+
+    for (let i = 0; i < columnDefinitions.length; i++) {
+      const colDef = columnDefinitions[i];
+      newColumnPreferences[colDef.id] = value.widths[i];
+    }
+
+    localStorage.setItem(
+      columnPreferenceKey,
+      JSON.stringify(newColumnPreferences)
+    );
+  };
 
   const updatePreferences = (value: CollectionPreferencesProps.Preferences) => {
     localStorage.setItem(preferenceKey, JSON.stringify(value));
@@ -210,14 +236,22 @@ export const TableComponent = ({
       return;
     }
 
+    const savedPreferencesString = localStorage.getItem(preferenceKey);
+    const savedColumnPreferenceString =
+      localStorage.getItem(columnPreferenceKey);
+
+    let defaultColumnPreferences: any = {};
+    if (savedColumnPreferenceString) {
+      defaultColumnPreferences = JSON.parse(savedColumnPreferenceString);
+    }
+
     const viewColumns = columnsToShow.map(
       (c) =>
         ({
           id: c.ColumnName,
           header: c.ColumnLabel,
           cell: (row) => <ViewColumnCell rowData={row} column={c} />,
-          maxWidth: 250,
-          minWidth: 200,
+          width: defaultColumnPreferences[c.ColumnName] || 250,
           sortingField: c.ColumnName.includes(".") ? null : c.ColumnName,
         } as TableProps.ColumnDefinition<unknown>)
     );
@@ -226,7 +260,6 @@ export const TableComponent = ({
       column: ViewColumn,
       rowData: any[]
     ): Promise<void> => {
-      console.log("xxx");
       setLoading(true);
       try {
         await handleViewEvent(column, rowData, menuItem);
@@ -250,10 +283,6 @@ export const TableComponent = ({
       },
     ];
 
-    const _preferenceKey = appName + "_" + menuItem.Id + "_preference_cache";
-
-    setPreferenceKey(_preferenceKey);
-    const savedPreferencesString = localStorage.getItem(_preferenceKey);
     let updatedPreferences = getDefaultPreference(cols);
     if (savedPreferencesString) {
       try {
@@ -352,7 +381,6 @@ export const TableComponent = ({
   const debouncedFilterChange = () =>
     useDebounce(
       () => {
-        console.log("debounced call");
         doReload(
           filterText,
           null,
@@ -397,7 +425,8 @@ export const TableComponent = ({
     <Table
       items={tableItems}
       loading={loading}
-      // resizableColumns={true}
+      resizableColumns={true}
+      onColumnWidthsChange={(e) => updateColumnPreferences(e.detail)}
       loadingText="Loading data"
       columnDefinitions={columnDefinitions}
       variant={isEmbedded ? "embedded" : "full-page"}

@@ -58,7 +58,8 @@ export const ActionProvider = ({ children }) => {
     }
 
     try {
-      const response = await fetch(urlToCall, fetchOptions);
+      const fetchUrl = new URL(urlToCall); // fails without this on some domains (it adds extra localhost when https://localhost/Odyssey/ for example)
+      const response = await fetch(fetchUrl, fetchOptions);
 
       if (response.ok) {
         const blob = await response.blob();
@@ -103,16 +104,17 @@ export const ActionProvider = ({ children }) => {
       case 0: {
         // show a view
         mainApp.setCurrentContentType("table");
-        mainApp.setCacheValue("/view/" + item.Id, item);
-        navigate("/view/" + item.Id);
+
+        const path = "/view/" + item.Id;
+        mainApp.setCacheValue(path, item);
+        navigate(path);
         break;
       }
       case 1: {
         // get inputs
-        //mainApp.setCurrentContentType("form");
-        mainApp.setCacheValue("/form/" + item.Id, item);
-        //mainApp.setCacheValue("/view/" + item.Id, item);
-        navigate("/form/" + item.Id);
+        const path = "/form/" + item.Id;
+        mainApp.setCacheValue(path, item);
+        navigate(path);
         break;
       }
       //case 2: // submenu  - // nothing, this is commented out in the old code

@@ -54,7 +54,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const performTokenRefresh = async () => {
-    const data = new FormData();
+    // const data = new FormData();
+    // data.append("grant_type", "refresh_token");
+    // data.append("refresh_token", refreshToken);
+    // data.append("client_id", appName);
+
+    const data = new URLSearchParams();
     data.append("grant_type", "refresh_token");
     data.append("refresh_token", refreshToken);
     data.append("client_id", appName);
@@ -136,7 +141,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const performLogin = async (username: string, password: string) => {
-    const data = new FormData();
+    const data = new URLSearchParams();
     data.append("grant_type", "password");
     data.append("username", username);
     data.append("password", password);
@@ -251,7 +256,7 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.log("caught error trying to initialize");
       console.log(err);
-      navigate("/login"); // not sure what else to do
+      navigate("/login");
     }
   }
 

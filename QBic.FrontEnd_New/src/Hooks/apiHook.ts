@@ -43,10 +43,6 @@ export const useApi = () => {
     }
 
     return await makeApiCallInternal(urlToCall, fetchOptions);
-
-    // alert(
-    //   "Error contacting the server. You might not have internet or our server is down"
-    // );
   };
 
   const initializeSystem = async (): Promise<SystemInfo> => {
@@ -82,7 +78,8 @@ export const useApi = () => {
       const response = await fetch(urlToCall, fetchOptions);
       if (response.ok) {
         // success
-        var json = (await response.json()) as T;
+        const json = (await response.json()) as T;
+
         return Promise.resolve(json);
       } else if (response.status == 401) {
         return auth
@@ -101,7 +98,6 @@ export const useApi = () => {
             });
           })
           .catch((err) => {
-            alert("error");
             console.error("error while getting refresh token");
             console.log(err);
             // TODO: show login dialog -> which should then essentially restart the application initialization stuff as it will have new tokens

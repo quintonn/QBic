@@ -8,5 +8,7 @@ namespace WebsiteTemplate.Test.Models
         public virtual User User { get; set; }
 
         public virtual string ExtraCode { get; set; }
+
+        public virtual TestUserRole UserRole { get; set; }
     }
 }

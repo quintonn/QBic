@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { API_URL } from "../../Constants/AppValues";
 import { AppLayoutProps } from "@cloudscape-design/components";
+import { addMessage } from "../../App/flashbarSlice";
+import { store } from "../../App/store";
 
 export interface SystemInfo {
   ApplicationName: string;
@@ -42,8 +44,12 @@ export const MainAppProvider = ({ children }) => {
           console.log("There was an error in the system initialization code:");
           console.log(systemInfo.ConstructionError);
 
-          //TODO: show error somewhere
-          //    : Maybe using the modal proider
+          store.dispatch(
+            addMessage({
+              type: "error",
+              content: `"There was an error in the system initialization code:" ${systemInfo.ConstructionError}`,
+            })
+          );
         } else {
           setAppName(systemInfo.ApplicationName);
           setAppVersion(systemInfo.Version);
@@ -57,17 +63,22 @@ export const MainAppProvider = ({ children }) => {
       console.error("Fatal error calling initialize system:");
       // wouldn't really happen because back-end hosts front-end
       console.error(err);
-      alert("fatal error");
+      store.dispatch(
+        addMessage({
+          type: "error",
+          content: `Fatal error: ${err}`,
+        })
+      );
     }
   };
 
   useEffect(() => {
-    console.log("main app hook useEffect");
     initializeSystem();
   }, []);
 
   const getCacheValue = (id: string): any => {
-    return cache[id];
+    const result = cache[id];
+    return result;
   };
 
   const setCacheValue = (id: string, value: any) => {
