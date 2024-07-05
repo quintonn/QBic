@@ -149,6 +149,13 @@ export const ActionProvider = ({ children }) => {
       case 11: // download file
         downloadFile(item.DataUrl, item.RequestData);
         break;
+      case 13: // log out
+        const url = new URL(window.location.href);
+        url.searchParams.delete("anonAction");
+        url.searchParams.delete("params");
+        window.history.pushState(null, "", url.toString());
+        auth.logout();
+        break;
       default:
         console.warn("Unknown action type: " + item.ActionType);
       // show global message?
@@ -156,11 +163,6 @@ export const ActionProvider = ({ children }) => {
   };
 
   const onMenuClick = async (event: number, params: any = null) => {
-    //TODO: Need to show busy indicator
-    // maybe... (works for now but don't like it)
-
-    //await onHomeClick();
-
     const url = "executeUIAction/" + event;
 
     const data = {

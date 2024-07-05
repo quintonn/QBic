@@ -5,6 +5,8 @@ import { useAuth } from "../AuthProvider/AuthProvider";
 import { useApi } from "../../Hooks/apiHook";
 import { useMainApp } from "../MainAppProvider/MainAppProvider";
 import { useActions } from "../ActionProvider/ActionProvider";
+import { store } from "../../App/store";
+import { addMessage } from "../../App/flashbarSlice";
 
 interface MenuContextType {
   appMenuItems: AppMenuItem[];
@@ -239,7 +241,7 @@ export const MenuProvider = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { onMenuClick } = useActions();
-  const mainApp = useMainApp();
+  const { setCurrentContentType, isReady: mainAppIsReady } = useMainApp();
 
   const loadMenus = async () => {
     const menuData = await api.makeApiCall<MenuItem[]>("getUserMenu", "GET");
@@ -269,7 +271,7 @@ export const MenuProvider = ({ children }) => {
 
   const onHomeClick = async () => {
     navigate("/");
-    mainApp.setCurrentContentType("default");
+    setCurrentContentType("default");
   };
 
   useEffect(() => {
@@ -280,6 +282,37 @@ export const MenuProvider = ({ children }) => {
       setSideNavMenuItems([]);
     }
   }, [auth.isAuthenticated]);
+
+  const checkPredefinedActions = async () => {
+    if (window.location.search.includes("anonAction")) {
+      const url = new URL(window.location.href);
+      const action = url.searchParams.get("anonAction");
+      const params = url.searchParams.get("params");
+
+      await onMenuClick(parseInt(action), params);
+
+      return;
+    }
+
+    if (window.location.search.includes("confirmed")) {
+      store.dispatch(
+        addMessage({
+          type: "success",
+          content: `"Thank you for confirming you email address. You can now log in using your username and password"`,
+        })
+      );
+
+      //navigate("#"); // show home page
+      const url = new URL(window.location.href);
+
+      url.searchParams.delete("confirmed");
+      window.history.pushState(null, "", url.toString());
+    }
+  };
+
+  useEffect(() => {
+    checkPredefinedActions();
+  }, [mainAppIsReady]);
 
   const value = {
     appMenuItems,
