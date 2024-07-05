@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using NHibernate.Criterion;
 using QBic.Core.Utilities;
 using System;
 using System.Collections.Generic;
@@ -122,19 +123,16 @@ namespace WebsiteTemplate.Backend.PasswordReset
                     };
                 }
 
-                //WebsiteUtils.SetCurrentUser("System");
+                using var session = DataService.OpenSession();
+                var dbToken = session.QueryOver<PasswordResetToken>().WhereRestrictionOn(p => p.Token).IsLike(passwordToken, MatchMode.Exact).SingleOrDefault();
 
-                /*
-                var verifyTokenResult = await UserManager.VerifyUserTokenAsync(userId, "ResetPassword", passwordToken);
-                if (verifyTokenResult == false)
+                if (dbToken == null || dbToken.Expiration < DateTime.UtcNow)
                 {
-                    //TODO: This does not actually do what i expected. The tokens never expire. wtf?!  -- ok, got them to expire after 6 hours, still. wtf
-                    //      Need to implement this ourselves. Keep a table of used tokens.
                     return new List<IEvent>()
                     {
                         new ShowMessage("Unable to reset password. The password reset link is no longer valid")
                     };
-                }*/
+                }
 
                 Logger.LogInformation("Calling reset password async");
                 var user = await UserManager.FindByIdAsync(userId);
@@ -158,6 +156,9 @@ namespace WebsiteTemplate.Backend.PasswordReset
                 }
                 else
                 {
+                    session.Delete(dbToken);
+                    session.Flush();
+
                     return new List<IEvent>()
                     {
                         new CancelInputDialog(),
@@ -165,7 +166,6 @@ namespace WebsiteTemplate.Backend.PasswordReset
                         {
                             OnConfirmationUIAction = EventNumber.Logout
                         },
-                        //new LogoutEvent(true)
                     };
                 }
             }

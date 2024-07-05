@@ -1,0 +1,14 @@
+﻿<div class="w3-modal-content ">
+    <header class="w3-container " data-bind="css: errorTypeColor" >
+        <span class="w3-closebtn w3-padding-top" data-bind="click: closeClick">&times;</span>
+        <h2 data-bind="text: heading"></h2>
+    </header>
+
+    <div class="w3-container" style="word-break:break-all">
+        <p data-bind="html: message" style="word-wrap:break-word;"></p>
+    </div>
+
+    <div class="w3-container w3-light-grey w3-padding w3-center">
+        <button class="w3-btn w3-app-color w3-border" data-bind="click: closeClick, hasFocus: true">Ok</button>
+    </div>
+</div>

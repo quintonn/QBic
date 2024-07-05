@@ -1,0 +1,26 @@
+﻿<div class="w3-section w3-content" id="##view_id##">
+    <h2 class="w3-center" data-bind="text: viewTitle, visible: isEmbeddedView == false" style="margin:0"></h2>
+
+    <div class="" data-bind="foreach: viewMenus">
+        <button class="w3-btn w3-app-color " data-bind="text: label, click: function(data, event) { $root.menuClick($data, $index(), event) }"></button>
+    </div>
+
+    <!-- ko if: detailIsHtml() == true -->
+        <div class="" style="overflow-x:auto; overflow-y: auto; ">
+            <!-- ko foreach: rows -->
+                <div class="" data-bind="html: cells()[0].value()"></div>
+            <!-- /ko -->
+        </div>
+    <!-- /ko -->
+
+    <!-- ko if: detailIsHtml() == false -->
+        <div class="w3-section w3-padding w3-pale-blue w3-container" style="overflow-x:auto; overflow-y: auto; ">
+            <!-- ko foreach: rows -->
+                <span data-bind="text: cells()[0].value()"></span>
+                <br />
+            <!-- /ko -->
+        </div>
+    <!-- /ko -->
+
+    <h5 class="w3-center" data-bind="html: viewMessage, visible: isEmbeddedView == false" style="margin:0"></h5>
+</div>
