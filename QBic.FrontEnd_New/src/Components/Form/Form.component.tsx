@@ -10,7 +10,6 @@ import {
   Multiselect,
   Select,
   SpaceBetween,
-  Table,
   Tabs,
   Textarea,
 } from "@cloudscape-design/components";
@@ -41,6 +40,8 @@ export const FormComponent = () => {
   const location = useLocation();
   const [currentMenu, setCurrentMenu] = useState<MenuDetail>();
   const dispatch = useAppDispatch();
+
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [values, setValues] = useState<Record<string, any>>({});
@@ -77,6 +78,7 @@ export const FormComponent = () => {
       // date
       if (value) {
         //value = new Date(value).toISOString().split("T")[0];
+        // TODO: revert this
         const date = new Date(value);
         value =
           String(date.getDate()).padStart(2, "0") +
@@ -460,6 +462,22 @@ export const FormComponent = () => {
     }
   };
 
+  useEffect(() => {
+    if (errors) {
+      console.log(errors);
+      const thereAreErrors = Object.values(errors).some(
+        (value) => value != null && value != ""
+      );
+      if (thereAreErrors === true) {
+        setErrorMessage(
+          "There are invalid inputs. Make sure to check all tabs."
+        );
+      } else {
+        setErrorMessage("");
+      }
+    }
+  }, [errors]);
+
   const onChange = async (field: InputField, value: any) => {
     setValues((prevValues) => ({ ...prevValues, [field.InputName]: value }));
 
@@ -689,6 +707,7 @@ export const FormComponent = () => {
         variant="full-page"
         header={<Header variant="awsui-h1-sticky">{currentMenu?.Title}</Header>}
         // errorText="Some error"
+        errorText={errorMessage}
         actions={
           <SpaceBetween direction="horizontal" size="xs" alignItems="start">
             {currentMenu?.InputButtons?.map((b) => (
