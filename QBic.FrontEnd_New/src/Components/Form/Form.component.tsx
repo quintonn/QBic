@@ -72,11 +72,18 @@ export const FormComponent = () => {
     } else if (field.InputType == 5) {
       // list selection
       const selectedItems = value as OptionDefinition[];
-      value = selectedItems.map((s) => s.value);
+      value = selectedItems?.map((s) => s.value);
     } else if (field.InputType == 6) {
       // date
       if (value) {
-        value = new Date(value).toISOString().split("T")[0];
+        //value = new Date(value).toISOString().split("T")[0];
+        const date = new Date(value);
+        value =
+          String(date.getDate()).padStart(2, "0") +
+          "-" +
+          String(date.getMonth() + 1).padStart(2, "0") +
+          "-" +
+          String(date.getFullYear()).padStart(2, "0");
       }
     } else if (field.InputType == 8) {
       // input view
@@ -169,15 +176,10 @@ export const FormComponent = () => {
           const value = await getInputValue(field);
           const validationResult = validateField(field, value);
           if (validationResult.length > 0) {
-            console.log(validationResult);
-            console.log("aa");
-            console.log(errors?.[field.InputName]);
             return;
           }
         }
       }
-      console.log("x");
-
       const params = await getInputValues();
 
       const data: any = {
@@ -211,15 +213,16 @@ export const FormComponent = () => {
   };
 
   const validateField = (field: InputField, value: any): string => {
-    if (field.Mandatory === true && fieldVisibility[field.InputName] == true) {
+    if (
+      field.Mandatory === true &&
+      fieldVisibility[field.InputName] !== false
+    ) {
       if (value === null || value === "") {
         return field.InputLabel + " is required";
       }
     }
 
     if (field.InputType == 9) {
-      console.log("xxxxxxx");
-      console.log(value);
       if (value == null || value.length == 0) {
         return field.InputLabel + " is required";
       }
@@ -265,7 +268,12 @@ export const FormComponent = () => {
         }
         case 5: {
           // multi select
-          const tmpDefaultValues = f.DefaultValue || ([] as string[]);
+          let listDefaultValue = f.DefaultValue || "";
+          if (listDefaultValue.constructor.name != "Array") {
+            listDefaultValue = listDefaultValue.split(",");
+          }
+          const tmpDefaultValues = listDefaultValue as string[];
+
           defaultValue = tmpDefaultValues
             .map((d) => {
               const label = f.ListSource.filter((l) => l.Key == d)[0]?.Value;
@@ -441,10 +449,8 @@ export const FormComponent = () => {
     for (let i = 0; i < otherFields.length; i++) {
       const field = otherFields[i];
 
-      const matchedConditions = field.VisibilityConditions.filter(
-        (condition) => {
-          return conditionIsMet(condition, valueChanged?.toString());
-        }
+      const matchedConditions = field.VisibilityConditions.filter((condition) =>
+        conditionIsMet(condition, valueChanged?.toString())
       );
 
       setFieldVisibility((prevValues) => ({
@@ -457,19 +463,17 @@ export const FormComponent = () => {
   const onChange = async (field: InputField, value: any) => {
     setValues((prevValues) => ({ ...prevValues, [field.InputName]: value }));
 
-    console.log("on change called");
-    console.log(field);
-
     const fieldError = validateField(field, value);
+
     setErrors((prevErrors) => ({
       ...prevErrors,
       [field.InputName]: fieldError,
     }));
 
-    updateFieldVisibilities(field, value);
+    const fieldValue = await getInputValue(field, value);
+    updateFieldVisibilities(field, fieldValue);
 
     if (field.RaisePropertyChangedEvent === true) {
-      const fieldValue = await getInputValue(field, value);
       let timeoutValue = 0;
       if (
         field.InputType == 0 ||
@@ -560,7 +564,6 @@ export const FormComponent = () => {
           />
         );
       case 8: // Input View
-        console.log(field);
         return (
           <TableComponent
             menuItem={field.ViewForInput}
@@ -600,8 +603,8 @@ export const FormComponent = () => {
       case 11: // label
         return <div>{field.DefaultValue}</div>;
       default:
-        console.log(field);
         console.error("unhandled input type: " + field.InputType);
+        console.log(field);
 
         dispatch(
           addMessage({
@@ -653,8 +656,6 @@ export const FormComponent = () => {
         uniqueTabs.add(field.TabName || "");
       }
     });
-
-    console.log("unique tabs", uniqueTabs);
 
     const tabNames = Array.from(uniqueTabs?.values()).filter(
       (x) => x != null && x.length > 0

@@ -87,7 +87,7 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
       <div id="h" style={{ position: "sticky", top: 0, zIndex: 1002 }}>
         <TopNavigation
           identity={{
-            href: "/",
+            href: "#",
             title: mainApp.appName || "QBic",
           }}
           utilities={

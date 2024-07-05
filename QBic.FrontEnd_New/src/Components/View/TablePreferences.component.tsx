@@ -1,4 +1,5 @@
 import {
+  Checkbox,
   CollectionPreferences,
   CollectionPreferencesProps,
 } from "@cloudscape-design/components";
@@ -46,6 +47,14 @@ export function TablePreferences({
         description: "Customize the columns visibility and order.",
         options: columnDisplayPreferenceOptions,
       }}
+      // customPreference={(customValue, setCustomValue) => (
+      //   <Checkbox
+      //     checked={customValue}
+      //     onChange={({ detail }) => setCustomValue(detail.checked)}
+      //   >
+      //     Custom field
+      //   </Checkbox>
+      // )}
       stickyColumnsPreference={{
         firstColumns: {
           title: "Stick first column(s)",
