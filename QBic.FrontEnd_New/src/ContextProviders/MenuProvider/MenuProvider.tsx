@@ -190,6 +190,7 @@ const MapMenuItemsToSideNavItems = (
 
       results.push(sectionItem);
     } else {
+      //href: "#/view" + item.Event, // TODO: Make open in new tab on menu also work
       results.push({ text: item.Name, href: "#" + item.Id, type: "link" });
     }
   }

@@ -82,6 +82,19 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
     onMenuClick(menuItemClicked.event);
   };
 
+  const clearAllViewFilterCaches = () => {
+    // Get the number of items in local storage
+    const localStorageLength = localStorage.length;
+
+    // Remove keys that match filter cache
+    for (let i = 0; i < localStorageLength; i++) {
+      const key = localStorage.key(i);
+      if (key && key.includes("_filter_cache")) {
+        localStorage.removeItem(key);
+      }
+    }
+  };
+
   return (
     <>
       <div id="h" style={{ position: "sticky", top: 0, zIndex: 1002 }}>
@@ -111,6 +124,8 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
             activeHref={activeHref}
             onFollow={(event) => {
               event.preventDefault();
+
+              clearAllViewFilterCaches();
               setActiveHref(event.detail.href);
               handleMenuClick(event.detail.href);
             }}

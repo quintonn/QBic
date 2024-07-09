@@ -31,6 +31,7 @@ export const useViewEvents = () => {
     if (menu.ActionType == 7) {
       console.log("TODO: addviewdatatoparams whatever that is");
       alert("todo: addviewdatatoparams");
+      //
     } else if (column.Event == null || column.Event.ActionType == 6) {
       const eventId =
         column.Event == null ? column.EventNumber : column.Event.EventNumber;
