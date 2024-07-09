@@ -233,11 +233,10 @@ export const FormComponent = () => {
         if (value == null || value.length == 0) {
           return field.InputLabel + " is required";
         }
-      }
-    }
-    if (field.InputType == 9) {
-      if (value == null || value.length == 0) {
-        return field.InputLabel + " is required";
+      } else if (field.InputType == 9) {
+        if (value == null || value.length == 0) {
+          return field.InputLabel + " is required";
+        }
       }
     }
 
