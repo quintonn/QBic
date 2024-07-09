@@ -109,7 +109,6 @@ export const TableComponent = ({
   const api = useApi();
 
   const location = useLocation();
-
   const mainApp = useMainApp();
 
   const [viewMenu, setViewMenu] = useState<ViewMenu[]>([]);
@@ -118,9 +117,19 @@ export const TableComponent = ({
     useState<CollectionPreferencesProps.Preferences>(null);
 
   const preferenceKey = appName + "_" + menuItem?.Id + "_preference_cache";
+  const filterKey = appName + "_" + menuItem?.Id + "_filter_cache";
 
   const columnPreferenceKey =
     appName + "_" + menuItem?.Id + "_column_preference_cache";
+
+  const updateFilterValue = (value: string): void => {
+    localStorage.setItem(filterKey, value);
+    setFilterText(value);
+
+    if (value == null || value.length == 0) {
+      localStorage.removeItem(filterKey);
+    }
+  };
 
   const updateColumnPreferences = (
     value: TableProps.ColumnWidthsChangeDetail
@@ -158,13 +167,13 @@ export const TableComponent = ({
     setPreferences(value);
   };
 
-  const doReload = (
+  const doReload = async (
     filter: string = "",
     _viewSettings: ViewSettings = null,
     sortColumn: string = "",
     sortAscending: boolean = true
-  ) => {
-    retrieveData(
+  ): Promise<void> => {
+    await retrieveData(
       filter,
       _viewSettings || viewSettings,
       sortColumn,
@@ -357,10 +366,13 @@ export const TableComponent = ({
       // clear page settings
       setSortingDescending(false);
       setSortingColumn(null);
-      setFilterText("");
+
       updateCounts(menuItem.TotalLines, viewSettings.currentPage);
 
-      doReload();
+      const storedFilterValue = localStorage.getItem(filterKey);
+      updateFilterValue(storedFilterValue || "");
+
+      doReload(storedFilterValue);
     }
   }, [preferences, menuItem]);
 
@@ -442,7 +454,7 @@ export const TableComponent = ({
                 <b>No matches found </b>
                 <Button
                   onClick={() => {
-                    setFilterText("");
+                    updateFilterValue("");
                     doReload(
                       "",
                       null,
@@ -481,7 +493,7 @@ export const TableComponent = ({
         isEmbedded ? null : (
           <TextFilter
             filteringPlaceholder="Filter items"
-            onChange={({ detail }) => setFilterText(detail.filteringText)}
+            onChange={({ detail }) => updateFilterValue(detail.filteringText)}
             onDelayedChange={(x) => {
               debouncedFilterChange();
             }}
