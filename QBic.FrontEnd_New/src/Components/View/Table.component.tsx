@@ -20,7 +20,6 @@ import { ViewActionColumn } from "./ViewActionColumn";
 import { ViewColumnCell } from "./ViewColumn";
 import { useApi } from "../../Hooks/apiHook";
 import { useDebounce } from "../../Hooks/useDebounce";
-import { useLocation } from "react-router-dom";
 import { useActions } from "../../ContextProviders/ActionProvider/ActionProvider";
 import { useViewEvents } from "../../Hooks/viewEventsHook";
 
@@ -76,6 +75,7 @@ export const TableComponent = ({
   defaultData = null,
 }: TableComponentProps) => {
   const { appName } = useMainApp();
+
   const [loading, setLoading] = useState(false);
   const [columnDefinitions, setColumnDefinitions] = useState<
     TableProps.ColumnDefinition<unknown>[]
@@ -107,9 +107,6 @@ export const TableComponent = ({
   const { handleViewEvent } = useViewEvents();
   const { onMenuClick } = useActions();
   const api = useApi();
-
-  const location = useLocation();
-  const mainApp = useMainApp();
 
   const [viewMenu, setViewMenu] = useState<ViewMenu[]>([]);
 
@@ -375,13 +372,6 @@ export const TableComponent = ({
       doReload(storedFilterValue);
     }
   }, [preferences, menuItem]);
-
-  useEffect(() => {
-    if (location && location.pathname) {
-      const menuItem = mainApp.getCacheValue(location.pathname);
-      //setCurrentMenu(menuItem);
-    }
-  }, [location]);
 
   useEffect(() => {
     if (menuItem) {
