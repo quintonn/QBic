@@ -67,12 +67,19 @@ interface TableComponentProps {
   menuItem: MenuDetail;
   isEmbedded?: boolean;
   defaultData?: any;
+  handleOnActionColumnClick?: (
+    column: ViewColumn,
+    rowInfo: any
+  ) => Promise<void>;
 }
 
 export const TableComponent = ({
   menuItem,
   isEmbedded = false,
   defaultData = null,
+  handleOnActionColumnClick = () => {
+    return Promise.resolve();
+  },
 }: TableComponentProps) => {
   const { appName } = useMainApp();
 
@@ -212,13 +219,37 @@ export const TableComponent = ({
         data
       );
 
-      if (viewData) {
-        setTableItems(viewData.ViewData);
-        updateCounts(viewData.TotalLines, _viewSettings.currentPage);
+      if (viewData && viewData.ViewData) {
+        updateItems(viewData.ViewData, _viewSettings.currentPage);
       }
     } catch (err) {
       console.log("error loading data");
       console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (defaultData != null) {
+      updateItems(defaultData);
+    }
+  }, [defaultData]);
+
+  const updateItems = (data: any[], pageNumber: number = 1) => {
+    setTableItems(data);
+    updateCounts(data.length, pageNumber);
+  };
+
+  const onActionColumnClick = async (
+    column: ViewColumn,
+    rowData: any[]
+  ): Promise<void> => {
+    setLoading(true);
+
+    try {
+      await handleOnActionColumnClick(column, rowData);
+      await handleViewEvent(column, rowData, column);
     } finally {
       setLoading(false);
     }
@@ -262,18 +293,6 @@ export const TableComponent = ({
         } as TableProps.ColumnDefinition<unknown>)
     );
 
-    const onActionColumnClick = async (
-      column: ViewColumn,
-      rowData: any[]
-    ): Promise<void> => {
-      setLoading(true);
-      try {
-        await handleViewEvent(column, rowData, menuItem);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     const cols: TableProps.ColumnDefinition<unknown>[] = [
       ...viewColumns,
       {
@@ -283,7 +302,7 @@ export const TableComponent = ({
           <ViewActionColumn
             rowData={rowData}
             columns={actionColumnsToShow}
-            onClick={onActionColumnClick}
+            onClick={(c, r) => onActionColumnClick(c, r)}
           />
         ),
       },
@@ -341,8 +360,10 @@ export const TableComponent = ({
   };
 
   const updateCounts = (totalLines: number, currentPage: number) => {
-    let pageCount = Math.floor(totalLines / preferences.pageSize);
-    if (totalLines % preferences.pageSize > 0) {
+    const pageSize = preferences?.pageSize || 100000;
+
+    let pageCount = Math.floor(totalLines / pageSize);
+    if (totalLines % pageSize > 0) {
       pageCount++;
     }
 
@@ -369,7 +390,9 @@ export const TableComponent = ({
       const storedFilterValue = localStorage.getItem(filterKey);
       updateFilterValue(storedFilterValue || "");
 
-      doReload(storedFilterValue);
+      if (!isEmbedded) {
+        doReload(storedFilterValue);
+      }
     }
   }, [preferences, menuItem]);
 
@@ -394,7 +417,7 @@ export const TableComponent = ({
       500
     );
 
-  const viewMenuItemClick = (item: ViewMenu) => {
+  const viewMenuItemClick = async (item: ViewMenu) => {
     const data = {
       data: item.ParametersToPass,
       parameters: {
@@ -402,7 +425,8 @@ export const TableComponent = ({
       },
     };
 
-    onMenuClick(item.EventNumber, data);
+    await handleOnActionColumnClick(null, null);
+    await onMenuClick(item.EventNumber, data);
   };
 
   const tableActions = viewMenu?.map((m, i) => (
@@ -414,14 +438,16 @@ export const TableComponent = ({
   const doRefresh = () => {
     doReload(filterText, null, sortingColumn?.sortingField, !sortingDescending);
   };
-  tableActions.unshift(
-    <Button
-      key="refresh"
-      variant="icon"
-      iconName="refresh"
-      onClick={doRefresh}
-    ></Button>
-  );
+  if (!isEmbedded) {
+    tableActions.unshift(
+      <Button
+        key="refresh"
+        variant="icon"
+        iconName="refresh"
+        onClick={doRefresh}
+      ></Button>
+    );
+  }
 
   return (
     <Table
@@ -463,21 +489,19 @@ export const TableComponent = ({
         </Box>
       }
       header={
-        isEmbedded ? null : (
-          <Header
-            variant="awsui-h1-sticky"
-            counter={`(${viewSettings.totalLines})`}
-            actions={
-              <SpaceBetween direction="horizontal" size="xs">
-                {/* <Button>Back</Button> How will we handle this?? */}
-                {/* TODO: handle on click */}
-                {tableActions}
-              </SpaceBetween>
-            }
-          >
-            {menuItem?.Description}
-          </Header>
-        )
+        <Header
+          variant="awsui-h1-sticky"
+          counter={`(${viewSettings.totalLines})`}
+          actions={
+            <SpaceBetween direction="horizontal" size="xs">
+              {/* <Button>Back</Button> How will we handle this?? */}
+              {/* TODO: handle on click */}
+              {tableActions}
+            </SpaceBetween>
+          }
+        >
+          {menuItem?.Description}
+        </Header>
       }
       filter={
         isEmbedded ? null : (
