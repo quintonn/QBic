@@ -21,24 +21,24 @@ namespace WebsiteTemplate.Test.MenuItems
             columnConfig.AddStringColumn("Value", "Value");
         }
 
-        public override IEnumerable GetData(GetDataSettings settings)
-        {
-            var result = new List<object>();
-            for (var i = 0; i < 10; i++)
-            {
-                result.Add(new
-                {
-                    Name = "Item " + i,
-                    Value = i
-                });
-            }
-            return result;
-        }
+        //public override IEnumerable GetData(GetDataSettings settings)
+        //{
+        //    var result = new List<object>();
+        //    for (var i = 0; i < 10; i++)
+        //    {
+        //        result.Add(new
+        //        {
+        //            Name = "Item " + i,
+        //            Value = i
+        //        });
+        //    }
+        //    return result;
+        //}
 
-        public override int GetDataCount(GetDataSettings settings)
-        {
-            return 10;
-        }
+        //public override int GetDataCount(GetDataSettings settings)
+        //{
+        //    return 10;
+        //}
 
         public override EventNumber GetId()
         {

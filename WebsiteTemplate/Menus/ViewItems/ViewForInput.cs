@@ -1,4 +1,6 @@
-﻿using WebsiteTemplate.Menus.BaseItems;
+﻿using NHibernate.Mapping;
+using System.Collections;
+using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Menus.ViewItems
 {
@@ -17,6 +19,17 @@ namespace WebsiteTemplate.Menus.ViewItems
             {
                 return EventType.InputDataView;
             }
+        }
+
+        public override sealed IEnumerable GetData(GetDataSettings settings)
+        {
+            //throw new System.NotImplementedException();
+            return null;
+        }
+
+        public override sealed int GetDataCount(GetDataSettings settings)
+        {
+            return 0;
         }
     }
 }

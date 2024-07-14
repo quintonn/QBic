@@ -166,6 +166,8 @@ export interface MenuDetail {
   InputName?: string;
   InputIsVisible?: boolean;
   ListItems?: ListSourceItem[];
+  JsonDataToUpdate?: string;
+  UpdateType?: number;
 }
 
 const MapMenuItemsToSideNavItems = (

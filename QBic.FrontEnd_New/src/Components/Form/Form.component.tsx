@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  Container,
   DatePicker,
   FileUpload,
   Form,
@@ -14,8 +15,8 @@ import {
   Textarea,
 } from "@cloudscape-design/components";
 import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   InputButton,
   InputField,
@@ -34,12 +35,20 @@ import moment from "moment";
 import { useDebounce } from "../../Hooks/useDebounce";
 import { TableComponent } from "../View/Table.component";
 
+interface FormCacheData {
+  fieldName: string;
+  cacheValue: Record<string, any>;
+  rowId: number;
+}
+
 export const FormComponent = () => {
   const mainApp = useMainApp();
   const [loading, setLoading] = useState(false);
   const location = useLocation();
   const [currentMenu, setCurrentMenu] = useState<MenuDetail>();
   const dispatch = useAppDispatch();
+
+  const navigate = useNavigate();
 
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -54,6 +63,10 @@ export const FormComponent = () => {
   const api = useApi();
   const { handleAction } = useActions();
 
+  const valuesRef = useRef<Record<string, any>>({});
+
+  valuesRef.current = values;
+
   const getInputValue = async (
     field: InputField,
     onChangeValue = null
@@ -61,10 +74,9 @@ export const FormComponent = () => {
     let value = null;
     if (onChangeValue != null) {
       value = onChangeValue;
-    } else if (values[field.InputName] != null) {
-      value = values[field.InputName];
+    } else if (valuesRef.current[field.InputName] != null) {
+      value = valuesRef.current[field.InputName];
     }
-    //let value = onChangeValue || values[field.InputName] || null;
 
     if (field.InputType == 3) {
       // combo box
@@ -80,7 +92,6 @@ export const FormComponent = () => {
       // date
       if (value) {
         //value = new Date(value).toISOString().split("T")[0];
-        // TODO: revert this
         const date = new Date(value);
         value =
           String(date.getDate()).padStart(2, "0") +
@@ -91,15 +102,22 @@ export const FormComponent = () => {
       }
     } else if (field.InputType == 8) {
       // input view
+
+      value = valuesRef.current[field.InputName];
+
       const params: any = {};
-      params["data"] = { ViewData: [], Filter: "" }; // TODO: viewdata should be the table rows values
+
+      params["data"] = {
+        ViewData: value,
+        Filter: "",
+      };
       return params;
     } else if (field.InputType == 9) {
       // file
+
       if (value && value.length > 0) {
         value = await readFile(value[0]);
-      } else {
-        value = null;
+        return value;
       }
     }
     return value;
@@ -153,15 +171,17 @@ export const FormComponent = () => {
     });
   };
 
-  const getInputValues = async () => {
+  const getInputValues = async (includeAll: boolean = false) => {
     const result: any = {};
 
     for (let i = 0; i < currentMenu.InputFields.length; i++) {
       const field = currentMenu.InputFields[i];
 
-      const isVisible = fieldVisibility[field.InputName];
-      if (!isVisible) {
-        continue;
+      if (includeAll != true) {
+        const isVisible = fieldVisibility[field.InputName];
+        if (!isVisible) {
+          continue;
+        }
       }
       result[field.InputName] = await getInputValue(field);
     }
@@ -317,6 +337,15 @@ export const FormComponent = () => {
 
           break;
         }
+        case 8: {
+          // input view, do nothing extra
+          console.log(defaultValue);
+          if (defaultValue) {
+            defaultValue = JSON.parse(defaultValue);
+            console.log(defaultValue);
+          }
+          break;
+        }
         case 9: {
           // file input
           defaultValue = [];
@@ -330,18 +359,79 @@ export const FormComponent = () => {
     });
   };
 
+  const [dummy, setDummy] = useState("");
+
   useEffect(() => {
     if (location && location.pathname) {
       const menuItem = mainApp.getCacheValue(location.pathname);
-      setCurrentMenu(menuItem);
+      if (menuItem) {
+        setCurrentMenu(menuItem);
+        setDummy("reload"); // using this because if location is same, current menu doesn't change and doesn't trigger the cache values check
+      }
     }
   }, [location]);
 
-  useEffect(() => {
-    if (currentMenu) {
-      buildInputs();
+  const checkCachedValues = async () => {
+    if (mainApp.getUseCachedValues(currentMenu.Id) === true) {
+      mainApp.updateUseCachedValues(currentMenu.Id, false);
+      const formCacheKey = mainApp.popFormCache() + "_form_values_cache";
+
+      const cachedValue = localStorage.getItem(formCacheKey);
+      localStorage.removeItem(formCacheKey);
+      if (cachedValue) {
+        const parsedValue = JSON.parse(cachedValue) as FormCacheData;
+        if (parsedValue) {
+          setValues(parsedValue.cacheValue);
+
+          const currentValue = values[parsedValue.fieldName] || [];
+          const inputViewUpdateData = mainApp.inputViewUpdateData;
+          let newValue = [];
+
+          if (inputViewUpdateData === -1) {
+            newValue = currentValue;
+            newValue.splice(parsedValue.rowId, 1);
+            console.log(newValue);
+          } else {
+            if (parsedValue.rowId == -1) {
+              let rowId = -1;
+              for (let j = 0; j < currentValue.length; j++) {
+                rowId = Math.max(rowId, currentValue[j].rowId);
+              }
+              rowId++;
+
+              inputViewUpdateData.rowId = rowId;
+              newValue = [...currentValue, inputViewUpdateData];
+            } else {
+              const rowIndex = parsedValue.rowId;
+              newValue = currentValue;
+              inputViewUpdateData.rowId = rowIndex;
+              newValue[rowIndex] = inputViewUpdateData;
+            }
+          }
+
+          // update all rowIds
+          let index = 0;
+          for (let j = 0; j < newValue.length; j++) {
+            newValue[j].rowId = index;
+            index++;
+          }
+
+          setValues((prevValues) => ({
+            ...prevValues,
+            [parsedValue.fieldName]: newValue,
+          }));
+        }
+      }
     }
-  }, [currentMenu]);
+  };
+
+  useEffect(() => {
+    if (dummy == "reload") {
+      buildInputs();
+      checkCachedValues();
+      setDummy("");
+    }
+  }, [dummy]);
 
   const conditionIsMet = (condition: VisibilityConditions, value: any) => {
     if (condition.Comparison == 0) {
@@ -546,6 +636,31 @@ export const FormComponent = () => {
     }
   };
 
+  // XXXXXXX
+  const onInputViewColumnActionClick = async (
+    field: InputField,
+    rowData: any
+  ): Promise<void> => {
+    mainApp.updateUseCachedValues(currentMenu.Id, true); // TODO: if the same form is used to get input, this will break (who will do this?)
+
+    const formStackId = mainApp.updateFormCacheStack();
+
+    const currentInputs = valuesRef.current; // TODO: exclude files somehow, because if a file is set, it breaks
+    const formCacheKey = formStackId + "_form_values_cache";
+
+    const cacheItem: FormCacheData = {
+      fieldName: field.InputName,
+      cacheValue: currentInputs,
+      rowId: rowData?.rowId ?? -1,
+    };
+    localStorage.setItem(formCacheKey, JSON.stringify(cacheItem));
+
+    console.log("on input view column");
+    console.log(cacheItem);
+
+    return Promise.resolve();
+  };
+
   const getInputField = (field: InputField, setAutoFocus: boolean) => {
     switch (field.InputType) {
       case 0: // text
@@ -620,11 +735,16 @@ export const FormComponent = () => {
         );
       case 8: // Input View
         return (
-          <TableComponent
-            menuItem={field.ViewForInput}
-            isEmbedded={true}
-            defaultData={field.DefaultValue}
-          ></TableComponent>
+          <Container>
+            <TableComponent
+              menuItem={field.ViewForInput}
+              isEmbedded={true}
+              defaultData={values?.[field.InputName]}
+              handleOnActionColumnClick={(c, data) =>
+                onInputViewColumnActionClick(field, data)
+              }
+            ></TableComponent>
+          </Container>
         );
       case 9: // file input
         return (
@@ -718,7 +838,7 @@ export const FormComponent = () => {
 
     return (
       <>
-        {tabNames.length > 1 ? (
+        {tabNames.length > 0 ? (
           <Tabs
             tabs={tabNames.map((t) => ({
               label: t,
@@ -746,7 +866,7 @@ export const FormComponent = () => {
         // errorText="Some error"
         errorText={errorMessage}
         actions={
-          <SpaceBetween direction="horizontal" size="xs" alignItems="start">
+          <SpaceBetween direction="horizontal" size="xs" alignItems="end">
             {currentMenu?.InputButtons?.map((b) => (
               <Button
                 key={b.Label}

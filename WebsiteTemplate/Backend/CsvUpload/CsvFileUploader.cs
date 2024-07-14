@@ -33,7 +33,7 @@ namespace WebsiteTemplate.Backend.CsvUpload
             results.Add(new FileInput("File", "File", mandatory: true, tabName: tabName));
             results.Add(new StringInput("Separator", "Column Separator", ColumnSeparator, mandatory: true, tabName: tabName));
             results.Add(new NumericInput<int>("Skip", "Lines to Skip", LinesToSkip, tabName: tabName));
-            results.Add(new ViewInput("Mappings", "ColumnMappings", new MappingView(), GetParameters(), mandatory: true, tabName: tabName));
+            results.Add(new ViewInput("Mappings", "Column Mappings", new MappingView(), GetParameters(), mandatory: true, tabName: tabName));
             results.Add(new BooleanInput("IsQuoted", "Are values in quotes", false, null, false));
 
             results.AddRange(extraInputs);
@@ -48,7 +48,22 @@ namespace WebsiteTemplate.Backend.CsvUpload
 
         private string GetParameters()
         {
-            var results = ColumnsToMap();
+            var columns = ColumnsToMap();
+            var results = new List<object>();
+
+            var rowNumber = 0;
+            foreach (var column in columns)
+            {
+                var item = new
+                {
+                    column.Field,
+                    column.Columns,
+                    rowId = rowNumber++
+                };
+                results.Add(item);
+            }
+
+            //return result;
             return JsonHelper.SerializeObject(results);
         }
 
@@ -80,9 +95,9 @@ namespace WebsiteTemplate.Backend.CsvUpload
                 var columnIndex = 1;
                 foreach (var mapping in mappings)
                 {
-                    var cols = mapping.ColumnNumbers;
-                    var columnValue = MapColumnData(mapping.ColumnName, fields, mapping.ColumnNumbers, rowIndex, errors);
-                    row.Columns.Add(new MappedColumn(mapping.ColumnName, columnIndex, columnValue));
+                    var cols = mapping.Columns;
+                    var columnValue = MapColumnData(mapping.Field, fields, mapping.Columns, rowIndex, errors);
+                    row.Columns.Add(new MappedColumn(mapping.Field, columnIndex, columnValue));
                 }
 
                 results.Add(row);

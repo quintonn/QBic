@@ -33,8 +33,8 @@ const ColButton = ({
     label = column.LinkLabel;
   }
 
-  const buttonClick = () => {
-    onClick(column, rowData);
+  const buttonClick = async () => {
+    await onClick(column, rowData);
   };
 
   return (

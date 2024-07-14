@@ -15,7 +15,7 @@ namespace WebsiteTemplate.Backend.CsvUpload
         }
 
         private JsonHelper RowData { get; set; }
-        private int RowId { get; set; }
+        private string RowId { get; set; }
 
         public override bool AllowInMenu => false;
 
@@ -38,7 +38,7 @@ namespace WebsiteTemplate.Backend.CsvUpload
                     rowData = json.GetValue("rowData");
                 }
 
-                RowId = json.GetValue<int>("rowid");
+                RowId = json.GetValue<string>("rowId");
                 RowData = JsonHelper.Parse(rowData);
             }
             //else

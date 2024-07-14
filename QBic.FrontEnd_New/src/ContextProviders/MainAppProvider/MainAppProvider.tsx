@@ -4,6 +4,8 @@ import { AppLayoutProps } from "@cloudscape-design/components";
 import { addMessage } from "../../App/flashbarSlice";
 import { store } from "../../App/store";
 
+import { v4 as uuidv4 } from "uuid";
+
 export interface SystemInfo {
   ApplicationName: string;
   Version: string;
@@ -20,6 +22,12 @@ interface MainAppContextType {
   setCacheValue: (id: string, value: any) => void;
   currentContentType: AppLayoutProps.ContentType;
   setCurrentContentType: (value: AppLayoutProps.ContentType) => void;
+  updateFormCacheStack: () => string | null;
+  popFormCache: () => string | null;
+  getUseCachedValues: (formId: number) => boolean;
+  updateUseCachedValues: (formId: number, value: boolean) => void;
+  inputViewUpdateData: any;
+  setInputViewUpdateData: (data: any) => void;
 }
 
 const MainAppContext = createContext<MainAppContextType>(null);
@@ -32,6 +40,13 @@ export const MainAppProvider = ({ children }) => {
   const [cache, setCache] = useState<any>({});
   const [currentContentType, setCurrentContentType] =
     useState<AppLayoutProps.ContentType>("default");
+
+  const [inputViewUpdateData, setInputViewUpdateData] = useState<any>(null);
+
+  const [formCachStack, setFormCacheStack] = useState<string[]>([]);
+  const [useCachedValues, setUseCachedValues] = useState<
+    Record<number, boolean>
+  >({});
 
   const initializeSystem = async (): Promise<void> => {
     try {
@@ -85,6 +100,36 @@ export const MainAppProvider = ({ children }) => {
     setCache({ ...cache, [id]: value });
   };
 
+  const getFormCacheStack = (): string | null => {
+    if (formCachStack.length > 0) {
+      return formCachStack[formCachStack.length - 1];
+    }
+    return null;
+  };
+
+  const updateFormCacheStack = (): string => {
+    const id = uuidv4();
+    setFormCacheStack([...formCachStack, id]);
+    return id;
+  };
+
+  const getUseCachedValues = (id: number) => {
+    return useCachedValues[id];
+  };
+
+  const updateUseCachedValues = (id: number, value: boolean) => {
+    setUseCachedValues((prevValues) => ({
+      ...prevValues,
+      [id]: value,
+    }));
+  };
+
+  const popFormCache = () => {
+    const lastValue = getFormCacheStack();
+    setFormCacheStack((prevStack) => prevStack.slice(0, prevStack.length - 1));
+    return lastValue;
+  };
+
   const value = {
     appName,
     appVersion,
@@ -94,6 +139,12 @@ export const MainAppProvider = ({ children }) => {
     setCacheValue,
     currentContentType,
     setCurrentContentType,
+    updateFormCacheStack,
+    popFormCache,
+    getUseCachedValues,
+    updateUseCachedValues,
+    inputViewUpdateData,
+    setInputViewUpdateData,
   };
 
   return (
