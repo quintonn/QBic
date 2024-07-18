@@ -40,28 +40,23 @@ namespace WebsiteTemplate.Test.MenuItems.Departments
             {
                 using var session = DataService.OpenStatelessSession();
                 var expenseItems = session.QueryOver<Expense>().Where(x => x.Department.Id == Item.Id).List().ToList();
-                defaultValues = expenseItems.Select((x, index) => new
+                defaultValues = expenseItems.OrderBy(x => x.Id).Select((x, index) => new
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    Category = x.Category,
-                    Type = x.ExpenseType,
+                    Category = x.Category.ToString(),
+                    Type = x.ExpenseType.ToString(),
                     Quantity = x.Quantity,
                     Amount = x.Amount,
-                    Frequency = x.Frequency,
+                    Frequency = x.Frequency.ToString(),
                     StartMonth = x.StartMonth,
                     EndMonth = x.EndMonth,
                     RollOutPeriod = x.RollOutPeriod,
-                    rowId = index,
+                    rowId = index, // TODO: Need a way to auto add rowIds, or force user to set these (auto will be better);
                 }).ToList();
             }
             
-            //TODO: see if adding defaults works and loads on screen and see if we can get Department add/editing/deleting etc.
             result.Add(new ViewInput("Expenses", "Expenses", new ViewExpenses(DataService), defaultValues, "General", true));
-
-            //result.Add(new LabelInput("txtStaff", "resource/staff expenses", "", "Staff"));
-
-            //result.Add(new LabelInput("txtStaffCosts", "resource/staff costs", "", "Staff Costs"));
 
             return result;
         }
