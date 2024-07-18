@@ -46,7 +46,7 @@ namespace WebsiteTemplate.Backend.CsvUpload
             return new List<InputField>();
         }
 
-        private string GetParameters()
+        private object GetParameters()
         {
             var columns = ColumnsToMap();
             var results = new List<object>();
@@ -64,7 +64,8 @@ namespace WebsiteTemplate.Backend.CsvUpload
             }
 
             //return result;
-            return JsonHelper.SerializeObject(results);
+            // return JsonHelper.SerializeObject(results);
+            return results;
         }
 
         public virtual string ColumnSeparator { get; } = ",";
