@@ -670,7 +670,12 @@ export const FormComponent = () => {
 
     const formStackId = mainApp.updateFormCacheStack();
 
-    const currentInputs = valuesRef.current; // TODO: exclude files somehow, because if a file is set, it breaks
+    const currentInputs = valuesRef.current;
+    currentMenu.InputFields.forEach((f) => {
+      if (f.InputType == 9) {
+        currentInputs[f.InputName] = []; // have to remove any file inputs because a file's input can't be set in javascript
+      }
+    });
     const formCacheKey = formStackId + "_form_values_cache";
 
     mainApp.setInputViewUpdateData(null); // clear any values here
