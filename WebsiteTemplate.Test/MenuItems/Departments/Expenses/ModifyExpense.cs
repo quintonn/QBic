@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
+using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Test.Models;
 using WebsiteTemplate.Utilities;
 
@@ -84,34 +85,32 @@ namespace WebsiteTemplate.Test.MenuItems.Departments.Expenses
             list.Add(new EnumComboBoxInput<ExpenseFrequency>("Frequency", "Frequency", false, null, x => x.Value, RowData?.GetValue("Frequency"), null)
             {
                 Mandatory = true,
-                //VisibilityConditions = new List<Condition>()
-                //{
-                //    new Condition("Category", Comparison.NotEquals, ExpenseCategory.Resource.ToString()),
-                //}
+                VisibilityConditions = new List<Condition>()
+                {
+                    new Condition("Category", Comparison.NotEquals, ExpenseCategory.Resource.ToString()),
+                }
             });
 
             list.Add(new NumericInput<int>("StartMonth", "Start Month", GetDefault("StartMonth", "1"), null, true));
             list.Add(new NumericInput<int>("EndMonth", "End Month", GetDefault("EndMonth", "60"), null, true)
             {
-                //VisibilityConditions = new List<Condition>()
-                //{
-                //    new Condition("Frequency", Comparison.NotEquals, ExpenseFrequency.OnceOff.ToString()),
-                //}
+                VisibilityConditions = new List<Condition>()
+                {
+                    new Condition("Frequency", Comparison.NotEquals, ExpenseFrequency.OnceOff.ToString()),
+                }
             });
 
             list.Add(new NumericInput<int>("RollOutPeriod", "Roll Out Period", GetDefault("RollOutPeriod"), null, true)
             {
-                //VisibilityConditions = new List<Condition>()
-                //{
-                //    new Condition("Category", Comparison.NotEquals, ExpenseCategory.Resource.ToString()),
-                //    new Condition("Category", Comparison.NotEquals, ExpenseCategory.ResourceExpense.ToString()),
-                //    new Condition("Type", Comparison.Equals, ExpenseType.Opex.ToString()),
-                //},
-                // TODO: These visibility conditions aren't working, get it working
+                VisibilityConditions = new List<Condition>()
+                {
+                    new Condition("Category", Comparison.NotEquals, ExpenseCategory.ResourceExpense.ToString()),
+                    new Condition("Type", Comparison.Equals, ExpenseType.Opex.ToString()),
+                },
             });
 
 
-            list.Add(new HiddenInput("rowId", RowId)); // Row id doesn't seem to get give a value?? // test with old UI
+            list.Add(new HiddenInput("rowId", RowId));
 
             return list;
         }
