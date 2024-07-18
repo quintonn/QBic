@@ -357,8 +357,7 @@ export const FormComponent = () => {
         default:
           break;
       }
-
-      onChange(f, defaultValue); // to update the visbility
+      onChange(f, defaultValue, true); // to update the visbility
     });
   };
 
@@ -391,11 +390,15 @@ export const FormComponent = () => {
 
           let newValue = [];
 
+          if (inputViewUpdateData == null) {
+            // this was a cancellation
+            return;
+          }
+
           if (inputViewUpdateData === -1) {
             // delete item
             newValue = currentValue;
             newValue.splice(parsedValue.rowId, 1);
-            console.log(newValue);
           } else if (parsedValue.rowId == -1) {
             // this is for a new item
             let rowId = -1;
@@ -434,6 +437,15 @@ export const FormComponent = () => {
     if (dummy == "reload") {
       buildInputs();
       checkCachedValues();
+      setDummy("reload-done");
+    } else if (dummy == "reload-done") {
+      const fields = currentMenu.InputFields;
+
+      fields.forEach((f) => {
+        const fieldValue = values[f.InputName];
+        onChange(f, fieldValue); // raise on property changed now to update visibility conditions etc
+      });
+
       setDummy("");
     }
   }, [dummy]);
@@ -615,10 +627,18 @@ export const FormComponent = () => {
     }));
   };
 
-  const onChange = async (field: InputField, value: any) => {
+  const onChange = async (
+    field: InputField,
+    value: any,
+    isScreenSetup: boolean = false
+  ) => {
     setValues((prevValues) => ({ ...prevValues, [field.InputName]: value }));
 
     await updateFieldErrors(field, value);
+
+    if (isScreenSetup === true) {
+      return; // don't handle property changed events or check visibility conditions during screen setup
+    }
 
     const fieldValue = await getInputValue(field, value);
     updateFieldVisibilities(field, fieldValue);
@@ -652,6 +672,8 @@ export const FormComponent = () => {
 
     const currentInputs = valuesRef.current; // TODO: exclude files somehow, because if a file is set, it breaks
     const formCacheKey = formStackId + "_form_values_cache";
+
+    mainApp.setInputViewUpdateData(null); // clear any values here
 
     const cacheItem: FormCacheData = {
       fieldName: field.InputName,
