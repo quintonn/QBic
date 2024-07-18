@@ -38,7 +38,7 @@ import { TableComponent } from "../View/Table.component";
 interface FormCacheData {
   fieldName: string;
   cacheValue: Record<string, any>;
-  rowId: number;
+  rowId: number; // for deletion
 }
 
 export const FormComponent = () => {
@@ -91,14 +91,19 @@ export const FormComponent = () => {
     } else if (field.InputType == 6) {
       // date
       if (value) {
-        //value = new Date(value).toISOString().split("T")[0];
-        const date = new Date(value);
-        value =
-          String(date.getDate()).padStart(2, "0") +
-          "-" +
-          String(date.getMonth() + 1).padStart(2, "0") +
-          "-" +
-          String(date.getFullYear()).padStart(2, "0");
+        value = new Date(value).toISOString().split("T")[0];
+
+        //TODO: make sure dates are working - test adding/editing/prop changed, etc
+
+        // This code is so it works in Odyssey I think
+        // const date = new Date(value);
+        // value =
+        //   String(date.getDate()).padStart(2, "0") +
+        //   "-" +
+        //   String(date.getMonth() + 1).padStart(2, "0") +
+        //   "-" +
+        //   String(date.getFullYear()).padStart(2, "0");
+        // TODO: revert this
       }
     } else if (field.InputType == 8) {
       // input view
@@ -191,6 +196,9 @@ export const FormComponent = () => {
 
   const onButtonClick = async (button: InputButton) => {
     setLoading(true);
+
+    // TODO: conditional mandatory setting
+    // TODO: test that all inputs and features are working
 
     try {
       if (button.ValidateInput) {
@@ -339,11 +347,6 @@ export const FormComponent = () => {
         }
         case 8: {
           // input view, do nothing extra
-          console.log(defaultValue);
-          if (defaultValue) {
-            defaultValue = JSON.parse(defaultValue);
-            console.log(defaultValue);
-          }
           break;
         }
         case 9: {
@@ -385,28 +388,30 @@ export const FormComponent = () => {
 
           const currentValue = values[parsedValue.fieldName] || [];
           const inputViewUpdateData = mainApp.inputViewUpdateData;
+
           let newValue = [];
 
           if (inputViewUpdateData === -1) {
+            // delete item
             newValue = currentValue;
             newValue.splice(parsedValue.rowId, 1);
             console.log(newValue);
-          } else {
-            if (parsedValue.rowId == -1) {
-              let rowId = -1;
-              for (let j = 0; j < currentValue.length; j++) {
-                rowId = Math.max(rowId, currentValue[j].rowId);
-              }
-              rowId++;
-
-              inputViewUpdateData.rowId = rowId;
-              newValue = [...currentValue, inputViewUpdateData];
-            } else {
-              const rowIndex = parsedValue.rowId;
-              newValue = currentValue;
-              inputViewUpdateData.rowId = rowIndex;
-              newValue[rowIndex] = inputViewUpdateData;
+          } else if (parsedValue.rowId == -1) {
+            // this is for a new item
+            let rowId = -1;
+            for (let j = 0; j < currentValue.length; j++) {
+              rowId = Math.max(rowId, currentValue[j].rowId);
             }
+            rowId++;
+
+            inputViewUpdateData.rowId = rowId;
+            newValue = [...currentValue, inputViewUpdateData];
+          } else {
+            // this is when an item is modified
+            const rowIndex = parsedValue.rowId;
+            newValue = currentValue;
+            inputViewUpdateData.rowId = rowIndex;
+            newValue[rowIndex] = inputViewUpdateData;
           }
 
           // update all rowIds
@@ -650,13 +655,11 @@ export const FormComponent = () => {
 
     const cacheItem: FormCacheData = {
       fieldName: field.InputName,
-      cacheValue: currentInputs,
+      cacheValue: currentInputs, //[field.InputName],
       rowId: rowData?.rowId ?? -1,
     };
-    localStorage.setItem(formCacheKey, JSON.stringify(cacheItem));
 
-    console.log("on input view column");
-    console.log(cacheItem);
+    localStorage.setItem(formCacheKey, JSON.stringify(cacheItem));
 
     return Promise.resolve();
   };
