@@ -89,7 +89,10 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
     // Remove keys that match filter cache
     for (let i = 0; i < localStorageLength; i++) {
       const key = localStorage.key(i);
-      if (key && key.includes("_filter_cache")) {
+      if (
+        key &&
+        (key.includes("_filter_cache") || key.includes("_form_values_cache"))
+      ) {
         localStorage.removeItem(key);
       }
     }

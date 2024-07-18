@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
-using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Test.Models;
 using WebsiteTemplate.Utilities;
 
@@ -65,11 +64,11 @@ namespace WebsiteTemplate.Test.MenuItems.Departments.Expenses
 
             if (IsNew == false)
             {
-                list.Add(new HiddenInput("ExpenseId", RowData?.GetValue("ExpenseId")));
+                list.Add(new HiddenInput("ExpenseId", RowData?.GetValue("Id")));
             }
 
             list.Add(new StringInput("Name", "Name", RowData?.GetValue("Name"), null, true));
-            /*
+            
             list.Add(new EnumComboBoxInput<ExpenseCategory>("Category", "Category", false, null, x => x.Value, RowData?.GetValue("Category"), null)
             {
                 Mandatory = true,
@@ -111,7 +110,6 @@ namespace WebsiteTemplate.Test.MenuItems.Departments.Expenses
                 // TODO: These visibility conditions aren't working, get it working
             });
 
-            */
 
             list.Add(new HiddenInput("rowId", RowId)); // Row id doesn't seem to get give a value?? // test with old UI
 
