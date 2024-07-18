@@ -63,8 +63,6 @@ namespace WebsiteTemplate.Backend.CsvUpload
                 results.Add(item);
             }
 
-            //return result;
-            // return JsonHelper.SerializeObject(results);
             return results;
         }
 
