@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -18,6 +19,7 @@ using QBic.Core.Services;
 using QBic.Core.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
@@ -206,12 +208,11 @@ namespace WebsiteTemplate
                 return next();
             });
             app.UseDefaultFiles();
-            app.UseStaticFiles();
-            //app.UseStaticFiles(new StaticFileOptions()
-            //{
-            //    //FileProvider = new PhysicalFileProvider("mypath"),
-            //    ServeUnknownFileTypes = true // else I get: The request path /api/v1/initializeSystem does not match a supported file type
-            //});
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "web-files")),
+                ServeUnknownFileTypes = true // else I get: The request path /api/v1/initializeSystem does not match a supported file type
+            });
 
             var appStartup = serviceProvider.GetService<ApplicationStartup>();
             appStartup?.RegisterUnityContainers(serviceProvider);

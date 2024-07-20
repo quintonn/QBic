@@ -37,6 +37,12 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Content Include="web-files\**\*">
+            <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
         <Content Include="wwwroot\readme.txt">
             <CopyToPublishDirectory>Always</CopyToPublishDirectory>
         </Content>
