@@ -93,3 +93,9 @@ jobs:
         
       - name: Create Nuget Package
         run: dotnet pack --no-build QBic.sln -c Release -o dist
+      
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: save artifacts
+          path: dist
