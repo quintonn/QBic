@@ -83,7 +83,7 @@ jobs:
       - name: Copy Front-end Build Output
         run: |
           mkdir -p WebsiteTemplate/web-files
-          cp -r QBic.FrontEnd_New/dist/* WebsiteTemplate/wwwroot
+          cp -r QBic.FrontEnd_New/dist/* WebsiteTemplate/web-files
 
       - name: Install .NET Dependencies
         run: dotnet restore QBic.sln

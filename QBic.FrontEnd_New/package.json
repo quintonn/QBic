@@ -5,8 +5,8 @@
   "source": "src/index.html",
   "scripts": {
     "clean:output": "rimraf dist",
-    "clean-destination": "rimraf ../WebsiteTemplate.Test/wwwroot",
-    "copy-dist": "cpy dist/* ../WebsiteTemplate.Test/wwwroot --parents",
+    "clean-destination": "rimraf ../WebsiteTemplate.Test/web-files",
+    "copy-dist": "cpy dist/* ../WebsiteTemplate.Test/web-files --parents",
     "start": "npm run clean:output && parcel",
     "build": "npm run clean:output && parcel build && npm run clean-destination && npm run copy-dist"
   },
