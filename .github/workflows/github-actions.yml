@@ -43,7 +43,6 @@ jobs:
         run: dotnet nuget push "dist/*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source ${{secrets.NUGET_SOURCE}} --skip-duplicate
 
   manual-build:
-    if: github.ref == 'refs/heads/new-ui'
     runs-on: windows-latest
     strategy:
       matrix:
