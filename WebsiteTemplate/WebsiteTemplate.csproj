@@ -5,7 +5,7 @@
         <Authors>Quintonn Rothmann</Authors>
         <Company>Quintonn Rothmann</Company>
         <Copyright>Copyright © 2018</Copyright>
-        <Version>8.0.0.9</Version>
+        <Version>8.0.0.15</Version>
         <RepositoryUrl>https://github.com/quintonn/QBic</RepositoryUrl>
         <Product>WebsiteTemplate</Product>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -18,7 +18,6 @@
         <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="8.0.7" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.7" />
-
     </ItemGroup>
 
     <ItemGroup>
@@ -35,19 +34,14 @@
         <Content Include="_wwwroot\**\*">
             <CopyToPublishDirectory>Always</CopyToPublishDirectory>
         </Content>
-    </ItemGroup>
-
-    <ItemGroup>
         <Content Include="wwwroot\readme.txt">
             <CopyToPublishDirectory>Always</CopyToPublishDirectory>
         </Content>
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="TestFiles/*.json" Pack="true" PackagePath="TestFiles" />
-        <None Include="TestFiles/**/*.html" Pack="true" PackagePath="TestFiles" />
-        <None Include="Markdown/*.md" Pack="true" PackagePath="Markdown" />
-        <None Include="Build/CopyFilesNuget.targets" Pack="true" PackagePath="build\CopyFilesNuget.targets"/>
+        <None Include="web-files/**/*.*" Pack="true" PackagePath="web-files" />
+        <None Include="Build/WebsiteTemplate.targets" Pack="true" PackagePath="build\WebsiteTemplate.targets"/>
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using QBic.Core.Utilities;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace WebsiteTemplate.Backend.Services
 {
     public class ApplicationService
     {
+        private static readonly ILogger Logger = SystemLogger.GetLogger<ApplicationService>();
         private static ApplicationSettingsCore ApplicationSettings { get; set; }
         private UserManager<User> UserContext { get; set; }
         private IHttpContextAccessor HttpContextAccessor { get; set; }
@@ -25,21 +27,18 @@ namespace WebsiteTemplate.Backend.Services
         
         public object InitializeApplication(string constructorError)
         {
-            //var version = XXXUtils.GetApplicationCoreVersion().ToString();
-
             var version = ApplicationSettings.GetType().Assembly.GetName().Version.ToString();
 
             using var session = DataService.OpenSession();
-            var appSettings = session.QueryOver<Models.SystemSettings>().List<Models.SystemSettings>().FirstOrDefault();
-
+            var systemSettings = session.QueryOver<Models.SystemSettings>().List<Models.SystemSettings>().FirstOrDefault();
+            
             var json = new
             {
                 ApplicationName = ApplicationSettings.GetApplicationName(),
                 Version = version,
                 ConstructorError = constructorError,
-                DateFormat = appSettings.DateFormat
+                DateFormat = systemSettings?.DateFormat ?? "dd-MM-yyyy"
             };
-
             return json;
         }
 
