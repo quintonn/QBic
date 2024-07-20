@@ -4,35 +4,90 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch: # This allows the workflow to be triggered manually
 
 jobs:
   build:
-
     runs-on: windows-latest
     strategy:
       matrix:
-        dotnet-version: ['8.0' ]
+        dotnet-version: ['8.0']
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
+
       - name: Setup Cache
         id: cache
         uses: actions/cache@v3
         with:
           path: ~/.nuget/packages
-          # Look to see if there is a cache hit for the corresponding requirements file
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
           restore-keys: |
             ${{ runner.os }}-nuget
+
       - name: Install Dependencies
         run: dotnet restore QBic.sln
+
       - name: Build Solution
         run: dotnet build QBic.sln --configuration Release --no-restore
+
       - name: Create Nuget Package
         run: dotnet pack --no-build QBic.sln -c Release -o dist
+
       - name: Publish Nuget Package
-        run: dotnet nuget push "dist\*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source ${{secrets.NUGET_SOURCE}} --skip-duplicate
+        run: dotnet nuget push "dist/*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source ${{secrets.NUGET_SOURCE}} --skip-duplicate
+
+  manual-build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        dotnet-version: ['8.0']
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: Setup Cache
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16' # Use the Node.js version compatible with your project
+
+      - name: Install Front-end Dependencies
+        working-directory: QBic.FrontEnd_New
+        run: npm install
+
+      - name: Build Front-end Project
+        working-directory: QBic.FrontEnd_New
+        run: npm run build
+
+      - name: Copy Front-end Build Output
+        run: |
+          mkdir -p WebsiteTemplate/web-files
+          cp -r QBic.FrontEnd_New/dist/* WebsiteTemplate/wwwroot
+
+      - name: Install .NET Dependencies
+        run: dotnet restore QBic.sln
+
+      - name: Build .NET Solution
+        run: dotnet build QBic.sln --configuration Release --no-restore
+        
+      - name: Create Nuget Package
+        run: dotnet pack --no-build QBic.sln -c Release -o dist
