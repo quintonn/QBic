@@ -45,3 +45,6 @@ WebsiteTemplate.Test/Data
 QBic.FrontEnd_New/.parcel-cache
 QBic.FrontEnd_New/node_modules
 QBic.FrontEnd_New/dist
+dist
+WebsiteTemplate/web-files
+WebsiteTemplate.Test/web-files

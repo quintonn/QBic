@@ -36,7 +36,7 @@
   <ItemGroup>
     <Folder Include="Logs\" />
     <Folder Include="MenuItems\MarketplaceItems\" />
-    <Folder Include="www-files\" />
+    <Folder Include="web-files\" />
   </ItemGroup> 
 
 
