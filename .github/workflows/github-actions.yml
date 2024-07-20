@@ -4,11 +4,6 @@ on:
   push:
     branches:
       - master
-      
-on:
-  push:
-    branches:
-      - new-ui  
   workflow_dispatch: # This allows the workflow to be triggered manually
 
 jobs:
