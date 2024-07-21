@@ -31,17 +31,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="_wwwroot\**\*">
-            <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-        </Content>
-        <Content Include="wwwroot\readme.txt">
-            <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-        </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Include="web-files/**/*.*" Pack="true" PackagePath="web-files" />
-        <None Include="Build/WebsiteTemplate.targets" Pack="true" PackagePath="build\WebsiteTemplate.targets"/>
+        <None Include="wwwroot/**/*.*" Pack="true" PackagePath="wwwroot" />
+        <None Include="Build/WebsiteTemplate.targets" Pack="true" PackagePath="build\WebsiteTemplate.targets" />
     </ItemGroup>
 
 </Project>
