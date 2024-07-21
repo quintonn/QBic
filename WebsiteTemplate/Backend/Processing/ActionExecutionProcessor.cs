@@ -172,7 +172,8 @@ namespace WebsiteTemplate.Backend.Processing
                         (input as IViewInput).ViewForInput.Columns = columns;
                     }
                 }
-                inputFields.Add(new HiddenInput("__init_data__", data));
+                inputFields.Add(new HiddenInput("__init_data__", data)); // I think the init data is just there for the CoreModify class and only to actually get the Id field
+                                                                         // Can be simplified
                 inputResult.InputFields = inputFields;
                 result.Add(inputResult);
             }
