@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using System;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
@@ -12,7 +13,7 @@ namespace WebsiteTemplate.Menus.InputItems
             }
         }
 
-        public DateInput(string name, string label, object defaultValue = null, string tabName = null, bool mandatory = false)
+        public DateInput(string name, string label, DateTime? defaultValue = null, string tabName = null, bool mandatory = false)
             : base(name, label, defaultValue, tabName, mandatory)
         {
         }

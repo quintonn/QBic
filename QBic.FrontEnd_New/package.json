@@ -5,10 +5,9 @@
   "source": "src/index.html",
   "scripts": {
     "clean:output": "rimraf dist",
-    "clean-destination": "rimraf ../WebsiteTemplate.Test/wwwroot",
     "copy-dist": "cpy dist/* ../WebsiteTemplate.Test/wwwroot --parents",
     "start": "npm run clean:output && parcel",
-    "build": "npm run clean:output && parcel build && npm run clean-destination && npm run copy-dist",
+    "build": "node scripts/clean.js && parcel build && npm run copy-dist",
     "todo": "echo 'TODO: add favicon.ico and other web files to the front-end project and github pipeline so it's copied into wwwroot too'"
   },
   "keywords": [],

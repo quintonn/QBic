@@ -79,8 +79,8 @@ namespace WebsiteTemplate.Test.MenuItems.Departments.Expenses
                 Mandatory = true
             });
             
-            list.Add(new NumericInput<int>("Quantity", "Quantity", GetDefault("Quantity", "1"), null, true));
-            list.Add(new NumericInput<double>("Amount", "Amount", GetDefault("Amount", "0"), null, true));
+            list.Add(new NumericInput<int>("Quantity", "Quantity", GetDefaultNumber("Quantity", 1), null, true));
+            list.Add(new NumericInput<double>("Amount", "Amount", GetDefaultNumber("Amount", 0), null, true));
 
             list.Add(new EnumComboBoxInput<ExpenseFrequency>("Frequency", "Frequency", false, null, x => x.Value, RowData?.GetValue("Frequency"), null)
             {
@@ -91,8 +91,8 @@ namespace WebsiteTemplate.Test.MenuItems.Departments.Expenses
                 }
             });
 
-            list.Add(new NumericInput<int>("StartMonth", "Start Month", GetDefault("StartMonth", "1"), null, true));
-            list.Add(new NumericInput<int>("EndMonth", "End Month", GetDefault("EndMonth", "60"), null, true)
+            list.Add(new NumericInput<int>("StartMonth", "Start Month", GetDefaultNumber("StartMonth", 1), null, true));
+            list.Add(new NumericInput<int>("EndMonth", "End Month", GetDefaultNumber("EndMonth", 60), null, true)
             {
                 VisibilityConditions = new List<Condition>()
                 {
@@ -100,7 +100,7 @@ namespace WebsiteTemplate.Test.MenuItems.Departments.Expenses
                 }
             });
 
-            list.Add(new NumericInput<int>("RollOutPeriod", "Roll Out Period", GetDefault("RollOutPeriod"), null, true)
+            list.Add(new NumericInput<int>("RollOutPeriod", "Roll Out Period", GetDefaultNumber("RollOutPeriod", 0), null, true)
             {
                 VisibilityConditions = new List<Condition>()
                 {
@@ -110,7 +110,7 @@ namespace WebsiteTemplate.Test.MenuItems.Departments.Expenses
             });
 
 
-            list.Add(new HiddenInput("rowId", RowId));
+            list.Add(new HiddenInput("rowId", RowId.ToString()));
 
             return list;
         }
@@ -123,6 +123,13 @@ namespace WebsiteTemplate.Test.MenuItems.Departments.Expenses
                 result = defaultValue;
             }
             return result;
+        }
+
+        private int GetDefaultNumber(string fieldName, int defaultValue = 0)
+        {
+            var value = GetDefault(fieldName, defaultValue.ToString());
+
+            return Convert.ToInt32(value);
         }
 
         //public override async Task<IList<IEvent>> OnPropertyChanged(string propertyName, object propertyValue)

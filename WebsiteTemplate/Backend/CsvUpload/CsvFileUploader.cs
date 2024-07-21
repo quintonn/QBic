@@ -33,7 +33,7 @@ namespace WebsiteTemplate.Backend.CsvUpload
             results.Add(new FileInput("File", "File", mandatory: true, tabName: tabName));
             results.Add(new StringInput("Separator", "Column Separator", ColumnSeparator, mandatory: true, tabName: tabName));
             results.Add(new NumericInput<int>("Skip", "Lines to Skip", LinesToSkip, tabName: tabName));
-            results.Add(new ViewInput("Mappings", "Column Mappings", new MappingView(), GetParameters(), mandatory: true, tabName: tabName));
+            results.Add(new ViewInput<CsvRowValue>("Mappings", "Column Mappings", new MappingView(), GetParameters(), mandatory: true, tabName: tabName));
             results.Add(new BooleanInput("IsQuoted", "Are values in quotes", false, null, false));
 
             results.AddRange(extraInputs);
@@ -46,34 +46,34 @@ namespace WebsiteTemplate.Backend.CsvUpload
             return new List<InputField>();
         }
 
-        private object GetParameters()
+        private List<IViewInputValue> GetParameters()
         {
             var columns = ColumnsToMap();
-            var results = new List<object>();
+            //var results = new List<IViewInputValue>();
 
-            var rowNumber = 0;
-            foreach (var column in columns)
-            {
-                var item = new
-                {
-                    column.Field,
-                    column.Columns,
-                    rowId = rowNumber++
-                };
-                results.Add(item);
-            }
+            //var rowNumber = 0;
+            //foreach (var column in columns)
+            //{
+            //    var item = new CsvRowValue()
+            //    {
+            //        Field = column.Field,
+            //        Columns = column.Columns,
+            //        rowId = rowNumber++
+            //    };
+            //    results.Add(item);
+            //}
 
-            return results;
+            return columns.Cast<IViewInputValue>().ToList();
         }
 
         public virtual string ColumnSeparator { get; } = ",";
         public virtual int LinesToSkip { get; } = 0;
 
-        public abstract List<ColumnSetting> ColumnsToMap();
+        public abstract List<CsvRowValue> ColumnsToMap();
 
         public abstract FileInfo ProcessMappingResults(List<MappedRow> mappedData, List<string> mappedErrors);
 
-        protected List<MappedRow> MapData(TextFieldParser parser, int linesToSkip, List<ColumnSetting> mappings, List<string> errors)
+        protected List<MappedRow> MapData(TextFieldParser parser, int linesToSkip, List<CsvRowValue> mappings, List<string> errors)
         {
             var results = new List<MappedRow>();
 
@@ -180,7 +180,7 @@ namespace WebsiteTemplate.Backend.CsvUpload
                         new ShowMessage("Number of lines to skip cannot be less than zero")
                     };
                 }
-                var mappings = GetValue<List<JToken>>("Mappings") ?? new List<JToken>();
+                var mappings = GetValue<List<CsvRowValue>>("Mappings") ?? new List<CsvRowValue>();
 
                 if (mappings.Count == 0)
                 {
@@ -190,20 +190,12 @@ namespace WebsiteTemplate.Backend.CsvUpload
                     };
                 }
 
-                var columnSettings = new List<ColumnSetting>();
-                foreach (JObject mapping in mappings)
-                {
-                    var field = mapping.GetValue("Field")?.ToString();
-                    var columns = mapping.GetValue("Columns")?.ToString();
-                    columnSettings.Add(new ColumnSetting(field, columns));
-                }
-
                 var parser = new TextFieldParser(new System.IO.StringReader(QBicUtils.GetString(file.Data)));
                 parser.HasFieldsEnclosedInQuotes = isQuoted;
                 parser.SetDelimiters(separator);
 
                 var errors = new List<string>();
-                var mappedData = MapData(parser, linesToSkip, columnSettings, errors);
+                var mappedData = MapData(parser, linesToSkip, mappings, errors);
                 parser.Close();
 
                 var fileData = ProcessMappingResults(mappedData, errors);

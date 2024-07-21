@@ -91,7 +91,7 @@ export const FormComponent = () => {
     } else if (field.InputType == 6) {
       // date
       if (value) {
-        value = new Date(value).toISOString().split("T")[0];
+        value = new Date(value).toISOString().split("T")[0]; // example date = 2024-07-21T00:00:00.000Z
 
         //TODO: make sure dates are working - test adding/editing/prop changed, etc
 
@@ -107,16 +107,8 @@ export const FormComponent = () => {
       }
     } else if (field.InputType == 8) {
       // input view
-
       value = valuesRef.current[field.InputName];
-
-      const params: any = {};
-
-      params["data"] = {
-        ViewData: value,
-        Filter: "",
-      };
-      return params;
+      return value;
     } else if (field.InputType == 9) {
       // file
 
