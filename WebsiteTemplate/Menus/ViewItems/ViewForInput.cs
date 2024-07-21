@@ -1,5 +1,4 @@
-﻿using NHibernate.Mapping;
-using System.Collections;
+﻿using System.Collections;
 using WebsiteTemplate.Menus.BaseItems;
 
 namespace WebsiteTemplate.Menus.ViewItems
@@ -23,7 +22,6 @@ namespace WebsiteTemplate.Menus.ViewItems
 
         public override sealed IEnumerable GetData(GetDataSettings settings)
         {
-            //throw new System.NotImplementedException();
             return null;
         }
 

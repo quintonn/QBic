@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using WebsiteTemplate.Menus.BaseItems;
+﻿using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
 
 namespace WebsiteTemplate.Test.MenuItems

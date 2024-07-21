@@ -14,7 +14,7 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public bool MultiLineText { get; set; } = false;
 
-        public StringInput(string name, string label, object defaultValue = null, string tabName = null, bool mandatory = false)
+        public StringInput(string name, string label, string defaultValue = null, string tabName = null, bool mandatory = false)
             : base(name, label, defaultValue, tabName, mandatory)
         {
         }

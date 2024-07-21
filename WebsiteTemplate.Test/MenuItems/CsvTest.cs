@@ -16,12 +16,12 @@ namespace WebsiteTemplate.Test.MenuItems
 
         public override string Description => "Test CSV File Uploader";
 
-        public override List<ColumnSetting> ColumnsToMap()
+        public override List<CsvRowValue> ColumnsToMap()
         {
-            return new List<ColumnSetting>()
+            return new List<CsvRowValue>()
             {
-                new ColumnSetting("name", "1"),
-                new ColumnSetting("age", "2")
+                new CsvRowValue("name", "1", 0),
+                new CsvRowValue("age", "2", 1)
             };
         }
 

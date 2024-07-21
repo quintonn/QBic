@@ -66,15 +66,15 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 
                 if (baseType == typeof(String))
                 {
-                    list.Add(new StringInput(input.Key, input.Value, defaultValue));
+                    list.Add(new StringInput(input.Key, input.Value, defaultValue as string));
                 }
                 else if (baseType == typeof(int))
                 {
-                    list.Add(new NumericInput<int>(input.Key, input.Value, defaultValue));
+                    list.Add(new NumericInput<int>(input.Key, input.Value, defaultValue as int?));
                 }
                 else if (baseType == typeof(DateTime) || baseType == typeof(DateTime?))
                 {
-                    list.Add(new DateInput(input.Key, input.Value, defaultValue));
+                    list.Add(new DateInput(input.Key, input.Value, defaultValue as DateTime?));
                 }
                 else if (baseType == typeof(bool))
                 {
@@ -82,7 +82,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                 }
                 else if (baseType == typeof(LongString))
                 {
-                    list.Add(new StringInput(input.Key, input.Value, defaultValue)
+                    list.Add(new StringInput(input.Key, input.Value, defaultValue as string)
                     {
                         MultiLineText = true
                     });
@@ -117,7 +117,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 
             }
 
-            list.Add(new HiddenInput("IsNew", IsNew));
+            list.Add(new HiddenInput("IsNew", IsNew.ToString()));
             list.Add(new HiddenInput("Id", Item?.Id));
 
 

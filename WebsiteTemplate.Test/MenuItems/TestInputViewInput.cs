@@ -48,7 +48,7 @@ namespace WebsiteTemplate.Test.MenuItems
                 TabName = "Main"
             });
 
-            result.Add(new ViewInput("Items", "Items", new TestInputView())
+            result.Add(new ViewInput<IViewInputValue>("Items", "Items", new TestInputView())
             {
                 TabName = "View"
             });

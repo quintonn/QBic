@@ -491,7 +491,9 @@ export const TableComponent = ({
       header={
         <Header
           variant="awsui-h1-sticky"
-          counter={`(${viewSettings.totalLines})`}
+          counter={`(${
+            isEmbedded ? tableItems.length : viewSettings.totalLines
+          })`}
           actions={
             <SpaceBetween direction="horizontal" size="xs">
               {/* <Button>Back</Button> How will we handle this?? */}

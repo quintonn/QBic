@@ -163,13 +163,13 @@ namespace WebsiteTemplate.Backend.Processing
                 for (var i = 0; i < inputFields.Count; i++)
                 {
                     var input = inputFields[i];
-                    if (input is ViewInput)
+                    if (input.InputType == InputType.View)
                     {
                         var user = await GetLoggedInUser();
                         var allowedMenus = GetAllowedEventsForUser(user?.Id);
 
-                        var columns = (input as ViewInput).ViewForInput.DoConfigureColumns(allowedMenus);
-                        (input as ViewInput).ViewForInput.Columns = columns;
+                        var columns = (input as IViewInput).ViewForInput.DoConfigureColumns(allowedMenus);
+                        (input as IViewInput).ViewForInput.Columns = columns;
                     }
                 }
                 inputFields.Add(new HiddenInput("__init_data__", data));

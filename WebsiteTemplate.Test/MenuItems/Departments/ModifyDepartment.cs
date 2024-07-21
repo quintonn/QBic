@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using NHibernate;
-using NHibernate.Cfg;
+﻿using NHibernate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,12 +33,12 @@ namespace WebsiteTemplate.Test.MenuItems.Departments
 
             result.Add(new StringInput("Name", "Name", Item?.Name, "General", true));
 
-            object defaultValues = null;
+            List<IViewInputValue> defaultValues = null;
             if (!string.IsNullOrWhiteSpace(Item?.Id))
             {
                 using var session = DataService.OpenStatelessSession();
                 var expenseItems = session.QueryOver<Expense>().Where(x => x.Department.Id == Item.Id).List().ToList();
-                defaultValues = expenseItems.OrderBy(x => x.Id).Select((x, index) => new
+                defaultValues = expenseItems.OrderBy(x => x.Name).Select((x, index) => new ExpenseRowItem()
                 {
                     Id = x.Id,
                     Name = x.Name,
@@ -52,11 +50,11 @@ namespace WebsiteTemplate.Test.MenuItems.Departments
                     StartMonth = x.StartMonth,
                     EndMonth = x.EndMonth,
                     RollOutPeriod = x.RollOutPeriod,
-                    rowId = index, // TODO: Need a way to auto add rowIds, or force user to set these (auto will be better);
-                }).ToList();
+                    rowId = index, 
+                }).Cast<IViewInputValue>().ToList();
             }
             
-            result.Add(new ViewInput("Expenses", "Expenses", new ViewExpenses(DataService), defaultValues, "General", true));
+            result.Add(new ViewInput<ExpenseRowItem>("Expenses", "Expenses", new ViewExpenses(), defaultValues, "General", true));
 
             return result;
         }
@@ -76,7 +74,7 @@ namespace WebsiteTemplate.Test.MenuItems.Departments
 
             session.SaveOrUpdate(dbItem);
 
-            var expenseInfo = GetValue<List<JToken>>("Expenses") ?? new List<JToken>();
+            var expenseInfo = GetValue<List<ExpenseRowItem>>("Expenses") ?? new List<ExpenseRowItem>();
 
             if (expenseInfo.Count == 0)
             {
@@ -89,41 +87,28 @@ namespace WebsiteTemplate.Test.MenuItems.Departments
             var existingExpenseItems = session.QueryOver<Expense>().Where(x => x.Department.Id == id).List().ToList();
             var existingExpenseIds = existingExpenseItems.Select(x => x.Id).ToList();
 
-            foreach (JObject item in expenseInfo)
+            foreach (var item in expenseInfo)
             {
-                var name = item.GetValue("Name")?.ToString();
-                var category = item.GetValue("Category")?.ToObject<ExpenseCategory>();
-                var type = item.GetValue("Type")?.ToObject<ExpenseType>();
-                var qty = item.GetValue("Quantity")?.ToObject<int>();
-                var amount = item.GetValue("Amount")?.ToObject<double>();
-                var frequency = item.GetValue("Frequency")?.ToObject<ExpenseFrequency>();
-                var startMonth = item.GetValue("StartMonth")?.ToObject<int>();
-                var endMonth = item.GetValue("EndMonth")?.ToObject<int>();
-                var rollOutPeriod = item.GetValue("RollOutPeriod")?.ToObject<int>();
-                var expenseId = item.GetValue("ExpenseId")?.ToString();
-
                 Expense dbExpense;
-                if (!string.IsNullOrWhiteSpace(expenseId))
+                if (!string.IsNullOrWhiteSpace(item.Id))
                 {
-                    dbExpense = session.Get<Expense>(expenseId);
-
-                    existingExpenseIds.Remove(expenseId);
+                    dbExpense = session.Get<Expense>(item.Id);
+                    existingExpenseIds.Remove(item.Id);
                 }
                 else
                 {
                     dbExpense = new Expense();
                 }
 
-                dbExpense.Name = name;
-                dbExpense.Category = category ?? ExpenseCategory.Other;
-                dbExpense.ExpenseType = type ?? ExpenseType.Capex;
-                dbExpense.StartMonth = startMonth ?? 0;
-                dbExpense.EndMonth = endMonth ?? 0;
-                dbExpense.RollOutPeriod = rollOutPeriod ?? 0;
-                dbExpense.Quantity = qty ?? 0;
-                dbExpense.Amount = amount ?? 0;
-
-                dbExpense.Department = dbItem;
+                dbExpense.Name = item.Name;
+                dbExpense.Category = Enum.Parse<ExpenseCategory>(item.Category);
+                dbExpense.ExpenseType = Enum.Parse<ExpenseType>(item.Type);
+                dbExpense.StartMonth = item.StartMonth;
+                dbExpense.EndMonth = item.EndMonth;
+                dbExpense.RollOutPeriod = item.RollOutPeriod;
+                dbExpense.Quantity = item.Quantity;
+                dbExpense.Amount = item.Amount;
+                dbExpense.Department = dbItem; // Assuming dbItem is defined elsewhere
 
                 DataService.SaveOrUpdate(session, dbExpense);
             }
