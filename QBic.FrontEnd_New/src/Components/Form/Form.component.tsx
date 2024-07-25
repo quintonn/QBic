@@ -642,31 +642,21 @@ export const FormComponent = ({ menuItem, visible }: FormComponentProps) => {
     }
   };
 
-  // XXXXXXX
   const onInputViewColumnActionClick = async (
     field: InputField,
     rowData: any
   ): Promise<void> => {
     const currentInputs = valuesRef.current;
-    menuItem.InputFields.forEach((f) => {
-      if (f.InputType == 9) {
-        //currentInputs[f.InputName] = []; // have to remove any file inputs because a file's input can't be set in javascript
-      }
-      // TODO: This can potentially be fixed by having a stack of FormComponents each with a visible state.
-      //       So when opening a "new form", we can simply create a new FormComponent, and setting the previous one to invisibile
-    });
 
     mainApp.setInputViewUpdateData(null); // clear any values here
 
     const cacheItem: FormCacheData = {
       fieldName: field.InputName,
-      cacheValue: currentInputs, //[field.InputName],
+      cacheValue: currentInputs,
       rowId: rowData?.rowId ?? -1,
     };
 
     setFormCache(cacheItem);
-
-    //localStorage.setItem(formCacheKey, JSON.stringify(cacheItem));
 
     return Promise.resolve();
   };
