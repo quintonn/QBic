@@ -46,6 +46,8 @@ namespace WebsiteTemplate.Backend.SystemSettings
         {
             var result = new List<InputField>();
 
+            // TODO: can get rid of date format, and maybe other settings ??
+
             result.Add(new StringInput("EmailFromAddress", "From Email", SystemSettings?.EmailFromAddress, "Mail Settings", true));
             result.Add(new StringInput("EmailHost", "Email Host", SystemSettings?.EmailHost, "Mail Settings", true));
             result.Add(new StringInput("EmailUserName", "Username", SystemSettings?.EmailUserName, "Mail Settings", false));

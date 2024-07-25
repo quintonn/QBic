@@ -9,29 +9,43 @@ import { ModalProvider } from "../../ContextProviders/ModalProvider/ModalProvide
 import { FormComponent } from "../Form/Form.component";
 import { ActionProvider } from "../../ContextProviders/ActionProvider/ActionProvider";
 
-const ROUTES = [
-  { path: "/*", element: <Home /> },
-  { path: "/view/*", element: <ViewComponent /> },
-  { path: "/form/*", element: <FormComponent /> },
-  { path: "/login", element: <Login /> },
-];
+// const ROUTES = [
+//   { path: "/*", element: <Home /> },
+//   { path: "/view/*", element: <ViewComponent /> },
+//   { path: "/form/*", element: <FormComponent /> },
+//   { path: "/login", element: <Login /> },
+// ];
 
 export const MainBody = () => {
-  const router = createHashRouter([
-    {
-      element: (
-        <AuthProvider>
-          <ModalProvider>
-            <ActionProvider>
-              <MenuProvider>
-                <MainAppLayout content={<Outlet></Outlet>} />
-              </MenuProvider>
-            </ActionProvider>
-          </ModalProvider>
-        </AuthProvider>
-      ),
-      children: ROUTES,
-    },
-  ]);
-  return <RouterProvider router={router} />;
+  return (
+    <AuthProvider>
+      <ModalProvider>
+        <ActionProvider>
+          <MenuProvider>
+            <MainAppLayout />
+          </MenuProvider>
+        </ActionProvider>
+      </ModalProvider>
+    </AuthProvider>
+  );
 };
+
+// export const MainBody = () => {
+//   const router = createHashRouter([
+//     {
+//       element: (
+//         <AuthProvider>
+//           <ModalProvider>
+//             <ActionProvider>
+//               <MenuProvider>
+//                 <MainAppLayout content={<Outlet></Outlet>} />
+//               </MenuProvider>
+//             </ActionProvider>
+//           </ModalProvider>
+//         </AuthProvider>
+//       ),
+//       children: ROUTES,
+//     },
+//   ]);
+//   return <RouterProvider router={router} />;
+// };

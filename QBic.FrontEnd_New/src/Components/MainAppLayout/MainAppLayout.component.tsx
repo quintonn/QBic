@@ -5,8 +5,11 @@ import {
   SideNavigation,
   TopNavigation,
 } from "@cloudscape-design/components";
-import { useState } from "react";
-import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
+import { useEffect, useState } from "react";
+import {
+  DisplayItem,
+  useMainApp,
+} from "../../ContextProviders/MainAppProvider/MainAppProvider";
 import { useAuth } from "../../ContextProviders/AuthProvider/AuthProvider";
 import {
   AppMenuItem,
@@ -15,9 +18,13 @@ import {
 import { removeMessage, selectedMessages } from "../../App/flashbarSlice";
 import { useAppDispatch, useAppSelector } from "../../App/hooks";
 import { useActions } from "../../ContextProviders/ActionProvider/ActionProvider";
+import { FormComponent } from "../Form/Form.component";
+import { Home } from "../Home/Home.component";
+import { Login } from "../Login/Login.component";
+import { ViewComponent } from "../View/View.component";
 
 interface MainAppLayoutProps extends AppLayoutProps {
-  content: React.ReactNode;
+  //content: React.ReactNode;
 }
 
 const findClickedItem = (id: string, items: AppMenuItem[]): AppMenuItem => {
@@ -35,7 +42,7 @@ const findClickedItem = (id: string, items: AppMenuItem[]): AppMenuItem => {
   return null;
 };
 
-export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
+export const MainAppLayout = (props: MainAppLayoutProps) => {
   const [activeHref, setActiveHref] = useState("#");
 
   const { messages } = useAppSelector(selectedMessages);
@@ -79,6 +86,8 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
 
     const menuItemClicked = findClickedItem(itemId, menus.appMenuItems);
 
+    mainApp.clearDisplayStack();
+
     onMenuClick(menuItemClicked.event);
   };
 
@@ -97,6 +106,29 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
       }
     }
   };
+
+  const content = (display: DisplayItem) => {
+    switch (display.type) {
+      case "login":
+        return <Login />;
+      case "form":
+        return (
+          <FormComponent
+            menuItem={mainApp.currentItem.menu}
+            visible={display.visible}
+          />
+        );
+      case "view":
+        return <ViewComponent menuItem={mainApp.currentItem.menu} />;
+      case "home":
+        return <Home />;
+    }
+  };
+
+  // useEffect(() => {
+  //   console.log("component changed");
+  //   console.log(mainApp.currentItem);
+  // }, [mainApp.currentItem?.component]);
 
   return (
     <>
@@ -118,7 +150,14 @@ export const MainAppLayout = ({ content }: MainAppLayoutProps) => {
       </div>
       <AppLayout
         headerSelector="#h"
-        content={content}
+        content={mainApp.displayStack?.map((d) => (
+          <div
+            key={d.id}
+            style={{ display: d.visible == true ? "block" : "none" }}
+          >
+            {d?.component()}
+          </div>
+        ))}
         contentType={mainApp.currentContentType}
         toolsHide={true}
         navigationHide={!auth.isAuthenticated}

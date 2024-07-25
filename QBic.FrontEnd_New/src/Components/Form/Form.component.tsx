@@ -41,14 +41,18 @@ interface FormCacheData {
   rowId: number; // for deletion
 }
 
-export const FormComponent = () => {
+interface FormComponentProps {
+  menuItem: MenuDetail;
+  visible: boolean;
+}
+
+export const FormComponent = ({ menuItem, visible }: FormComponentProps) => {
   const mainApp = useMainApp();
   const [loading, setLoading] = useState(false);
-  const location = useLocation();
-  const [currentMenu, setCurrentMenu] = useState<MenuDetail>();
+  //const location = useLocation();
+  //const [currentMenu, setCurrentMenu] = useState<MenuDetail>();
   const dispatch = useAppDispatch();
-
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -64,6 +68,8 @@ export const FormComponent = () => {
   const { handleAction } = useActions();
 
   const valuesRef = useRef<Record<string, any>>({});
+
+  const [formCache, setFormCache] = useState<FormCacheData>(null);
 
   valuesRef.current = values;
 
@@ -171,8 +177,8 @@ export const FormComponent = () => {
   const getInputValues = async (includeAll: boolean = false) => {
     const result: any = {};
 
-    for (let i = 0; i < currentMenu.InputFields.length; i++) {
-      const field = currentMenu.InputFields[i];
+    for (let i = 0; i < menuItem.InputFields.length; i++) {
+      const field = menuItem.InputFields[i];
 
       if (includeAll != true) {
         const isVisible = fieldVisibility[field.InputName];
@@ -195,8 +201,8 @@ export const FormComponent = () => {
     try {
       if (button.ValidateInput) {
         //todo : validate all input fields -> currentMenu.fields with values
-        for (let i = 0; i < currentMenu.InputFields.length; i++) {
-          const field = currentMenu.InputFields[i];
+        for (let i = 0; i < menuItem.InputFields.length; i++) {
+          const field = menuItem.InputFields[i];
           const value = await getInputValue(field);
           const validationResult = validateField(field, value);
           if (validationResult.length > 0) {
@@ -204,6 +210,7 @@ export const FormComponent = () => {
           }
         }
       }
+
       const params = await getInputValues();
 
       const data: any = {
@@ -213,7 +220,7 @@ export const FormComponent = () => {
 
       // call api
       const resp = await api.makeApiCall<MenuDetail[]>(
-        "processEvent/" + currentMenu.Id,
+        "processEvent/" + menuItem.Id,
         "POST",
         data
       );
@@ -264,7 +271,7 @@ export const FormComponent = () => {
   };
 
   const buildInputs = () => {
-    const fields = currentMenu.InputFields;
+    const fields = menuItem.InputFields;
 
     const defaultVisibility = fields.reduce((prev, f) => {
       prev[f.InputName] = true;
@@ -284,6 +291,7 @@ export const FormComponent = () => {
 
     fields.forEach((f) => {
       let defaultValue = f.DefaultValue;
+
       switch (f.InputType) {
         case 3: {
           // combo box
@@ -355,92 +363,164 @@ export const FormComponent = () => {
 
   const [dummy, setDummy] = useState("");
 
+  // useEffect(() => {
+  //   if (location && location.pathname) {
+  //     const menuItem = mainApp.getCacheValue(location.pathname);
+  //     if (menuItem) {
+  //       setCurrentMenu(menuItem);
+  //       setDummy("reload"); // using this because if location is same, current menu doesn't change and doesn't trigger the cache values check
+  //     }
+  //   }
+  // }, [location]);
+
+  const [prevMenu, setPrevMenu] = useState<MenuDetail>(null);
+
   useEffect(() => {
-    if (location && location.pathname) {
-      const menuItem = mainApp.getCacheValue(location.pathname);
-      if (menuItem) {
-        setCurrentMenu(menuItem);
-        setDummy("reload"); // using this because if location is same, current menu doesn't change and doesn't trigger the cache values check
-      }
+    console.log("menuChanged");
+    console.log(menuItem);
+    console.log(prevMenu);
+    if (menuItem && menuItem.Id != prevMenu?.Id) {
+      setPrevMenu(menuItem);
+      setDummy("reload");
     }
-  }, [location]);
+  }, [menuItem]);
 
-  const checkCachedValues = async () => {
-    if (mainApp.getUseCachedValues(currentMenu.Id) === true) {
-      mainApp.updateUseCachedValues(currentMenu.Id, false);
-      const formCacheKey = mainApp.popFormCache() + "_form_values_cache";
+  useEffect(() => {
+    //console.log("form useEffect");
+  }, []);
 
-      const cachedValue = localStorage.getItem(formCacheKey);
-      localStorage.removeItem(formCacheKey);
-      if (cachedValue) {
-        const parsedValue = JSON.parse(cachedValue) as FormCacheData;
-        if (parsedValue) {
-          setValues(parsedValue.cacheValue);
+  useEffect(() => {
+    if (mainApp.inputViewUpdateData != null && visible && formCache != null) {
+      // console.log("------------------------------------------------------");
+      // console.log("inputviewdata updated (form component)");
 
-          const currentValue = values[parsedValue.fieldName] || [];
-          const inputViewUpdateData = mainApp.inputViewUpdateData;
+      // console.log(mainApp.inputViewUpdateData);
+      // console.log(menuItem);
+      // console.log("is visible = " + visible);
+      // console.log(formCache);
+      // console.log("==============================================");
+      const currentValue = values[formCache.fieldName] || [];
+      const inputViewUpdateData = mainApp.inputViewUpdateData;
 
-          let newValue = [];
+      let newValue = [];
 
-          if (inputViewUpdateData == null) {
-            // this was a cancellation
-            return;
-          }
+      if (inputViewUpdateData == null) {
+        // this was a cancellation
+        return;
+      }
 
-          if (inputViewUpdateData === -1) {
-            // delete item
-            newValue = currentValue;
-            newValue.splice(parsedValue.rowId, 1);
-          } else if (parsedValue.rowId == -1) {
-            // this is for a new item
-            let rowId = -1;
-            for (let j = 0; j < currentValue.length; j++) {
-              rowId = Math.max(rowId, currentValue[j].rowId);
-            }
-            rowId++;
-
-            inputViewUpdateData.rowId = rowId;
-            newValue = [...currentValue, inputViewUpdateData];
-          } else {
-            // this is when an item is modified
-            const rowIndex = parsedValue.rowId;
-            newValue = currentValue;
-            inputViewUpdateData.rowId = rowIndex;
-            newValue[rowIndex] = inputViewUpdateData;
-          }
-
-          // update all rowIds
-          let index = 0;
-          for (let j = 0; j < newValue.length; j++) {
-            newValue[j].rowId = index;
-            index++;
-          }
-
-          setValues((prevValues) => ({
-            ...prevValues,
-            [parsedValue.fieldName]: newValue,
-          }));
+      if (inputViewUpdateData === -1) {
+        // delete item
+        newValue = currentValue;
+        newValue.splice(formCache.rowId, 1);
+      } else if (formCache.rowId == -1) {
+        // this is for a new item
+        let rowId = -1;
+        for (let j = 0; j < currentValue.length; j++) {
+          rowId = Math.max(rowId, currentValue[j].rowId);
         }
+        rowId++;
+
+        inputViewUpdateData.rowId = rowId;
+        newValue = [...currentValue, inputViewUpdateData];
+      } else {
+        // this is when an item is modified
+        const rowIndex = formCache.rowId;
+        newValue = currentValue;
+        inputViewUpdateData.rowId = rowIndex;
+        newValue[rowIndex] = inputViewUpdateData;
       }
+
+      // update all rowIds
+      let index = 0;
+      for (let j = 0; j < newValue.length; j++) {
+        newValue[j].rowId = index;
+        index++;
+      }
+
+      setValues((prevValues) => ({
+        ...prevValues,
+        [formCache.fieldName]: newValue,
+      }));
     }
-  };
+  }, [mainApp.inputViewUpdateData]);
 
-  useEffect(() => {
-    if (dummy == "reload") {
-      buildInputs();
-      checkCachedValues();
-      setDummy("reload-done");
-    } else if (dummy == "reload-done") {
-      const fields = currentMenu.InputFields;
+  // const checkCachedValues = async () => {
+  //   if (mainApp.getUseCachedValues(menuItem.Id) === true) {
+  //     mainApp.updateUseCachedValues(menuItem.Id, false);
+  //     const formCacheKey = mainApp.popFormCache() + "_form_values_cache";
 
-      fields.forEach((f) => {
-        const fieldValue = values[f.InputName];
-        onChange(f, fieldValue); // raise on property changed now to update visibility conditions etc
-      });
+  //     const cachedValue = localStorage.getItem(formCacheKey);
+  //     localStorage.removeItem(formCacheKey);
+  //     if (cachedValue) {
+  //       const parsedValue = JSON.parse(cachedValue) as FormCacheData;
+  //       if (parsedValue) {
+  //         setValues(parsedValue.cacheValue);
 
-      setDummy("");
-    }
-  }, [dummy]);
+  //         const currentValue = values[parsedValue.fieldName] || [];
+  //         const inputViewUpdateData = mainApp.inputViewUpdateData;
+
+  //         let newValue = [];
+
+  //         if (inputViewUpdateData == null) {
+  //           // this was a cancellation
+  //           return;
+  //         }
+
+  //         if (inputViewUpdateData === -1) {
+  //           // delete item
+  //           newValue = currentValue;
+  //           newValue.splice(parsedValue.rowId, 1);
+  //         } else if (parsedValue.rowId == -1) {
+  //           // this is for a new item
+  //           let rowId = -1;
+  //           for (let j = 0; j < currentValue.length; j++) {
+  //             rowId = Math.max(rowId, currentValue[j].rowId);
+  //           }
+  //           rowId++;
+
+  //           inputViewUpdateData.rowId = rowId;
+  //           newValue = [...currentValue, inputViewUpdateData];
+  //         } else {
+  //           // this is when an item is modified
+  //           const rowIndex = parsedValue.rowId;
+  //           newValue = currentValue;
+  //           inputViewUpdateData.rowId = rowIndex;
+  //           newValue[rowIndex] = inputViewUpdateData;
+  //         }
+
+  //         // update all rowIds
+  //         let index = 0;
+  //         for (let j = 0; j < newValue.length; j++) {
+  //           newValue[j].rowId = index;
+  //           index++;
+  //         }
+
+  //         setValues((prevValues) => ({
+  //           ...prevValues,
+  //           [parsedValue.fieldName]: newValue,
+  //         }));
+  //       }
+  //     }
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (dummy == "reload") {
+  //     buildInputs();
+  //     checkCachedValues();
+  //     setDummy("reload-done");
+  //   } else if (dummy == "reload-done") {
+  //     const fields = menuItem.InputFields;
+
+  //     fields.forEach((f) => {
+  //       const fieldValue = values[f.InputName];
+  //       onChange(f, fieldValue); // raise on property changed now to update visibility conditions etc
+  //     });
+
+  //     setDummy("");
+  //   }
+  // }, [dummy]);
 
   const conditionIsMet = (condition: VisibilityConditions, value: any) => {
     if (condition.Comparison == 0) {
@@ -471,11 +551,11 @@ export const FormComponent = () => {
         Data: {
           PropertyName: field.InputName,
           PropertyValue: fieldValue,
-          EventId: currentMenu.Id,
+          EventId: menuItem.Id,
         },
       };
       const resp = await api.makeApiCall<MenuDetail[]>(
-        "propertyChanged/" + currentMenu.Id,
+        "propertyChanged/" + menuItem.Id,
         "POST",
         data
       );
@@ -491,7 +571,7 @@ export const FormComponent = () => {
                 [item.InputName]: item.ListItems,
               }));
 
-              const fld = currentMenu.InputFields.filter(
+              const fld = menuItem.InputFields.filter(
                 (f) => f.InputName == item.InputName
               )[0];
               const currentValue = await getInputValue(fld);
@@ -555,7 +635,7 @@ export const FormComponent = () => {
     fieldChanged: InputField,
     valueChanged: any
   ) => {
-    const otherFields = currentMenu.InputFields.filter(
+    const otherFields = menuItem.InputFields.filter(
       (f) =>
         f.VisibilityConditions.filter(
           (v) => v.ColumnName == fieldChanged.InputName
@@ -658,15 +738,17 @@ export const FormComponent = () => {
     field: InputField,
     rowData: any
   ): Promise<void> => {
-    mainApp.updateUseCachedValues(currentMenu.Id, true); // TODO: if the same form is used to get input, this will break (who will do this?)
+    mainApp.updateUseCachedValues(menuItem.Id, true); // TODO: if the same form is used to get input, this will break (who will do this?)
 
     const formStackId = mainApp.updateFormCacheStack();
 
     const currentInputs = valuesRef.current;
-    currentMenu.InputFields.forEach((f) => {
+    menuItem.InputFields.forEach((f) => {
       if (f.InputType == 9) {
-        currentInputs[f.InputName] = []; // have to remove any file inputs because a file's input can't be set in javascript
+        //currentInputs[f.InputName] = []; // have to remove any file inputs because a file's input can't be set in javascript
       }
+      // TODO: This can potentially be fixed by having a stack of FormComponents each with a visible state.
+      //       So when opening a "new form", we can simply create a new FormComponent, and setting the previous one to invisibile
     });
     const formCacheKey = formStackId + "_form_values_cache";
 
@@ -678,7 +760,9 @@ export const FormComponent = () => {
       rowId: rowData?.rowId ?? -1,
     };
 
-    localStorage.setItem(formCacheKey, JSON.stringify(cacheItem));
+    setFormCache(cacheItem);
+
+    //localStorage.setItem(formCacheKey, JSON.stringify(cacheItem));
 
     return Promise.resolve();
   };
@@ -818,7 +902,7 @@ export const FormComponent = () => {
   };
 
   const getTabContent = (tabName: string) => {
-    const fields = currentMenu.InputFields.filter(
+    const fields = menuItem.InputFields.filter(
       (x) => x.TabName == tabName || (tabName == null && x.TabName == "")
     );
 
@@ -842,13 +926,13 @@ export const FormComponent = () => {
   };
 
   const getTabs = () => {
-    if (currentMenu == null) {
+    if (menuItem == null) {
       return null;
     }
 
     // Get unique tab names, ignore hidden inputs
     const uniqueTabs = new Set<string>();
-    currentMenu.InputFields.forEach((field) => {
+    menuItem.InputFields.forEach((field) => {
       if (field.InputType != 2) {
         uniqueTabs.add(field.TabName || "");
       }
@@ -884,12 +968,12 @@ export const FormComponent = () => {
     <form onSubmit={onFormSubmit}>
       <Form
         variant="full-page"
-        header={<Header variant="awsui-h1-sticky">{currentMenu?.Title}</Header>}
+        header={<Header variant="awsui-h1-sticky">{menuItem?.Title}</Header>}
         // errorText="Some error"
         errorText={errorMessage}
         actions={
           <SpaceBetween direction="horizontal" size="xs" alignItems="end">
-            {currentMenu?.InputButtons?.map((b) => (
+            {menuItem?.InputButtons?.map((b) => (
               <Button
                 key={b.Label}
                 variant="primary"

@@ -106,6 +106,7 @@ export const useApi = () => {
           });
       } else if (response.status == 400) {
         let message = await response.text();
+        console.log(message);
         if (message.includes("invalid_grant")) {
           message = "Incorrect username or password";
           // show message that username or password was incorrect

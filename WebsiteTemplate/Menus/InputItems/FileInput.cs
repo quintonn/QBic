@@ -19,7 +19,7 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public override object GetValue(JToken jsonToken)
         {
-            if (jsonToken == null)
+            if (jsonToken == null || jsonToken.ToString() == "[]")
             {
                 return null;
             }

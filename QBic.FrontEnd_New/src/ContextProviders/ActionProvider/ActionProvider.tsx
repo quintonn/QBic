@@ -17,12 +17,11 @@ interface ActionContextType {
 const ActionContext = createContext<ActionContextType>(null);
 
 export const ActionProvider = ({ children }) => {
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const modal = useModal();
   const api = useApi();
   const mainApp = useMainApp();
   const auth = useAuth();
-  const location = useLocation();
 
   const encode = (str: string) => {
     return btoa(str);
@@ -108,14 +107,16 @@ export const ActionProvider = ({ children }) => {
 
         const path = "/view/" + item.Id;
         mainApp.setCacheValue(path, item);
-        navigate(path);
+        //navigate(path);
+        mainApp.setCurrentItem({ menu: item, type: "view" });
         break;
       }
       case 1: {
         // get inputs
         const path = "/form/" + item.Id;
         mainApp.setCacheValue(path, item);
-        navigate(path);
+        //navigate(path);
+        mainApp.setCurrentItem({ menu: item, type: "form" });
         break;
       }
       //case 2: // submenu  - // nothing, this is commented out in the old code
@@ -123,7 +124,11 @@ export const ActionProvider = ({ children }) => {
       case 4: {
         // close input dialog (not sure if i need this here);
         // maybe navigate back
-        navigate(-1);
+        //navigate(-1);
+        //mainApp.setCurrentItem("view");
+        //TODO: close current item
+
+        mainApp.setCurrentItem(-1);
         break;
       }
       case 5: {
@@ -149,13 +154,7 @@ export const ActionProvider = ({ children }) => {
           const json = JSON.parse(item.JsonDataToUpdate);
           mainApp.setInputViewUpdateData(json);
         } else if (item.UpdateType == 1) {
-          //delete
           mainApp.setInputViewUpdateData(-1);
-
-          // triggers the form component to re-load
-          navigate({
-            pathname: location.pathname,
-          });
         }
         break;
       }
