@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
     appName,
     appVersion,
     isReady: mainAppIsReady,
-    setCurrentItem,
+    showComponent,
   } = useMainApp();
 
   //const navigate = useNavigate();
@@ -178,7 +178,7 @@ export const AuthProvider = ({ children }) => {
           window.location.reload();
         }, 10); // make sure this happens after navigate !?!
         //navigate("/");
-        setCurrentItem({ menu: null, type: "home" });
+        showComponent({ menu: null, type: "home" });
 
         return;
       }
@@ -225,7 +225,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem(getName("lastRefreshDate"));
     setIsAuthenticated(false);
     //navigate("/login");
-    setCurrentItem({ menu: null, type: "login" });
+    showComponent({ menu: null, type: "login" });
   };
 
   async function onReadyFunction(allow401: boolean = true) {
@@ -260,7 +260,7 @@ export const AuthProvider = ({ children }) => {
             await onReadyFunction(false);
           } else {
             //navigate("/login");
-            setCurrentItem({ menu: null, type: "login" });
+            showComponent({ menu: null, type: "login" });
           }
         }
       }
@@ -269,7 +269,7 @@ export const AuthProvider = ({ children }) => {
       console.log("caught error trying to initialize");
       console.log(err);
       //navigate("/login");
-      setCurrentItem({ menu: null, type: "login" });
+      showComponent({ menu: null, type: "login" });
     }
   }
 

@@ -5,11 +5,8 @@ import {
   SideNavigation,
   TopNavigation,
 } from "@cloudscape-design/components";
-import { useEffect, useState } from "react";
-import {
-  DisplayItem,
-  useMainApp,
-} from "../../ContextProviders/MainAppProvider/MainAppProvider";
+import { useState } from "react";
+import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
 import { useAuth } from "../../ContextProviders/AuthProvider/AuthProvider";
 import {
   AppMenuItem,
@@ -18,14 +15,8 @@ import {
 import { removeMessage, selectedMessages } from "../../App/flashbarSlice";
 import { useAppDispatch, useAppSelector } from "../../App/hooks";
 import { useActions } from "../../ContextProviders/ActionProvider/ActionProvider";
-import { FormComponent } from "../Form/Form.component";
-import { Home } from "../Home/Home.component";
-import { Login } from "../Login/Login.component";
-import { ViewComponent } from "../View/View.component";
 
-interface MainAppLayoutProps extends AppLayoutProps {
-  //content: React.ReactNode;
-}
+interface MainAppLayoutProps extends AppLayoutProps {}
 
 const findClickedItem = (id: string, items: AppMenuItem[]): AppMenuItem => {
   for (const item of items) {
@@ -42,8 +33,8 @@ const findClickedItem = (id: string, items: AppMenuItem[]): AppMenuItem => {
   return null;
 };
 
-export const MainAppLayout = (props: MainAppLayoutProps) => {
-  const [activeHref, setActiveHref] = useState("#");
+export const MainAppLayout = (_props: MainAppLayoutProps) => {
+  const [activeHref, setActiveHref] = useState("/");
 
   const { messages } = useAppSelector(selectedMessages);
   const dispatch = useAppDispatch();
@@ -78,7 +69,7 @@ export const MainAppLayout = (props: MainAppLayoutProps) => {
   //    -> if this errors check for anon functions
 
   const handleMenuClick = (itemRef: string) => {
-    if (itemRef == "#") {
+    if (itemRef == "/") {
       menus.onHomeClick();
       return;
     }
@@ -107,35 +98,12 @@ export const MainAppLayout = (props: MainAppLayoutProps) => {
     }
   };
 
-  const content = (display: DisplayItem) => {
-    switch (display.type) {
-      case "login":
-        return <Login />;
-      case "form":
-        return (
-          <FormComponent
-            menuItem={mainApp.currentItem.menu}
-            visible={display.visible}
-          />
-        );
-      case "view":
-        return <ViewComponent menuItem={mainApp.currentItem.menu} />;
-      case "home":
-        return <Home />;
-    }
-  };
-
-  // useEffect(() => {
-  //   console.log("component changed");
-  //   console.log(mainApp.currentItem);
-  // }, [mainApp.currentItem?.component]);
-
   return (
     <>
       <div id="h" style={{ position: "sticky", top: 0, zIndex: 1002 }}>
         <TopNavigation
           identity={{
-            href: "#",
+            href: "/",
             title: mainApp.appName || "QBic",
           }}
           utilities={

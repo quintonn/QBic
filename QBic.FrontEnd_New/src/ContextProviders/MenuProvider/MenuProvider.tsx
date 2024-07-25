@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import { SideNavigationProps } from "@cloudscape-design/components";
 import { useAuth } from "../AuthProvider/AuthProvider";
 import { useApi } from "../../Hooks/apiHook";
@@ -177,7 +176,7 @@ const MapMenuItemsToSideNavItems = (
   const results: SideNavigationProps.Item[] = [];
 
   if (root) {
-    results.push({ text: "Home", href: "#", type: "link" });
+    results.push({ text: "Home", href: "/", type: "link" });
   }
 
   for (let i = 0; i < items?.length; i++) {
@@ -193,7 +192,7 @@ const MapMenuItemsToSideNavItems = (
       results.push(sectionItem);
     } else {
       //href: "#/view" + item.Event, // TODO: Make open in new tab on menu also work
-      results.push({ text: item.Name, href: "#" + item.Id, type: "link" });
+      results.push({ text: item.Name, href: "/" + item.Id, type: "link" });
     }
   }
 
@@ -241,13 +240,11 @@ export const MenuProvider = ({ children }) => {
 
   const auth = useAuth();
   const api = useApi();
-  //const navigate = useNavigate();
-  //const location = useLocation();
   const { onMenuClick } = useActions();
   const {
     setCurrentContentType,
     isReady: mainAppIsReady,
-    setCurrentItem,
+    showComponent,
   } = useMainApp();
 
   const loadMenus = async () => {
@@ -258,30 +255,10 @@ export const MenuProvider = ({ children }) => {
 
     setAppMenuItems(menuItems);
     setSideNavMenuItems(sideNavItems);
-
-    // check current path and simulate menu click
-    const pathValues = location.pathname.split("/");
-
-    //TODO: not sure what this does - i think when refreshing the page, so no longer really needed i guess
-    /*
-    if (pathValues[pathValues.length - 1]) {
-      const lastValue = pathValues[pathValues.length - 1];
-      const lastValueNumber = Number(lastValue);
-      if (isFinite(lastValueNumber)) {
-        await onMenuClick(lastValueNumber);
-      } else {
-        console.warn(
-          "current location path value is not a number",
-          location.pathname
-        );
-      }
-    }
-      */
   };
 
   const onHomeClick = async () => {
-    setCurrentItem({ menu: null, type: "home" });
-
+    showComponent({ menu: null, type: "home" });
     setCurrentContentType("default");
   };
 
@@ -313,7 +290,6 @@ export const MenuProvider = ({ children }) => {
         })
       );
 
-      //navigate("#"); // show home page
       const url = new URL(window.location.href);
 
       url.searchParams.delete("confirmed");

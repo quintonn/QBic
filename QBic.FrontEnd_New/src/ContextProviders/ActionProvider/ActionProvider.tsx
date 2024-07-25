@@ -106,29 +106,19 @@ export const ActionProvider = ({ children }) => {
         mainApp.setCurrentContentType("table");
 
         const path = "/view/" + item.Id;
-        mainApp.setCacheValue(path, item);
-        //navigate(path);
-        mainApp.setCurrentItem({ menu: item, type: "view" });
+        mainApp.showComponent({ menu: item, type: "view" });
         break;
       }
       case 1: {
         // get inputs
         const path = "/form/" + item.Id;
-        mainApp.setCacheValue(path, item);
-        //navigate(path);
-        mainApp.setCurrentItem({ menu: item, type: "form" });
+        mainApp.showComponent({ menu: item, type: "form" });
         break;
       }
       //case 2: // submenu  - // nothing, this is commented out in the old code
       //case 3: // do something - // nothing, this is commented out in the old code
       case 4: {
-        // close input dialog (not sure if i need this here);
-        // maybe navigate back
-        //navigate(-1);
-        //mainApp.setCurrentItem("view");
-        //TODO: close current item
-
-        mainApp.setCurrentItem(-1);
+        mainApp.showComponent(-1);
         break;
       }
       case 5: {

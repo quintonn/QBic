@@ -363,42 +363,28 @@ export const FormComponent = ({ menuItem, visible }: FormComponentProps) => {
 
   const [dummy, setDummy] = useState("");
 
-  // useEffect(() => {
-  //   if (location && location.pathname) {
-  //     const menuItem = mainApp.getCacheValue(location.pathname);
-  //     if (menuItem) {
-  //       setCurrentMenu(menuItem);
-  //       setDummy("reload"); // using this because if location is same, current menu doesn't change and doesn't trigger the cache values check
-  //     }
-  //   }
-  // }, [location]);
-
-  const [prevMenu, setPrevMenu] = useState<MenuDetail>(null);
-
   useEffect(() => {
-    console.log("menuChanged");
-    console.log(menuItem);
-    console.log(prevMenu);
-    if (menuItem && menuItem.Id != prevMenu?.Id) {
-      setPrevMenu(menuItem);
-      setDummy("reload");
+    if (menuItem) {
+      buildInputs();
+      setDummy("reload-done"); // using this because we need various state values set before calling the onChange method (i.e. getting/setting the value state variable)
     }
   }, [menuItem]);
 
   useEffect(() => {
-    //console.log("form useEffect");
-  }, []);
+    if (dummy == "reload-done") {
+      const fields = menuItem.InputFields;
+
+      fields.forEach((f) => {
+        const fieldValue = values[f.InputName];
+        onChange(f, fieldValue); // raise on property changed now to update visibility conditions etc
+      });
+
+      setDummy("");
+    }
+  }, [dummy]);
 
   useEffect(() => {
     if (mainApp.inputViewUpdateData != null && visible && formCache != null) {
-      // console.log("------------------------------------------------------");
-      // console.log("inputviewdata updated (form component)");
-
-      // console.log(mainApp.inputViewUpdateData);
-      // console.log(menuItem);
-      // console.log("is visible = " + visible);
-      // console.log(formCache);
-      // console.log("==============================================");
       const currentValue = values[formCache.fieldName] || [];
       const inputViewUpdateData = mainApp.inputViewUpdateData;
 
@@ -444,83 +430,6 @@ export const FormComponent = ({ menuItem, visible }: FormComponentProps) => {
       }));
     }
   }, [mainApp.inputViewUpdateData]);
-
-  // const checkCachedValues = async () => {
-  //   if (mainApp.getUseCachedValues(menuItem.Id) === true) {
-  //     mainApp.updateUseCachedValues(menuItem.Id, false);
-  //     const formCacheKey = mainApp.popFormCache() + "_form_values_cache";
-
-  //     const cachedValue = localStorage.getItem(formCacheKey);
-  //     localStorage.removeItem(formCacheKey);
-  //     if (cachedValue) {
-  //       const parsedValue = JSON.parse(cachedValue) as FormCacheData;
-  //       if (parsedValue) {
-  //         setValues(parsedValue.cacheValue);
-
-  //         const currentValue = values[parsedValue.fieldName] || [];
-  //         const inputViewUpdateData = mainApp.inputViewUpdateData;
-
-  //         let newValue = [];
-
-  //         if (inputViewUpdateData == null) {
-  //           // this was a cancellation
-  //           return;
-  //         }
-
-  //         if (inputViewUpdateData === -1) {
-  //           // delete item
-  //           newValue = currentValue;
-  //           newValue.splice(parsedValue.rowId, 1);
-  //         } else if (parsedValue.rowId == -1) {
-  //           // this is for a new item
-  //           let rowId = -1;
-  //           for (let j = 0; j < currentValue.length; j++) {
-  //             rowId = Math.max(rowId, currentValue[j].rowId);
-  //           }
-  //           rowId++;
-
-  //           inputViewUpdateData.rowId = rowId;
-  //           newValue = [...currentValue, inputViewUpdateData];
-  //         } else {
-  //           // this is when an item is modified
-  //           const rowIndex = parsedValue.rowId;
-  //           newValue = currentValue;
-  //           inputViewUpdateData.rowId = rowIndex;
-  //           newValue[rowIndex] = inputViewUpdateData;
-  //         }
-
-  //         // update all rowIds
-  //         let index = 0;
-  //         for (let j = 0; j < newValue.length; j++) {
-  //           newValue[j].rowId = index;
-  //           index++;
-  //         }
-
-  //         setValues((prevValues) => ({
-  //           ...prevValues,
-  //           [parsedValue.fieldName]: newValue,
-  //         }));
-  //       }
-  //     }
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (dummy == "reload") {
-  //     buildInputs();
-  //     checkCachedValues();
-  //     setDummy("reload-done");
-  //   } else if (dummy == "reload-done") {
-  //     const fields = menuItem.InputFields;
-
-  //     fields.forEach((f) => {
-  //       const fieldValue = values[f.InputName];
-  //       onChange(f, fieldValue); // raise on property changed now to update visibility conditions etc
-  //     });
-
-  //     setDummy("");
-  //   }
-  // }, [dummy]);
 
   const conditionIsMet = (condition: VisibilityConditions, value: any) => {
     if (condition.Comparison == 0) {
@@ -738,10 +647,6 @@ export const FormComponent = ({ menuItem, visible }: FormComponentProps) => {
     field: InputField,
     rowData: any
   ): Promise<void> => {
-    mainApp.updateUseCachedValues(menuItem.Id, true); // TODO: if the same form is used to get input, this will break (who will do this?)
-
-    const formStackId = mainApp.updateFormCacheStack();
-
     const currentInputs = valuesRef.current;
     menuItem.InputFields.forEach((f) => {
       if (f.InputType == 9) {
@@ -750,7 +655,6 @@ export const FormComponent = ({ menuItem, visible }: FormComponentProps) => {
       // TODO: This can potentially be fixed by having a stack of FormComponents each with a visible state.
       //       So when opening a "new form", we can simply create a new FormComponent, and setting the previous one to invisibile
     });
-    const formCacheKey = formStackId + "_form_values_cache";
 
     mainApp.setInputViewUpdateData(null); // clear any values here
 
