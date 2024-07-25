@@ -20,13 +20,13 @@ export interface SystemInfo {
 
 type displayType = "form" | "view" | "home" | "login";
 
-export interface DisplayItem extends AbbrDisplayItem {
+export interface DisplayItem extends ComponentInfo {
   visible: boolean;
   component: () => React.ReactNode;
   id: string;
 }
 
-export interface AbbrDisplayItem {
+export interface ComponentInfo {
   menu?: MenuDetail;
   type: displayType;
 }
@@ -36,25 +36,16 @@ interface MainAppContextType {
   appVersion: string;
   dateFormat: string;
   isReady: boolean;
-  getCacheValue: (id: string) => any;
-  setCacheValue: (id: string, value: any) => void;
   currentContentType: AppLayoutProps.ContentType;
   setCurrentContentType: (value: AppLayoutProps.ContentType) => void;
-  updateFormCacheStack: () => string | null;
-  popFormCache: () => string | null;
-  getUseCachedValues: (formId: number) => boolean;
-  updateUseCachedValues: (formId: number, value: boolean) => void;
   inputViewUpdateData: any;
   setInputViewUpdateData: (data: any) => void;
-  currentItem: DisplayItem;
-  setCurrentItem: (value: AbbrDisplayItem | -1) => void;
+  showComponent: (value: ComponentInfo | -1) => void;
   displayStack: DisplayItem[];
   clearDisplayStack: () => void;
 }
 
 const MainAppContext = createContext<MainAppContextType>(null);
-
-//const DisplayStack: DisplayItem[] = [];
 
 const homeDisplayItem: DisplayItem = {
   menu: null,
@@ -71,12 +62,9 @@ export const MainAppProvider = ({ children }) => {
   const [appVersion, setAppVersion] = useState("");
   const [dateFormat, setDateFormat] = useState("");
   const [isReady, setIsReady] = useState(false);
-  const [cache, setCache] = useState<any>({});
+
   const [currentContentType, setCurrentContentType] =
     useState<AppLayoutProps.ContentType>("default");
-
-  const [currentItem, updateCurrentItem] =
-    useState<DisplayItem>(homeDisplayItem);
 
   const [displayStack, setDisplayStack] = useState<DisplayItem[]>([
     homeDisplayItem,
@@ -92,11 +80,6 @@ export const MainAppProvider = ({ children }) => {
     for (let i = 0; i < stack.length; i++) {
       stack[i].visible = false;
     }
-
-    // const updatedItems = stack.map((item) => ({
-    //   ...item,
-    //   visible: false,
-    // }));
   };
 
   const getComponent = (display: DisplayItem) => {
@@ -115,10 +98,10 @@ export const MainAppProvider = ({ children }) => {
   };
 
   const addDisplayItem = (
-    item: AbbrDisplayItem,
+    item: ComponentInfo,
     visible: boolean,
     stack: DisplayItem[]
-  ): DisplayItem => {
+  ) => {
     const stackItem: DisplayItem = {
       component: () => null,
       id: uuidv4(),
@@ -130,10 +113,9 @@ export const MainAppProvider = ({ children }) => {
       return getComponent(stackItem);
     };
     stack.push(stackItem);
-    return stack[stack.length - 1];
   };
 
-  const setCurrentItem = (displayItem: AbbrDisplayItem | -1) => {
+  const showComponent = (displayItem: ComponentInfo | -1) => {
     let stack = [...displayStack];
     hideAllItems(stack);
 
@@ -150,15 +132,10 @@ export const MainAppProvider = ({ children }) => {
         stack = [...stack.slice(0, index), ...stack.slice(index + 1)];
       }
       if (displayStack.length == 0) {
-        const item = addDisplayItem(homeDisplayItem, true, stack);
-        updateCurrentItem(item);
-      } else {
-        updateCurrentItem(displayStack[displayStack.length - 1]);
+        addDisplayItem(homeDisplayItem, true, stack);
       }
     } else {
-      //displayStack.push(displayItem);
-      const item = addDisplayItem(displayItem, true, stack);
-      updateCurrentItem(item); // to make sure the current item matches the added one
+      addDisplayItem(displayItem, true, stack);
     }
 
     makeLastItemVisible(stack);
@@ -167,11 +144,6 @@ export const MainAppProvider = ({ children }) => {
   };
 
   const [inputViewUpdateData, setInputViewUpdateData] = useState<any>(null);
-
-  const [formCachStack, setFormCacheStack] = useState<string[]>([]);
-  const [useCachedValues, setUseCachedValues] = useState<
-    Record<number, boolean>
-  >({});
 
   const initializeSystem = async (): Promise<void> => {
     try {
@@ -216,51 +188,11 @@ export const MainAppProvider = ({ children }) => {
     initializeSystem();
   }, []);
 
-  const getCacheValue = (id: string): any => {
-    const result = cache[id];
-    return result;
-  };
-
-  const setCacheValue = (id: string, value: any) => {
-    setCache({ ...cache, [id]: value });
-  };
-
-  const getFormCacheStack = (): string | null => {
-    if (formCachStack.length > 0) {
-      return formCachStack[formCachStack.length - 1];
-    }
-    return null;
-  };
-
-  const updateFormCacheStack = (): string => {
-    const id = uuidv4();
-    setFormCacheStack([...formCachStack, id]);
-    return id;
-  };
-
-  const getUseCachedValues = (id: number) => {
-    return useCachedValues[id];
-  };
-
-  const updateUseCachedValues = (id: number, value: boolean) => {
-    setUseCachedValues((prevValues) => ({
-      ...prevValues,
-      [id]: value,
-    }));
-  };
-
-  const popFormCache = () => {
-    const lastValue = getFormCacheStack();
-    setFormCacheStack((prevStack) => prevStack.slice(0, prevStack.length - 1));
-    return lastValue;
-  };
-
   const clearDisplayStack = () => {
     clearingStack = true;
     const stack = [];
-    const item = addDisplayItem(homeDisplayItem, true, stack);
-    updateCurrentItem(item); // to make sure the current item matches the added one
-    setDisplayStack([]);
+    addDisplayItem(homeDisplayItem, true, stack);
+    setDisplayStack(stack);
   };
 
   const value = {
@@ -268,18 +200,12 @@ export const MainAppProvider = ({ children }) => {
     appVersion,
     dateFormat,
     isReady,
-    getCacheValue,
-    setCacheValue,
     currentContentType,
     setCurrentContentType,
-    updateFormCacheStack,
-    popFormCache,
-    getUseCachedValues,
-    updateUseCachedValues,
     inputViewUpdateData,
     setInputViewUpdateData,
-    currentItem,
-    setCurrentItem,
+    //currentItem,
+    showComponent,
     displayStack,
     clearDisplayStack,
   };
