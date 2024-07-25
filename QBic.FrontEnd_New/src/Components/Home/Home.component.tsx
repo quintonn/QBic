@@ -46,6 +46,7 @@ export const Home = () => {
             >
               {mainApp.appName}
             </Box>
+            HOME
             {/* <Box fontSize="display-l" fontWeight="light">
               Sub heading
             </Box>

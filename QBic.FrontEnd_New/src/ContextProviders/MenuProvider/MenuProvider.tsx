@@ -241,10 +241,14 @@ export const MenuProvider = ({ children }) => {
 
   const auth = useAuth();
   const api = useApi();
-  const navigate = useNavigate();
-  const location = useLocation();
+  //const navigate = useNavigate();
+  //const location = useLocation();
   const { onMenuClick } = useActions();
-  const { setCurrentContentType, isReady: mainAppIsReady } = useMainApp();
+  const {
+    setCurrentContentType,
+    isReady: mainAppIsReady,
+    setCurrentItem,
+  } = useMainApp();
 
   const loadMenus = async () => {
     const menuData = await api.makeApiCall<MenuItem[]>("getUserMenu", "GET");
@@ -258,6 +262,8 @@ export const MenuProvider = ({ children }) => {
     // check current path and simulate menu click
     const pathValues = location.pathname.split("/");
 
+    //TODO: not sure what this does - i think when refreshing the page, so no longer really needed i guess
+    /*
     if (pathValues[pathValues.length - 1]) {
       const lastValue = pathValues[pathValues.length - 1];
       const lastValueNumber = Number(lastValue);
@@ -270,10 +276,12 @@ export const MenuProvider = ({ children }) => {
         );
       }
     }
+      */
   };
 
   const onHomeClick = async () => {
-    navigate("/");
+    setCurrentItem({ menu: null, type: "home" });
+
     setCurrentContentType("default");
   };
 

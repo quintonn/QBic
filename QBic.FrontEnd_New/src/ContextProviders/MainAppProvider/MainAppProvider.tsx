@@ -5,12 +5,30 @@ import { addMessage } from "../../App/flashbarSlice";
 import { store } from "../../App/store";
 
 import { v4 as uuidv4 } from "uuid";
+import { MenuDetail } from "../MenuProvider/MenuProvider";
+import { Login } from "../../Components/Login/Login.component";
+import { FormComponent } from "../../Components/Form/Form.component";
+import { ViewComponent } from "../../Components/View/View.component";
+import { Home } from "../../Components/Home/Home.component";
 
 export interface SystemInfo {
   ApplicationName: string;
   Version: string;
   ConstructionError: string;
   DateFormat: string;
+}
+
+type displayType = "form" | "view" | "home" | "login";
+
+export interface DisplayItem extends AbbrDisplayItem {
+  visible: boolean;
+  component: () => React.ReactNode;
+  id: string;
+}
+
+export interface AbbrDisplayItem {
+  menu?: MenuDetail;
+  type: displayType;
 }
 
 interface MainAppContextType {
@@ -28,9 +46,25 @@ interface MainAppContextType {
   updateUseCachedValues: (formId: number, value: boolean) => void;
   inputViewUpdateData: any;
   setInputViewUpdateData: (data: any) => void;
+  currentItem: DisplayItem;
+  setCurrentItem: (value: AbbrDisplayItem | -1) => void;
+  displayStack: DisplayItem[];
+  clearDisplayStack: () => void;
 }
 
 const MainAppContext = createContext<MainAppContextType>(null);
+
+//const DisplayStack: DisplayItem[] = [];
+
+const homeDisplayItem: DisplayItem = {
+  menu: null,
+  type: "home",
+  visible: true,
+  id: "home",
+  component: () => <Home />,
+};
+
+let clearingStack = false;
 
 export const MainAppProvider = ({ children }) => {
   const [appName, setAppName] = useState("");
@@ -40,6 +74,97 @@ export const MainAppProvider = ({ children }) => {
   const [cache, setCache] = useState<any>({});
   const [currentContentType, setCurrentContentType] =
     useState<AppLayoutProps.ContentType>("default");
+
+  const [currentItem, updateCurrentItem] =
+    useState<DisplayItem>(homeDisplayItem);
+
+  const [displayStack, setDisplayStack] = useState<DisplayItem[]>([
+    homeDisplayItem,
+  ]);
+
+  const makeLastItemVisible = (stack: DisplayItem[]) => {
+    if (stack.length > 0) {
+      stack[stack.length - 1].visible = true;
+    }
+  };
+
+  const hideAllItems = (stack: DisplayItem[]) => {
+    for (let i = 0; i < stack.length; i++) {
+      stack[i].visible = false;
+    }
+
+    // const updatedItems = stack.map((item) => ({
+    //   ...item,
+    //   visible: false,
+    // }));
+  };
+
+  const getComponent = (display: DisplayItem) => {
+    switch (display.type) {
+      case "login":
+        return <Login />;
+      case "form":
+        return (
+          <FormComponent menuItem={display.menu} visible={display.visible} />
+        );
+      case "view":
+        return <ViewComponent menuItem={display.menu} />;
+      case "home":
+        return <Home />;
+    }
+  };
+
+  const addDisplayItem = (
+    item: AbbrDisplayItem,
+    visible: boolean,
+    stack: DisplayItem[]
+  ): DisplayItem => {
+    const stackItem: DisplayItem = {
+      component: () => null,
+      id: uuidv4(),
+      visible: visible,
+      menu: item.menu,
+      type: item.type,
+    };
+    stackItem.component = () => {
+      return getComponent(stackItem);
+    };
+    stack.push(stackItem);
+    return stack[stack.length - 1];
+  };
+
+  const setCurrentItem = (displayItem: AbbrDisplayItem | -1) => {
+    let stack = [...displayStack];
+    hideAllItems(stack);
+
+    if (clearingStack === true) {
+      clearingStack = false;
+      stack = [homeDisplayItem];
+    }
+
+    if (displayItem == -1) {
+      // remove current item
+      if (stack.length > 0) {
+        const index = stack.length - 1;
+        const lastItem = stack[index];
+        stack = [...stack.slice(0, index), ...stack.slice(index + 1)];
+      }
+      if (displayStack.length == 0) {
+        const item = addDisplayItem(homeDisplayItem, true, stack);
+        updateCurrentItem(item);
+      } else {
+        updateCurrentItem(displayStack[displayStack.length - 1]);
+      }
+    } else {
+      //displayStack.push(displayItem);
+      const item = addDisplayItem(displayItem, true, stack);
+      updateCurrentItem(item); // to make sure the current item matches the added one
+    }
+
+    makeLastItemVisible(stack);
+
+    setDisplayStack(stack); // TODO: this seems to work, but make all other items not visible and clean up code
+  };
 
   const [inputViewUpdateData, setInputViewUpdateData] = useState<any>(null);
 
@@ -130,6 +255,14 @@ export const MainAppProvider = ({ children }) => {
     return lastValue;
   };
 
+  const clearDisplayStack = () => {
+    clearingStack = true;
+    const stack = [];
+    const item = addDisplayItem(homeDisplayItem, true, stack);
+    updateCurrentItem(item); // to make sure the current item matches the added one
+    setDisplayStack([]);
+  };
+
   const value = {
     appName,
     appVersion,
@@ -145,6 +278,10 @@ export const MainAppProvider = ({ children }) => {
     updateUseCachedValues,
     inputViewUpdateData,
     setInputViewUpdateData,
+    currentItem,
+    setCurrentItem,
+    displayStack,
+    clearDisplayStack,
   };
 
   return (

@@ -82,7 +82,8 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                 }
                 else if (baseType == typeof(LongString))
                 {
-                    list.Add(new StringInput(input.Key, input.Value, defaultValue as string)
+                    var val = defaultValue?.ToString();
+                    list.Add(new StringInput(input.Key, input.Value, val)
                     {
                         MultiLineText = true
                     });

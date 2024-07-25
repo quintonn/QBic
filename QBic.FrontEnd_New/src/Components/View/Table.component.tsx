@@ -449,6 +449,13 @@ export const TableComponent = ({
     );
   }
 
+  // TODO: I wanted to add the details section as something that can be passed from the back-end.
+  //       It might have to be a child component or something as the details panel can have multiple tabs.
+  //       Maybe a field that returns a list of MenuNumbers of ViewDetail classes.
+  //       But maybe there's a way then to use something other than MenuNumbers so that we can prevent users from adding the wrong number by accident.
+  //       Maybe ask for the types only?
+  //       --> have a method with an object where users can call config.AddDetailView<T>(); // where T is the detail view type. I think this is the best.
+
   return (
     <Table
       items={tableItems}

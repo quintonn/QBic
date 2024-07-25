@@ -31,9 +31,14 @@ export const AuthProvider = ({ children }) => {
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const { appName, appVersion, isReady: mainAppIsReady } = useMainApp();
+  const {
+    appName,
+    appVersion,
+    isReady: mainAppIsReady,
+    setCurrentItem,
+  } = useMainApp();
 
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   const getName = (name: string) => {
     return appName + "_" + name;
@@ -172,7 +177,8 @@ export const AuthProvider = ({ children }) => {
         setTimeout(() => {
           window.location.reload();
         }, 10); // make sure this happens after navigate !?!
-        navigate("/");
+        //navigate("/");
+        setCurrentItem({ menu: null, type: "home" });
 
         return;
       }
@@ -218,7 +224,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem(getName("refreshToken"));
     localStorage.removeItem(getName("lastRefreshDate"));
     setIsAuthenticated(false);
-    navigate("/login");
+    //navigate("/login");
+    setCurrentItem({ menu: null, type: "login" });
   };
 
   async function onReadyFunction(allow401: boolean = true) {
@@ -252,7 +259,8 @@ export const AuthProvider = ({ children }) => {
             await performTokenRefresh();
             await onReadyFunction(false);
           } else {
-            navigate("/login");
+            //navigate("/login");
+            setCurrentItem({ menu: null, type: "login" });
           }
         }
       }
@@ -260,7 +268,8 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.log("caught error trying to initialize");
       console.log(err);
-      navigate("/login");
+      //navigate("/login");
+      setCurrentItem({ menu: null, type: "login" });
     }
   }
 

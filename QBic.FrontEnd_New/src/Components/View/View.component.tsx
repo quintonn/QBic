@@ -5,18 +5,22 @@ import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvid
 import { useLocation } from "react-router-dom";
 import { TableComponent } from "./Table.component";
 
-export const ViewComponent = () => {
-  const location = useLocation();
+interface ViewComponentProps {
+  menuItem: MenuDetail;
+}
 
-  const [currentMenu, setCurrentMenu] = useState<MenuDetail>();
+export const ViewComponent = ({ menuItem }: ViewComponentProps) => {
+  //const location = useLocation();
+
+  //const [currentMenu, setCurrentMenu] = useState<MenuDetail>();
   const mainApp = useMainApp();
 
-  useEffect(() => {
-    if (location && location.pathname) {
-      const menuItem = mainApp.getCacheValue(location.pathname);
-      setCurrentMenu(menuItem);
-    }
-  }, [location]);
+  // useEffect(() => {
+  //   if (location && location.pathname) {
+  //     const menuItem = mainApp.getCacheValue(location.pathname);
+  //     setCurrentMenu(menuItem);
+  //   }
+  // }, [location]);
 
-  return <TableComponent menuItem={currentMenu}></TableComponent>;
+  return <TableComponent menuItem={menuItem}></TableComponent>;
 };

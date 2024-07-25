@@ -37,7 +37,7 @@ namespace WebsiteTemplate.Backend.Services
                 ApplicationName = ApplicationSettings.GetApplicationName(),
                 Version = version,
                 ConstructorError = constructorError,
-                DateFormat = systemSettings?.DateFormat ?? "dd-MM-yyyy"
+                DateFormat = systemSettings?.DateFormat ?? "dd-MM-yyyy" // IS this used or are we just using ISO Date Format
             };
             return json;
         }
