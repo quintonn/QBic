@@ -38,6 +38,7 @@ namespace WebsiteTemplate.Backend.Services
                 Version = version,
                 ConstructorError = constructorError,
                 DateFormat = systemSettings?.DateFormat ?? "dd-MM-yyyy" // IS this used or are we just using ISO Date Format
+                //TODO
             };
             return json;
         }

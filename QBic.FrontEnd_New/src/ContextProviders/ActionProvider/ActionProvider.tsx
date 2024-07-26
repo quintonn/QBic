@@ -104,14 +104,11 @@ export const ActionProvider = ({ children }) => {
       case 0: {
         // show a view
         mainApp.setCurrentContentType("table");
-
-        const path = "/view/" + item.Id;
         mainApp.showComponent({ menu: item, type: "view" });
         break;
       }
       case 1: {
         // get inputs
-        const path = "/form/" + item.Id;
         mainApp.showComponent({ menu: item, type: "form" });
         break;
       }

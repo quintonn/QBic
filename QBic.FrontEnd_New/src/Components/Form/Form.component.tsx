@@ -16,7 +16,7 @@ import {
 } from "@cloudscape-design/components";
 import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+
 import {
   InputButton,
   InputField,
@@ -43,16 +43,12 @@ interface FormCacheData {
 
 interface FormComponentProps {
   menuItem: MenuDetail;
-  visible: boolean;
 }
 
-export const FormComponent = ({ menuItem, visible }: FormComponentProps) => {
+export const FormComponent = ({ menuItem }: FormComponentProps) => {
   const mainApp = useMainApp();
   const [loading, setLoading] = useState(false);
-  //const location = useLocation();
-  //const [currentMenu, setCurrentMenu] = useState<MenuDetail>();
   const dispatch = useAppDispatch();
-  //const navigate = useNavigate();
 
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -374,8 +370,9 @@ export const FormComponent = ({ menuItem, visible }: FormComponentProps) => {
     if (dummy == "reload-done") {
       const fields = menuItem.InputFields;
 
+      const valuesToUse = formCache?.cacheValue ?? values;
       fields.forEach((f) => {
-        const fieldValue = values[f.InputName];
+        const fieldValue = valuesToUse[f.InputName];
         onChange(f, fieldValue); // raise on property changed now to update visibility conditions etc
       });
 
@@ -384,7 +381,7 @@ export const FormComponent = ({ menuItem, visible }: FormComponentProps) => {
   }, [dummy]);
 
   useEffect(() => {
-    if (mainApp.inputViewUpdateData != null && visible && formCache != null) {
+    if (mainApp.inputViewUpdateData != null && formCache != null) {
       const currentValue = values[formCache.fieldName] || [];
       const inputViewUpdateData = mainApp.inputViewUpdateData;
 
