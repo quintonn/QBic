@@ -23,6 +23,8 @@ import { useDebounce } from "../../Hooks/useDebounce";
 import { useActions } from "../../ContextProviders/ActionProvider/ActionProvider";
 import { useViewEvents } from "../../Hooks/viewEventsHook";
 
+import orderBy from "lodash/orderBy";
+
 // create common interface between ColumnDefintion and ContentDisplayItem
 interface HasId {
   id: string;
@@ -45,7 +47,7 @@ const getDefaultPreference = (
   columns: TableProps.ColumnDefinition<unknown>[]
 ): CollectionPreferencesProps.Preferences => {
   return {
-    stickyColumns: { first: 1, last: 1 },
+    stickyColumns: { first: 0, last: 0 },
     contentDisplay: columns.map((c) => createDefaultColumn(c as HasId)),
     pageSize: 20,
   };
@@ -73,6 +75,12 @@ interface TableComponentProps {
   ) => Promise<void>;
 }
 
+const test = {
+  Name: "Department 1",
+  Id: "03956867-301d-4758-8a49-89b69508752a",
+  CanDelete: true,
+};
+
 export const TableComponent = ({
   menuItem,
   isEmbedded = false,
@@ -81,13 +89,19 @@ export const TableComponent = ({
     return Promise.resolve();
   },
 }: TableComponentProps) => {
-  const { appName } = useMainApp();
+  const { appName, setSelectedTableRow, displayStack, selectedRow } =
+    useMainApp();
 
   const [loading, setLoading] = useState(false);
   const [columnDefinitions, setColumnDefinitions] = useState<
     TableProps.ColumnDefinition<unknown>[]
   >([]);
   const [tableItems, setTableItems] = useState<any[]>([]);
+
+  const [selectedItems, setSelectedItems] = useState<any[]>(
+    selectedRow?.rowData ? [selectedRow?.rowData] : []
+  );
+  //const [selectedRow, setSelectedRow] = useState<any>({});
 
   const [sortingColumn, setSortingColumn] =
     useState<TableProps<any>["sortingColumn"]>(null);
@@ -100,7 +114,16 @@ export const TableComponent = ({
     setSortingDescending(Boolean(isDescending));
     setSortingColumn(sortingColumn);
 
-    doReload(filterText, null, sortingColumn.sortingField, !isDescending);
+    if (isEmbedded == false) {
+      doReload(filterText, null, sortingColumn.sortingField, !isDescending);
+    } else {
+      const sortedItems = orderBy(
+        [...tableItems],
+        sortingColumn.sortingField,
+        isDescending ? "desc" : "asc"
+      );
+      setTableItems(sortedItems);
+    }
   };
 
   const [viewSettings, setViewSettings] = useState<ViewSettings>({
@@ -293,9 +316,9 @@ export const TableComponent = ({
         } as TableProps.ColumnDefinition<unknown>)
     );
 
-    const cols: TableProps.ColumnDefinition<unknown>[] = [
-      ...viewColumns,
-      {
+    const cols: TableProps.ColumnDefinition<unknown>[] = [...viewColumns];
+    if (actionColumnsToShow.length > 0) {
+      cols.push({
         id: "actions",
         header: "Actions",
         cell: (rowData: any) => (
@@ -305,8 +328,8 @@ export const TableComponent = ({
             onClick={(c, r) => onActionColumnClick(c, r)}
           />
         ),
-      },
-    ];
+      });
+    }
 
     let updatedPreferences = getDefaultPreference(cols);
     if (savedPreferencesString) {
@@ -399,7 +422,7 @@ export const TableComponent = ({
   useEffect(() => {
     if (menuItem) {
       loadConfig();
-      loadViewMenu();
+      loadViewMenu(); // this loads even it was previously shown. I think react clears state when a component is re-rendered. Might have to store my own state for this to work in the main app somehow
     }
   }, [menuItem]);
 
@@ -449,12 +472,22 @@ export const TableComponent = ({
     );
   }
 
+  const onSelectionChange = (items: any[]) => {
+    setSelectedItems(items);
+    const selectedRow = items?.length === 1 ? items[0] : null;
+    setSelectedTableRow({ menuItem: menuItem, rowData: selectedRow });
+  };
+
+  // TODO: E.g. - on Departments to view the expenses.
+  //              will have to get/set via mainApp
+
   // TODO: I wanted to add the details section as something that can be passed from the back-end.
   //       It might have to be a child component or something as the details panel can have multiple tabs.
   //       Maybe a field that returns a list of MenuNumbers of ViewDetail classes.
   //       But maybe there's a way then to use something other than MenuNumbers so that we can prevent users from adding the wrong number by accident.
   //       Maybe ask for the types only?
   //       --> have a method with an object where users can call config.AddDetailView<T>(); // where T is the detail view type. I think this is the best.
+  //           or just initialize the class like inputView
 
   return (
     <Table
@@ -469,6 +502,11 @@ export const TableComponent = ({
       sortingColumn={sortingColumn}
       sortingDescending={sortingDescending}
       onSortingChange={onSortingChange}
+      onSelectionChange={({ detail }) => {
+        onSelectionChange(detail.selectedItems);
+      }}
+      selectedItems={selectedItems}
+      selectionType={isEmbedded || !menuItem.DetailSectionId ? null : "single"}
       empty={
         <Box margin={{ vertical: "xs" }} textAlign="center" color="inherit">
           <SpaceBetween size="m">

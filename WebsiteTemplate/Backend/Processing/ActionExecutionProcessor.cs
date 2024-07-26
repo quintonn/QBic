@@ -88,6 +88,14 @@ namespace WebsiteTemplate.Backend.Processing
                     parentData = data;  // In case user modified parentData -> this smells??
                 }
 
+                if (action.DetailSectionId != null)
+                {
+                    if (!allowedMenus.Contains(action.DetailSectionId))
+                    {
+                        action.DetailSectionId = null;
+                    }
+                }
+
                 var viewDataSettings = new GetDataSettings(parentData, string.Empty, 1, 10, string.Empty, true);
 
                 var totalLines = action.GetDataCount(viewDataSettings);

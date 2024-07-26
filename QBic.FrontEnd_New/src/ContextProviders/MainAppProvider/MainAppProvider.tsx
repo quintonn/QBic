@@ -22,8 +22,9 @@ type displayType = "form" | "view" | "home" | "login";
 
 export interface DisplayItem extends ComponentInfo {
   visible: boolean;
-  component: () => React.ReactNode;
+  component: React.ReactNode;
   id: string;
+  splitPanelContents: () => React.ReactNode;
 }
 
 export interface ComponentInfo {
@@ -43,6 +44,13 @@ interface MainAppContextType {
   showComponent: (value: ComponentInfo | -1) => void;
   displayStack: DisplayItem[];
   clearDisplayStack: () => void;
+  setSelectedTableRow: (selection: SelectedRecord) => void;
+  selectedRow: SelectedRecord;
+}
+
+interface SelectedRecord {
+  menuItem: MenuDetail;
+  rowData: any;
 }
 
 const MainAppContext = createContext<MainAppContextType>(null);
@@ -52,7 +60,8 @@ const homeDisplayItem: DisplayItem = {
   type: "home",
   visible: true,
   id: "home",
-  component: () => <Home />,
+  component: <Home />,
+  splitPanelContents: () => null,
 };
 
 let clearingStack = false;
@@ -62,6 +71,8 @@ export const MainAppProvider = ({ children }) => {
   const [appVersion, setAppVersion] = useState("");
   const [dateFormat, setDateFormat] = useState("");
   const [isReady, setIsReady] = useState(false);
+
+  const [selectedRow, setRow] = useState<SelectedRecord>(null);
 
   const [currentContentType, setCurrentContentType] =
     useState<AppLayoutProps.ContentType>("default");
@@ -82,14 +93,12 @@ export const MainAppProvider = ({ children }) => {
     }
   };
 
-  const getComponent = (display: DisplayItem) => {
+  const getComponent = (display: ComponentInfo) => {
     switch (display.type) {
       case "login":
         return <Login />;
       case "form":
-        return (
-          <FormComponent menuItem={display.menu} visible={display.visible} />
-        );
+        return <FormComponent menuItem={display.menu} />; //TODO: not creating a new copy of form - all state values need to be handled somewhere else then
       case "view":
         return <ViewComponent menuItem={display.menu} />;
       case "home":
@@ -103,15 +112,15 @@ export const MainAppProvider = ({ children }) => {
     stack: DisplayItem[]
   ) => {
     const stackItem: DisplayItem = {
-      component: () => null,
       id: uuidv4(),
       visible: visible,
       menu: item.menu,
       type: item.type,
+      component: getComponent(item),
+      splitPanelContents: () => null, // can do this the same as getComponent and pass in the menu item, i think it will only render once
+      // but how to link selected item? also via mainApp?
     };
-    stackItem.component = () => {
-      return getComponent(stackItem);
-    };
+    //TODO: if view, set split panel stuff somehow
     stack.push(stackItem);
   };
 
@@ -140,7 +149,7 @@ export const MainAppProvider = ({ children }) => {
 
     makeLastItemVisible(stack);
 
-    setDisplayStack(stack); // TODO: this seems to work, but make all other items not visible and clean up code
+    setDisplayStack(stack);
   };
 
   const [inputViewUpdateData, setInputViewUpdateData] = useState<any>(null);
@@ -184,6 +193,10 @@ export const MainAppProvider = ({ children }) => {
     }
   };
 
+  const setSelectedTableRow = (selection: SelectedRecord): void => {
+    setRow(selection);
+  };
+
   useEffect(() => {
     initializeSystem();
   }, []);
@@ -204,10 +217,11 @@ export const MainAppProvider = ({ children }) => {
     setCurrentContentType,
     inputViewUpdateData,
     setInputViewUpdateData,
-    //currentItem,
     showComponent,
     displayStack,
     clearDisplayStack,
+    setSelectedTableRow,
+    selectedRow,
   };
 
   return (
