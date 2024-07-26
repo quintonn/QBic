@@ -94,14 +94,11 @@ export const MainAppProvider = ({ children }) => {
   };
 
   const getComponent = (display: ComponentInfo) => {
-    const uid = uuidv4();
-    console.log("get component called " + display?.menu?.Title + " -> " + uid);
-
     switch (display.type) {
       case "login":
         return <Login />;
       case "form":
-        return <FormComponent menuItem={display.menu} xx={uid} />; //TODO: not creating a new copy of form - all state values need to be handled somewhere else then
+        return <FormComponent menuItem={display.menu} />; //TODO: not creating a new copy of form - all state values need to be handled somewhere else then
       case "view":
         return <ViewComponent menuItem={display.menu} />;
       case "home":
@@ -197,7 +194,6 @@ export const MainAppProvider = ({ children }) => {
   };
 
   const setSelectedTableRow = (selection: SelectedRecord): void => {
-    // console.log
     setRow(selection);
   };
 

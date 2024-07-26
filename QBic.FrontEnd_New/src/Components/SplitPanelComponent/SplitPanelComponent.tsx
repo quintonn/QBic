@@ -1,4 +1,8 @@
-import { SplitPanel, Tabs } from "@cloudscape-design/components";
+import {
+  SplitPanel,
+  SplitPanelProps,
+  Tabs,
+} from "@cloudscape-design/components";
 import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
 import { useEffect, useState } from "react";
 import { useApi } from "../../Hooks/apiHook";
@@ -11,6 +15,20 @@ import { TableComponent } from "../View/Table.component";
 interface SplitPanelComponentProps {
   showContent: boolean;
 }
+
+const splitPanelI18nStrings: SplitPanelProps.I18nStrings = {
+  preferencesTitle: "Split panel preferences",
+  preferencesPositionLabel: "Split panel position",
+  preferencesPositionDescription:
+    "Choose the default split panel position for the service.",
+  preferencesPositionSide: "Side",
+  preferencesPositionBottom: "Bottom",
+  preferencesConfirm: "Confirm",
+  preferencesCancel: "Cancel",
+  closeButtonAriaLabel: "Close panel",
+  openButtonAriaLabel: "Open panel",
+  resizeHandleAriaLabel: "Resize split panel",
+};
 
 export const SplitPanelComponent = ({
   showContent,
@@ -49,7 +67,11 @@ export const SplitPanelComponent = ({
   }, [mainApp.selectedRow]);
 
   return mainApp.selectedRow == null || detailComponents.length == 0 ? null : (
-    <SplitPanel header={title || "No item selected"}>
+    <SplitPanel
+      header={title || "No item selected"}
+      hidePreferencesButton={false}
+      i18nStrings={splitPanelI18nStrings}
+    >
       <Tabs
         tabs={
           showContent == false

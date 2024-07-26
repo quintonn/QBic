@@ -23,6 +23,8 @@ import { useDebounce } from "../../Hooks/useDebounce";
 import { useActions } from "../../ContextProviders/ActionProvider/ActionProvider";
 import { useViewEvents } from "../../Hooks/viewEventsHook";
 
+import orderBy from "lodash/orderBy";
+
 // create common interface between ColumnDefintion and ContentDisplayItem
 interface HasId {
   id: string;
@@ -45,7 +47,7 @@ const getDefaultPreference = (
   columns: TableProps.ColumnDefinition<unknown>[]
 ): CollectionPreferencesProps.Preferences => {
   return {
-    stickyColumns: { first: 1, last: 1 },
+    stickyColumns: { first: 0, last: 0 },
     contentDisplay: columns.map((c) => createDefaultColumn(c as HasId)),
     pageSize: 20,
   };
@@ -112,7 +114,16 @@ export const TableComponent = ({
     setSortingDescending(Boolean(isDescending));
     setSortingColumn(sortingColumn);
 
-    doReload(filterText, null, sortingColumn.sortingField, !isDescending);
+    if (isEmbedded == false) {
+      doReload(filterText, null, sortingColumn.sortingField, !isDescending);
+    } else {
+      const sortedItems = orderBy(
+        [...tableItems],
+        sortingColumn.sortingField,
+        isDescending ? "desc" : "asc"
+      );
+      setTableItems(sortedItems);
+    }
   };
 
   const [viewSettings, setViewSettings] = useState<ViewSettings>({
@@ -583,7 +594,6 @@ export const TableComponent = ({
           />
         )
       }
-      trackBy={"Id"}
       preferences={
         isEmbedded ? null : (
           <TablePreferences

@@ -140,8 +140,18 @@ export const MainAppLayout = (_props: MainAppLayoutProps) => {
               showContent={currentDisplayItem.type == "view"}
             />
           ) : null
-        } //todo: will have to set/get via mainApp, maybe from display stack item?
-        content={currentDisplayItem.component}
+        }
+        // we need the <div and id here because without it, components share state and also lose state, etc. It has to do with order of rendering etc.
+        // TODO: this might break with a react or cloudscape upgrade at some point.
+        //       a possible solution is to just move all form state to a state context provider or something
+        content={mainApp.displayStack?.map((d) => (
+          <div
+            key={d.id}
+            style={{ display: d.visible == true ? "block" : "none" }}
+          >
+            {d?.component}
+          </div>
+        ))}
         contentType={mainApp.currentContentType}
         toolsHide={true}
         navigationHide={!auth.isAuthenticated}
