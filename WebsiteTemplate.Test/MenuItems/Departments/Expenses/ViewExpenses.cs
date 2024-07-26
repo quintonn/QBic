@@ -10,8 +10,6 @@ namespace WebsiteTemplate.Test.MenuItems.Departments.Expenses
     {
         public override string Description => "View Expenses";
 
-        public override bool AllowInMenu => false;
-
         public override void ConfigureColumns(ColumnConfiguration columnConfig)
         {
             columnConfig.AddStringColumn("Name", "Name");

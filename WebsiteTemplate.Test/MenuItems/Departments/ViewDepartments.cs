@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using WebsiteTemplate.Backend.Services;
@@ -52,5 +53,12 @@ namespace WebsiteTemplate.Test.MenuItems.Departments
                 new MenuItem("Add", MenuNumber.AddDepartment)
             };
         }
+
+        public override IEnumerable GetData(GetDataSettings settings)
+        {
+            return base.GetData(settings);
+        }
+
+        public override EventNumber DetailSectionId => MenuNumber.DepartmentDetailsSection;
     }
 }

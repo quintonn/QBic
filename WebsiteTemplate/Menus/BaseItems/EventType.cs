@@ -19,6 +19,8 @@
         ListView = 14, // todo: delete this (was for mobile view)
         DetailView = 15, //TODO; delete code related to this (was for mobile view)
         BackgroundEvent = 16,
-        UpdateInputVisibility = 17
+        UpdateInputVisibility = 17,
+        ViewDetailSection = 19,
+        ViewDetailComponent = 20,
     }
 }

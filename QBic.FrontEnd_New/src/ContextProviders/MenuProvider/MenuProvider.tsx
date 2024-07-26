@@ -167,6 +167,19 @@ export interface MenuDetail {
   ListItems?: ListSourceItem[];
   JsonDataToUpdate?: string;
   UpdateType?: number;
+  DetailSectionId?: number;
+}
+
+export interface ViewDetailComponent {
+  Columns: ViewColumn[];
+  Data: any[];
+  Id: number;
+  Title: string;
+}
+
+export interface ViewDetailSection {
+  Title: string;
+  Components: ViewDetailComponent[];
 }
 
 const MapMenuItemsToSideNavItems = (

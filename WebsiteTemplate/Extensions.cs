@@ -91,6 +91,7 @@ namespace WebsiteTemplate
             services.AddTransient<FileProcessor>();
             services.AddTransient<UpdateViewProcessor>();
             services.AddTransient<BackupProcessor>();
+            services.AddTransient<ViewDetailProcessing>();
 
             services.AddTransient<IRefreshToken, RefreshToken>();
 

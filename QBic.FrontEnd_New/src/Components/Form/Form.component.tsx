@@ -16,7 +16,7 @@ import {
 } from "@cloudscape-design/components";
 import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+
 import {
   InputButton,
   InputField,
@@ -43,10 +43,10 @@ interface FormCacheData {
 
 interface FormComponentProps {
   menuItem: MenuDetail;
-  visible: boolean;
+  xx: string;
 }
 
-export const FormComponent = ({ menuItem, visible }: FormComponentProps) => {
+export const FormComponent = ({ menuItem, xx }: FormComponentProps) => {
   const mainApp = useMainApp();
   const [loading, setLoading] = useState(false);
   //const location = useLocation();
@@ -55,6 +55,8 @@ export const FormComponent = ({ menuItem, visible }: FormComponentProps) => {
   //const navigate = useNavigate();
 
   const [errorMessage, setErrorMessage] = useState("");
+
+  const [tmp, setTmp] = useState(xx);
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [values, setValues] = useState<Record<string, any>>({});
@@ -271,6 +273,7 @@ export const FormComponent = ({ menuItem, visible }: FormComponentProps) => {
   };
 
   const buildInputs = () => {
+    console.log("building input for " + menuItem.Title + " = " + tmp);
     const fields = menuItem.InputFields;
 
     const defaultVisibility = fields.reduce((prev, f) => {
@@ -365,6 +368,7 @@ export const FormComponent = ({ menuItem, visible }: FormComponentProps) => {
 
   useEffect(() => {
     if (menuItem) {
+      //console.log("calling buildinputs");
       buildInputs();
       setDummy("reload-done"); // using this because we need various state values set before calling the onChange method (i.e. getting/setting the value state variable)
     }
@@ -374,8 +378,13 @@ export const FormComponent = ({ menuItem, visible }: FormComponentProps) => {
     if (dummy == "reload-done") {
       const fields = menuItem.InputFields;
 
+      console.log("reload done");
+      console.log("current form is " + menuItem.Title);
+      console.log(formCache);
+      const valuesToUse = formCache?.cacheValue ?? values;
       fields.forEach((f) => {
-        const fieldValue = values[f.InputName];
+        const fieldValue = valuesToUse[f.InputName];
+        console.log(f.InputName + " = " + fieldValue);
         onChange(f, fieldValue); // raise on property changed now to update visibility conditions etc
       });
 
@@ -384,7 +393,10 @@ export const FormComponent = ({ menuItem, visible }: FormComponentProps) => {
   }, [dummy]);
 
   useEffect(() => {
-    if (mainApp.inputViewUpdateData != null && visible && formCache != null) {
+    console.log("on input view data update");
+    if (mainApp.inputViewUpdateData != null && formCache != null) {
+      console.log("form cache x");
+      console.log(formCache);
       const currentValue = values[formCache.fieldName] || [];
       const inputViewUpdateData = mainApp.inputViewUpdateData;
 
@@ -424,6 +436,7 @@ export const FormComponent = ({ menuItem, visible }: FormComponentProps) => {
         index++;
       }
 
+      console.log("setting values 1");
       setValues((prevValues) => ({
         ...prevValues,
         [formCache.fieldName]: newValue,
@@ -489,6 +502,7 @@ export const FormComponent = ({ menuItem, visible }: FormComponentProps) => {
                 if (fld.InputType == 3) {
                   const validValues = item.ListItems.map((l) => l.Key);
                   if (!validValues.includes(currentValue)) {
+                    console.log("setting values 2");
                     setValues((prevValues) => ({
                       ...prevValues,
                       [item.InputName]: null,
@@ -503,6 +517,7 @@ export const FormComponent = ({ menuItem, visible }: FormComponentProps) => {
                   );
 
                   if (!validValues.includes(currentValue)) {
+                    console.log("setting values 3");
                     setValues((prevValues) => ({
                       ...prevValues,
                       [item.InputName]: updatedValue,
@@ -655,6 +670,10 @@ export const FormComponent = ({ menuItem, visible }: FormComponentProps) => {
       cacheValue: currentInputs,
       rowId: rowData?.rowId ?? -1,
     };
+
+    console.log("saving form cache for form " + menuItem.Title);
+    console.log("form tmp = " + tmp);
+    console.log(cacheItem);
 
     setFormCache(cacheItem);
 

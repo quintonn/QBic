@@ -207,6 +207,14 @@ namespace WebsiteTemplate.Controllers
         }
 
         [HttpPost]
+        [Route("getViewDetailSection/{*eventId}")]
+        [ConditionalAuthorize]
+        public async Task<IActionResult> GetViewDetailSection(int eventId)
+        {
+            return await Container.GetService<ViewDetailProcessing>().Process(eventId, Request);
+        }
+
+        [HttpPost]
         [Route("executeUIAction/{*eventId}")]
         [ConditionalAuthorize]
         public async Task<IActionResult> ExecuteUIAction(int eventId)

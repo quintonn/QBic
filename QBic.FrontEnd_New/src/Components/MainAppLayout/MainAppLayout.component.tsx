@@ -3,9 +3,10 @@ import {
   AppLayoutProps,
   Flashbar,
   SideNavigation,
+  SplitPanel,
   TopNavigation,
 } from "@cloudscape-design/components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
 import { useAuth } from "../../ContextProviders/AuthProvider/AuthProvider";
 import {
@@ -15,6 +16,7 @@ import {
 import { removeMessage, selectedMessages } from "../../App/flashbarSlice";
 import { useAppDispatch, useAppSelector } from "../../App/hooks";
 import { useActions } from "../../ContextProviders/ActionProvider/ActionProvider";
+import { SplitPanelComponent } from "../SplitPanelComponent/SplitPanelComponent";
 
 interface MainAppLayoutProps extends AppLayoutProps {}
 
@@ -41,6 +43,7 @@ export const MainAppLayout = (_props: MainAppLayoutProps) => {
 
   const menus = useMenu();
   const { onMenuClick } = useActions();
+  const [splitPanelOpen, setSplitPanelOpen] = useState(false);
 
   const mainApp = useMainApp(); // auto injected because it's a context provider
 
@@ -69,6 +72,7 @@ export const MainAppLayout = (_props: MainAppLayoutProps) => {
   //    -> if this errors check for anon functions
 
   const handleMenuClick = (itemRef: string) => {
+    mainApp.setSelectedTableRow(null);
     if (itemRef == "/") {
       menus.onHomeClick();
       return;
@@ -98,6 +102,16 @@ export const MainAppLayout = (_props: MainAppLayoutProps) => {
     }
   };
 
+  useEffect(() => {
+    if (mainApp?.selectedRow) {
+      setSplitPanelOpen(true);
+    }
+  }, [mainApp.selectedRow]);
+
+  const currentDisplayItem = mainApp.displayStack.filter(
+    (d) => d.visible == true
+  )?.[0]; // this seems to work
+
   return (
     <>
       <div id="h" style={{ position: "sticky", top: 0, zIndex: 1002 }}>
@@ -118,14 +132,16 @@ export const MainAppLayout = (_props: MainAppLayoutProps) => {
       </div>
       <AppLayout
         headerSelector="#h"
-        content={mainApp.displayStack?.map((d) => (
-          <div
-            key={d.id}
-            style={{ display: d.visible == true ? "block" : "none" }}
-          >
-            {d?.component()}
-          </div>
-        ))}
+        splitPanelOpen={splitPanelOpen}
+        onSplitPanelToggle={() => setSplitPanelOpen(!splitPanelOpen)}
+        splitPanel={
+          currentDisplayItem.type == "view" ? (
+            <SplitPanelComponent
+              showContent={currentDisplayItem.type == "view"}
+            />
+          ) : null
+        } //todo: will have to set/get via mainApp, maybe from display stack item?
+        content={currentDisplayItem.component}
         contentType={mainApp.currentContentType}
         toolsHide={true}
         navigationHide={!auth.isAuthenticated}
