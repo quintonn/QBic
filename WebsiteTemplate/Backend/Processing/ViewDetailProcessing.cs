@@ -45,6 +45,7 @@ namespace WebsiteTemplate.Backend.Processing
                     Data = detail.GetData(new GetDataSettings(parentData, string.Empty, 1, 10, string.Empty, true)),
                     Id = detail.Id,
                     Title = detail.Title,
+                    DataForGettingMenu = detail.DataForGettingMenu
                 }).ToList(),
                 Title = eventItem.Title,
             };

@@ -85,6 +85,7 @@ export const SplitPanelComponent = ({
                     defaultData={x.Data}
                     menuItem={{
                       ViewData: x.Data,
+                      DataForGettingMenu: x.DataForGettingMenu,
                       Columns: x.Columns,
                       Id: x.Id,
                       Title: x.Title,

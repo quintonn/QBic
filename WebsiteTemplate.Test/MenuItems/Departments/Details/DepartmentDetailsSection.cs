@@ -3,7 +3,7 @@ using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems.ViewDetail;
 using WebsiteTemplate.Test.SiteSpecific;
 
-namespace WebsiteTemplate.Test.MenuItems.Departments
+namespace WebsiteTemplate.Test.MenuItems.Departments.Details
 {
     public class DepartmentDetailsSection : ViewDetailSection
     {

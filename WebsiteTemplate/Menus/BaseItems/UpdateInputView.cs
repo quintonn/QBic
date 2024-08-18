@@ -2,18 +2,11 @@
 {
     public class UpdateInputView : Event
     {
-        //[InjectionConstructor]
         public UpdateInputView()
         {
             RowId = -1;
         }
-        public override bool AllowInMenu
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public override bool AllowInMenu => false;
 
         public UpdateInputView(InputViewUpdateType updateType)
             : this()

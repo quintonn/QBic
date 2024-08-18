@@ -12,8 +12,8 @@ import {
 } from "@cloudscape-design/components";
 import { useEffect, useState } from "react";
 import { ForgotPassword } from "./ForgotPassword.component";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../ContextProviders/AuthProvider/AuthProvider";
+import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
 
 interface LoginData {
   username: string;
@@ -55,11 +55,11 @@ export const Login = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const auth = useAuth();
-  const navigate = useNavigate();
+  const { showComponent } = useMainApp();
 
   useEffect(() => {
     if (auth.isAuthenticated == true) {
-      navigate("/");
+      showComponent({ menu: null, type: "home" });
     }
   }, [auth.isAuthenticated]);
 

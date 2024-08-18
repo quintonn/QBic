@@ -175,6 +175,7 @@ export interface ViewDetailComponent {
   Data: any[];
   Id: number;
   Title: string;
+  DataForGettingMenu: any;
 }
 
 export interface ViewDetailSection {

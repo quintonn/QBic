@@ -149,6 +149,7 @@ namespace WebsiteTemplate.Backend.Processing
                 }
 
                 (eventItem as DoSomething).InputData = processedFormData;
+                eventItem.Parameters = parameters;
                 var doResult = await (eventItem as DoSomething).ProcessAction();
                 await HandleProcessActionResult(doResult, eventItem);
                 result.AddRange(doResult);
@@ -157,6 +158,7 @@ namespace WebsiteTemplate.Backend.Processing
             {
                 var inputResult = eventItem as GetInput;
 
+                inputResult.Parameters = parameters;
                 var initializeResult = await inputResult.Initialize(data);
                 if (!initializeResult.Success)
                 {

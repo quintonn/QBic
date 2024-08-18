@@ -37,7 +37,7 @@ namespace WebsiteTemplate.Test.MenuItems.Departments.Expenses
 
         public override async Task<InitializeResult> Initialize(string data)
         {
-            var json = JsonHelper.Parse(data);
+             var json = JsonHelper.Parse(data);
 
             if (IsNew == false)
             {
@@ -69,7 +69,7 @@ namespace WebsiteTemplate.Test.MenuItems.Departments.Expenses
             }
 
             list.Add(new StringInput("Name", "Name", RowData?.GetValue("Name"), null, true));
-            
+
             list.Add(new EnumComboBoxInput<ExpenseCategory>("Category", "Category", false, null, x => x.Value, RowData?.GetValue("Category"), null)
             {
                 Mandatory = true,
@@ -78,7 +78,7 @@ namespace WebsiteTemplate.Test.MenuItems.Departments.Expenses
             {
                 Mandatory = true
             });
-            
+
             list.Add(new NumericInput<int>("Quantity", "Quantity", GetDefaultNumber("Quantity", 1), null, true));
             list.Add(new NumericInput<double>("Amount", "Amount", GetDefaultNumber("Amount", 0), null, true));
 
@@ -111,6 +111,20 @@ namespace WebsiteTemplate.Test.MenuItems.Departments.Expenses
 
 
             list.Add(new HiddenInput("rowId", RowId.ToString()));
+
+            list.Add(new HiddenInput("_EDIT_", (!string.IsNullOrWhiteSpace(this.Parameters) && this.Parameters.Contains("_EDIT_")).ToString()));
+
+            var departmentId = "";
+            var doAdd = false;
+
+            if (!string.IsNullOrWhiteSpace(this.Parameters) && this.Parameters.Contains("_ADD_"))
+            {
+                doAdd = true;
+                var json = JsonHelper.Parse(this.Parameters);
+                departmentId = json.GetValue("Id");
+            }
+            list.Add(new HiddenInput("_ADD_", doAdd.ToString().ToLower()));
+            list.Add(new HiddenInput("DepartmentId", departmentId));
 
             return list;
         }
@@ -163,9 +177,48 @@ namespace WebsiteTemplate.Test.MenuItems.Departments.Expenses
             }
             else if (actionNumber == 0)
             {
-                //InputData["ExpenseId"] = outcome.Id;
-                //InputData["OutcomeName"] = outcome.Name;
-                //InputData.Add("Id", outcome.Id);
+                var x = GetValue("_EDIT_");
+                var qq = this.Parameters;
+                var doEdit = GetValue("_EDIT_")?.ToLower() == "true";
+                var doAdd = GetValue("_ADD_")?.ToLower() == "true";
+
+                if (doEdit || doAdd)
+                {
+                    var session = DataService.OpenSession();
+                    Expense dbItem;
+
+                    if (doEdit)
+                    {
+                        var id = GetValue("ExpenseId");
+                        
+                        dbItem = session.Get<Expense>(id);
+                    }
+                    else
+                    {
+                        dbItem = new Expense();
+                        var departmentId = GetValue("DepartmentId");
+                        dbItem.Department = session.Get<Department>(departmentId);
+                    }
+
+                    dbItem.Name = GetValue("Name");
+                    dbItem.Category = GetValue<ExpenseCategory>("Category");
+                    dbItem.ExpenseType = GetValue<ExpenseType>("Type");
+                    dbItem.Quantity = GetValue<int>("Quantity");
+                    dbItem.Amount = GetValue<int>("Amount");
+                    dbItem.Frequency = GetValue<ExpenseFrequency>("Frequency");
+                    dbItem.StartMonth = GetValue<int>("StartMonth");
+                    dbItem.EndMonth = GetValue<int>("EndMonth");
+                    dbItem.RollOutPeriod = GetValue<int>("RollOutPeriod");
+
+                    session.SaveOrUpdate(dbItem);
+                    session.Flush();
+                    return new List<IEvent>()
+                    {
+                    
+                        new CancelInputDialog()
+                    };
+                }
+                
                 InputData["Category"] = GetValue<ExpenseCategory>("Category").ToString();
                 InputData["Type"] = GetValue<ExpenseType>("Type").ToString();
                 InputData["Frequency"] = GetValue<ExpenseFrequency>("Frequency").ToString();

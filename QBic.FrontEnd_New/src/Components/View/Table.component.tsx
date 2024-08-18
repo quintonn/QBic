@@ -92,6 +92,10 @@ export const TableComponent = ({
   const { appName, setSelectedTableRow, displayStack, selectedRow } =
     useMainApp();
 
+  const { handleViewEvent } = useViewEvents();
+  const { onMenuClick } = useActions();
+  const api = useApi();
+
   const [loading, setLoading] = useState(false);
   const [columnDefinitions, setColumnDefinitions] = useState<
     TableProps.ColumnDefinition<unknown>[]
@@ -133,10 +137,6 @@ export const TableComponent = ({
   });
 
   const [filterText, setFilterText] = useState("");
-
-  const { handleViewEvent } = useViewEvents();
-  const { onMenuClick } = useActions();
-  const api = useApi();
 
   const [viewMenu, setViewMenu] = useState<ViewMenu[]>([]);
 
@@ -273,6 +273,10 @@ export const TableComponent = ({
     try {
       await handleOnActionColumnClick(column, rowData);
       await handleViewEvent(column, rowData, column);
+
+      if (isEmbedded) {
+        doRefresh();
+      }
     } finally {
       setLoading(false);
     }
@@ -442,10 +446,11 @@ export const TableComponent = ({
 
   const viewMenuItemClick = async (item: ViewMenu) => {
     const data = {
-      data: item.ParametersToPass,
-      parameters: {
-        ViewId: item.EventNumber,
-      },
+      // data: item.ParametersToPass, // i am dissabling this because for adding in detail section, the parameters value should be what was set in parameters
+      // parameters: {
+      //   ViewId: item.EventNumber,
+      // },
+      parameters: item.ParametersToPass,
     };
 
     await handleOnActionColumnClick(null, null);
@@ -547,7 +552,7 @@ export const TableComponent = ({
             </SpaceBetween>
           }
         >
-          {menuItem?.Description}
+          {menuItem?.Title}
         </Header>
       }
       filter={

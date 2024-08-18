@@ -103,6 +103,7 @@ namespace WebsiteTemplate.Test.MenuItems.Departments
                 dbExpense.Name = item.Name;
                 dbExpense.Category = Enum.Parse<ExpenseCategory>(item.Category);
                 dbExpense.ExpenseType = Enum.Parse<ExpenseType>(item.Type);
+                dbExpense.Frequency = Enum.Parse<ExpenseFrequency>(item.Frequency);
                 dbExpense.StartMonth = item.StartMonth;
                 dbExpense.EndMonth = item.EndMonth;
                 dbExpense.RollOutPeriod = item.RollOutPeriod;
