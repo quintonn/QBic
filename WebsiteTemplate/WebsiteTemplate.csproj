@@ -18,6 +18,7 @@
         <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="8.0.7" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.7" />
+        <PackageReference Include="Google.Apis.Drive.v3" Version="1.68.0.3498" />
     </ItemGroup>
 
     <ItemGroup>

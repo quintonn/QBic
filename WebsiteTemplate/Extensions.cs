@@ -97,6 +97,12 @@ namespace WebsiteTemplate
 
             services.RegisterJwtUserProviders<User>(true);
 
+            if (appSettings.EnableGoogleAutoBackups)
+            {
+                // register google backup service
+                services.AddHostedService<GoogleBackupService>();
+            }
+
             services.Configure<FormOptions>(options =>
             {
                 options.ValueCountLimit = int.MaxValue;

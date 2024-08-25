@@ -28,6 +28,7 @@ namespace WebsiteTemplate.Test.SiteSpecific
         public static MenuNumber DeleteDepartment = new MenuNumber(2103);
         public static MenuNumber DepartmentDetailsSection = new MenuNumber(2104);
         public static MenuNumber ExpenseDetailsComponent = new MenuNumber(2105);
+        public static MenuNumber TestGoogleDriveBackup = new MenuNumber(2106);
 
         public static MenuNumber ViewExpenses = new MenuNumber(2110);
         public static MenuNumber AddExpense = new MenuNumber(2111);

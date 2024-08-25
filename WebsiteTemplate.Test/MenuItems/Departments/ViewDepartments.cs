@@ -31,6 +31,8 @@ namespace WebsiteTemplate.Test.MenuItems.Departments
             {
                 OnConfirmationUIAction = MenuNumber.DeleteDepartment
             });
+
+            columnConfig.AddLinkColumn("", "Id", "Test", MenuNumber.TestGoogleDriveBackup);
         }
 
         public override List<Expression<Func<Department, object>>> GetFilterItems()

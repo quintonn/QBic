@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
@@ -14,6 +16,7 @@ namespace WebsiteTemplate.Backend.SystemSettings
     public class ModifySystemSettings : GetInput
     {
         private Models.SystemSettings SystemSettings { get; set; }
+        private GoogleBackupSettings GoogleBackupSettings { get; set; }
 
         /// <summary>
         /// This is for additional settings inputs obtained from ApplicationSettingsCore instance for each project.
@@ -56,11 +59,10 @@ namespace WebsiteTemplate.Backend.SystemSettings
             result.Add(new NumericInput<int>("EmailPort", "Port", SystemSettings?.EmailPort, "Mail Settings", true));
             result.Add(new BooleanInput("EmailEnableSsl", "Enable Ssl", SystemSettings?.EmailEnableSsl, "Mail Settings", true));
 
-            result.Add(new StringInput("DateFormat", "Date Format", SystemSettings?.DateFormat, "Formats", true));
-            result.Add(new NumericInput<int>("TimeOffset", "Time Offset", SystemSettings?.TimeOffset, "Formats", true));
+            result.Add(new StringInput("DateFormat", "Date Format", SystemSettings?.DateFormat, "General", true));
 
-            result.Add(new StringInput("WebsiteUrl", "Website Base Url", SystemSettings?.WebsiteBaseUrl, "Website", true));
-            result.Add(new LabelInput("64Bit", "Is 64 bit", Environment.Is64BitOperatingSystem.ToString(), "Website"));
+            result.Add(new StringInput("WebsiteUrl", "Website Base Url", SystemSettings?.WebsiteBaseUrl, "General", true));
+            
             result.Add(new LabelInput("Time", "System Time", DateTime.Now.ToString("HH:mm:ss")));
             using (var session = DataService.OpenSession())
             {
@@ -81,6 +83,13 @@ namespace WebsiteTemplate.Backend.SystemSettings
                 }
             }
 
+            if (AppSettings.EnableGoogleAutoBackups)
+            {
+                result.Add(new StringInput("ApplicationName", "Application Name", GoogleBackupSettings?.ApplicationName, "Google Backups", true));
+                result.Add(new StringInput("ParentFolder", "Parent Folder", GoogleBackupSettings?.ParentFolder, "Google Backups", true));
+                result.Add(new FileInput("CredentialFile", "Credential File", "Google Backups", false));
+            }
+
             return result;
         }
 
@@ -89,7 +98,8 @@ namespace WebsiteTemplate.Backend.SystemSettings
             //SystemSettingValues.Clear();
             using (var session = DataService.OpenSession())
             {
-                SystemSettings = session.QueryOver<Models.SystemSettings>().List<Models.SystemSettings>().FirstOrDefault();
+                SystemSettings = session.QueryOver<Models.SystemSettings>().List().FirstOrDefault();
+                GoogleBackupSettings = session.QueryOver<GoogleBackupSettings>().List().FirstOrDefault();
 
                 //var additionalSettings = AppSettings.GetAdditionalSystemSettings(session);
                 //foreach (var setting in additionalSettings)
@@ -125,8 +135,7 @@ namespace WebsiteTemplate.Backend.SystemSettings
                 var enableSsl = GetValue<bool>("EmailEnableSsl");
 
                 var dateFormat = GetValue("DateFormat");
-                var timeOffset = GetValue<int>("TimeOffset");
-
+                
                 var websiteBaseUrl = GetValue("WebsiteUrl");
 
                 using (var session = DataService.OpenSession())
@@ -148,7 +157,6 @@ namespace WebsiteTemplate.Backend.SystemSettings
                     systemSettings.EmailEnableSsl = enableSsl;
 
                     systemSettings.DateFormat = dateFormat;
-                    systemSettings.TimeOffset = timeOffset;
 
                     systemSettings.WebsiteBaseUrl = websiteBaseUrl;
 
@@ -171,6 +179,26 @@ namespace WebsiteTemplate.Backend.SystemSettings
                             dbSetting.Value = value;
                             DataService.SaveOrUpdate(session, dbSetting);
                         }
+                    }
+
+                    if (AppSettings.EnableGoogleAutoBackups)
+                    {
+                        var credsFile = GetValue<FileInfo>("CredentialFile");
+                        var dbGoogleSettings = session.QueryOver<GoogleBackupSettings>().List().FirstOrDefault();
+                        if (dbGoogleSettings == null)
+                        {
+                            dbGoogleSettings = new GoogleBackupSettings();
+                        }
+
+                        dbGoogleSettings.ApplicationName = GetValue("ApplicationName");
+                        dbGoogleSettings.ParentFolder = GetValue("ParentFolder");
+
+                        if (credsFile != null && credsFile.Data != null && credsFile.Data.Length > 0)
+                        {
+                            dbGoogleSettings.CredentialJsonValue = credsFile.Data;
+                        }
+
+                        session.SaveOrUpdate(dbGoogleSettings);
                     }
 
                     session.Flush();

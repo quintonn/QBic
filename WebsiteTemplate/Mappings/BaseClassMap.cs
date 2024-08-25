@@ -1,7 +1,6 @@
-﻿using QBic.Core.Mappings;
+﻿using FluentNHibernate.Mapping;
+using QBic.Core.Mappings;
 using QBic.Core.Models;
-using FluentNHibernate.Mapping;
-using WebsiteTemplate.Models;
 
 namespace WebsiteTemplate.Mappings
 {

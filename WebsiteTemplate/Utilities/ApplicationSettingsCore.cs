@@ -106,5 +106,8 @@ namespace WebsiteTemplate.Utilities
         public virtual TimeSpan PasswordResetTokenExpireTimeSpan { get; } = TimeSpan.FromHours(1);
         public virtual string TokenEndpointPath { get; } = "/api/v1/token";
         public abstract bool TokenEndpointAllowInsecureHttpRequests { get; }
+        public virtual bool EnableGoogleAutoBackups { get; } = false;
+        public virtual GoogleBackupConfig GoogleBackupConfig { get; } = null;
+
     }
 }

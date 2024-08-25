@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
 using QBic.Core.Data;
+using QBic.Core.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -84,5 +85,12 @@ namespace WebsiteTemplate.Test.SiteSpecific
         }
 
         public override DBProviderType DataProviderType => DBProviderType.MSSQL;
+
+        public override bool EnableGoogleAutoBackups => true;
+        public override GoogleBackupConfig GoogleBackupConfig => new GoogleBackupConfig()
+        {
+            //DailyRunTimeUTC = new TimeOnly(22, 00) // midnight South African time
+            DailyRunTimeUTC = new TimeOnly(15, 00) // 4pm UK time
+        };
     }
 }
