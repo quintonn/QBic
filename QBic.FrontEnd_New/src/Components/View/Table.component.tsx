@@ -137,7 +137,6 @@ export const TableComponent = ({
   });
 
   const [filterText, setFilterText] = useState("");
-
   const [viewMenu, setViewMenu] = useState<ViewMenu[]>([]);
 
   const [preferences, setPreferences] =
@@ -561,7 +560,19 @@ export const TableComponent = ({
             filteringPlaceholder="Filter items"
             onChange={({ detail }) => updateFilterValue(detail.filteringText)}
             onDelayedChange={(x) => {
-              debouncedFilterChange();
+              if (
+                x.detail.filteringText == null ||
+                x.detail.filteringText == ""
+              ) {
+                doReload(
+                  "",
+                  null,
+                  sortingColumn?.sortingField,
+                  !sortingDescending
+                );
+              } else {
+                debouncedFilterChange();
+              }
             }}
             filteringText={filterText}
             countText={
