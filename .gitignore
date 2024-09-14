@@ -42,9 +42,9 @@ QBic.FrontEnd_Old/bin
 QBic.FrontEnd_Old/obj
 QBic.FrontEnd_Old/Properties/launchSettings.json
 WebsiteTemplate.Test/Data
-QBic.FrontEnd_New/.parcel-cache
-QBic.FrontEnd_New/node_modules
-QBic.FrontEnd_New/dist
+QBic.FrontEnd/.parcel-cache
+QBic.FrontEnd/node_modules
+QBic.FrontEnd/dist
 dist
 WebsiteTemplate/web-files
 WebsiteTemplate.Test/web-files
