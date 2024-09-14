@@ -51,16 +51,16 @@ Before using and running qBic, the following should be installed or adhered to:
 
 # Creating a new qBic Project
 To create and run a new project, simply run the following commands:  
-1. dotnet new -i qbic-dotnet-template
+1. dotnet new install qbic-dotnet-template
 1. dotnet new qBic -n myProject  
 1. cd myProject  
 1. dotnet run 
 1. Visit https://localhost:5001
 1. It might take a few seconds before the website is ready, so maybe refresh the web page  
-1. Login with admin/password
+1. Login with **admin/password**
 
 Or, if on Windows, run the following single line:
-> dotnet new -i qbic-dotnet-template && dotnet new qBic -n myProject && cd myProject && start "" "https://localhost:5001" && dotnet run
+> dotnet new install qbic-dotnet-template && dotnet new qBic -n myProject && cd myProject && start "" "https://localhost:5001" && dotnet run
 
 # Documentation
 Documentation will be added over the course of time.  
@@ -111,6 +111,8 @@ And below is the view and the input screen this code generates:
 ![View of Categories](Category_View.png "View of categories")  
 ### Input Screen
 ![Categories input screen](Edit_Category.png "Modifying a category")
+### Form Example
+![Example of input form](Form_Example.png "Example of form")
 
 # Known Problems
 ### SQLite.Interop.dll

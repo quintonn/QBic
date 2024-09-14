@@ -1,5 +1,6 @@
 ﻿using NHibernate;
 using NHibernate.Criterion;
+using Pluralize.NET;
 using QBic.Core.Data;
 using QBic.Core.Models;
 using System;
@@ -41,11 +42,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
         {
             get
             {
-                if (ItemName.EndsWith("s", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return ItemName;
-                }
-                return ItemName + "s"; //TODO: Add properties for these sort of names
+                return new Pluralizer().Pluralize(ItemName);
             }
         }
 
