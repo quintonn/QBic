@@ -73,7 +73,6 @@ namespace WebsiteTemplate.Backend.Backups
                     {
                         typesToIgnore.Add(typeof(Models.SystemSettings));
                         typesToIgnore.Add(typeof(Models.SystemSettingValue));
-                        typesToIgnore.Add(typeof(RefreshToken)); // ignore refresh token because it's changed too much 
                     }
                     BackupService.BusyWithBackups = true;
                     success = BackupService.RestoreFullBackup(true, backupFile.Data, typesToIgnore.ToArray());
