@@ -37,10 +37,10 @@ QBic.Core/QBic.Core.csproj.user
 WebsiteTemplate.Test/Data/appDataCore.db
 QBic.Authentication/bin
 QBic.Authentication/obj
-QBic.FrontEnd/node_modules
-QBic.FrontEnd/bin
-QBic.FrontEnd/obj
-QBic.FrontEnd/Properties/launchSettings.json
+QBic.FrontEnd_Old/node_modules
+QBic.FrontEnd_Old/bin
+QBic.FrontEnd_Old/obj
+QBic.FrontEnd_Old/Properties/launchSettings.json
 WebsiteTemplate.Test/Data
 QBic.FrontEnd_New/.parcel-cache
 QBic.FrontEnd_New/node_modules
