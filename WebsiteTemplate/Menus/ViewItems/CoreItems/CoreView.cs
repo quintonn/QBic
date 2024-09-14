@@ -110,13 +110,27 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
                 }
                 query.Where(or);
             }
-
+            
             if (additionalCriteria != null)
             {
                 query.And(additionalCriteria);
             }
 
-            OrderQuery(query);
+            if (string.IsNullOrWhiteSpace(settings.SortColumn))
+            {
+                OrderQuery(query);
+            }
+            else
+            {
+                if (settings.SortAscending)
+                {
+                    query.OrderBy(Projections.Property(settings.SortColumn)).Asc();
+                }
+                else
+                {
+                    query.OrderBy(Projections.Property(settings.SortColumn)).Desc();
+                }
+            }
 
             return query;
         }

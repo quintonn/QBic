@@ -1,6 +1,6 @@
-﻿using QBic.Core.Data.BaseTypes;
+﻿using NHibernate.Criterion;
+using QBic.Core.Data.BaseTypes;
 using QBic.Core.Models;
-using NHibernate.Criterion;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
-using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.BasicCrudItems
@@ -17,6 +16,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
     public class BasicCrudModify<T> : GetInput, IBasicCrudModify where T : BaseClass
     {
         private static Type DynamicClassType = typeof(DynamicClass);
+        private readonly string DateFormat = "yyyy-MM-dd";// Fix to ISO date format
         public BasicCrudModify(DataService dataService) : base(dataService)
         {
         }
@@ -66,15 +66,15 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 
                 if (baseType == typeof(String))
                 {
-                    list.Add(new StringInput(input.Key, input.Value, defaultValue));
+                    list.Add(new StringInput(input.Key, input.Value, defaultValue as string));
                 }
                 else if (baseType == typeof(int))
                 {
-                    list.Add(new NumericInput<int>(input.Key, input.Value, defaultValue));
+                    list.Add(new NumericInput<int>(input.Key, input.Value, defaultValue as int?));
                 }
                 else if (baseType == typeof(DateTime) || baseType == typeof(DateTime?))
                 {
-                    list.Add(new DateInput(input.Key, input.Value, defaultValue));
+                    list.Add(new DateInput(input.Key, input.Value, defaultValue as DateTime?));
                 }
                 else if (baseType == typeof(bool))
                 {
@@ -82,7 +82,8 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                 }
                 else if (baseType == typeof(LongString))
                 {
-                    list.Add(new StringInput(input.Key, input.Value, defaultValue)
+                    var val = defaultValue?.ToString();
+                    list.Add(new StringInput(input.Key, input.Value, val)
                     {
                         MultiLineText = true
                     });
@@ -117,7 +118,7 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 
             }
 
-            list.Add(new HiddenInput("IsNew", IsNew));
+            list.Add(new HiddenInput("IsNew", IsNew.ToString()));
             list.Add(new HiddenInput("Id", Item?.Id));
 
 
@@ -183,7 +184,6 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
 
                 using (var session = DataService.OpenSession())
                 {
-                    var dateFormat = String.Empty;
                     T item;
                     if (!isNew)
                     {
@@ -221,12 +221,12 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
                         else if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
                         {
                             DateTime date;
-                            if (String.IsNullOrWhiteSpace(dateFormat))
-                            {
-                                var appSettings = session.QueryOver<SystemSettings>().List<SystemSettings>().FirstOrDefault();
-                                dateFormat = appSettings.DateFormat;
-                            }
-                            if (DateTime.TryParseExact(value.Value?.ToString(), dateFormat, CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out date))
+                            //if (String.IsNullOrWhiteSpace(dateFormat))
+                            //{
+                            //    var appSettings = session.QueryOver<SystemSettings>().List<SystemSettings>().FirstOrDefault();
+                            //    dateFormat = appSettings.DateFormat;
+                            //}
+                            if (DateTime.TryParseExact(value.Value?.ToString(), DateFormat, CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out date))
                             {
                                 prop.SetValue(item, date);
                             }

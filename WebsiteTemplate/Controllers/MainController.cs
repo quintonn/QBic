@@ -7,7 +7,6 @@ using Newtonsoft.Json;
 using QBic.Core.Utilities;
 using System;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using WebsiteTemplate.Backend.Processing;
 using WebsiteTemplate.Backend.Services;
@@ -186,7 +185,7 @@ namespace WebsiteTemplate.Controllers
             if (result is FileContentResult)
             {
                 var f = result as FileContentResult;
-                Response.Headers.Add("filename", f.FileDownloadName);
+                Response.Headers.Append("filename", f.FileDownloadName);
             }
             return result;
         }
@@ -205,6 +204,14 @@ namespace WebsiteTemplate.Controllers
         public async Task<IActionResult> GetViewMenu(int eventId)
         {
             return await Container.GetService<ViewMenuProcessor>().Process(eventId, Request);
+        }
+
+        [HttpPost]
+        [Route("getViewDetailSection/{*eventId}")]
+        [ConditionalAuthorize]
+        public async Task<IActionResult> GetViewDetailSection(int eventId)
+        {
+            return await Container.GetService<ViewDetailProcessing>().Process(eventId, Request);
         }
 
         [HttpPost]

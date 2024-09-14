@@ -1,0 +1,11 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <ItemGroup>
+        <!-- Include files to copy from the package -->
+        <WebFilesToCopy Include="$(MSBuildThisFileDirectory)../wwwroot/**/*.*"/>
+    </ItemGroup>
+
+    <Target Name="CopyContent" BeforeTargets="Build">
+        <!-- Copy files to the project directory -->
+        <Copy SourceFiles="@(WebFilesToCopy)" DestinationFolder="$(ProjectDir)wwwroot/%(RecursiveDir)" SkipUnchangedFiles="true" />
+    </Target>
+</Project>

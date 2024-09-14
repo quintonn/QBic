@@ -48,7 +48,7 @@ namespace WebsiteTemplate.Backend.UserRoles
 
         public override IEnumerable GetData(GetDataSettings settings)
         {
-            return UserRoleService.RetrieveUserRoles(settings.CurrentPage, settings.LinesPerPage, settings.Filter);
+            return UserRoleService.RetrieveUserRoles(settings);
         }
 
         public override int GetDataCount(GetDataSettings settings)

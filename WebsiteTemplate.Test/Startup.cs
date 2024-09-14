@@ -78,6 +78,7 @@ namespace WebsiteTemplate.Test
                 builder.AllowAnyOrigin()
                        .AllowAnyMethod()
                        .AllowAnyHeader();
+                builder.WithHeaders("filename").WithExposedHeaders("filename");
             }));
         }
 

@@ -31,12 +31,34 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget
 
-      - name: Install Dependencies
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16' # Use the Node.js version compatible with your project
+
+      - name: Install Front-end Dependencies
+        working-directory: QBic.FrontEnd
+        run: npm install
+
+      - name: Build Front-end Project
+        working-directory: QBic.FrontEnd
+        run: npm run build
+
+      - name: Copy Front-end Build Output
+        run: |
+          mkdir -p WebsiteTemplate/wwwroot
+          cp -r QBic.FrontEnd/dist/* WebsiteTemplate/wwwroot
+          
+      - name: Copy browser and device files
+        run: |
+          cp WebFiles WebsiteTemplate/wwwroot
+
+      - name: Install .NET Dependencies
         run: dotnet restore QBic.sln
 
-      - name: Build Solution
+      - name: Build .NET Solution
         run: dotnet build QBic.sln --configuration Release --no-restore
-
+        
       - name: Create Nuget Package
         run: dotnet pack --no-build QBic.sln -c Release -o dist
 
@@ -73,17 +95,21 @@ jobs:
           node-version: '16' # Use the Node.js version compatible with your project
 
       - name: Install Front-end Dependencies
-        working-directory: QBic.FrontEnd_New
+        working-directory: QBic.FrontEnd
         run: npm install
 
       - name: Build Front-end Project
-        working-directory: QBic.FrontEnd_New
+        working-directory: QBic.FrontEnd
         run: npm run build
 
       - name: Copy Front-end Build Output
         run: |
-          mkdir -p WebsiteTemplate/web-files
-          cp -r QBic.FrontEnd_New/dist/* WebsiteTemplate/wwwroot
+          mkdir -p WebsiteTemplate/wwwroot
+          cp -r QBic.FrontEnd/dist/* WebsiteTemplate/wwwroot
+          
+      - name: Copy browser and device files
+        run: |
+          cp WebFiles/* WebsiteTemplate/wwwroot/
 
       - name: Install .NET Dependencies
         run: dotnet restore QBic.sln
@@ -93,3 +119,9 @@ jobs:
         
       - name: Create Nuget Package
         run: dotnet pack --no-build QBic.sln -c Release -o dist
+      
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: save artifacts
+          path: dist

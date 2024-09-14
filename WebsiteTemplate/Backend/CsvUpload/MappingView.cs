@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
-using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.CsvUpload
 {
@@ -31,31 +28,32 @@ namespace WebsiteTemplate.Backend.CsvUpload
             //});
         }
 
-        public override IEnumerable GetData(GetDataSettings settings)
-        {
-            var result = new List<object>();
+        //public override IEnumerable GetData(GetDataSettings settings)
+        //{
+        //    var result = new List<object>();
 
-            foreach (var column in ColumnsToMap)
-            {
-                var item = new
-                {
-                    Field = column.ColumnName,
-                    Columns = column.ColumnNumbers,
-                    rowId = Guid.NewGuid().ToString()
-                };
-                result.Add(item);
-            }
+        //    var rowNumber = 0;
+        //    foreach (var column in ColumnsToMap)
+        //    {
+        //        var item = new
+        //        {
+        //            column.Field,
+        //            column.Columns,
+        //            rowId = rowNumber++
+        //        };
+        //        result.Add(item);
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
-        public override int GetDataCount(GetDataSettings settings)
-        {
-            var jsonString = settings.ViewData;
-            ColumnsToMap = JsonHelper.DeserializeObject<List<ColumnSetting>>(jsonString);
+        //public override int GetDataCount(GetDataSettings settings)
+        //{
+        //    var jsonString = settings.ViewData;
+        //    ColumnsToMap = JsonHelper.DeserializeObject<List<ColumnSetting>>(jsonString);
 
-            return ColumnsToMap.Count;
-        }
+        //    return ColumnsToMap.Count;
+        //}
 
         public override EventNumber GetId()
         {

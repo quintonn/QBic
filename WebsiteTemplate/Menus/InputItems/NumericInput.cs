@@ -31,7 +31,7 @@ namespace WebsiteTemplate.Menus.InputItems
             }
         }
 
-        public NumericInput(string name, string label, object defaultValue = null, string tabName = null, bool mandatory = false, int decimalPlaces = 0)
+        public NumericInput(string name, string label, T? defaultValue = null, string tabName = null, bool mandatory = false, int decimalPlaces = 0)
             : base(name, label, defaultValue, tabName, mandatory)
         {
             DecimalPlaces = decimalPlaces;

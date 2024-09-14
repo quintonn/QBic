@@ -12,14 +12,14 @@ namespace WebsiteTemplate.Menus.InputItems
                 return InputType.File;
             }
         }
-        public FileInput(string name, string label, object defaultValue = null, string tabName = null, bool mandatory = false)
-            : base(name, label, defaultValue, tabName, mandatory)
+        public FileInput(string name, string label, string tabName = null, bool mandatory = false)
+            : base(name, label, null, tabName, mandatory) // File can't have a default value
         {
         }
 
         public override object GetValue(JToken jsonToken)
         {
-            if (jsonToken == null)
+            if (jsonToken == null || jsonToken.ToString() == "[]")
             {
                 return null;
             }

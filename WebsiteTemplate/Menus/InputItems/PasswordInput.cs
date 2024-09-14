@@ -12,7 +12,7 @@ namespace WebsiteTemplate.Menus.InputItems
             }
         }
 
-        public PasswordInput(string name, string label, object defaultValue = null, string tabName = null, bool mandatory = false)
+        public PasswordInput(string name, string label, string defaultValue = null, string tabName = null, bool mandatory = false)
             : base(name, label, defaultValue, tabName, mandatory)
         {
         }

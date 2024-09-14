@@ -2,14 +2,14 @@
 {
     public class ColumnSetting
     {
-        public string ColumnName { get; set; }
+        public string Field { get; set; }
 
-        public string ColumnNumbers { get; set; }
+        public string Columns { get; set; }
 
-        public ColumnSetting(string columnName, string columnNumbers = null)
+        public ColumnSetting(string field, string columns = null)
         {
-            ColumnName = columnName;
-            ColumnNumbers = columnNumbers;
+            Field = field;
+            Columns = columns;
         }
     }
 }

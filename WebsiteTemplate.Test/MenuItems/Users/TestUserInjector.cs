@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using NHibernate;
 using WebsiteTemplate.Backend.Processing.InputProcessing;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Backend.Users;
 using WebsiteTemplate.Menus.InputItems;
+using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Test.Models;
 
@@ -34,21 +36,40 @@ namespace WebsiteTemplate.Test.MenuItems.Users
         public override IList<InputField> GetInputFields(User user)
         {
             var result = new List<InputField>();
-            var defaultValue = String.Empty;
+
+            UserExtraInfo userExtraInfo = null;
 
             using (var session = DataService.OpenSession())
             {
                 if (user != null && !String.IsNullOrWhiteSpace(user.Id))
                 {
-                    var userInfo = session.QueryOver<UserExtraInfo>().Where(u => u.User.Id == user.Id).SingleOrDefault();
-                    if (userInfo != null)
-                    {
-                        defaultValue = userInfo.ExtraCode;
-                    }
+                    userExtraInfo = session.QueryOver<UserExtraInfo>().Where(u => u.User.Id == user.Id).SingleOrDefault();
+                    result.Add(new StringInput("ExtraCode", "Extra Code", userExtraInfo?.ExtraCode, "Extra", false));
                 }
-            }
 
-            result.Add(new StringInput("ExtraCode", "Extra Code", defaultValue, "Extra", false));
+                result.Add(new EnumComboBoxInput<TestUserRole>("OdysseyUserRole", "School User Role", defaultValue: userExtraInfo?.UserRole.ToString(), tabName: "Extra")
+                {
+                    Mandatory = true
+                });
+
+                var subjectInput = new StringInput("Subjects", "Subject", "", "Extra", true)
+                {
+                    VisibilityConditions = new List<Condition>()
+                    {
+                        new Condition("OdysseyUserRole", Comparison.Equals, TestUserRole.Teacher.ToString()),
+                    },
+                };
+                result.Add(subjectInput);
+
+                var classInput = new StringInput("Classes", "Class", "", "Extra", true)
+                {
+                    VisibilityConditions = new List<Condition>()
+                    {
+                        new Condition("OdysseyUserRole", Comparison.Equals, TestUserRole.HeadOfGrade.ToString()),
+                    },
+                };
+                result.Add(classInput);
+            }
 
             return result;
         }

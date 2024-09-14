@@ -50,7 +50,7 @@ namespace WebsiteTemplate.Test.MenuItems.MarketplaceItems
 
             if (IsNew || currentUser.Id == Item.Owner?.Id)
             {
-                result.Add(new FileInput("File", "File", null, null, false));
+                result.Add(new FileInput("File", "File", null, false));
             }
 
             result.Add(new HiddenInput("Owner", currentUser?.Id));

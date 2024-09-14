@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using WebsiteTemplate.Backend.Services;
-using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.InputItems
 {
@@ -171,7 +170,9 @@ namespace WebsiteTemplate.Menus.InputItems
 
         private static bool TryParseDate(string dateValue, out DateTime result)
         {
-            return DateTime.TryParseExact(dateValue, WebsiteUtils.GetSystemDateFormat(), CultureInfo.InvariantCulture, DateTimeStyles.None, out result);
+            //return DateTime.TryParseExact(dateValue, WebsiteUtils.GetSystemDateFormat(), CultureInfo.InvariantCulture, DateTimeStyles.None, out result);
+            return DateTime.TryParseExact(dateValue, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out result);
+            // Fix to ISO date format
         }
     }
 }

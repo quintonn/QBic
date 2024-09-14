@@ -1,5 +1,4 @@
 ﻿using FluentNHibernate.Cfg.Db;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
 using QBic.Core.Data;
@@ -24,7 +23,9 @@ namespace WebsiteTemplate.Test.SiteSpecific
 
         public override string ApplicationPassPhrase => "xxxxxxxxxxxxxxxxqqqqqqqqqqqqqqqq"; // must be at least 32 characters long (multiples of 8)
 
-        public override bool ShowSQL => true;
+        public override bool ShowSQL => false;
+
+        //public override TimeSpan AccessTokenExpireTimeSpan => TimeSpan.FromSeconds(25);
 
         public override Type GetApplicationStartupType
         {
@@ -75,9 +76,21 @@ namespace WebsiteTemplate.Test.SiteSpecific
             var connectionString = "Integrated Security=SSPI;Persist Security Info=False;Data Source=localhost;Initial Catalog=WebTest;MultipleActiveResultSets=true";
             var configurer = MsSqlConfiguration.MsSql2012.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
 
+            //var connectionString = "Data Source=##CurrentDirectory##\\Data\\test.db;Version=3;Journal Mode=Off;Connection Timeout=12000";
+            //var currentDirectory = QBicUtils.GetCurrentDirectory();
+            //connectionString = connectionString.Replace("##CurrentDirectory##", currentDirectory); // for my sqlite connectiontion string
+            //var configurer = SQLiteConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
+
             return configurer;
         }
 
         public override DBProviderType DataProviderType => DBProviderType.MSSQL;
+
+        public override bool EnableGoogleAutoBackups => true;
+        public override GoogleBackupConfig GoogleBackupConfig => new GoogleBackupConfig()
+        {
+            //DailyRunTimeUTC = new TimeOnly(22, 00) // midnight South African time
+            DailyRunTimeUTC = new TimeOnly(15, 00) // 4pm UK time
+        };
     }
 }

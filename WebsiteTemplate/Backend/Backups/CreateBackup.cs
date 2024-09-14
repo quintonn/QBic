@@ -11,6 +11,13 @@ namespace WebsiteTemplate.Backend.Backups
     {
         private BackupService BackupService { get; set; }
 
+        // TODO:
+        // todo. add auto backups option in the settings tab
+        //       https://medium.com/@meghnav274/uploading-files-to-google-drive-using-net-console-app-f0aae69a3f0f
+        //       this will allow users to set a google drive ID of a folder they want to have auto backups placed into
+        //       I can add a setting for how many backups to keep
+        //       and i can store the back ups (google drive ID) made in a DB too, so that I can delete the cloud backups once we exceed to configured backup count.
+        //       this will allow me to let people choose to have backups saved in google drive, or i can have it backed-up into my own google drive folder
         public CreateBackup(BackupService backupService)
         {
             BackupService = backupService;
@@ -32,6 +39,7 @@ namespace WebsiteTemplate.Backend.Backups
             }
         }
 
+        //TODO:
         //TODO: Need to ask user for confirmation. Maybe even have file name as input
 
         public override async Task<FileInfo> GetFileInfo(string data)

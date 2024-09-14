@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using WebsiteTemplate.Menus.ViewItems;
+using WebsiteTemplate.Utilities;
 namespace WebsiteTemplate.Menus.InputItems
 {
     public abstract class InputField
@@ -19,7 +20,7 @@ namespace WebsiteTemplate.Menus.InputItems
 
         public bool Mandatory { get; set; }
 
-        public List<Condition> MandatoryConditions { get; set; }
+        //public List<Condition> MandatoryConditions { get; set; } // doesn't seem to be used anywhere (new UI doesn't handle this yet)
 
         public bool RaisePropertyChangedEvent { get; set; }
 
@@ -32,7 +33,7 @@ namespace WebsiteTemplate.Menus.InputItems
             Mandatory = mandatory;
 
             VisibilityConditions = new List<Condition>();
-            MandatoryConditions = new List<Condition>();
+            //MandatoryConditions = new List<Condition>();
         }
 
         public abstract object GetValue(JToken jsonToken);

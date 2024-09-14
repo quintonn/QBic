@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +9,6 @@ using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Utilities;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace WebsiteTemplate.Backend.Processing
 {
@@ -28,7 +28,7 @@ namespace WebsiteTemplate.Backend.Processing
             originalData = json.GetValue("Data");
 
             var data = originalData;
-            if (!String.IsNullOrWhiteSpace(data))
+            if (!string.IsNullOrWhiteSpace(data))
             {
                 try
                 {
@@ -37,7 +37,7 @@ namespace WebsiteTemplate.Backend.Processing
                     {
                         var subData = tmp.GetValue("data");
 
-                        if (!String.IsNullOrWhiteSpace(subData))
+                        if (!string.IsNullOrWhiteSpace(subData))
                         {
                             data = subData;
                         }
@@ -88,7 +88,15 @@ namespace WebsiteTemplate.Backend.Processing
                     parentData = data;  // In case user modified parentData -> this smells??
                 }
 
-                var viewDataSettings = new GetDataSettings(parentData, String.Empty, 1, 10);
+                if (action.DetailSectionId != null)
+                {
+                    if (!allowedMenus.Contains(action.DetailSectionId))
+                    {
+                        action.DetailSectionId = null;
+                    }
+                }
+
+                var viewDataSettings = new GetDataSettings(parentData, string.Empty, 1, 10, string.Empty, true);
 
                 var totalLines = action.GetDataCount(viewDataSettings);
 
@@ -100,7 +108,7 @@ namespace WebsiteTemplate.Backend.Processing
                 action.CurrentPage = 1;
                 action.LinesPerPage = 10;
                 action.TotalLines = totalLines;
-                action.Filter = String.Empty;
+                action.Filter = string.Empty;
 
                 //clicking back in view many times breaks filter args- test with menus
 
@@ -141,6 +149,7 @@ namespace WebsiteTemplate.Backend.Processing
                 }
 
                 (eventItem as DoSomething).InputData = processedFormData;
+                eventItem.Parameters = parameters;
                 var doResult = await (eventItem as DoSomething).ProcessAction();
                 await HandleProcessActionResult(doResult, eventItem);
                 result.AddRange(doResult);
@@ -149,6 +158,7 @@ namespace WebsiteTemplate.Backend.Processing
             {
                 var inputResult = eventItem as GetInput;
 
+                inputResult.Parameters = parameters;
                 var initializeResult = await inputResult.Initialize(data);
                 if (!initializeResult.Success)
                 {
@@ -163,16 +173,17 @@ namespace WebsiteTemplate.Backend.Processing
                 for (var i = 0; i < inputFields.Count; i++)
                 {
                     var input = inputFields[i];
-                    if (input is ViewInput)
+                    if (input.InputType == InputType.View)
                     {
                         var user = await GetLoggedInUser();
                         var allowedMenus = GetAllowedEventsForUser(user?.Id);
 
-                        var columns = (input as ViewInput).ViewForInput.DoConfigureColumns(allowedMenus);
-                        (input as ViewInput).ViewForInput.Columns = columns;
+                        var columns = (input as IViewInput).ViewForInput.DoConfigureColumns(allowedMenus);
+                        (input as IViewInput).ViewForInput.Columns = columns;
                     }
                 }
-                inputFields.Add(new HiddenInput("__init_data__", data));
+                inputFields.Add(new HiddenInput("__init_data__", data)); // I think the init data is just there for the CoreModify class and only to actually get the Id field
+                                                                         // Can be simplified
                 inputResult.InputFields = inputFields;
                 result.Add(inputResult);
             }

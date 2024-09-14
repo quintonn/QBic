@@ -54,7 +54,7 @@ namespace WebsiteTemplate.Controllers
             {
                 var result = await UserService.SendPasswordResetLink(usernameOrEmail);
 
-                return new JsonResult(result);
+                return Ok(result);
             }
             catch (Exception error)
             {

@@ -43,6 +43,10 @@ namespace WebsiteTemplate.Test.MenuItems
         public override IList<InputField> GetInputFields()
         {
             var result = new List<InputField>();
+            result.Add(new StringInput("Name", "Name", null, null, true)
+            {
+                RaisePropertyChangedEvent = true
+            });
 
             result.Add(new BooleanInput("FilterItems", "Filter Items", false)
             {
@@ -83,12 +87,18 @@ namespace WebsiteTemplate.Test.MenuItems
         {
             var result = new List<IEvent>();
 
+            var value = propertyValue?.ToString();
+
             if (propertyName == "FilterItems")
             {
-                var change = Convert.ToBoolean(propertyValue.ToString());
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    value = "false";
+                }
+                var change = Convert.ToBoolean(value);
                 if (change)
                 {
-                    var combo = InputFields.Where(i => i.InputName == "Comparison").Single() as EnumComboBoxInput<FilterComparison>;
+                    var combo = GetInputFields().Where(i => i.InputName == "Comparison").Single() as EnumComboBoxInput<FilterComparison>;
                     
                     combo.UpdateList(x => x.Key == FilterComparison.Contains || x.Key == FilterComparison.NotEquals, null, false);
 
@@ -96,10 +106,10 @@ namespace WebsiteTemplate.Test.MenuItems
                     result.Add(new UpdateComboBoxSource("Comparison", list));
 
 
-                    var listInput = InputFields.Where(i => i.InputName == "List").Single() as ListSelectionInput;
+                    var listInput = GetInputFields().Where(i => i.InputName == "List").Single() as ListSelectionInput;
                     listInput.ListSource = new Dictionary<string, object>()
                     {
-                        { "x", "ITem XXX" }
+                        { "x", "Item XXX" }
                     };
                     var tmp = listInput.ListSource;
                     result.Add(new UpdateComboBoxSource("List", tmp));
@@ -107,8 +117,8 @@ namespace WebsiteTemplate.Test.MenuItems
             }
             else if (propertyName == "User")
             {
-                var userId = propertyValue?.ToString();
-                if (userId == "a444fd59-1ed5-49f4-80be-4c6c1dae6aa2")
+                var userId = value;
+                if (userId == "cdc908f7-bd2a-49ac-8f5b-d01167d44e0f")
                 {
                     result.Add(new UpdateInputVisibility("Email", true));
                 }

@@ -18,8 +18,6 @@ namespace WebsiteTemplate.Models
 
         public virtual string DateFormat { get; set; }
 
-        public virtual int TimeOffset { get; set; }
-
         public virtual string WebsiteBaseUrl { get; set; }
 
         public SystemSettings()

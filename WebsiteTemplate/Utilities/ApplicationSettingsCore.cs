@@ -98,7 +98,16 @@ namespace WebsiteTemplate.Utilities
         public virtual string AccessControlAllowOrigin { get; } = "*";
         public virtual TimeSpan AccessTokenExpireTimeSpan { get; } = TimeSpan.FromHours(1); //Access token expires after 60min
         public virtual TimeSpan RefreshTokenExpireTimeSpan { get; } = TimeSpan.FromDays(7); //Refresh token expires after 7 days
+
+        /// <summary>
+        /// The amount of time the password reset tokens are valid for.
+        /// Default is 1 hour
+        /// </summary>
+        public virtual TimeSpan PasswordResetTokenExpireTimeSpan { get; } = TimeSpan.FromHours(1);
         public virtual string TokenEndpointPath { get; } = "/api/v1/token";
         public abstract bool TokenEndpointAllowInsecureHttpRequests { get; }
+        public virtual bool EnableGoogleAutoBackups { get; } = false;
+        public virtual GoogleBackupConfig GoogleBackupConfig { get; } = null;
+
     }
 }
