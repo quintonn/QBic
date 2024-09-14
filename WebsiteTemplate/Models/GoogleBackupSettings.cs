@@ -1,5 +1,4 @@
-﻿using QBic.Core.Data.BaseTypes;
-using QBic.Core.Models;
+﻿using QBic.Core.Models;
 
 namespace WebsiteTemplate.Models
 {

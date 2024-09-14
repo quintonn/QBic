@@ -390,7 +390,17 @@ namespace QBic.Core.Services
                             continue;
                         }
 
-                        var items = GetItems(type, backupSession);
+                        List<BaseClass> items;
+                        try
+                        {
+                            items = GetItems(type, backupSession);
+                        }
+                        catch (Exception error)
+                        {
+                            // This could happen if there are new classes in the code since the backup has been made
+                            Logger.LogError(error, $"Error getting items of type {type.Name}: {error.Message}, skipping restore of this type");
+                            continue;
+                        }
 
                         var sameTypeProperties = type.GetProperties().Where(p => p.PropertyType == type).ToList();
                         if (sameTypeProperties.Count > 0)
