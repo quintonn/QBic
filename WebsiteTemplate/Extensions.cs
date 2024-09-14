@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -19,7 +18,6 @@ using QBic.Core.Services;
 using QBic.Core.Utilities;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
@@ -207,15 +205,26 @@ namespace WebsiteTemplate
                 SystemLogger.GetLogger(typeof(Extensions)).LogError("Call services.UseQBic<AppSettings, AppStartup>(IConfiguration) from your Startup ConfigureServices(IServiceCollection services) method.");
                 throw new Exception("Call services.UseQBic<AppSettings, AppStartup>(IConfiguration) from your Startup ConfigureServices(IServiceCollection services) method.");
             }
+
             ConfigureCalled = true;
+
+            var appSettings = app.ApplicationServices.GetService<ApplicationSettingsCore>();
+
             app.Use((context, next) =>
             {
                 // needed to read request body in controllers
                 context.Request.EnableBuffering();
                 return next();
             });
+            
+            if (appSettings.UseHttpsRedirection)
+            {
+                app.UseHttpsRedirection(); // must be before UseStaticFiles and UseRouting or UseMVC
+            }
+
             app.UseDefaultFiles();
             app.UseStaticFiles();
+            
             //app.UseStaticFiles(new StaticFileOptions()
             //{
             //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "web-files")),
@@ -226,12 +235,9 @@ namespace WebsiteTemplate
             appStartup?.RegisterUnityContainers(serviceProvider);
             //appSettings.PerformAdditionalStartupConfiguration(services);
 
-            var appSettings = app.ApplicationServices.GetService<ApplicationSettingsCore>();
-
             //app.ApplicationServices.GetService<SystemLogger>().Setup(appSettings.LogLevel);
             //new SystemLogger().Setup(appSettings.LogLevel);
 
-            //app.UseHttpsRedirection();
             //app.UsePathBase("/test");  // will add /test to all my routes, regardless of their paths
 
             app.UseMiddleware<JwtAuthenticationMiddleware>(); // this is for logging-in and getting new tokens

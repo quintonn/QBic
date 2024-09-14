@@ -4,6 +4,8 @@ import { API_URL } from "../Constants/AppValues";
 import { useAuth } from "../ContextProviders/AuthProvider/AuthProvider";
 import { useMainApp } from "../ContextProviders/MainAppProvider/MainAppProvider";
 
+const AUTH_RETRY_ATTEMPTS = 5;
+
 export interface SystemInfo {
   ApplicationName: string;
   Version: string;
@@ -70,11 +72,11 @@ export const useApi = () => {
   const makeApiCallInternal = async <T extends any>(
     urlToCall: string,
     fetchOptions: RequestInit,
-    raiseErrors: boolean = true
+    raiseErrors: boolean = true,
+    authRetryCount: number = 1
   ): Promise<T> => {
     // make API call
     try {
-      const tmpAccessToken = auth.getAccessToken();
       const response = await fetch(urlToCall, fetchOptions);
       if (response.ok) {
         // success
@@ -82,6 +84,21 @@ export const useApi = () => {
 
         return Promise.resolve(json);
       } else if (response.status == 401) {
+        if (authRetryCount > AUTH_RETRY_ATTEMPTS) {
+          // only try AUTH_RETRY_ATTEMPTS times
+          console.log(
+            `auth retry count exceeded ${AUTH_RETRY_ATTEMPTS} attempts`
+          );
+          store.dispatch(
+            addMessage({
+              type: "error",
+              content: `Unable to authenticate with server, ${AUTH_RETRY_ATTEMPTS} attempts were made`,
+            })
+          );
+          return Promise.reject(
+            "Unable to authenticate with server, multiple attempts were made"
+          );
+        }
         return auth
           .performTokenRefresh()
           .then((x) => {
@@ -92,7 +109,8 @@ export const useApi = () => {
             return makeApiCallInternal<T>(
               urlToCall,
               fetchOptions,
-              raiseErrors
+              raiseErrors,
+              authRetryCount + 1
             ).then((x) => {
               return Promise.resolve(x as T);
             });
