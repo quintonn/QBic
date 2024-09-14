@@ -51,4 +51,5 @@ WebsiteTemplate.Test/wwwroot/*.js
 WebsiteTemplate.Test/wwwroot/*.js.map
 WebsiteTemplate.Test/wwwroot/*.css
 WebsiteTemplate.Test/wwwroot/*.css.map
+WebsiteTemplate.Test/wwwroot/*.html
 WebsiteTemplate/wwwroot

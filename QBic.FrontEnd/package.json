@@ -7,7 +7,8 @@
     "clean:output": "rimraf dist",
     "copy-dist": "cpy dist/* ../WebsiteTemplate.Test/wwwroot --parents",
     "start": "npm run clean:output && parcel",
-    "build": "node scripts/clean.js && parcel build && npm run copy-dist",
+    "build": "node scripts/clean.js && parcel build",
+    "build-test": "node scripts/clean.js && parcel build && npm run copy-dist",
     "todo": "echo 'TODO: add favicon.ico and other web files to the front-end project and github pipeline so it's copied into wwwroot too'"
   },
   "keywords": [],
