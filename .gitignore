@@ -47,5 +47,8 @@ QBic.FrontEnd/node_modules
 QBic.FrontEnd/dist
 dist
 WebsiteTemplate/web-files
-WebsiteTemplate.Test/web-files
+WebsiteTemplate.Test/wwwroot/*.js
+WebsiteTemplate.Test/wwwroot/*.js.map
+WebsiteTemplate.Test/wwwroot/*.css
+WebsiteTemplate.Test/wwwroot/*.css.map
 WebsiteTemplate/wwwroot
