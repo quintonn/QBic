@@ -64,16 +64,16 @@ namespace WebsiteTemplate.Backend.Menus
 
         public override async Task<InitializeResult> Initialize(string data)
         {
-            var jobject = JsonHelper.Parse(data);
+            var jObject = JsonHelper.Parse(data);
             if (IsNew)
             {
-                var parentId = jobject.GetValue("ParentId");
+                var parentId = jObject.GetValue("ParentId");
                 ParentMenuId = parentId;
                 DataItem = new Menu();
             }
             else
             {
-                var id = jobject.GetValue("Id");
+                var id = jObject.GetValue("Id");
                 DataItem = ItemProcessor.RetrieveItem(id);
                 ParentMenuId = DataItem.ParentMenu?.Id;
             }

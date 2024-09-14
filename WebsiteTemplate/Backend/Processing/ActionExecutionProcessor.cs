@@ -35,11 +35,19 @@ namespace WebsiteTemplate.Backend.Processing
                     var tmp = JsonHelper.Parse(data);
                     if (tmp != null)
                     {
-                        var subData = tmp.GetValue("data");
+                        var subData = tmp.GetValue("data"); // this is from the old UI code (i think).
 
                         if (!string.IsNullOrWhiteSpace(subData))
                         {
                             data = subData;
+                        }
+                        else
+                        {
+                            subData = tmp.GetValue("parameters");
+                            if (!string.IsNullOrWhiteSpace(subData))
+                            {
+                                data = subData;
+                            }
                         }
                     }
                 }

@@ -1,5 +1,4 @@
-﻿using NHibernate.Util;
-using QBic.Core.Utilities;
+﻿using QBic.Core.Utilities;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

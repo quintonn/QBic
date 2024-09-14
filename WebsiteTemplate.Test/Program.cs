@@ -24,7 +24,6 @@ namespace WebsiteTemplate.Test
         {
             var builder = new WebHostBuilder();
 
-            //builder.UseIISIntegration();
             builder.UseKestrel(opt =>
             {
                 opt.Limits.MaxRequestBodySize = MAX_REQUEST_BODY_BYTES;

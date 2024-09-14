@@ -87,7 +87,7 @@ namespace WebsiteTemplate.Test.SiteSpecific
 
         public override DBProviderType DataProviderType => DBProviderType.MSSQL;
 
-        public override bool EnableGoogleAutoBackups => true;
+        public override bool EnableGoogleAutoBackups => false;
         public override GoogleBackupConfig GoogleBackupConfig => new GoogleBackupConfig()
         {
             //DailyRunTimeUTC = new TimeOnly(22, 00) // midnight South African time
