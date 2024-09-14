@@ -37,17 +37,17 @@ jobs:
           node-version: '16' # Use the Node.js version compatible with your project
 
       - name: Install Front-end Dependencies
-        working-directory: QBic.FrontEnd_New
+        working-directory: QBic.FrontEnd
         run: npm install
 
       - name: Build Front-end Project
-        working-directory: QBic.FrontEnd_New
+        working-directory: QBic.FrontEnd
         run: npm run build
 
       - name: Copy Front-end Build Output
         run: |
           mkdir -p WebsiteTemplate/wwwroot
-          cp -r QBic.FrontEnd_New/dist/* WebsiteTemplate/wwwroot
+          cp -r QBic.FrontEnd/dist/* WebsiteTemplate/wwwroot
           
       - name: Copy browser and device files
         run: |
@@ -95,17 +95,17 @@ jobs:
           node-version: '16' # Use the Node.js version compatible with your project
 
       - name: Install Front-end Dependencies
-        working-directory: QBic.FrontEnd_New
+        working-directory: QBic.FrontEnd
         run: npm install
 
       - name: Build Front-end Project
-        working-directory: QBic.FrontEnd_New
+        working-directory: QBic.FrontEnd
         run: npm run build
 
       - name: Copy Front-end Build Output
         run: |
           mkdir -p WebsiteTemplate/wwwroot
-          cp -r QBic.FrontEnd_New/dist/* WebsiteTemplate/wwwroot
+          cp -r QBic.FrontEnd/dist/* WebsiteTemplate/wwwroot
           
       - name: Copy browser and device files
         run: |
