@@ -72,7 +72,7 @@ jobs:
         run: dotnet nuget push "dist/*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source ${{secrets.NUGET_SOURCE}} --skip-duplicate
 
   manual-build:
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/fixes'
+    if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master'
     runs-on: windows-latest
     strategy:
       matrix:
