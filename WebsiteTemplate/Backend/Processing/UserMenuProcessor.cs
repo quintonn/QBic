@@ -19,6 +19,10 @@ namespace WebsiteTemplate.Backend.Processing
         {
             var results = new List<Menu>();
             var user = await GetLoggedInUser();
+            if (user == null)
+            {
+                return new List<Menu>(); // happens after failed Backup Restore
+            }
             using (var session = DataService.OpenSession())
             {
                 var events = GetAllowedEventsForUser(user.Id).ToArray();

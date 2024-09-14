@@ -338,6 +338,8 @@ namespace QBic.Core.Services
         {
             if (removeExistingItemsFirst)
             {
+                // TODO: without transaction scopes, this is very bad. 
+                // see if it's possible to restore to a new temp database and then switch the databases, or something like that
                 RemoveExistingData(typesToIgnore);
             }
 
@@ -456,6 +458,8 @@ namespace QBic.Core.Services
                 stopwatch.Stop();
 
                 Logger.LogInformation("Full restore took " + stopwatch.ElapsedMilliseconds + " ms");
+
+                factory.Close();
 
                 return true;
             }

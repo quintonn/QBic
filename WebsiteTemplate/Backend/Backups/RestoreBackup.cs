@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using QBic.Core.Models;
 using QBic.Core.Services;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,7 @@ namespace WebsiteTemplate.Backend.Backups
             var results = new List<InputField>();
             results.Add(new FileInput("BackupFile", "Backup File", mandatory: true));
             results.Add(new BooleanInput("SystemSettings", "Restore System Settings", false));
+            //TODO: ask user which types to include/ignore in restore.
             return results;
         }
 
@@ -71,6 +73,7 @@ namespace WebsiteTemplate.Backend.Backups
                     {
                         typesToIgnore.Add(typeof(Models.SystemSettings));
                         typesToIgnore.Add(typeof(Models.SystemSettingValue));
+                        typesToIgnore.Add(typeof(RefreshToken)); // ignore refresh token because it's changed too much 
                     }
                     BackupService.BusyWithBackups = true;
                     success = BackupService.RestoreFullBackup(true, backupFile.Data, typesToIgnore.ToArray());

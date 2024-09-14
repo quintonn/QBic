@@ -51,7 +51,7 @@ jobs:
           
       - name: Copy browser and device files
         run: |
-          cp WebFiles WebsiteTemplate/wwwroot
+          cp WebFiles/* WebsiteTemplate/wwwroot
 
       - name: Install .NET Dependencies
         run: dotnet restore QBic.sln
