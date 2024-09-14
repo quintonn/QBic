@@ -385,7 +385,7 @@ namespace QBic.Core.Services
                         //if ((type == typeof(Models.SystemSettings) || (type == typeof(SystemSettingValue))) && restoreSystemSettings == false)
                         if (typesToIgnore.Contains(type))
                         {
-                            var tmpItems = GetItems(type, backupSession);
+                            //var tmpItems = GetItems(type, backupSession);
 
                             continue;
                         }
