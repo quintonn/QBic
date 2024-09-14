@@ -81,6 +81,18 @@ namespace WebsiteTemplate.Utilities
             }
         }
 
+        /// <summary>
+        /// Whether or not to set UseHttpsRedirection on the App Provider, which must be set before any calls to UseRouting or UseMvc, or UseStaticFiles.
+        /// When setting this to true, include services.AddHttpsRedirection in your Startup file.
+        /// </summary>
+        public virtual bool UseHttpsRedirection
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public virtual void PerformAdditionalStartupConfiguration(IServiceCollection services)
         {
 
@@ -105,6 +117,10 @@ namespace WebsiteTemplate.Utilities
         /// </summary>
         public virtual TimeSpan PasswordResetTokenExpireTimeSpan { get; } = TimeSpan.FromHours(1);
         public virtual string TokenEndpointPath { get; } = "/api/v1/token";
+        
+        /// <summary>
+        /// Whether or not to allow insecure requests to <see cref="TokenEndpointPath"/>
+        /// </summary>
         public abstract bool TokenEndpointAllowInsecureHttpRequests { get; }
         public virtual bool EnableGoogleAutoBackups { get; } = false;
         public virtual GoogleBackupConfig GoogleBackupConfig { get; } = null;

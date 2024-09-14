@@ -44,6 +44,7 @@ namespace WebsiteTemplate.Test.SiteSpecific
         }
 
         public override bool TokenEndpointAllowInsecureHttpRequests => false;
+        public override bool UseHttpsRedirection => true;
 
         public override string GetApplicationName()
         {

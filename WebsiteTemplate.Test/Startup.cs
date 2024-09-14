@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using QBic.Authentication;
 using QBic.Core.Utilities;
 using System;
+using System.Net;
 using WebsiteTemplate.Backend.Users;
 using WebsiteTemplate.Test.MenuItems.Users;
 using WebsiteTemplate.Test.Models;
@@ -80,6 +81,15 @@ namespace WebsiteTemplate.Test
                        .AllowAnyHeader();
                 builder.WithHeaders("filename").WithExposedHeaders("filename");
             }));
+            var appSettings = Activator.CreateInstance<AppSettings>();
+            if (appSettings.UseHttpsRedirection)
+            {
+                services.AddHttpsRedirection(options =>
+                {
+                    options.RedirectStatusCode = (int)HttpStatusCode.TemporaryRedirect;
+                    options.HttpsPort = 5001;
+                });
+            }
         }
 
 
