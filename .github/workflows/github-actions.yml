@@ -61,12 +61,12 @@ jobs:
         
       - name: Create Nuget Package
         run: dotnet pack --no-build QBic.sln -c Release -o dist
-
+        
       - name: Publish Nuget Package
-        run: dotnet nuget push "dist/*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source ${{secrets.NUGET_SOURCE}} --skip-duplicate
+        run: dotnet nuget push "dist\*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source ${{secrets.NUGET_SOURCE}} --skip-duplicate
 
   manual-build:
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/new-ui'
+    if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master'
     runs-on: windows-latest
     strategy:
       matrix:
