@@ -260,7 +260,7 @@ export const TableComponent = ({
 
   const updateItems = (data: any[], pageNumber: number = 1) => {
     setTableItems(data);
-    updateCounts(data.length, pageNumber);
+    //updateCounts(data.length, pageNumber);
   };
 
   const onActionColumnClick = async (
