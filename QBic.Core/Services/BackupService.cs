@@ -336,11 +336,15 @@ namespace QBic.Core.Services
 
         public bool RestoreFullBackup(bool removeExistingItemsFirst, byte[] data, params Type[] typesToIgnore)
         {
+            Logger.LogInformation("Restoring full backup");
             if (removeExistingItemsFirst)
             {
                 // TODO: without transaction scopes, this is very bad. 
                 // see if it's possible to restore to a new temp database and then switch the databases, or something like that
+
+                Logger.LogInformation("Backup Restore - Removing existing data");
                 RemoveExistingData(typesToIgnore);
+                Logger.LogInformation("Existing data removed");
             }
 
             var stopwatch = new Stopwatch();
@@ -359,6 +363,7 @@ namespace QBic.Core.Services
 
             try
             {
+                Logger.LogInformation("Inside restore try");
                 File.WriteAllBytes(currentDirectory + backupName, data);
 
                 var connectionString = String.Format(@"Data Source=##CurrentDirectory##\Data\{0};Version=3;Journal Mode=Off;Connection Timeout=12000", backupName);
@@ -378,10 +383,12 @@ namespace QBic.Core.Services
                 using (var backupSession = backupFactory.OpenStatelessSession())
                 using (var session = factory.OpenStatelessSession())
                 {
+                    Logger.LogInformation($"id count = {ids.Count()}");
                     foreach (var id in ids)
                     {
                         var type = SystemTypes[id];
 
+                        Logger.LogInformation($"Processing type {type?.Name}");
                         //if ((type == typeof(Models.SystemSettings) || (type == typeof(SystemSettingValue))) && restoreSystemSettings == false)
                         if (typesToIgnore.Contains(type))
                         {
@@ -434,7 +441,7 @@ namespace QBic.Core.Services
 
                 //factory.Close();
                 //backupFactory.Close();
-
+                Logger.LogInformation("Done with id look, verifying number of records restored");
                 using (var session = factory.OpenSession())
                 {
                     var count = session
