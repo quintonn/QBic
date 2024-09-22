@@ -275,6 +275,7 @@ namespace QBic.Core.Services
                         continue;
                     }
 
+                    Logger.LogInformation($"Deleting items of type {type.Name}");
                     var deleteMethod = deleteMethodInfo.MakeGenericMethod(type);
                     deleteMethod.Invoke(this, new object[] { session });
                 }
