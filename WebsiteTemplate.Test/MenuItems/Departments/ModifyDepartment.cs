@@ -56,6 +56,8 @@ namespace WebsiteTemplate.Test.MenuItems.Departments
             
             result.Add(new ViewInput<ExpenseRowItem>("Expenses", "Expenses", new ViewExpenses(), defaultValues, "General", true));
 
+            result.Add(new DateInput("Date", "Date", Item?.Date, "General", true));
+
             return result;
         }
         public override async Task<IList<IEvent>> PerformModify(bool isNew, string id, ISession session)
@@ -71,6 +73,7 @@ namespace WebsiteTemplate.Test.MenuItems.Departments
             }
 
             dbItem.Name = GetValue("Name");
+            dbItem.Date = GetValue<DateTime>("Date");
 
             session.SaveOrUpdate(dbItem);
 

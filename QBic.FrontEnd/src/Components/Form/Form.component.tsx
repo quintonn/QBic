@@ -722,8 +722,20 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
           ></Multiselect>
         );
       case 6: // date input
+        console.log(
+          "getting date picker for value " + values?.[field.InputName]
+        );
+        const userLocale = navigator.language || navigator.languages[0];
+        const today = new Date();
+
+        // Format today's date using the user's locale
+        const formattedDate = new Intl.DateTimeFormat(userLocale).format(today);
+        console.log("user info:");
+        console.log("user locale = " + userLocale);
+        console.log("user's formatted date = " + formattedDate);
         return (
           <DatePicker
+            locale="en-CA" // en-CA uses the date format YYYY-MM-DD, which is what we use (i think)
             value={values?.[field.InputName]}
             autoFocus={setAutoFocus}
             onChange={({ detail: { value } }) => onChange(field, value)}

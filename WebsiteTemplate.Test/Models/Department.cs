@@ -1,4 +1,5 @@
 ﻿using QBic.Core.Models;
+using System;
 
 namespace WebsiteTemplate.Test.Models
 {
@@ -9,6 +10,7 @@ namespace WebsiteTemplate.Test.Models
         }
 
         public virtual string Name { get; set; }
+        public virtual DateTime Date { get; set; }
 
     }
 }
