@@ -124,7 +124,6 @@ namespace WebsiteTemplate
                 options.UseCamelCasing(true);
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                //options.SerializerSettings.TypeNameHandling = includeTypeInfo == true ? TypeNameHandling.All : TypeNameHandling.None;
                 options.SerializerSettings.TypeNameHandling = TypeNameHandling.None;
             })
             .AddJsonOptions(options =>
@@ -138,7 +137,7 @@ namespace WebsiteTemplate
             services.AddSingleton<IJwtAuthenticationProvider, QBicJwtAuthProvider>();
 
             var dataStore = DataStore.GetInstance(appSettings.UpdateDatabase, appSettings, configuration, services);
-            services.AddSingleton(dataStore);// appSettings.UpdateDatabase));
+            services.AddSingleton(dataStore);
 
             // This is required for authentication to work
             services.AddHttpContextAccessor();
@@ -151,9 +150,9 @@ namespace WebsiteTemplate
             {
                 if (ConfigureCalled == false)
                 {
-                    Console.WriteLine("Call app.UseQBic(IServiceProvider); from your Startup Configure(IApplicationBuilder app, IServiceProvider serviceProvider) method.");
-                    SystemLogger.GetLogger(typeof(Extensions)).LogError("Call app.UseQBic(IServiceProvider); from your Startup Configure(IApplicationBuilder app, IServiceProvider serviceProvider) method.");
-                    throw new Exception("Call app.UseQBic(IServiceProvider); from your Startup Configure(IApplicationBuilder app, IServiceProvider serviceProvider) method.");
+                    var message = "Call app.UseQBic(IServiceProvider); from your Startup Configure(IApplicationBuilder app, IServiceProvider serviceProvider) method.";
+                    SystemLogger.GetLogger(typeof(Extensions)).LogError(message);
+                    throw new Exception(message);
                 }
 
                 var tokenProviderParams = new TokenValidationParameters()
@@ -251,13 +250,11 @@ namespace WebsiteTemplate
             // without this, tokens are validated, but the Authorize attribute doesn't use it and httpcontext identity is null
             app.UseAuthentication();
 
-            //app.UseResponseCaching();
             app.UseResponseCompression();
 
-
             //app.UseAuthorization(); --> Does not seem to be needed
-
-            app.UseMvc();
+            
+            app.UseMvc(); // should typicall be called last
 
             OptionsProviders = serviceProvider.GetServices<IJwtAuthenticationProvider>().ToList();
 

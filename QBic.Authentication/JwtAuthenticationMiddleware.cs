@@ -18,7 +18,7 @@ namespace QBic.Authentication
     /// <summary>
     /// Authentication middleware.
     /// Used to perform logins and to refresh expired tokens.
-    /// Not responsible for validating current access tokens. That is done my JwtAuthenticationMiddleware.
+    /// Not responsible for validating current access tokens. That is done by JwtAuthorizationMiddleware.
     /// </summary>
     public class JwtAuthenticationMiddleware
     {
