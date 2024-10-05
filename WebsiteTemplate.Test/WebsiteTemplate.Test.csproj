@@ -29,9 +29,6 @@
   <ItemGroup>
     <Content Include="Data\**\*" Exclude="Data\*.db;Data\*.txt" />
     <Content Include="Properties\launchSettings.json" />
-    <Content Include="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>

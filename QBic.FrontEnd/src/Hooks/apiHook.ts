@@ -6,12 +6,6 @@ import { useMainApp } from "../ContextProviders/MainAppProvider/MainAppProvider"
 
 const AUTH_RETRY_ATTEMPTS = 5;
 
-export interface SystemInfo {
-  ApplicationName: string;
-  Version: string;
-  ConstructionError: string;
-}
-
 export const useApi = () => {
   const auth = useAuth();
 
@@ -45,28 +39,6 @@ export const useApi = () => {
     }
 
     return await makeApiCallInternal(urlToCall, fetchOptions);
-  };
-
-  const initializeSystem = async (): Promise<SystemInfo> => {
-    // let cacheControl = `&_=${Date.now()}`; // don't cache stuff
-    // const urlToCall = `${appInfo.apiUrl}initializeSystem?v=${appInfo.appVersion}${cacheControl}`;
-
-    // const fetchOptions: RequestInit = {
-    //   method: "GET",
-    // };
-
-    const systemInfo = await makeApiCall<SystemInfo>("initializeSystem");
-    if (systemInfo) {
-      if (systemInfo.ConstructionError) {
-        console.log("There was an error in the system initialization code:");
-        console.log(systemInfo.ConstructionError);
-        return null;
-      }
-      //appInfo.setAppVersion(systemInfo.Version);
-      document.title = `${systemInfo.ApplicationName} ${systemInfo.Version}`;
-    }
-
-    return systemInfo;
   };
 
   const makeApiCallInternal = async <T extends any>(
@@ -170,5 +142,5 @@ export const useApi = () => {
     }
   };
 
-  return { makeApiCall, initializeSystem };
+  return { makeApiCall };
 };

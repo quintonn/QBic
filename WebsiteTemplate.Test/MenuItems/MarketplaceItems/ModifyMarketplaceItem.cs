@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using QBic.Authentication;
-using QBic.Core.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,12 +14,10 @@ namespace WebsiteTemplate.Test.MenuItems.MarketplaceItems
 {
     public abstract class ModifyMarketplaceItem : CoreModify<MarketplaceItem>
     {
-        private UserManager<IUser> UserManager { get; set; }
-        private IHttpContextAccessor HttpContextAccessor { get; set; }
-        public ModifyMarketplaceItem(DataService dataService, bool isNew, UserManager<IUser> userManager, IHttpContextAccessor httpContextAccessor) : base(dataService, isNew)
+        private readonly ContextService ContextService;
+        public ModifyMarketplaceItem(DataService dataService, bool isNew, ContextService contextService) : base(dataService, isNew)
         {
-            HttpContextAccessor = httpContextAccessor;
-            UserManager = userManager;
+            ContextService = contextService;
         }
 
         public override string EntityName => "Marketplace Item";
@@ -44,9 +38,7 @@ namespace WebsiteTemplate.Test.MenuItems.MarketplaceItems
                 MultiLineText = true,
             });
 
-            var userTask = QBicUtils.GetLoggedInUserAsync(UserManager, HttpContextAccessor);
-            userTask.Wait();
-            var currentUser = userTask.Result as User;
+            var currentUser = ContextService.GetRequestUser();
 
             if (IsNew || currentUser.Id == Item.Owner?.Id)
             {

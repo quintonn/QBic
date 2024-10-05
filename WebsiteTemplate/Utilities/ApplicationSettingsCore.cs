@@ -1,7 +1,7 @@
 ﻿using FluentNHibernate.Cfg.Db;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
+using QBic.Core.Auth;
 using QBic.Core.Data;
 using QBic.Core.Utilities;
 using System;
@@ -26,8 +26,6 @@ namespace WebsiteTemplate.Utilities
         public abstract string GetApplicationName();
 
         public abstract string ApplicationPassPhrase { get; }
-
-        public abstract Type GetApplicationStartupType { get; }
 
         /// <summary>
         /// This is the email address to assign to the 'System' user.
@@ -93,11 +91,6 @@ namespace WebsiteTemplate.Utilities
             }
         }
 
-        public virtual void PerformAdditionalStartupConfiguration(IServiceCollection services)
-        {
-
-        }
-
         public virtual List<SystemSettingItem> GetAdditionalSystemSettings(ISession session)
         {
             return new List<SystemSettingItem>();
@@ -106,6 +99,8 @@ namespace WebsiteTemplate.Utilities
         public abstract IPersistenceConfigurer GetPersistenceConfigurer(string databaseName);
 
         public abstract DBProviderType DataProviderType { get; }
+
+        public virtual IAuthConfig AuthConfig => new QbicAuth();
 
         public virtual string AccessControlAllowOrigin { get; } = "*";
         public virtual TimeSpan AccessTokenExpireTimeSpan { get; } = TimeSpan.FromHours(1); //Access token expires after 60min

@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using QBic.Authentication;
+using QBic.Core.Auth;
 using QBic.Core.Data;
 using QBic.Core.Models;
 using QBic.Core.Services;
@@ -27,6 +28,7 @@ using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Backend.Services.Background;
 using WebsiteTemplate.Backend.UIProcessors;
 using WebsiteTemplate.Backend.Users;
+using WebsiteTemplate.Middleware;
 using WebsiteTemplate.Models;
 using WebsiteTemplate.Security;
 using WebsiteTemplate.Utilities;
@@ -38,7 +40,6 @@ namespace WebsiteTemplate
         private static IList<IJwtAuthenticationProvider> OptionsProviders { get; set; }
         private static bool ConfigureServicesCalled = false;
         private static bool ConfigureCalled = false;
-        //AppStartup
         public static IServiceCollection UseQBic<T, A>(this IServiceCollection services, IConfiguration configuration, Action<IdentityOptions> identityOptions = null) where T : ApplicationSettingsCore
             where A : ApplicationStartup
         {
@@ -90,6 +91,7 @@ namespace WebsiteTemplate
             services.AddTransient<UpdateViewProcessor>();
             services.AddTransient<BackupProcessor>();
             services.AddTransient<ViewDetailProcessing>();
+            services.AddTransient<ContextService>();
 
             services.AddTransient<IRefreshToken, RefreshToken>();
 
@@ -134,7 +136,11 @@ namespace WebsiteTemplate
             });
 
             builder.AddAuthorization(); // This makes the AuthorizeAttribute work. Without this, requests are not authorized at all
-            services.AddSingleton<IJwtAuthenticationProvider, QBicJwtAuthProvider>();
+
+            if (appSettings.AuthConfig.AuthType == QBic.Core.Auth.AuthType.Qbic)
+            {
+                services.AddSingleton<IJwtAuthenticationProvider, QBicJwtAuthProvider>();
+            }
 
             var dataStore = DataStore.GetInstance(appSettings.UpdateDatabase, appSettings, configuration, services);
             services.AddSingleton(dataStore);
@@ -142,55 +148,73 @@ namespace WebsiteTemplate
             // This is required for authentication to work
             services.AddHttpContextAccessor();
 
-            services.AddAuthentication(x =>
+            if (appSettings.AuthConfig.AuthType == QBic.Core.Auth.AuthType.Qbic)
             {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // Authentication needs a default scheme
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // Authentication needs a default scheme
-            }).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
-            {
-                if (ConfigureCalled == false)
+                services.AddAuthentication(x =>
                 {
-                    var message = "Call app.UseQBic(IServiceProvider); from your Startup Configure(IApplicationBuilder app, IServiceProvider serviceProvider) method.";
-                    SystemLogger.GetLogger(typeof(Extensions)).LogError(message);
-                    throw new Exception(message);
-                }
-
-                var tokenProviderParams = new TokenValidationParameters()
+                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // Authentication needs a default scheme
+                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // Authentication needs a default scheme
+                }).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKeys = OptionsProviders.Select(o => new SymmetricSecurityKey(Encoding.ASCII.GetBytes(o.SecretKey))).ToList(),
-                    ValidateIssuer = true,
-                    ValidIssuers = OptionsProviders.Select(o => o.Issuer).ToList(),
-                    ValidateAudience = true,
-                    ValidAudiences = OptionsProviders.Select(o => o.Audience).ToList(),
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero,
-                };
+                    if (ConfigureCalled == false)
+                    {
+                        var message = "Call app.UseQBic(IServiceProvider); from your Startup Configure(IApplicationBuilder app, IServiceProvider serviceProvider) method.";
+                        SystemLogger.GetLogger(typeof(Extensions)).LogError(message);
+                        throw new Exception(message);
+                    }
 
-                // Needed, else authentication does not work. Same as 100: below
-                //TODO: is there a way to get this without having to store it?
-                options.TokenValidationParameters = tokenProviderParams;
-            });
+                    var tokenProviderParams = new TokenValidationParameters()
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKeys = OptionsProviders.Select(o => new SymmetricSecurityKey(Encoding.ASCII.GetBytes(o.SecretKey))).ToList(),
+                        ValidateIssuer = true,
+                        ValidIssuers = OptionsProviders.Select(o => o.Issuer).ToList(),
+                        ValidateAudience = true,
+                        ValidAudiences = OptionsProviders.Select(o => o.Audience).ToList(),
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero,
+                    };
+
+                    // Needed, else authentication does not work. Same as 100: below
+                    //TODO: is there a way to get this without having to store it?
+                    options.TokenValidationParameters = tokenProviderParams;
+                });
+            }
 
             services.AddScoped<UserInjector, DefaultUserInjector>();
 
-            if (identityOptions != null)
+            var authConfigType = appSettings.AuthConfig.GetType();
+            if (authConfigType.IsGenericType && typeof(IAuthConfig).IsAssignableFrom(authConfigType))
             {
-                services.AddIdentityCore<User>(identityOptions).AddTokenProvider<DataProtectorTokenProvider<User>>(TokenOptions.DefaultProvider);
+                var genericType = authConfigType.GetGenericArguments()[0];
+                services.AddScoped(typeof(IAuthResolver), genericType);
             }
-            else
+            else if (appSettings.AuthConfig.AuthType == AuthType.Qbic)
             {
-                services.AddIdentityCore<User>(options =>
-                {
-                    options.Password.RequireDigit = false;
-                    options.Password.RequireLowercase = false;
-                    options.Password.RequiredUniqueChars = 0;
-                    options.Password.RequireNonAlphanumeric = false;
-                    options.Password.RequireUppercase = false;
-                    options.User.RequireUniqueEmail = true;
+                services.AddScoped<IAuthResolver, QbicAuthResolver>();
+            }
+            
 
-                    options.SignIn.RequireConfirmedAccount = true;
-                }).AddTokenProvider<DataProtectorTokenProvider<User>>(TokenOptions.DefaultProvider);
+            if (appSettings.AuthConfig.AuthType == QBic.Core.Auth.AuthType.Qbic)
+            {
+                if (identityOptions != null)
+                {
+                    services.AddIdentityCore<User>(identityOptions).AddTokenProvider<DataProtectorTokenProvider<User>>(TokenOptions.DefaultProvider);
+                }
+                else
+                {
+                    services.AddIdentityCore<User>(options =>
+                    {
+                        options.Password.RequireDigit = false;
+                        options.Password.RequireLowercase = false;
+                        options.Password.RequiredUniqueChars = 0;
+                        options.Password.RequireNonAlphanumeric = false;
+                        options.Password.RequireUppercase = false;
+                        options.User.RequireUniqueEmail = true;
+
+                        options.SignIn.RequireConfirmedAccount = true;
+                    }).AddTokenProvider<DataProtectorTokenProvider<User>>(TokenOptions.DefaultProvider);
+                }
             }
 
             return services;
@@ -224,23 +248,14 @@ namespace WebsiteTemplate
             app.UseDefaultFiles();
             app.UseStaticFiles();
             
-            //app.UseStaticFiles(new StaticFileOptions()
-            //{
-            //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "web-files")),
-            //    ServeUnknownFileTypes = true // else I get: The request path /api/v1/initializeSystem does not match a supported file type
-            //});
-
             var appStartup = serviceProvider.GetService<ApplicationStartup>();
             appStartup?.RegisterUnityContainers(serviceProvider);
-            //appSettings.PerformAdditionalStartupConfiguration(services);
 
-            //app.ApplicationServices.GetService<SystemLogger>().Setup(appSettings.LogLevel);
-            //new SystemLogger().Setup(appSettings.LogLevel);
-
-            //app.UsePathBase("/test");  // will add /test to all my routes, regardless of their paths
-
-            app.UseMiddleware<JwtAuthenticationMiddleware>(); // this is for logging-in and getting new tokens
-            app.UseMiddleware<JwtAuthorizationMiddleware>(); // this is for validating tokens when a called has the Authorize attribute
+            if (appSettings.AuthConfig.AuthType == QBic.Core.Auth.AuthType.Qbic)
+            {
+                app.UseMiddleware<JwtAuthenticationMiddleware>(); // this is for logging-in and getting new tokens
+                app.UseMiddleware<JwtAuthorizationMiddleware>(); // this is for validating tokens when a call has the Authorize attribute
+            } 
 
             app.UseDeveloperExceptionPage();
 
@@ -253,6 +268,8 @@ namespace WebsiteTemplate
             app.UseResponseCompression();
 
             //app.UseAuthorization(); --> Does not seem to be needed
+
+            app.UseMiddleware<ContextMiddleware>();
             
             app.UseMvc(); // should typicall be called last
 

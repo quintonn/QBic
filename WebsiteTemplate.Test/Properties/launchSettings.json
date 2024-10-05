@@ -2,7 +2,7 @@
   "profiles": {
     "WebsiteTemplate.Test": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "environmentVariables": {
         "DOTNET_CLI_TELEMETRY_OPTOUT ": "true",
         "ASPNETCORE_ENVIRONMENT": "Development"

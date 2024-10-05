@@ -1,13 +1,4 @@
-import {
-  Box,
-  Button,
-  Container,
-  ContentLayout,
-  Grid,
-  Header,
-  SpaceBetween,
-} from "@cloudscape-design/components";
-import { Link } from "react-router-dom";
+import { Box, ContentLayout, Grid } from "@cloudscape-design/components";
 import { useMainApp } from "../../ContextProviders/MainAppProvider/MainAppProvider";
 
 interface ServiceFeatureListItemProps {

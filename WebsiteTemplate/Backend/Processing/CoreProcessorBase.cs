@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using NHibernate.Criterion;
-using QBic.Core.Utilities;
+using QBic.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,12 +24,11 @@ namespace WebsiteTemplate.Backend.Processing
         protected static AuditService AuditService { get; set; }
         protected static BackgroundService BackgroundService { get; set; }
 
-        protected static UserManager<User> UserManager { get; set; }
-
         private static bool SetupDone = false;
 
         private static object LockObject = new object();
 
+        private readonly ContextService ContextService;
         public CoreProcessorBase(IServiceProvider container)
         {
             try
@@ -39,7 +37,7 @@ namespace WebsiteTemplate.Backend.Processing
                 {
                     Container = container;
 
-                    UserManager = Container.GetService<UserManager<User>>();
+                    ContextService = Container.GetService<ContextService>();
 
                     if (SetupDone == false)
                     {
@@ -99,14 +97,6 @@ namespace WebsiteTemplate.Backend.Processing
             }
         }
 
-        //public IDictionary<int, Type> EventList
-        //{
-        //    get
-        //    {
-        //        return EventService.EventList;
-        //    }
-        //}
-
         protected async Task<string> GetRequestData()
         {
             return await WebsiteUtils.GetCurrentRequestData(Container.GetService<IHttpContextAccessor>());
@@ -116,13 +106,7 @@ namespace WebsiteTemplate.Backend.Processing
         {
             using (var session = DataService.OpenSession())
             {
-                var roles = session.CreateCriteria<UserRoleAssociation>()
-                                       .CreateAlias("User", "user")
-                                       .Add(Restrictions.Eq("user.Id", userId))
-                                       .List<UserRoleAssociation>()
-                                       .ToList();
-
-                var userRoles = roles.Select(r => r.UserRole.Id).ToArray();
+                var userRoles = ContextService.GetRequestUserRoles().ToArray();
                 var eventRoleAssociations = session.CreateCriteria<EventRoleAssociation>()
                                                    .CreateAlias("UserRole", "role")
                                                    .Add(Restrictions.In("role.Id", userRoles))
@@ -133,9 +117,9 @@ namespace WebsiteTemplate.Backend.Processing
             }
         }
 
-        protected async Task<User> GetLoggedInUser()
+        protected async Task<IUser> GetLoggedInUser()
         {
-            var user = await QBicUtils.GetLoggedInUserAsync(UserManager, Container.GetService<IHttpContextAccessor>()) as User;
+            var user = ContextService.GetRequestUser();
             return user;
         }
 

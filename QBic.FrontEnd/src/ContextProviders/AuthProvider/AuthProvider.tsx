@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { API_URL } from "../../Constants/AppValues";
 import { useMainApp } from "../MainAppProvider/MainAppProvider";
 import { useNavigate } from "react-router-dom";
+import { useAuth as useOidcAuth } from "react-oidc-context";
 
 interface AuthContextType {
   getAccessToken: () => string;
@@ -31,8 +32,11 @@ export const AuthProvider = ({ children }) => {
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  const oidcAuth = useOidcAuth();
+
   const {
     appName,
+    authConfig,
     appVersion,
     isReady: mainAppIsReady,
     showComponent,
@@ -49,6 +53,32 @@ export const AuthProvider = ({ children }) => {
       initializeAuth();
     }
   }, [mainAppIsReady]);
+
+  useEffect(() => {
+    if (
+      authConfig?.AuthType == "Oidc" &&
+      mainAppIsReady === true &&
+      oidcAuth.isLoading === false
+    ) {
+      if (oidcAuth.isAuthenticated === true) {
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
+        accessToken = oidcAuth.user.access_token;
+        localStorage.setItem(getName("accessToken"), accessToken);
+        onReadyFunction();
+      } else {
+        oidcAuth.signinRedirect();
+      }
+    }
+  }, [
+    oidcAuth.isAuthenticated,
+    authConfig,
+    mainAppIsReady,
+    oidcAuth.isLoading,
+  ]);
 
   const getAccessToken = () => {
     return accessToken;
@@ -141,8 +171,12 @@ export const AuthProvider = ({ children }) => {
     accessToken = localStorage.getItem(getName("accessToken"));
     refreshToken = localStorage.getItem(getName("refreshToken"));
     //validateRefreshToken();
-    await onReadyFunction();
-    setIsReady(true);
+    if (authConfig.AuthType == "Qbic") {
+      await onReadyFunction();
+      setIsReady(true);
+    } else if (authConfig.AuthType == "Oidc") {
+      //handleLoggingIn();
+    }
   };
 
   const performLogin = async (username: string, password: string) => {
@@ -219,13 +253,29 @@ export const AuthProvider = ({ children }) => {
     await performLogin(username, password);
   };
 
+  const handleLoggingIn = () => {
+    if (authConfig?.AuthType == "Qbic") {
+      showComponent({ menu: null, type: "login" });
+    } else if (authConfig?.AuthType == "Oidc") {
+      // handled elsewhere
+    } else {
+      console.warn("Unexpected auth config type: " + authConfig?.AuthType);
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem(getName("accessToken"));
     localStorage.removeItem(getName("refreshToken"));
     localStorage.removeItem(getName("lastRefreshDate"));
     setIsAuthenticated(false);
-    //navigate("/login");
-    showComponent({ menu: null, type: "login" });
+
+    if (authConfig?.AuthType == "Oidc") {
+      oidcAuth.signoutSilent();
+    }
+    handleLoggingIn();
+
+    // show home page
+    showComponent({ menu: null, type: "home" });
   };
 
   async function onReadyFunction(allow401: boolean = true) {
@@ -259,8 +309,7 @@ export const AuthProvider = ({ children }) => {
             await performTokenRefresh();
             await onReadyFunction(false);
           } else {
-            //navigate("/login");
-            showComponent({ menu: null, type: "login" });
+            handleLoggingIn();
           }
         }
       }
@@ -268,8 +317,7 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.log("caught error trying to initialize");
       console.log(err);
-      //navigate("/login");
-      showComponent({ menu: null, type: "login" });
+      handleLoggingIn();
     }
   }
 

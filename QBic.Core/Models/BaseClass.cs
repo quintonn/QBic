@@ -1,4 +1,6 @@
-﻿namespace QBic.Core.Models
+﻿using System;
+
+namespace QBic.Core.Models
 {
     public abstract class BaseClass
     {
@@ -6,13 +8,14 @@
 
         public virtual bool CanDelete { get; set; }
 
-        public BaseClass()
+        public BaseClass() : this(true)
         {
-            CanDelete = true;   
+            
         }
 
         public BaseClass(bool canDelete)
         {
+            Id = Guid.NewGuid().ToString();
             CanDelete = canDelete;
         }
     }

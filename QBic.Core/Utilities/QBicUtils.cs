@@ -1,13 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using QBic.Authentication;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace QBic.Core.Utilities
 {
@@ -16,18 +12,6 @@ namespace QBic.Core.Utilities
     /// </summary>
     public static class QBicUtils
     {
-        public static async Task<USER> GetLoggedInUserAsync<USER>(UserManager<USER> userContext, IHttpContextAccessor httpContextAccessor) where USER: class, IUser
-        {
-            var userName = httpContextAccessor.HttpContext.User?.Identity?.Name;
-            if (!String.IsNullOrWhiteSpace(userName))
-            {
-                var user = await userContext.FindByNameAsync(userName);
-                return user;
-            }
-            return null;
-
-        }
-
         public static byte[] GetBytes(string str)
         {
             return Encoding.UTF8.GetBytes(str);

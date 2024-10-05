@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using QBic.Authentication;
+using QBic.Core.Auth;
 using QBic.Core.Utilities;
 using System;
 using System.Net;
@@ -49,6 +52,34 @@ namespace WebsiteTemplate.Test
                 options.User.AllowedUserNameCharacters += " ";
             });
             services.UseQBic<AppSettings, AppStartup>(Config, idOptions);
+
+            var appSettings = Activator.CreateInstance<AppSettings>();
+
+            // Configure Auth
+            if (appSettings.AuthConfig.AuthType == AuthType.Oidc)
+            {
+                var oidcConfig = appSettings.AuthConfig as IOidcAuth;
+                services.AddAuthentication(x =>
+                {
+                    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                }).AddJwtBearer(x =>
+                {
+                    x.SaveToken = true;
+                    x.Authority = oidcConfig.Authority;
+                    x.Audience = oidcConfig.ClientId;
+                    x.IncludeErrorDetails = true;
+                    x.RequireHttpsMetadata = false;
+                    x.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidAudience = oidcConfig.ClientId,
+                        ValidIssuer = oidcConfig.Authority,
+                        NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+                    };
+                });
+            }
+
             //services.AddScoped<UserInjector, DefaultUserInjector>(); // can i override the default one?
             services.AddScoped<UserInjector, TestUserInjector>();
             //User can override UserInjector with their own injector class
@@ -81,7 +112,7 @@ namespace WebsiteTemplate.Test
                        .AllowAnyHeader();
                 builder.WithHeaders("filename").WithExposedHeaders("filename");
             }));
-            var appSettings = Activator.CreateInstance<AppSettings>();
+            
             if (appSettings.UseHttpsRedirection)
             {
                 services.AddHttpsRedirection(options =>

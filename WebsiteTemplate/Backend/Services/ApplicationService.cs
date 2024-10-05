@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using QBic.Core.Utilities;
 using System.Linq;
 using System.Threading.Tasks;
-using WebsiteTemplate.Models;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Backend.Services
@@ -13,18 +10,16 @@ namespace WebsiteTemplate.Backend.Services
     {
         private static readonly ILogger Logger = SystemLogger.GetLogger<ApplicationService>();
         private static ApplicationSettingsCore ApplicationSettings { get; set; }
-        private UserManager<User> UserContext { get; set; }
-        private IHttpContextAccessor HttpContextAccessor { get; set; }
         private readonly DataService DataService;
-        public ApplicationService(ApplicationSettingsCore applicationSettings, UserManager<User> userContext, IHttpContextAccessor httpContextAccessor, DataService dataService)
+        private readonly ContextService ContextService;
+        public ApplicationService(ApplicationSettingsCore applicationSettings, DataService dataService, ContextService contextService)
         {
             ApplicationSettings = applicationSettings;
-            UserContext = userContext;
-            HttpContextAccessor = httpContextAccessor;
             DataService = dataService;
+            ContextService = contextService;
         }
 
-        
+
         public object InitializeApplication(string constructorError)
         {
             var version = ApplicationSettings.GetType().Assembly.GetName().Version.ToString();
@@ -37,7 +32,12 @@ namespace WebsiteTemplate.Backend.Services
                 ApplicationName = ApplicationSettings.GetApplicationName(),
                 Version = version,
                 ConstructorError = constructorError,
-                DateFormat = systemSettings?.DateFormat ?? "dd-MM-yyyy" // IS this used or are we just using ISO Date Format
+                DateFormat = systemSettings?.DateFormat ?? "dd-MM-yyyy", // IS this used or are we just using ISO Date Format
+                AuthConfig = new
+                {
+                    AuthType = ApplicationSettings.AuthConfig.AuthType.ToString(),
+                    Config = ApplicationSettings.AuthConfig
+                }
                 //TODO
             };
             return json;
@@ -45,7 +45,7 @@ namespace WebsiteTemplate.Backend.Services
 
         public async Task<object> InitializeSession()
         {
-            var user = await QBicUtils.GetLoggedInUserAsync<User>(UserContext, HttpContextAccessor);
+            var user = ContextService.GetRequestUser();
             if (user == null)
             {
                 return new

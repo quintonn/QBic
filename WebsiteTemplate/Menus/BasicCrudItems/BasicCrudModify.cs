@@ -119,7 +119,10 @@ namespace WebsiteTemplate.Menus.BasicCrudItems
             }
 
             list.Add(new HiddenInput("IsNew", IsNew.ToString()));
-            list.Add(new HiddenInput("Id", Item?.Id));
+            if (!IsNew)
+            {
+                list.Add(new HiddenInput("Id", Item?.Id));
+            }
 
 
             return list;

@@ -54,7 +54,10 @@ namespace WebsiteTemplate.Backend.Menus
             });
 
             list.Add(new HiddenInput("ParentMenuId", ParentMenuId));
-            list.Add(new HiddenInput("Id", DataItem?.Id));
+            if (!IsNew)
+            {
+                list.Add(new HiddenInput("Id", DataItem?.Id));
+            }
 
 
             return list;
