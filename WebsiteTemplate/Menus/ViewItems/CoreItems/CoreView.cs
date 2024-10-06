@@ -1,4 +1,5 @@
-﻿using NHibernate;
+﻿using Microsoft.Extensions.Logging;
+using NHibernate;
 using NHibernate.Criterion;
 using QBic.Core.Models;
 using System;
@@ -14,9 +15,11 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
     public abstract class CoreView<T> : ShowView where T : DynamicClass
     {
         protected DataService DataService { get; set; }
-        public CoreView(DataService dataService)
+        protected readonly ILogger Logger;
+        public CoreView(DataService dataService, ILogger logger)
         {
             DataService = dataService;
+            Logger = logger;
             ViewParams = new Dictionary<string, string>();
         }
 
@@ -50,11 +53,13 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
 
         public override int GetDataCount(GetDataSettings settings)
         {
+            Logger.LogInformation("Getting data count for " + this.Title);
             ViewParams = GetViewParameters(settings);
 
             using (var session = DataService.OpenSession())
             {
                 var result = CreateQuery(session, settings).RowCount();
+                Logger.LogInformation("Returning data count for " + this.Title + " = " + result);
                 return result;
             }
         }
