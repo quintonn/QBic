@@ -1,6 +1,6 @@
 ﻿using FluentNHibernate.Cfg.Db;
 using QBic.Core.Data;
-using System;
+using QBic.Core.Utilities;
 using System.Data;
 using WebsiteTemplate.Utilities;
 
@@ -20,7 +20,7 @@ namespace WebsiteTemplate.UnitTests.Setup
 
         public override bool TokenEndpointAllowInsecureHttpRequests => false;
 
-        string name = Guid.NewGuid().ToString();
+        string name = QBicUtils.CreateNewGuid();
         public override IPersistenceConfigurer GetPersistenceConfigurer(string databaseName)
         {
             var connectionString = $"Data Source=file:{name}?mode=memory&cache=shared;Version=3;New=True";

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using QBic.Core.Utilities;
 
 namespace QBic.Core.Models
 {
@@ -15,7 +15,7 @@ namespace QBic.Core.Models
 
         public BaseClass(bool canDelete)
         {
-            Id = Guid.NewGuid().ToString();
+            Id = QBicUtils.CreateNewGuid();
             CanDelete = canDelete;
         }
     }

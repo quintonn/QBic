@@ -247,7 +247,7 @@ namespace WebsiteTemplate.Utilities
 
         public static byte[] SerializeObject_New(object value, bool includeTypeInfo)
         {
-            var path = Path.GetTempPath() + Guid.NewGuid().ToString() + ".dat";
+            var path = Path.GetTempPath() + QBicUtils.CreateNewGuid() + ".dat";
             try
             {
                 //var filePath = @"C:\somewhere.json";

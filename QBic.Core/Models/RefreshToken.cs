@@ -1,5 +1,5 @@
 ﻿using QBic.Authentication;
-using System;
+using QBic.Core.Utilities;
 
 namespace QBic.Core.Models
 {
@@ -7,7 +7,7 @@ namespace QBic.Core.Models
     {
         public RefreshToken()
         {
-            Id = Guid.NewGuid().ToString();
+            Id = QBicUtils.CreateNewGuid();
     }
         public virtual string Token { get; set; }
         //[Required]

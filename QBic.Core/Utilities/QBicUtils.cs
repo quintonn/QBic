@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Medo;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,6 +20,11 @@ namespace QBic.Core.Utilities
         public static string GetString(byte[] bytes)
         {
             return Encoding.UTF8.GetString(bytes);
+        }
+
+        public static string CreateNewGuid()
+        {
+            return Uuid7.NewUuid7().ToString();
         }
 
         public static bool IsValidEmail(string email)
