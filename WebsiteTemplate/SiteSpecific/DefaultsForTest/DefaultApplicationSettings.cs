@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using QBic.Core.Data;
 using QBic.Core.Utilities;
-using System;
 using System.Data;
 using WebsiteTemplate.Utilities;
 
@@ -20,14 +19,6 @@ namespace WebsiteTemplate.SiteSpecific.DefaultsForTest
             get
             {
                 return "||22^master^JOIN^continue^12||";
-            }
-        }
-
-        public override Type GetApplicationStartupType
-        {
-            get
-            {
-                return typeof(DefaultStartup);
             }
         }
 

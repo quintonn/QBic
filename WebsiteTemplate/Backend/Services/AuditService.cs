@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
-using NHibernate;
+﻿using NHibernate;
 using QBic.Authentication;
 using QBic.Core.Data;
 using QBic.Core.Models;
-using QBic.Core.Utilities;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,16 +13,13 @@ namespace WebsiteTemplate.Backend.Services
     public class AuditService
     {
         private DataStore DataStore { get; set; }
-        private UserManager<User> UserContext { get; set; }
-
         private ApplicationSettingsCore AppSettings { get; set; }
-        private Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor { get; set; }
-        public AuditService(DataStore dataStore, UserManager<User> userContext, ApplicationSettingsCore appSettings, Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor)
+        private readonly ContextService ContextService;
+        public AuditService(DataStore dataStore, ApplicationSettingsCore appSettings, ContextService contextService)
         {
             DataStore = dataStore;
-            UserContext = userContext;
             AppSettings = appSettings;
-            HttpContextAccessor = httpContextAccessor;
+            ContextService = contextService;
         }
 
         public async Task LogUserEvent(int eventId)
@@ -54,9 +49,7 @@ namespace WebsiteTemplate.Backend.Services
 
             if (user == null)
             {
-                var userTask = QBicUtils.GetLoggedInUserAsync(UserContext, HttpContextAccessor);
-                userTask.Wait();
-                user = userTask.Result as User;
+                user = ContextService.GetRequestUser();
             }
             if (user == null)
             {

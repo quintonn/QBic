@@ -82,7 +82,10 @@ namespace WebsiteTemplate.Backend.Users
 
             list.Add(listSelection);
 
-            list.Add(new HiddenInput("Id", DataItem?.Id));
+            if (!IsNew)
+            {
+                list.Add(new HiddenInput("Id", DataItem?.Id));
+            }
 
             list.AddRange(injectedInputs);
 

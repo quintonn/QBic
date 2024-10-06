@@ -1,14 +1,11 @@
 ﻿using DocumentGenerator.DocumentTypes;
 using DocumentGenerator.Settings;
 using DocumentGenerator.Styles;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using MigraDoc.DocumentObjectModel;
-using QBic.Authentication;
-using QBic.Core.Utilities;
 using System;
 using System.Threading.Tasks;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
@@ -63,8 +60,9 @@ namespace WebsiteTemplate.Test.MenuItems
                 document.AddRowUsingParams("Jack", "Black");
             }
 
-            var user = await QBicUtils.GetLoggedInUserAsync(Container.GetService<UserManager<IUser>>(), Container.GetService<IHttpContextAccessor>());
-            
+            var user = Container.GetService<ContextService>().GetRequestUser();
+
+
             var formats = DateTime.Now.GetDateTimeFormats();
             
             var footer = "Printed by " + user.UserName + " on " + System.DateTime.Now.ToString("yyyy-MM-dd");

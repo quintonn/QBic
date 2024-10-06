@@ -1,14 +1,12 @@
 ﻿using FluentNHibernate.Cfg.Db;
-using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
+using QBic.Core.Auth;
 using QBic.Core.Data;
 using QBic.Core.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using WebsiteTemplate.Backend.Users;
 using WebsiteTemplate.Models.NonDatabase;
-using WebsiteTemplate.Test.MenuItems.Users;
 using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Test.SiteSpecific
@@ -27,14 +25,6 @@ namespace WebsiteTemplate.Test.SiteSpecific
 
         //public override TimeSpan AccessTokenExpireTimeSpan => TimeSpan.FromSeconds(25);
 
-        public override Type GetApplicationStartupType
-        {
-            get
-            {
-                return typeof(Startup);
-            }
-        }
-
         public override string SystemEmailAddress
         {
             get
@@ -49,11 +39,6 @@ namespace WebsiteTemplate.Test.SiteSpecific
         public override string GetApplicationName()
         {
             return "QBic";
-        }
-
-        public override void PerformAdditionalStartupConfiguration(IServiceCollection services)
-        {
-            services.AddTransient<UserInjector, TestUserInjector>();
         }
 
         public override List<SystemSettingItem> GetAdditionalSystemSettings(ISession session)
@@ -86,6 +71,15 @@ namespace WebsiteTemplate.Test.SiteSpecific
         }
 
         public override DBProviderType DataProviderType => DBProviderType.MSSQL;
+
+        //public override IAuthConfig AuthConfig => new OidcAuth<OidcAuthResolver>()
+        //{
+        //    ClientId = "286831252286275587",
+        //    Authority = "http://localhost:5050",
+        //    RedirectUrl = "http://localhost:1234/",
+        //    Scope = "openid profile email",
+        //    ResponseType = "code"
+        //};
 
         public override bool EnableGoogleAutoBackups => false;
         public override GoogleBackupConfig GoogleBackupConfig => new GoogleBackupConfig()

@@ -1,9 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using NHibernate;
+﻿using NHibernate;
 using NHibernate.Criterion;
-using QBic.Authentication;
-using QBic.Core.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,7 +8,6 @@ using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
-using WebsiteTemplate.Models;
 using WebsiteTemplate.Test.Models;
 using WebsiteTemplate.Test.SiteSpecific;
 
@@ -21,13 +16,11 @@ namespace WebsiteTemplate.Test.MenuItems.MarketplaceItems
     public class ViewMarketplaceItems : ShowView
     {
         private DataService DataService { get; set; }
-        private UserManager<IUser> UserManager { get; set; }
-        private IHttpContextAccessor HttpContextAccessor { get; set; }
-        public ViewMarketplaceItems(DataService dataService, UserManager<IUser> userManager, IHttpContextAccessor httpContextAccessor)
+        private readonly ContextService ContextService;
+        public ViewMarketplaceItems(DataService dataService, ContextService contextService)
         {
             DataService = dataService;
-            HttpContextAccessor = httpContextAccessor;
-            UserManager = userManager;
+            ContextService = contextService;
         }
 
         public override bool AllowInMenu => true;
@@ -41,9 +34,7 @@ namespace WebsiteTemplate.Test.MenuItems.MarketplaceItems
             columnConfig.AddDateColumn("Last Updated", "LastUpdate");
             columnConfig.AddDateColumn("Owner", "Owner");
 
-            var userTask = QBicUtils.GetLoggedInUserAsync(UserManager, HttpContextAccessor);
-            userTask.Wait();
-            var currentUser = userTask.Result as User;
+            var currentUser = ContextService.GetRequestUser();
 
             columnConfig.AddLinkColumn("", "Id", "Edit", MenuNumber.EditMarketplaceItem, new ShowHideColumnSetting()
             {

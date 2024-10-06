@@ -40,7 +40,7 @@ namespace WebsiteTemplate.Menus.ViewItems.CoreItems
             }
             result.AddRange(InputFields());
 
-            if (result.Count(r => r.InputName == "Id") == 0)
+            if (!IsNew && result.Count(r => r.InputName == "Id") == 0)
             {
                 result.Add(new HiddenInput("Id", Item?.Id));
             }

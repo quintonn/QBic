@@ -31,8 +31,6 @@ namespace WebsiteTemplate.Backend.Processing
 
             var id = eventId;
             var eventItem = Container.GetService<EventService>().GetEventItem(eventId) as GetInput;
-            //var eventItemType = EventList[id];
-            //var eventItem = Container.Resolve(eventItemType) as GetInput;
 
             var inputButtons = eventItem.InputButtons;
             if (inputButtons.Where(i => i.ActionNumber == actionId).Count() == 0)

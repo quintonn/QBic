@@ -56,7 +56,7 @@ namespace WebsiteTemplate.Test.MenuItems.Departments
             
             result.Add(new ViewInput<ExpenseRowItem>("Expenses", "Expenses", new ViewExpenses(), defaultValues, "General", true));
 
-            result.Add(new DateInput("Date", "Date", Item?.Date, "General", true));
+            result.Add(new DateInput("Date", "Date", IsNew ? DateTime.Today : Item?.Date, "General", true));
 
             return result;
         }

@@ -16,6 +16,23 @@ export interface SystemInfo {
   Version: string;
   ConstructionError: string;
   DateFormat: string;
+  AuthConfig: AuthConfig;
+}
+
+type authType = "Qbic" | "Oidc";
+
+interface AuthConfigConfg {
+  Scope: string;
+  ResponseType: string;
+  RedirectUrl: string;
+  ClientId: string;
+  Authority: string;
+  AuthType: number;
+}
+
+export interface AuthConfig {
+  AuthType: authType;
+  Config: AuthConfigConfg;
 }
 
 type displayType = "form" | "view" | "home" | "login";
@@ -46,6 +63,7 @@ interface MainAppContextType {
   clearDisplayStack: () => void;
   setSelectedTableRow: (selection: SelectedRecord) => void;
   selectedRow: SelectedRecord;
+  authConfig: AuthConfig;
 }
 
 interface SelectedRecord {
@@ -71,6 +89,7 @@ export const MainAppProvider = ({ children }) => {
   const [appVersion, setAppVersion] = useState("");
   const [dateFormat, setDateFormat] = useState("");
   const [isReady, setIsReady] = useState(false);
+  const [authConfig, setAuthConfig] = useState<AuthConfig>(null);
 
   const [selectedRow, setRow] = useState<SelectedRecord>(null);
 
@@ -175,6 +194,7 @@ export const MainAppProvider = ({ children }) => {
           setAppName(systemInfo.ApplicationName);
           setAppVersion(systemInfo.Version);
           setDateFormat(systemInfo.DateFormat);
+          setAuthConfig(systemInfo.AuthConfig);
 
           document.title = `${systemInfo.ApplicationName} ${systemInfo.Version}`;
           setIsReady(true);
@@ -222,6 +242,7 @@ export const MainAppProvider = ({ children }) => {
     clearDisplayStack,
     setSelectedTableRow,
     selectedRow,
+    authConfig,
   };
 
   return (

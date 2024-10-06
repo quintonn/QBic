@@ -54,37 +54,6 @@ namespace QBic.Core.Services
             session.Query<T>().Delete();
         }
 
-        //private int GetCount(Type type, ISession session)
-        //{
-        //    var queryOverMethodInfo = typeof(ISession).GetMethods().FirstOrDefault(m => m.Name == "QueryOver"
-        //                                                        && m.GetParameters().Count() == 0);
-        //    var queryOverMethod = queryOverMethodInfo.MakeGenericMethod(type);
-
-        //    var genericType = typeof(IQueryOver<>);
-        //    Type[] typeArgs = { type };
-
-        //    var genericType1 = typeof(IQueryOver<,>);
-        //    Type[] typeArgs1 = { type, type };
-
-        //    var queryOver = queryOverMethod.Invoke(session, null);
-
-        //    var gType = genericType.MakeGenericType(typeArgs);
-        //    var gType1 = genericType1.MakeGenericType(typeArgs1);
-
-        //    var selectMethod = gType1.GetMethods().Where(m => m.Name == "Select").Last();
-        //    var parameters = new IProjection[] { Projections.RowCount() };
-        //    queryOver = selectMethod.Invoke(queryOver, new object[] { parameters });
-
-        //    var futureValueMethodInfo = gType.GetMethods().Where(m => m.Name == "FutureValue").Last();
-        //    var futureValueMethod = futureValueMethodInfo.MakeGenericMethod(typeof(int));
-
-        //    var futureValue = futureValueMethod.Invoke(queryOver, null) as IFutureValue<int>;
-
-        //    var count = futureValue.Value;
-
-        //    return count;
-        //}
-
         private List<BaseClass> GetItems<Session>(Type type, Session session, int skip = 0, int take = int.MaxValue)
         {
             var queryOverMethodInfo = session.GetType().GetMethods().FirstOrDefault(m => m.Name == "QueryOver"
@@ -145,8 +114,6 @@ namespace QBic.Core.Services
 
             try
             {
-                DynamicClass.SetIdsToBeAssigned = true;
-
                 Logger.LogInformation("About to create backup");
 
                 CreateBackupFile(currentDirectory + backupName);
@@ -208,11 +175,9 @@ namespace QBic.Core.Services
                 }
 
                 Logger.LogInformation("Closing factory");
-                //factory.Close();
 
                 using (var session = factory.OpenSession())
                 {
-                    //var users = session.QueryOver<Models.User>().List().ToList();
                     var count = session
                             .CreateCriteria<BaseClass>()
                             .SetProjection(
@@ -239,8 +204,6 @@ namespace QBic.Core.Services
             }
             finally
             {
-                DynamicClass.SetIdsToBeAssigned = false; // change it back.
-
                 File.Delete(currentDirectory + backupName);
             }
         }
@@ -261,11 +224,8 @@ namespace QBic.Core.Services
                 {
                     var type = SystemTypes[id];
 
-                    //if ((type == typeof(Models.SystemSettings) || (type == typeof(SystemSettingValue))) && restoreSystemSettings == false)
                     if (typesToIgnore.Contains(type))
                     {
-                        //itemsAllowed = session.QueryOver<Models.SystemSettings>().RowCount() +
-                        //               session.QueryOver<Models.SystemSettingValue>().RowCount();
                         itemsAllowed += GetItemCount(type, session);
                         continue;
                     }
@@ -368,12 +328,10 @@ namespace QBic.Core.Services
                 File.WriteAllBytes(currentDirectory + backupName, data);
 
                 var connectionString = String.Format(@"Data Source=##CurrentDirectory##\Data\{0};Version=3;Journal Mode=Off;Connection Timeout=12000", backupName);
-                //var connectionString = $"Data Source=file:{Guid.NewGuid()}?mode=memory&cache=shared;Version=3;New=True";
                 var store = DataStore.GetInstance(false, AppSettings, null);
                 var backupConfig = store.CreateNewConfigurationUsingConnectionString(connectionString);
                 var backupFactory = backupConfig.BuildSessionFactory();
 
-                DynamicClass.SetIdsToBeAssigned = true;
                 var config = store.CreateNewConfigurationUsingDatabaseName("MainDataStore");
                 var factory = config.BuildSessionFactory();
 
@@ -390,11 +348,8 @@ namespace QBic.Core.Services
                         var type = SystemTypes[id];
 
                         Logger.LogInformation($"Processing type {type?.Name}");
-                        //if ((type == typeof(Models.SystemSettings) || (type == typeof(SystemSettingValue))) && restoreSystemSettings == false)
                         if (typesToIgnore.Contains(type))
                         {
-                            //var tmpItems = GetItems(type, backupSession);
-
                             continue;
                         }
 
@@ -440,8 +395,6 @@ namespace QBic.Core.Services
                     }
                 }
 
-                //factory.Close();
-                //backupFactory.Close();
                 Logger.LogInformation("Done with id look, verifying number of records restored");
                 using (var session = factory.OpenSession())
                 {
@@ -452,13 +405,6 @@ namespace QBic.Core.Services
                             )
                             .List<int>()
                             .Sum();
-
-                    //if (restoreSystemSettings == false)
-                    //{
-                    //    var settingsCount = session.QueryOver<Models.SystemSettings>().RowCount() +
-                    //                        session.QueryOver<SystemSettingValue>().RowCount();
-                    //    count -= settingsCount;
-                    //}
 
                     var queryOverMethodInfo = typeof(ISession).GetMethods().FirstOrDefault(m => m.Name == "QueryOver" && m.GetParameters().Count() == 0);
                     foreach (var t in typesToIgnore)
@@ -489,7 +435,6 @@ namespace QBic.Core.Services
             }
             finally
             {
-                DynamicClass.SetIdsToBeAssigned = false;
                 if (File.Exists(currentDirectory + backupName))
                 {
                     File.Delete(currentDirectory + backupName);

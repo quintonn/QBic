@@ -1,7 +1,5 @@
 ﻿using FluentNHibernate.Cfg.Db;
-using Microsoft.Extensions.Configuration;
 using QBic.Core.Data;
-using QBic.Core.Utilities;
 using System;
 using System.Data;
 using WebsiteTemplate.Utilities;
@@ -17,8 +15,6 @@ namespace WebsiteTemplate.UnitTests.Setup
         public override string ApplicationPassPhrase => "12345678901234567890123456789123";
 
         public override bool UpdateDatabase => true;
-
-        public override Type GetApplicationStartupType => typeof(TestAppStartup);
 
         public override string SystemEmailAddress => "system@example.com";
 
