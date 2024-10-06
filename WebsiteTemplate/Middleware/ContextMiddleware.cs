@@ -20,8 +20,8 @@ namespace WebsiteTemplate.Middleware
         private readonly DataStore DataStore;
         private readonly IAuthResolver AuthResolver;
 
-        private readonly ConcurrentDictionary<string, IUser> UserCache = new ConcurrentDictionary<string, IUser>();
-        private readonly ConcurrentDictionary<string, List<string>> UserRolesCache = new ConcurrentDictionary<string, List<string>>();
+        private static readonly ConcurrentDictionary<string, IUser> UserCache = new ConcurrentDictionary<string, IUser>();
+        private static readonly ConcurrentDictionary<string, List<string>> UserRolesCache = new ConcurrentDictionary<string, List<string>>();
 
         public ContextMiddleware(RequestDelegate next, ILogger<ContextMiddleware> logger, IHttpContextAccessor httpContextAccessor, DataStore dataStore, IAuthResolver authResolver)
         {
@@ -73,8 +73,6 @@ namespace WebsiteTemplate.Middleware
 
         public async Task Invoke(HttpContext context)
         {
-            Logger.LogInformation("Context middle-ware being executed");
-
             var userId = HttpContextAccessor.HttpContext.User?.Identity?.Name;
             if (!string.IsNullOrWhiteSpace(userId))
             {

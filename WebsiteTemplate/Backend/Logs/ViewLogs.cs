@@ -48,7 +48,6 @@ namespace WebsiteTemplate.Backend.Logs
                 var files = directoryInfo.GetFiles().OrderBy(p => p.LastWriteTime).TakeLast(5).ToList();
 
                 LogsCache = files.SelectMany(f => SafelyReadAllLines(f.FullName, settings)).Reverse().ToArray();
-
             }
             return LogsCache;
         }

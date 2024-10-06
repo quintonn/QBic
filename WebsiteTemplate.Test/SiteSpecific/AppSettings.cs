@@ -1,4 +1,5 @@
 ﻿using FluentNHibernate.Cfg.Db;
+using Microsoft.Extensions.Configuration;
 using NHibernate;
 using QBic.Core.Auth;
 using QBic.Core.Data;
@@ -24,7 +25,7 @@ namespace WebsiteTemplate.Test.SiteSpecific
         public override bool ShowSQL => false;
 
         //public override TimeSpan AccessTokenExpireTimeSpan => TimeSpan.FromSeconds(25);
-
+        public override bool DebugUserEvents => true;
         public override string SystemEmailAddress
         {
             get
@@ -59,7 +60,10 @@ namespace WebsiteTemplate.Test.SiteSpecific
 
             //var configurer = SQLiteConfiguration.Standard.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
 
-            var connectionString = "Integrated Security=SSPI;Persist Security Info=False;Data Source=localhost;Initial Catalog=WebTest;MultipleActiveResultSets=true";
+            var temp = Config.GetSection("ConnectionStrings");
+            var connectionString = Config.GetConnectionString(databaseName);
+
+            //var connectionString = "Integrated Security=SSPI;Persist Security Info=False;Data Source=localhost;Initial Catalog=WebTest;MultipleActiveResultSets=true";
             var configurer = MsSqlConfiguration.MsSql2012.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
 
             //var connectionString = "Data Source=##CurrentDirectory##\\Data\\test.db;Version=3;Journal Mode=Off;Connection Timeout=12000";

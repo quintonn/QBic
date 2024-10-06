@@ -15,8 +15,12 @@ namespace WebsiteTemplate.Utilities
     {
         public ApplicationSettingsCore()
         {
-
         }
+
+        /// <summary>
+        /// This is a temporary flag added to try and debug a client scenario where the user's menu doesn't load completely
+        /// </summary>
+        public virtual bool DebugUserEvents => false;
 
         protected IConfiguration Config { get; set; }
         public void SetConfig(IConfiguration config)

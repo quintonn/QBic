@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using QBic.Core.Utilities;
 using System;
 using System.Text.Json;
@@ -9,8 +10,8 @@ namespace WebsiteTemplate.Backend.Processing
 {
     public abstract class CoreProcessor<T> : CoreProcessorBase
     {
-        public CoreProcessor(IServiceProvider container)
-            : base(container)
+        public CoreProcessor(IServiceProvider container, ILogger logger)
+            : base(container, logger)
         {
 
         }

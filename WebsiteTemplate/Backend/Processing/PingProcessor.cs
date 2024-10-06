@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 using WebsiteTemplate.Utilities;
 
@@ -6,8 +7,8 @@ namespace WebsiteTemplate.Backend.Processing
 {
     public class PingProcessor : EventProcessor<PingResult>
     {
-        public PingProcessor(IServiceProvider container)
-            : base(container)
+        public PingProcessor(IServiceProvider container, ILogger<PingProcessor> logger)
+            : base(container, logger)
         {
 
         }

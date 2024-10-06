@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebsiteTemplate.Menus.BaseItems;
@@ -9,8 +10,8 @@ namespace WebsiteTemplate.Backend.Processing
 {
     public abstract class EventProcessor<T> : CoreProcessor<T>
     {
-        public EventProcessor(IServiceProvider container)
-            : base(container)
+        public EventProcessor(IServiceProvider container, ILogger logger)
+            : base(container, logger)
         {
 
         }

@@ -19,7 +19,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.7" />
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.7" />
-    <PackageReference Include="Serilog.Extensions.Logging.File" Version="3.0.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.0" />
@@ -28,6 +28,10 @@
 
   <ItemGroup>
     <Content Include="Data\**\*" Exclude="Data\*.db;Data\*.txt" />
+    <None Remove="appsettings.json" />
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Properties\launchSettings.json" />
   </ItemGroup>
 

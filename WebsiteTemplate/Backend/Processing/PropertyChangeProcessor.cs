@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,8 +12,8 @@ namespace WebsiteTemplate.Backend.Processing
 {
     public class PropertyChangeProcessor : CoreProcessor<IList<IEvent>>
     {
-        public PropertyChangeProcessor(IServiceProvider container)
-            :base(container)
+        public PropertyChangeProcessor(IServiceProvider container, ILogger<PropertyChangeProcessor> logger)
+            :base(container, logger)
         {
 
         }

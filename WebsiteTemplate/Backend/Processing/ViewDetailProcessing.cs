@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace WebsiteTemplate.Backend.Processing
 {
     internal class ViewDetailProcessing : CoreProcessor<object>
     {
-        public ViewDetailProcessing(IServiceProvider container) : base(container)
+        public ViewDetailProcessing(IServiceProvider container, ILogger<ViewDetailProcessing> logger) : base(container, logger)
         {
         }
 

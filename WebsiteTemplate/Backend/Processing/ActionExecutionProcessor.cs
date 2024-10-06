@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,9 @@ namespace WebsiteTemplate.Backend.Processing
 {
     public class ActionExecutionProcessor : EventProcessor<IList<IEvent>>
     {
-        public ActionExecutionProcessor(IServiceProvider container)
-            : base(container)
+        public ActionExecutionProcessor(IServiceProvider container, ILogger<ActionExecutionProcessor> logger)
+            : base(container, logger)
         {
-
         }
 
         public async override Task<IList<IEvent>> ProcessEvent(int eventId)
@@ -79,7 +79,9 @@ namespace WebsiteTemplate.Backend.Processing
                 var action = eventItem as ShowView;
 
                 var user = await GetLoggedInUser();
+                Logger.LogInformation("Getting allowed events for user: {Id}", user.Id);
                 var allowedMenus = GetAllowedEventsForUser(user.Id);
+                
                 action.Columns = action.DoConfigureColumns(allowedMenus);
 
                 data = originalData;

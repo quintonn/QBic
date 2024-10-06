@@ -7,13 +7,14 @@ using WebsiteTemplate.Menus;
 using Microsoft.Extensions.DependencyInjection;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace WebsiteTemplate.Backend.Processing
 {
     public class ViewMenuProcessor : CoreProcessor<IList<MenuItem>>
     {
-        public ViewMenuProcessor(IServiceProvider container)
-            : base(container)
+        public ViewMenuProcessor(IServiceProvider container, ILogger<ViewMenuProcessor> logger)
+            : base(container, logger)
         {
 
         }

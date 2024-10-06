@@ -1,4 +1,5 @@
-﻿using NHibernate;
+﻿using Microsoft.Extensions.Logging;
+using NHibernate;
 using NHibernate.Criterion;
 using System;
 using System.Collections.Generic;
@@ -9,8 +10,8 @@ namespace WebsiteTemplate.Backend.Processing
 {
     public class UserMenuProcessor : CoreProcessor<IList<Menu>>
     {
-        public UserMenuProcessor(IServiceProvider container)
-            : base(container)
+        public UserMenuProcessor(IServiceProvider container, ILogger<UserMenuProcessor> logger)
+            : base(container, logger)
         {
 
         }

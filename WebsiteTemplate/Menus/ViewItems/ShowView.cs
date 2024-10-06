@@ -1,7 +1,11 @@
-﻿using System.Collections;
+﻿using Microsoft.Extensions.Logging;
+using QBic.Core.Utilities;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
+using WebsiteTemplate.Utilities;
 
 namespace WebsiteTemplate.Menus.ViewItems
 {
@@ -44,7 +48,29 @@ namespace WebsiteTemplate.Menus.ViewItems
         internal IList<ViewColumn> DoConfigureColumns(IList<int> allowedUserEvents)
         {
             var config = new ColumnConfiguration();
+            var container = QBicUtils.ServiceProvider;
+            
+            var appSettings = container.GetService(typeof(ApplicationSettingsCore)) as ApplicationSettingsCore;
+
             ConfigureColumns(config);
+
+            if (appSettings.DebugUserEvents)
+            {
+                var contextService = container.GetService(typeof(ContextService)) as ContextService;
+                var user = contextService.GetRequestUser();
+
+                var logger = container.GetService(typeof(ILogger<ShowView>)) as ILogger;
+                logger.LogInformation("Getting allowed columns for " + this.Title + " - " + this.Description + " -->  " + user?.UserName);
+                
+                var allColumns = config.GetColumns();
+                var json = JsonHelper.SerializeObject(allColumns.Select(x => x.GetFullColumnName()).ToList(), true);
+                logger.LogInformation("all columns:");
+                logger.LogInformation(json);
+                var allowedColumns = allColumns.Where(x => AllowColumn(x, allowedUserEvents)).ToList();
+                json = JsonHelper.SerializeObject(allowedColumns.Select(x => x.GetFullColumnName()).ToList(), true);
+                logger.LogInformation("allowed columns:");
+                logger.LogInformation(json);
+            }
 
             var columns = config.GetColumns().Where(c => AllowColumn(c, allowedUserEvents)).ToList();
             return columns;

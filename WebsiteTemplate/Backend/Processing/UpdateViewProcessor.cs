@@ -6,13 +6,14 @@ using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.ViewItems;
 using WebsiteTemplate.Utilities;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace WebsiteTemplate.Backend.Processing
 {
     public class UpdateViewProcessor : CoreProcessor<Event>
     {
-        public UpdateViewProcessor(IServiceProvider container)
-            : base(container)
+        public UpdateViewProcessor(IServiceProvider container, ILogger<UpdateViewProcessor> logger)
+            : base(container, logger)
         {
 
         }

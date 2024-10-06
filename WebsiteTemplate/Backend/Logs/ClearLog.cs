@@ -42,9 +42,15 @@ namespace WebsiteTemplate.Backend.Logs
             var directoryInfo = new DirectoryInfo(logsPath);
             directoryInfo.GetFiles().OrderBy(x => x.LastAccessTime).ToList().ForEach(f =>
             {
-                f.Delete();
+                using (var fileStream = new FileStream(f.FullName, FileMode.Open, FileAccess.Write, FileShare.ReadWrite))
+                {
+                    // Truncate the file (clear contents)
+                    fileStream.SetLength(0);
+
+                    fileStream.Flush();
+                    fileStream.Close();
+                }
             });
-           
 
             return new List<IEvent>()
             {

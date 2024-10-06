@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Serilog;
 using System;
 using System.IO;
 
@@ -35,18 +33,13 @@ namespace WebsiteTemplate.Test
 #endif
             var config = new ConfigurationBuilder();
             config.AddJsonFile("appsettings.json", true, true);
+            
+            // Load environment app settings file
+            var appFileName = "appsettings." + Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") + ".json";
+            config.AddJsonFile(appFileName, true, true);
+
             builder.UseConfiguration(config.Build());
 
-            builder.ConfigureLogging(x =>
-            {
-                x.SetMinimumLevel(LogLevel.Information);
-
-                x.ClearProviders();
-                x.AddDebug();
-                x.AddConsole();
-                var logConfig = new LoggerConfiguration();
-                x.AddFile("Logs/log-{Date}.txt");
-            });
             builder.UseStartup<Startup>();
 
             return builder;

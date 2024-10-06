@@ -13,6 +13,7 @@ namespace QBic.Core.Utilities
     /// </summary>
     public static class QBicUtils
     {
+        public static IServiceProvider ServiceProvider { get; set; }
         public static byte[] GetBytes(string str)
         {
             return Encoding.UTF8.GetBytes(str);
