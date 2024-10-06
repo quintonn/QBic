@@ -15,6 +15,7 @@ using WebsiteTemplate.Backend.Users;
 using WebsiteTemplate.Test.MenuItems.Users;
 using WebsiteTemplate.Test.Models;
 using WebsiteTemplate.Test.SiteSpecific;
+using Serilog;
 
 namespace WebsiteTemplate.Test
 {
@@ -31,12 +32,14 @@ namespace WebsiteTemplate.Test
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // This is needed if hosting on Linux environment such as azure
-            services.AddLogging(x =>
+            services.AddSerilog((services, lc) =>
             {
-                x.AddConsole();
-                x.AddDebug();
-
+                lc
+                .ReadFrom.Configuration(Config)
+                .ReadFrom.Services(services)
+                .Enrich.FromLogContext()
+                //.WriteTo.Sink<QbicMemorySinkLog>()
+                .WriteTo.Console(Serilog.Events.LogEventLevel.Information, "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] {SourceContext} - {Message}{NewLine}{Exception}");
             });
 
             var idOptions = new Action<IdentityOptions>(options =>
@@ -127,7 +130,6 @@ namespace WebsiteTemplate.Test
         public void Configure(IApplicationBuilder app, IServiceProvider serviceProvider, ILoggerFactory logFactory)
         {
             SystemLogger.Setup(logFactory);
-            logFactory.AddFile("Logs/log-{Date}.txt");
             app.UseCors("Default");
             app.UseQBic(serviceProvider);
         }

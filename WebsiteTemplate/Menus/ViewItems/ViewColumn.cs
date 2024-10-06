@@ -1,4 +1,6 @@
-﻿namespace WebsiteTemplate.Menus.ViewItems
+﻿using NHibernate.Linq;
+
+namespace WebsiteTemplate.Menus.ViewItems
 {
     public abstract class ViewColumn
     {
@@ -43,5 +45,29 @@
         // hide this column if no rows are populated
 
         /// Can add other stuff like formating, styling, etc
+
+        public string GetFullColumnName()
+        {
+            var result = "";
+            if (!string.IsNullOrWhiteSpace(ColumnLabel))
+            {
+                result = ColumnLabel;
+            } else
+            {
+                result = ColumnName;
+            }
+
+            switch (ColumnType)
+            {
+                case ColumnType.Button:
+                    result += " - " + (this as ButtonColumn).LinkLabel;
+                    break;
+                case ColumnType.Link:
+                    result += " - " + (this as LinkColumn).LinkLabel;
+                    break;
+            }
+
+            return result;
+        }
     }
 }

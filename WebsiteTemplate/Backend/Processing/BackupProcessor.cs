@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using QBic.Core.Services;
 using System;
 using System.Threading.Tasks;
@@ -10,8 +11,8 @@ namespace WebsiteTemplate.Backend.Processing
 {
     public class BackupProcessor : CoreProcessor<FileContentResult>
     {
-        public BackupProcessor(IServiceProvider container)
-            : base(container)
+        public BackupProcessor(IServiceProvider container, ILogger<BackupProcessor> logger)
+            : base(container, logger)
         {
             BackupService = Container.GetService<BackupService>();
             AppSettings = Container.GetService<ApplicationSettingsCore>();

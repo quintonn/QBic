@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NHibernate.Criterion;
 using QBic.Authentication;
+using QBic.Core.Utilities;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,14 +26,19 @@ namespace WebsiteTemplate.Backend.Processing
         protected static DataService DataService { get; set; }
         protected static AuditService AuditService { get; set; }
         protected static BackgroundService BackgroundService { get; set; }
+        private static readonly ConcurrentDictionary<string, List<int>> UserEventsCache = new ConcurrentDictionary<string, List<int>>();
 
         private static bool SetupDone = false;
 
         private static object LockObject = new object();
 
         private readonly ContextService ContextService;
-        public CoreProcessorBase(IServiceProvider container)
+        protected readonly ILogger Logger;
+        private readonly ApplicationSettingsCore AppSettings;
+        public CoreProcessorBase(IServiceProvider container, ILogger logger)
         {
+            Logger = logger;
+            QBicUtils.ServiceProvider = container;
             try
             {
                 lock (LockObject)
@@ -66,6 +74,8 @@ namespace WebsiteTemplate.Backend.Processing
             {
                 Console.WriteLine(error.Message);
             }
+
+            AppSettings = container.GetService<ApplicationSettingsCore>();
         }
 
         private static void PopulateDefaultValues()
@@ -104,6 +114,14 @@ namespace WebsiteTemplate.Backend.Processing
 
         protected List<int> GetAllowedEventsForUser(string userId)
         {
+            if (UserEventsCache.TryGetValue(userId, out List<int> results))
+            {
+                if (AppSettings.DebugUserEvents)
+                {
+                    Logger.LogInformation("Returning cached events for user {userId}", userId);
+                }
+                return results;
+            }
             using (var session = DataService.OpenSession())
             {
                 var userRoles = ContextService.GetRequestUserRoles().ToArray();
@@ -113,6 +131,14 @@ namespace WebsiteTemplate.Backend.Processing
                                                    .List<EventRoleAssociation>();
 
                 var events = eventRoleAssociations.Select(e => e.Event).ToList();
+                UserEventsCache.TryAdd(userId, events);
+
+                if (AppSettings.DebugUserEvents)
+                {
+                    var names = events.Select(x => EventService.EventList[x]?.Name).ToList();
+                    var data = JsonHelper.SerializeObject(names);
+                    Logger.LogInformation("allowed events for userId {userId}: {data}", userId, data);
+                }
                 return events;
             }
         }

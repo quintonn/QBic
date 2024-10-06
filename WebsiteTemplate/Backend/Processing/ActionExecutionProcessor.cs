@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,9 @@ namespace WebsiteTemplate.Backend.Processing
 {
     public class ActionExecutionProcessor : EventProcessor<IList<IEvent>>
     {
-        public ActionExecutionProcessor(IServiceProvider container)
-            : base(container)
+        public ActionExecutionProcessor(IServiceProvider container, ILogger<ActionExecutionProcessor> logger)
+            : base(container, logger)
         {
-
         }
 
         public async override Task<IList<IEvent>> ProcessEvent(int eventId)
@@ -79,7 +79,14 @@ namespace WebsiteTemplate.Backend.Processing
                 var action = eventItem as ShowView;
 
                 var user = await GetLoggedInUser();
+
+                var appSettings = Container.GetService(typeof(ApplicationSettingsCore)) as ApplicationSettingsCore;
+                if (appSettings.DebugUserEvents)
+                {
+                    Logger.LogInformation("Getting allowed events for user: {Id}", user.Id);
+                }
                 var allowedMenus = GetAllowedEventsForUser(user.Id);
+                
                 action.Columns = action.DoConfigureColumns(allowedMenus);
 
                 data = originalData;
@@ -108,10 +115,14 @@ namespace WebsiteTemplate.Backend.Processing
 
                 var totalLines = action.GetDataCount(viewDataSettings);
 
+                /*
                 var list = action.GetData(viewDataSettings); //TODO: Instead of calling this here, i should re-use what's in UpdateViewProcessor
+                Logger.LogInformation("Get data for view: " + eventItem.Description);
+                Logger.LogInformation(JsonHelper.SerializeObject(list));
                 action.ViewData = list;
+                */
 
-                totalLines = Math.Max(totalLines, list.Cast<object>().Count());
+                //totalLines = Math.Max(totalLines, list.Cast<object>().Count());
 
                 action.CurrentPage = 1;
                 action.LinesPerPage = 10;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using QBic.Core.Utilities;
 using System;
 using System.Threading.Tasks;
@@ -11,8 +12,8 @@ namespace WebsiteTemplate.Backend.Processing
 {
     public class FileProcessor : CoreProcessor<FileContentResult>
     {
-        public FileProcessor(IServiceProvider container)
-            : base(container)
+        public FileProcessor(IServiceProvider container, ILogger<FileProcessor> logger)
+            : base(container, logger)
         {
 
         }

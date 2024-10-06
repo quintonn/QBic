@@ -9,13 +9,14 @@ using WebsiteTemplate.Menus;
 using WebsiteTemplate.Menus.BaseItems;
 using WebsiteTemplate.Menus.InputItems;
 using WebsiteTemplate.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace WebsiteTemplate.Backend.Processing
 {
     public class InputEventProcessor : EventProcessor<IList<IEvent>>
     {
-        public InputEventProcessor(IServiceProvider container)
-            : base(container)
+        public InputEventProcessor(IServiceProvider container, ILogger<InputEventProcessor> logger)
+            : base(container, logger)
         {
 
         }
