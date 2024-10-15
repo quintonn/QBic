@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Microsoft.Extensions.Logging;
 using NHibernate;
 using WebsiteTemplate.Backend.Services;
 using WebsiteTemplate.Menus.BaseItems;
@@ -13,7 +14,7 @@ namespace WebsiteTemplate.Test.MenuItems
 {
     public class TestCoreView : CoreView<CauseChild>
     {
-        public TestCoreView(DataService dataService) : base(dataService)
+        public TestCoreView(DataService dataService, ILogger<TestCoreView> logger) : base(dataService, logger)
         {
         }
         public override bool AllowInMenu

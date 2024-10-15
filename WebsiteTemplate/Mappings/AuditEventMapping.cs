@@ -31,6 +31,11 @@ namespace WebsiteTemplate.Mappings
                 Map(x => x.OriginalObject).Nullable().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
                 Map(x => x.NewObject).Nullable().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
             }
+            else if (DataStore.DbProviderType == DBProviderType.POSTGRES)
+            {
+                Map(x => x.OriginalObject).Nullable().CustomSqlType("TEXT");
+                Map(x => x.NewObject).Nullable().CustomSqlType("TEXT");
+            }
             else
             {
                 Map(x => x.OriginalObject).Nullable().Length(int.MaxValue);

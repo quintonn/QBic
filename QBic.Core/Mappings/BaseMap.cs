@@ -34,6 +34,10 @@ namespace QBic.Core.Mappings
                     {
                         dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Not.Nullable().CustomSqlType("varbinary(max)").Length(int.MaxValue);
                     }
+                    else if (DataStore.DbProviderType == DBProviderType.POSTGRES)
+                    {
+                        dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Not.Nullable().CustomSqlType("BYTEA");
+                    }
                     else
                     {
                         dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Not.Nullable().Length(int.MaxValue);
@@ -49,6 +53,10 @@ namespace QBic.Core.Mappings
                     else if (DataStore.DbProviderType == DBProviderType.MSSQL)
                     {
                         dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Nullable().CustomType<LongString>().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
+                    }
+                    else if (DataStore.DbProviderType == DBProviderType.POSTGRES)
+                    {
+                        dynamicMap.Map(FluentNHibernate.Reveal.Member<T>(column)).Not.Nullable().CustomSqlType("TEXT");
                     }
                     else
                     {

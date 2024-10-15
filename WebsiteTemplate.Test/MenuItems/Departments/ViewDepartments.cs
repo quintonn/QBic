@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -14,7 +15,7 @@ namespace WebsiteTemplate.Test.MenuItems.Departments
 {
     public class ViewDepartments : CoreView<Department>
     {
-        public ViewDepartments(DataService dataService) : base(dataService)
+        public ViewDepartments(DataService dataService, ILogger<ViewDepartments> logger) : base(dataService, logger)
         {
         }
 

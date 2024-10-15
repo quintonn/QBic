@@ -1,5 +1,6 @@
 ﻿using QBic.Core.Models;
 using FluentNHibernate.Mapping;
+using QBic.Core.Data;
 
 namespace QBic.Core.Mappings
 {
@@ -9,7 +10,7 @@ namespace QBic.Core.Mappings
         {
             Id(x => x.Id).GeneratedBy.Assigned();
 
-            Map(x => x.CanDelete).Default("1")
+            Map(x => x.CanDelete).Default(DataStore.GetDefaultBoolean())
                                  .Not.Nullable();
         }
     }
