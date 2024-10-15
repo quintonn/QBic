@@ -65,6 +65,8 @@ namespace WebsiteTemplate.Test.SiteSpecific
 
             //var connectionString = "Integrated Security=SSPI;Persist Security Info=False;Data Source=localhost;Initial Catalog=WebTest;MultipleActiveResultSets=true";
             var configurer = MsSqlConfiguration.MsSql2012.ConnectionString(connectionString).IsolationLevel(IsolationLevel.ReadCommitted);
+            
+            //var configurer = PostgreSQLConfiguration.Standard.ConnectionString("Host=localhost;Port=5432;Database=qbictest;Username=postgres;Password=password1*");
 
             //var connectionString = "Data Source=##CurrentDirectory##\\Data\\test.db;Version=3;Journal Mode=Off;Connection Timeout=12000";
             //var currentDirectory = QBicUtils.GetCurrentDirectory();

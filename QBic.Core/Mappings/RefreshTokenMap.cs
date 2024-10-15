@@ -20,6 +20,10 @@ namespace QBic.Core.Mappings
             {
                 Map(x => x.Token).Not.Nullable().CustomSqlType("nvarchar(max)").Length(int.MaxValue);
             }
+            else if (DataStore.DbProviderType == DBProviderType.POSTGRES)
+            {
+                Map(x => x.Token).Not.Nullable().CustomSqlType("TEXT");
+            }
             else
             {
                 Map(x => x.Token).Not.Nullable().Length(int.MaxValue);

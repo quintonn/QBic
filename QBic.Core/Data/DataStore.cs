@@ -30,6 +30,15 @@ namespace QBic.Core.Data
         private static IApplicationSettings AppSettings { get; set; }
         //public static string ProviderName { get; set; }
         public static DBProviderType DbProviderType { get; set; }
+        public static string GetDefaultBoolean(bool isTrue = true)
+        {
+            if (isTrue)
+            {
+                return DbProviderType == DBProviderType.POSTGRES ? "TRUE" : "1";
+            }
+            return DbProviderType == DBProviderType.POSTGRES ? "FALSE" : "0";
+        }
+
         private static IConfiguration Config { get; set; }
 
         private DataStore(bool updateDatabase, IApplicationSettings appSettings)

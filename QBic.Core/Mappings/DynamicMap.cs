@@ -3,6 +3,7 @@ using FluentNHibernate.Mapping;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using QBic.Core.Data;
 
 namespace QBic.Core.Mappings
 {
@@ -19,7 +20,7 @@ namespace QBic.Core.Mappings
 
             Id(x => x.Id).GeneratedBy.Assigned(); // This is for when doing backup restore.
 
-            Map(x => x.CanDelete).Default("1")
+            Map(x => x.CanDelete).Default(DataStore.GetDefaultBoolean())
                                  .Not.Nullable();
 
             var primitiveColumns = Properties.Where(p => BaseMap.IsPrimitive(p.PropertyType) == true).Select(p => p.Name).ToList();

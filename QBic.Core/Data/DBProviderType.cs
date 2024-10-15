@@ -5,7 +5,7 @@
         MSSQL,
         MYSQL,
         SQLITE,
-        //POSTGRES,
+        POSTGRES,
         //ORACLE
     }
 }
