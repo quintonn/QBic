@@ -74,6 +74,7 @@ namespace WebsiteTemplate.Middleware
         public async Task Invoke(HttpContext context)
         {
             var userId = HttpContextAccessor.HttpContext.User?.Identity?.Name;
+            Logger.LogDebug($"Context middleware invoked with user id = {userId}");
             if (!string.IsNullOrWhiteSpace(userId))
             {
                 var currentUser = await GetUser(userId);

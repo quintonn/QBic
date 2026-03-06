@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }) => {
         );
         accessToken = oidcAuth.user.access_token;
         localStorage.setItem(getName("accessToken"), accessToken);
-        onReadyFunction();
+        onReadyFunction(false);
       } else {
         oidcAuth.signinRedirect();
       }
