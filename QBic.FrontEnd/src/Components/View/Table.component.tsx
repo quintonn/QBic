@@ -44,7 +44,7 @@ const createDefaultColumn = ({ id }: HasId) => ({
 });
 
 const getDefaultPreference = (
-  columns: TableProps.ColumnDefinition<unknown>[]
+  columns: TableProps.ColumnDefinition<unknown>[],
 ): CollectionPreferencesProps.Preferences => {
   return {
     stickyColumns: { first: 0, last: 0 },
@@ -71,7 +71,7 @@ interface TableComponentProps {
   defaultData?: any;
   handleOnActionColumnClick?: (
     column: ViewColumn,
-    rowInfo: any
+    rowInfo: any,
   ) => Promise<void>;
 }
 
@@ -103,7 +103,7 @@ export const TableComponent = ({
   const [tableItems, setTableItems] = useState<any[]>([]);
 
   const [selectedItems, setSelectedItems] = useState<any[]>(
-    selectedRow?.rowData ? [selectedRow?.rowData] : []
+    selectedRow?.rowData ? [selectedRow?.rowData] : [],
   );
   //const [selectedRow, setSelectedRow] = useState<any>({});
 
@@ -124,7 +124,7 @@ export const TableComponent = ({
       const sortedItems = orderBy(
         [...tableItems],
         sortingColumn.sortingField,
-        isDescending ? "desc" : "asc"
+        isDescending ? "desc" : "asc",
       );
       setTableItems(sortedItems);
     }
@@ -140,7 +140,11 @@ export const TableComponent = ({
   const [viewMenu, setViewMenu] = useState<ViewMenu[]>([]);
 
   const [preferences, setPreferences] =
-    useState<CollectionPreferencesProps.Preferences>(null);
+    useState<CollectionPreferencesProps.Preferences>({
+      pageSize: 20,
+      contentDisplay: [],
+      stickyColumns: { first: 0, last: 0 },
+    });
 
   const preferenceKey = appName + "_" + menuItem?.Id + "_preference_cache";
   const filterKey = appName + "_" + menuItem?.Id + "_filter_cache";
@@ -158,7 +162,7 @@ export const TableComponent = ({
   };
 
   const updateColumnPreferences = (
-    value: TableProps.ColumnWidthsChangeDetail
+    value: TableProps.ColumnWidthsChangeDetail,
   ) => {
     const savedColumnPreferenceString =
       localStorage.getItem(columnPreferenceKey);
@@ -175,7 +179,7 @@ export const TableComponent = ({
 
     localStorage.setItem(
       columnPreferenceKey,
-      JSON.stringify(newColumnPreferences)
+      JSON.stringify(newColumnPreferences),
     );
   };
 
@@ -197,13 +201,13 @@ export const TableComponent = ({
     filter: string = "",
     _viewSettings: ViewSettings = null,
     sortColumn: string = "",
-    sortAscending: boolean = true
+    sortAscending: boolean = true,
   ): Promise<void> => {
     await retrieveData(
       filter,
       _viewSettings || viewSettings,
       sortColumn,
-      sortAscending
+      sortAscending,
     );
   };
 
@@ -211,7 +215,7 @@ export const TableComponent = ({
     filter: string = "",
     _viewSettings: ViewSettings,
     sortColumn: string = "",
-    sortAscending: boolean = true
+    sortAscending: boolean = true,
   ) => {
     setLoading(true);
     try {
@@ -238,7 +242,7 @@ export const TableComponent = ({
       const viewData = await api.makeApiCall<MenuDetail>(
         "updateViewData/" + menuItem.Id,
         "POST",
-        data
+        data,
       );
 
       if (viewData && viewData.ViewData) {
@@ -265,7 +269,7 @@ export const TableComponent = ({
 
   const onActionColumnClick = async (
     column: ViewColumn,
-    rowData: any[]
+    rowData: any[],
   ): Promise<void> => {
     setLoading(true);
 
@@ -283,14 +287,14 @@ export const TableComponent = ({
 
   const loadConfig = async () => {
     const columnsToShow = menuItem?.Columns?.filter(
-      (c) => c.ColumnType == 0 || c.ColumnType == 1 // 0-string, 1-boolean
+      (c) => c.ColumnType == 0 || c.ColumnType == 1, // 0-string, 1-boolean
     );
     const actionColumnsToShow = menuItem?.Columns?.filter(
-      (c) => c.ColumnType == 2 || c.ColumnType == 3 // 2-button, 3-link
+      (c) => c.ColumnType == 2 || c.ColumnType == 3, // 2-button, 3-link
     );
 
     const hiddenColumns = menuItem?.Columns?.filter(
-      (c) => c.ColumnType == 4 // 4-hiden
+      (c) => c.ColumnType == 4, // 4-hiden
     ); // not sure if we need to do anything with this
 
     // 5-date, 6-checkbox // maybe later can format and do other stuff
@@ -316,7 +320,7 @@ export const TableComponent = ({
           cell: (row) => <ViewColumnCell rowData={row} column={c} />,
           width: defaultColumnPreferences[c.ColumnName] || 250,
           sortingField: c.ColumnName.includes(".") ? null : c.ColumnName,
-        } as TableProps.ColumnDefinition<unknown>)
+        }) as TableProps.ColumnDefinition<unknown>,
     );
 
     const cols: TableProps.ColumnDefinition<unknown>[] = [...viewColumns];
@@ -341,7 +345,7 @@ export const TableComponent = ({
       } catch (err) {
         console.log(
           "error parsing saved preferences for menu item: ",
-          menuItem
+          menuItem,
         );
         console.log(err);
       }
@@ -351,7 +355,7 @@ export const TableComponent = ({
     if (updatedPreferences && updatedPreferences.contentDisplay) {
       // Start with columns from preferences to keep the user order and filter out deprecated columns
       const existingColumns = updatedPreferences.contentDisplay.filter(
-        (column) => isColumnInDefinitions(column, cols as HasId[])
+        (column) => isColumnInDefinitions(column, cols as HasId[]),
       );
 
       const columnDefinitionIds = cols
@@ -362,7 +366,7 @@ export const TableComponent = ({
       // Add new columns from definitions
       const newColumns = columnDefinitionIds
         .filter(
-          (column) => !isColumnInDefinitions(column, preferencesContentDisplay)
+          (column) => !isColumnInDefinitions(column, preferencesContentDisplay),
         )
         .map(createDefaultColumn);
 
@@ -379,7 +383,7 @@ export const TableComponent = ({
     const viewMenu = await api.makeApiCall<ViewMenu[]>(
       "getViewMenu/" + menuItem.Id,
       "POST",
-      data
+      data,
     );
 
     setViewMenu(viewMenu);
@@ -436,11 +440,11 @@ export const TableComponent = ({
           filterText,
           null,
           sortingColumn?.sortingField,
-          !sortingDescending
+          !sortingDescending,
         );
       },
       "refresh",
-      500
+      500,
     );
 
   const viewMenuItemClick = async (item: ViewMenu) => {
@@ -472,7 +476,7 @@ export const TableComponent = ({
         variant="icon"
         iconName="refresh"
         onClick={doRefresh}
-      ></Button>
+      ></Button>,
     );
   }
 
@@ -524,7 +528,7 @@ export const TableComponent = ({
                       "",
                       null,
                       sortingColumn.sortingField,
-                      !sortingDescending
+                      !sortingDescending,
                     );
                   }}
                 >
@@ -568,7 +572,7 @@ export const TableComponent = ({
                   "",
                   null,
                   sortingColumn?.sortingField,
-                  !sortingDescending
+                  !sortingDescending,
                 );
               } else {
                 debouncedFilterChange();
@@ -604,7 +608,7 @@ export const TableComponent = ({
                 filterText,
                 newViewSettings,
                 sortingColumn?.sortingField || "",
-                !sortingDescending
+                !sortingDescending,
               );
             }}
           />

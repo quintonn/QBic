@@ -27,7 +27,7 @@ namespace WebsiteTemplate.Backend.Processing
 
             var originalData = await GetRequestData();
 
-            var user = await GetLoggedInUser();
+            var user = GetLoggedInUser();
             var allowedEvents = GetAllowedEventsForUser(user.Id);
 
             var validDetailComponentIds = eventItem.GetDetailComponentIds(originalData).Where(x => allowedEvents.Contains(x)).ToList();

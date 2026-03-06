@@ -21,7 +21,7 @@ namespace WebsiteTemplate.Backend.Processing
     {
         protected static JsonSerializerSettings JSON_SETTINGS;
         protected static ApplicationStartup ApplicationStartup { get; set; }
-        protected static IServiceProvider Container { get; set; }
+        protected IServiceProvider Container { get; set; }
         protected static EventService EventService { get; set; }
         protected static DataService DataService { get; set; }
         protected static AuditService AuditService { get; set; }
@@ -38,7 +38,7 @@ namespace WebsiteTemplate.Backend.Processing
         public CoreProcessorBase(IServiceProvider container, ILogger logger)
         {
             Logger = logger;
-            QBicUtils.ServiceProvider = container;
+           
             try
             {
                 lock (LockObject)
@@ -78,13 +78,13 @@ namespace WebsiteTemplate.Backend.Processing
             AppSettings = container.GetService<ApplicationSettingsCore>();
         }
 
-        private static void PopulateDefaultValues()
+        private void PopulateDefaultValues()
         {
             CreateInternalUsers();
             ApplicationStartup.SetupDefaultsInternal();
         }
 
-        private static void CreateInternalUsers()
+        private void CreateInternalUsers()
         {
             using (var session = DataService.OpenSession())
             {
@@ -143,7 +143,7 @@ namespace WebsiteTemplate.Backend.Processing
             }
         }
 
-        protected async Task<IUser> GetLoggedInUser()
+        protected IUser GetLoggedInUser()
         {
             var user = ContextService.GetRequestUser();
             return user;

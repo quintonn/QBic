@@ -48,7 +48,7 @@ namespace WebsiteTemplate.Menus.ViewItems
         internal IList<ViewColumn> DoConfigureColumns(IList<int> allowedUserEvents)
         {
             var config = new ColumnConfiguration();
-            var container = QBicUtils.ServiceProvider;
+            var container = this.serviceProvider;
             
             var appSettings = container.GetService(typeof(ApplicationSettingsCore)) as ApplicationSettingsCore;
 

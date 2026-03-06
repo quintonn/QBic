@@ -720,6 +720,7 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
               onChange(field, detail.selectedOptions);
             }}
             enableSelectAll
+            i18nStrings={{ selectAllText: "Select All" }}
             options={fieldSources[field.InputName]?.map((x) => ({
               label: x.Value,
               value: x.Key,

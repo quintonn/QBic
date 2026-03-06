@@ -77,8 +77,9 @@ namespace WebsiteTemplate.Backend.Processing
             if (eventItem is ShowView)
             {
                 var action = eventItem as ShowView;
+                action.serviceProvider = Container;
 
-                var user = await GetLoggedInUser();
+                var user = GetLoggedInUser();
 
                 var appSettings = Container.GetService(typeof(ApplicationSettingsCore)) as ApplicationSettingsCore;
                 if (appSettings.DebugUserEvents)
@@ -194,7 +195,7 @@ namespace WebsiteTemplate.Backend.Processing
                     var input = inputFields[i];
                     if (input.InputType == InputType.View)
                     {
-                        var user = await GetLoggedInUser();
+                        var user = GetLoggedInUser();
                         var allowedMenus = GetAllowedEventsForUser(user?.Id);
 
                         var columns = (input as IViewInput).ViewForInput.DoConfigureColumns(allowedMenus);

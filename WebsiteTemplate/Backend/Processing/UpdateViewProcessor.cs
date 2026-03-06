@@ -20,7 +20,7 @@ namespace WebsiteTemplate.Backend.Processing
 
         public async override Task<Event> ProcessEvent(int eventId)
         {
-            var user = await GetLoggedInUser();
+            var user = GetLoggedInUser();
             var originalData = await GetRequestData();
 
             var json = JsonHelper.Parse(originalData);
@@ -66,7 +66,9 @@ namespace WebsiteTemplate.Backend.Processing
             {
                 throw new Exception("ERROR: Invalid UIActionType: " + eventItem.GetType().ToString().Split(".".ToCharArray()).Last() + " with id " + id);
             }
+
             var action = eventItem as ShowView;
+            action.serviceProvider = Container;
 
             data = originalData;
             var parentData = data;
