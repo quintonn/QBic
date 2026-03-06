@@ -19,7 +19,7 @@ namespace WebsiteTemplate.Backend.Processing
         public async override System.Threading.Tasks.Task<IList<Menu>> ProcessEvent(int eventId)
         {
             var results = new List<Menu>();
-            var user = await GetLoggedInUser();
+            var user = GetLoggedInUser();
             if (user == null)
             {
                 return new List<Menu>(); // happens after failed Backup Restore

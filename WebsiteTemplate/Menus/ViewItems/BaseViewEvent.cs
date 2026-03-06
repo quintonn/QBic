@@ -10,6 +10,9 @@ namespace WebsiteTemplate.Menus.ViewItems
         {
             
         }
+
+        internal IServiceProvider serviceProvider { get; set; }
+
         /// <summary>
         /// Returns the title that will be displayed when this view is rendered.
         /// </summary>
