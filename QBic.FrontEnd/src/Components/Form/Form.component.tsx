@@ -71,7 +71,7 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
 
   const getInputValue = async (
     field: InputField,
-    onChangeValue = null
+    onChangeValue = null,
   ): Promise<any> => {
     let value = null;
     if (onChangeValue != null) {
@@ -169,7 +169,7 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
         addMessage({
           type: "error",
           content: `Error reading file, see logs for details (${err})`,
-        })
+        }),
       );
     });
   };
@@ -222,7 +222,7 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
       const resp = await api.makeApiCall<MenuDetail[]>(
         "processEvent/" + menuItem.Id,
         "POST",
-        data
+        data,
       );
 
       //await formEvents.handleEvents(resp);
@@ -236,7 +236,7 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
         addMessage({
           type: "error",
           content: message,
-        })
+        }),
       );
     } finally {
       setLoading(false);
@@ -246,7 +246,7 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
   const validateField = (
     field: InputField,
     value: any,
-    forcedCheck: boolean = false
+    forcedCheck: boolean = false,
   ): string => {
     if (
       field.Mandatory === true &&
@@ -335,7 +335,7 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
             try {
               //defaultValue = parse("23-06-2024", "dd-MM-YYYY", new Date());
               defaultValue = moment(defaultValue, "DD-MMM-YYYY").format(
-                "YYYY-MM-DD"
+                "YYYY-MM-DD",
               );
             } catch (err) {
               console.log("error parsing date: " + defaultValue);
@@ -467,7 +467,7 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
       const resp = await api.makeApiCall<MenuDetail[]>(
         "propertyChanged/" + menuItem.Id,
         "POST",
-        data
+        data,
       );
 
       if (resp && resp.length > 0) {
@@ -482,7 +482,7 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
               }));
 
               const fld = menuItem.InputFields.filter(
-                (f) => f.InputName == item.InputName
+                (f) => f.InputName == item.InputName,
               )[0];
               const currentValue = await getInputValue(fld);
 
@@ -500,7 +500,7 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
 
                   let newCurrentValue = values[item.InputName] as any[];
                   const updatedValue = newCurrentValue.filter((n) =>
-                    validValues.includes(n.value)
+                    validValues.includes(n.value),
                   );
 
                   if (!validValues.includes(currentValue)) {
@@ -527,7 +527,7 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
                 addMessage({
                   type: "error",
                   content: "Unknown action type: " + item.ActionType,
-                })
+                }),
               );
               break;
             }
@@ -543,20 +543,20 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
 
   const updateFieldVisibilities = (
     fieldChanged: InputField,
-    valueChanged: any
+    valueChanged: any,
   ) => {
     const otherFields = menuItem.InputFields.filter(
       (f) =>
         f.VisibilityConditions.filter(
-          (v) => v.ColumnName == fieldChanged.InputName
-        ).length > 0
+          (v) => v.ColumnName == fieldChanged.InputName,
+        ).length > 0,
     );
 
     for (let i = 0; i < otherFields.length; i++) {
       const field = otherFields[i];
 
       const matchedConditions = field.VisibilityConditions.filter((condition) =>
-        conditionIsMet(condition, valueChanged?.toString())
+        conditionIsMet(condition, valueChanged?.toString()),
       );
 
       if (matchedConditions.length > 0) {
@@ -587,7 +587,7 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
 
       if (thereAreErrors === true) {
         setErrorMessage(
-          "There are invalid inputs. Make sure to check all tabs."
+          "There are invalid inputs. Make sure to check all tabs.",
         );
       } else {
         setErrorMessage("");
@@ -598,7 +598,7 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
   const updateFieldErrors = async (
     field: InputField,
     value: any,
-    forcedValidation: boolean = false // because this might be checked while changing visibility
+    forcedValidation: boolean = false, // because this might be checked while changing visibility
   ) => {
     const actualValue = await getInputValue(field, value);
     const fieldError = validateField(field, actualValue, forcedValidation);
@@ -612,7 +612,7 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
   const onChange = async (
     field: InputField,
     value: any,
-    isScreenSetup: boolean = false
+    isScreenSetup: boolean = false,
   ) => {
     setValues((prevValues) => ({ ...prevValues, [field.InputName]: value }));
 
@@ -638,14 +638,14 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
         field.InputName,
         timeoutValue,
         field,
-        fieldValue
+        fieldValue,
       );
     }
   };
 
   const onInputViewColumnActionClick = async (
     field: InputField,
-    rowData: any
+    rowData: any,
   ): Promise<void> => {
     const currentInputs = valuesRef.current;
 
@@ -719,6 +719,7 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
             onChange={({ detail }) => {
               onChange(field, detail.selectedOptions);
             }}
+            enableSelectAll
             options={fieldSources[field.InputName]?.map((x) => ({
               label: x.Value,
               value: x.Key,
@@ -791,7 +792,7 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
               field.InputType +
               " for field " +
               field.InputLabel,
-          })
+          }),
         );
         return null;
     }
@@ -799,7 +800,7 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
 
   const getTabContent = (tabName: string) => {
     const fields = menuItem.InputFields.filter(
-      (x) => x.TabName == tabName || (tabName == null && x.TabName == "")
+      (x) => x.TabName == tabName || (tabName == null && x.TabName == ""),
     );
 
     const formFields = fields
@@ -835,7 +836,7 @@ export const FormComponent = ({ menuItem }: FormComponentProps) => {
     });
 
     const tabNames = Array.from(uniqueTabs?.values()).filter(
-      (x) => x != null && x.length > 0
+      (x) => x != null && x.length > 0,
     );
 
     return (
