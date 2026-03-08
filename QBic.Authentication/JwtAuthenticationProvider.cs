@@ -89,6 +89,12 @@ namespace QBic.Authentication
                 user = await UserManager.FindByEmailAsync(username);
             }
 
+            if (user == null)
+            {
+                // No such user
+                return false;
+            }
+
             var res = await UserManager.CheckPasswordAsync(user, password);
             return res;
         }

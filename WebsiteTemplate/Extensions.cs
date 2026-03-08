@@ -166,7 +166,11 @@ namespace WebsiteTemplate
                     var tokenProviderParams = new TokenValidationParameters()
                     {
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKeys = OptionsProviders.Select(o => new SymmetricSecurityKey(Encoding.ASCII.GetBytes(o.SecretKey))).ToList(),
+                        // Support both UTF8 and legacy ASCII secret encodings for token validation to avoid breaking existing tokens.
+                        IssuerSigningKeys = OptionsProviders.SelectMany(o => new[] {
+                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(o.SecretKey)),
+                            new SymmetricSecurityKey(Encoding.ASCII.GetBytes(o.SecretKey))
+                        }).ToList(),
                         ValidateIssuer = true,
                         ValidIssuers = OptionsProviders.Select(o => o.Issuer).ToList(),
                         ValidateAudience = true,

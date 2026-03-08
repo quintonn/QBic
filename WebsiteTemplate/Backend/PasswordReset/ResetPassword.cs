@@ -77,18 +77,16 @@ namespace WebsiteTemplate.Backend.PasswordReset
         {
             if (!data.Contains("UserId"))
             {
-                Logger.LogInformation("ResetPassword:");
-                Logger.LogInformation("*****************************************");
-                Logger.LogInformation(data);
+                // Decrypt incoming payload but do not log sensitive contents (tokens etc.)
                 var jsonData = Encryption.Decrypt(data, AppSettings.ApplicationPassPhrase);
-                Logger.LogInformation($"JSONData =\r\n-------------------\r\n{jsonData}\r\n--------------------------\r\n");
 
                 TempJson = jsonData;
                 var json = JsonHelper.Parse(jsonData);
-                Logger.LogInformation("json parsed:\r\n" + json.ToString());
 
                 UserId = json.GetValue("userId");
                 PasswordToken = json.GetValue("token");
+
+                Logger.LogInformation($"ResetPassword: parsed payload for userId '{UserId ?? "<unknown>"}'.");
             }
 
             return new InitializeResult(true);

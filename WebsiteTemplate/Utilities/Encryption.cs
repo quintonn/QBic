@@ -8,45 +8,43 @@ namespace WebsiteTemplate.Utilities
 {
     public static class Encryption
     {
-        // This constant is used to determine the keysize of the encryption algorithm in bits.
+        // AES block/key size in bits used for key derivation. 128-bit key is used for compatibility.
         // We divide this by 8 within the code below to get the equivalent number of bytes.
-        private const int Keysize = 128;//256; only 128 supported in dotnet
+        private const int Keysize = 128;
 
-        // This constant determines the number of iterations for the password bytes generation function.
-        private const int DerivationIterations = 1000;
+        // Number of iterations for PBKDF2 (Rfc2898). Increased from 1000 to a modern default.
+        // Adjust this value according to your deployment's performance/strength needs.
+        private const int DerivationIterations = 100000;
 
         public static string Encrypt(string plainText, string passphrase)
         {
-            // Salt and IV is randomly generated each time, but is preprended to encrypted cipher text
-            // so that the same Salt and IV values can be used when decrypting.  
-            var saltStringBytes = Generate256BitsOfRandomEntropy();
-            var ivStringBytes = Generate256BitsOfRandomEntropy();
+            // Salt and IV are randomly generated for each encryption and prepended to the cipher text
+            // so the same salt/IV can be used during decryption.
+            var saltStringBytes = GenerateRandomBytes(Keysize / 8);
+            var ivStringBytes = GenerateRandomBytes(16); // AES block size is 16 bytes (128 bits)
             var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
-            using (var password = new Rfc2898DeriveBytes(passphrase, saltStringBytes, DerivationIterations))
+            using (var password = new Rfc2898DeriveBytes(passphrase, saltStringBytes, DerivationIterations, System.Security.Cryptography.HashAlgorithmName.SHA256))
             {
                 var keyBytes = password.GetBytes(Keysize / 8);
-                using (var symmetricKey = new RijndaelManaged())
+                using (var aes = Aes.Create())
                 {
-                    symmetricKey.BlockSize = 128;
-                    symmetricKey.Mode = CipherMode.CBC;
-                    symmetricKey.Padding = PaddingMode.PKCS7;
-                    using (var encryptor = symmetricKey.CreateEncryptor(keyBytes, ivStringBytes))
+                    aes.BlockSize = 128;
+                    aes.Mode = CipherMode.CBC;
+                    aes.Padding = PaddingMode.PKCS7;
+                    using (var encryptor = aes.CreateEncryptor(keyBytes, ivStringBytes))
+                    using (var memoryStream = new MemoryStream())
+                    using (var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
                     {
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            using (var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
-                            {
-                                cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
-                                cryptoStream.FlushFinalBlock();
-                                // Create the final bytes as a concatenation of the random salt bytes, the random iv bytes and the cipher bytes.
-                                var cipherTextBytes = saltStringBytes;
-                                cipherTextBytes = cipherTextBytes.Concat(ivStringBytes).ToArray();
-                                cipherTextBytes = cipherTextBytes.Concat(memoryStream.ToArray()).ToArray();
-                                memoryStream.Close();
-                                cryptoStream.Close();
-                                return Convert.ToBase64String(cipherTextBytes);
-                            }
-                        }
+                        cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
+                        cryptoStream.FlushFinalBlock();
+
+                        // Final bytes: [salt] + [iv] + [ciphertext]
+                        var cipherTextBytes = saltStringBytes
+                            .Concat(ivStringBytes)
+                            .Concat(memoryStream.ToArray())
+                            .ToArray();
+
+                        return Convert.ToBase64String(cipherTextBytes);
                     }
                 }
             }
@@ -54,58 +52,70 @@ namespace WebsiteTemplate.Utilities
 
         public static string Decrypt(string cipherText, string passphrase)
         {
-            // Get the complete stream of bytes that represent:
-            // [32 bytes of Salt] + [32 bytes of IV] + [n bytes of CipherText]
+            // Stored format: [salt (Keysize/8 bytes)] + [iv (16 bytes)] + [ciphertext]
             var cipherTextBytesWithSaltAndIv = Convert.FromBase64String(cipherText);
-            // Get the saltbytes by extracting the first 32 bytes from the supplied cipherText bytes.
-            var saltStringBytes = cipherTextBytesWithSaltAndIv.Take(Keysize / 8).ToArray();
-            // Get the IV bytes by extracting the next 32 bytes from the supplied cipherText bytes.
-            var ivStringBytes = cipherTextBytesWithSaltAndIv.Skip(Keysize / 8).Take(Keysize / 8).ToArray();
-            // Get the actual cipher text bytes by removing the first 64 bytes from the cipherText string.
-            var cipherTextBytes = cipherTextBytesWithSaltAndIv.Skip((Keysize / 8) * 2).Take(cipherTextBytesWithSaltAndIv.Length - ((Keysize / 8) * 2)).ToArray();
 
-            using (var password = new Rfc2898DeriveBytes(passphrase, saltStringBytes, DerivationIterations))
+            var saltStringBytes = cipherTextBytesWithSaltAndIv.Take(Keysize / 8).ToArray();
+            var ivStringBytes = cipherTextBytesWithSaltAndIv.Skip(Keysize / 8).Take(16).ToArray();
+            var cipherTextBytes = cipherTextBytesWithSaltAndIv.Skip((Keysize / 8) + 16).ToArray();
+
+            // Try decrypting with the current (stronger) iteration count first.
+            try
+            {
+                using (var password = new Rfc2898DeriveBytes(passphrase, saltStringBytes, DerivationIterations, System.Security.Cryptography.HashAlgorithmName.SHA256))
+                {
+                    var keyBytes = password.GetBytes(Keysize / 8);
+                    using (var aes = Aes.Create())
+                    {
+                        aes.BlockSize = 128;
+                        aes.Mode = CipherMode.CBC;
+                        aes.Padding = PaddingMode.PKCS7;
+
+                        using (var decryptor = aes.CreateDecryptor(keyBytes, ivStringBytes))
+                        using (var memoryStream = new MemoryStream(cipherTextBytes))
+                        using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
+                        using (var streamReader = new StreamReader(cryptoStream))
+                        {
+                            var plaintext = streamReader.ReadToEnd();
+                            return plaintext;
+                        }
+                    }
+                }
+            }
+            catch (System.Security.Cryptography.CryptographicException)
+            {
+                // Decryption failed with the current iteration count -> attempt legacy iteration count for backward compatibility.
+            }
+
+            // Fallback: try legacy (older) iteration count so previously-encrypted data can still be decrypted after upgrade.
+            const int LegacyDerivationIterations = 1000;
+            using (var password = new Rfc2898DeriveBytes(passphrase, saltStringBytes, LegacyDerivationIterations, System.Security.Cryptography.HashAlgorithmName.SHA256))
             {
                 var keyBytes = password.GetBytes(Keysize / 8);
-                using (var symmetricKey = new RijndaelManaged())
+                using (var aes = Aes.Create())
                 {
-                    symmetricKey.BlockSize = 128;
-                    symmetricKey.Mode = CipherMode.CBC;
-                    symmetricKey.Padding = PaddingMode.PKCS7;
-                    using (var decryptor = symmetricKey.CreateDecryptor(keyBytes, ivStringBytes))
-                    {
-                        using (var memoryStream = new MemoryStream(cipherTextBytes))
-                        {
-                            using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
-                            {
-                                //var plainTextBytes = new byte[cipherTextBytes.Length];
-                                //var decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
-                                //memoryStream.Close();
-                                //cryptoStream.Close();
-                                //return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
-                                // https://github.com/dotnet/runtime/issues/61918 -> https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.cryptostream?view=net-6.0
-                                using (var streamReader = new StreamReader(cryptoStream))
-                                {
+                    aes.BlockSize = 128;
+                    aes.Mode = CipherMode.CBC;
+                    aes.Padding = PaddingMode.PKCS7;
 
-                                    // Read the decrypted bytes from the decrypting stream
-                                    // and place them in a string.
-                                    var plaintext = streamReader.ReadToEnd();
-                                    return plaintext;
-                                }
-                            }
-                        }
+                    using (var decryptor = aes.CreateDecryptor(keyBytes, ivStringBytes))
+                    using (var memoryStream = new MemoryStream(cipherTextBytes))
+                    using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
+                    using (var streamReader = new StreamReader(cryptoStream))
+                    {
+                        var plaintext = streamReader.ReadToEnd();
+                        return plaintext;
                     }
                 }
             }
         }
 
-        private static byte[] Generate256BitsOfRandomEntropy()
+        private static byte[] GenerateRandomBytes(int length)
         {
-            var randomBytes = new byte[16]; // 32 Bytes will give us 256 bits.
-            using (var rngCsp = new RNGCryptoServiceProvider())
+            var randomBytes = new byte[length];
+            using (var rng = System.Security.Cryptography.RandomNumberGenerator.Create())
             {
-                // Fill the array with cryptographically secure random bytes.
-                rngCsp.GetBytes(randomBytes);
+                rng.GetBytes(randomBytes);
             }
             return randomBytes;
         }

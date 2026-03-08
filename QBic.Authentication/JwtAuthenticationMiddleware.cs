@@ -184,17 +184,21 @@ namespace QBic.Authentication
             //var validationParams = JwtValidation.GetValidationParameters(providers);
 
             //TODO: Do i want to choose all providers, or select ones that match the path or something?
-            var validationParams = new TokenValidationParameters()
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKeys = providers.Select(o => new SymmetricSecurityKey(Encoding.ASCII.GetBytes(o.SecretKey))).ToList(),
-                ValidateIssuer = true,
-                ValidIssuers = providers.Select(o => o.Issuer).ToList(),
-                ValidateAudience = true,
-                ValidAudiences = providers.Select(o => o.Audience).ToList(),
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero,
-            };
+                var validationParams = new TokenValidationParameters()
+                {
+                    ValidateIssuerSigningKey = true,
+                    // Support tokens signed using UTF8 and legacy ASCII encoding of the secret key so upgrades are non-breaking.
+                    IssuerSigningKeys = providers.SelectMany(o => new[] {
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(o.SecretKey)),
+                        new SymmetricSecurityKey(Encoding.ASCII.GetBytes(o.SecretKey))
+                    }).ToList(),
+                    ValidateIssuer = true,
+                    ValidIssuers = providers.Select(o => o.Issuer).ToList(),
+                    ValidateAudience = true,
+                    ValidAudiences = providers.Select(o => o.Audience).ToList(),
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,
+                };
 
             try
             {
@@ -301,7 +305,7 @@ namespace QBic.Authentication
 
         private string CreateToken(IEnumerable<Claim> claims, DateTime notBefore, DateTime tokenExpiration, IJwtAuthenticationProvider optionsProvider)
         {
-            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(optionsProvider.SecretKey));
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(optionsProvider.SecretKey));
             var signingCredentials = new SigningCredentials(signingKey, optionsProvider.SigningAlgorithm);
 
             var token = new JwtSecurityToken(
